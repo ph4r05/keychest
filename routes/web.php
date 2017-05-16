@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'SearchController@show');
+Route::post('/', 'SearchController@search');
 
 Route::get('/w', function () {
     return view('welcome');
