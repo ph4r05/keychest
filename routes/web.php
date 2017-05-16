@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', 'SearchController@show');
 
 Route::get('/w', function () {
     return view('welcome');
