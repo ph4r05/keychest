@@ -39,5 +39,16 @@ class SearchController extends Controller
         return view('index', $data);
     }
 
+    /**
+     * Performs the search / check
+     *
+     * @return Response
+     */
+    public function search()
+    {
+        $data = [];
+        return view('index', $data);
+    }
+
 }
 
