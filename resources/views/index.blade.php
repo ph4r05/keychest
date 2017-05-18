@@ -8,7 +8,7 @@
                 {{ csrf_field() }}
                 <div class="input-group">
                     <input type="text" class="form-control input-sm" placeholder="Enter your server name"
-                           name="server-name">
+                           name="scan-target">
                     <span class="input-group-btn">
                         <button class="btn btn-default btn-sm" type="submit">
                             <span class="glyphicon glyphicon-search"></span>
