@@ -16,7 +16,7 @@ class CreateScanJobsTable extends Migration
         Schema::create('scan_jobs', function (Blueprint $table) {
             $table->uuid('id');
             $table->primary('id');
-            $table->string('scan_target');
+            $table->string('scan_host');
             $table->string('scan_scheme')->nullable();
             $table->string('scan_port')->nullable();
             $table->timestamps();

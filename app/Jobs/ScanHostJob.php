@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 
 class ScanHostJob implements ShouldQueue
 {
@@ -32,7 +33,7 @@ class ScanHostJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Job received: ' . var_export($this->elDb));
+        Log::info('Job received: ' . var_export($this->elDb, true));
         // TODO: host scanning logic
     }
 }

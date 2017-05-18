@@ -51,7 +51,7 @@ class SearchController extends Controller
     public function search()
     {
         $uuid = Uuid::generate()->string;
-        $server = Input::get('scan-target');
+        $server = trim(Input::get('scan-target'));
         Log::info(sprintf('UUID: %s, target: %s', $uuid, $server));
 
         $parsed = parse_url($server);
@@ -62,9 +62,9 @@ class SearchController extends Controller
         // DB Job data
         $newJobDb = [
             'id' => $uuid,
-            'scan_scheme' => $parsed['scheme'],
-            'scan_host' => $parsed['host'],
-            'scan_port' => $parsed['port'],
+            'scan_scheme' => isset($parsed['scheme']) ? $parsed['scheme'] : null,
+            'scan_host' => isset($parsed['host']) ? $parsed['host'] : $server,
+            'scan_port' => isset($parsed['port']) ? $parsed['port'] : null,
         ];
 
         $curUser = Auth::user();
@@ -73,7 +73,7 @@ class SearchController extends Controller
         }
 
         $elDb = ScanJob::create($newJobDb);
-        Log::info(var_export($elDb));
+        Log::info(var_export($elDb, true));
 
         // Queue entry to the scanner queue
         dispatch((new ScanHostJob($elDb))->onQueue('scanner'));
