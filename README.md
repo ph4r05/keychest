@@ -21,6 +21,14 @@ npm run dev
 npm run prod
 ```
 
+### Operation
+
+Queue management
+
+```bash
+php artisan queue:work redis --queue=scanner
+```
+
 ### EC2 dep
 
 Install NodeJS
