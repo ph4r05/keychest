@@ -33,7 +33,8 @@ nvm install 6
 
 ### Redis install
 
-https://redis.io/topics/quickstart
+* <https://redis.io/topics/quickstart>
+* <https://medium.com/@andrewcbass/install-redis-v3-2-on-aws-ec2-instance-93259d40a3ce>
 
 ```bash
 wget http://download.redis.io/redis-stable.tar.gz
@@ -56,4 +57,20 @@ sudo mkdir /var/redis/6379
 # Set the dir to /var/redis/6379 (very important step!)
 
 sudo /etc/init.d/redis_6379 start
+```
+
+Alternative init script:
+
+```
+sudo wget https://raw.githubusercontent.com/saxenap/install-redis-amazon-linux-centos/master/redis-server
+
+sudo mv redis-server /etc/init.d
+sudo chmod 755 /etc/init.d/redis-server
+
+sudo vi /etc/init.d/redis-server
+# REDIS_CONF_FILE="/etc/redis/6379.conf" 
+
+sudo chkconfig --add redis-server
+sudo chkconfig --level 345 redis-server on
+sudo service redis-server start
 ```
