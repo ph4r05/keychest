@@ -23,10 +23,16 @@ npm run prod
 
 ### Operation
 
-Queue management
+Queue management - obsolete now processed by python component.
 
 ```bash
 php artisan queue:work redis --queue=scanner
+```
+
+Queued events processing
+
+```bash
+php artisan queue:work 
 ```
 
 ### EC2 dep
