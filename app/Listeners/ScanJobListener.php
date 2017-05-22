@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\ScanJobProgress;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 
 class ScanJobListener implements ShouldQueue
 {
@@ -28,6 +29,6 @@ class ScanJobListener implements ShouldQueue
      */
     public function handle(ScanJobProgress $event)
     {
-        //
+        Log::info('New event: ' . var_export($event, true));
     }
 }

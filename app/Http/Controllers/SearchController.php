@@ -75,7 +75,7 @@ class SearchController extends Controller
 
         $elJson = $newJobDb;
         $elDb = ScanJob::create($newJobDb);
-        Log::info(var_export($elDb, true));
+        // Log::info(var_export($elDb, true));
 
         // Queue entry to the scanner queue
         dispatch((new ScanHostJob($elDb, $elJson))->onQueue('scanner'));
