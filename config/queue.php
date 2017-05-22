@@ -64,6 +64,13 @@ return [
             'retry_after' => 90,
         ],
 
+        'ph4redis' => [
+            'driver' => 'ph4redis',
+            'connection' => 'default',
+            'queue' => 'default',
+            'retry_after' => 90,
+        ],
+
     ],
 
     /*
