@@ -70,13 +70,15 @@ class SearchController extends Controller
         $curUser = Auth::user();
         if (!empty($curUser)){
             $newJobDb['user'] = $curUser;
+            $newJobDb['user_id'] = $curUser->getAuthIdentifier();
         }
 
+        $elJson = $newJobDb;
         $elDb = ScanJob::create($newJobDb);
         Log::info(var_export($elDb, true));
 
         // Queue entry to the scanner queue
-        dispatch((new ScanHostJob($elDb))->onQueue('scanner'));
+        dispatch((new ScanHostJob($elDb, $elJson))->onQueue('scanner'));
 
         $data = ['job_id' => $uuid];
         return view('index', $data);
