@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Keychest\Queue\JsonJob;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -10,9 +11,15 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class ScanJobProgress
+class ScanJobProgress implements JsonJob
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    /**
+     * json encoded data passed by python scanner
+     * @var string
+     */
+    protected $json_data;
 
     /**
      * Create a new event instance.
@@ -33,4 +40,23 @@ class ScanJobProgress
     {
         return new PrivateChannel('channel-name');
     }
+
+    /**
+     * Returns json interpretation
+     * @return array
+     */
+    public function toJson()
+    {
+        return [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsonData()
+    {
+        return $this->json_data;
+    }
+
+
 }
