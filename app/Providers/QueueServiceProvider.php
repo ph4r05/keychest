@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Keychest\Queue\Ph4RedisConnector;
+use App\Keychest\Queue\Ph4Worker;
+use Illuminate\Queue\Worker;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Queue\Connectors\SqsConnector;
@@ -26,6 +28,7 @@ class QueueServiceProvider extends ServiceProvider
     {
         $manager = $this->app['queue'];
         $this->registerConnectors($manager);
+        $this->registerWorker();
     }
 
     /**
@@ -49,6 +52,20 @@ class QueueServiceProvider extends ServiceProvider
     {
         $manager->addConnector('ph4redis', function () {
             return new Ph4RedisConnector($this->app['redis']);
+        });
+    }
+
+    /**
+     * Register the queue worker.
+     *
+     * @return void
+     */
+    protected function registerWorker()
+    {
+        $this->app->singleton('queue.worker', function () {
+            return new Ph4Worker(
+                $this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]
+            );
         });
     }
 }
