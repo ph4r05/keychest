@@ -12,6 +12,20 @@ class ScanJobListener implements ShouldQueue
     use InteractsWithQueue;
 
     /**
+     * The name of the connection the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $connection = 'ph4redis';
+
+    /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    //public $queue = null;
+
+    /**
      * Create the event listener.
      *
      * @return void
