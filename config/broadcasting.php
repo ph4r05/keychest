@@ -45,6 +45,11 @@ return [
             'connection' => 'default',
         ],
 
+        'ph4redis' => [
+            'driver' => 'ph4redis',
+            'connection' => 'default',
+        ],
+
         'log' => [
             'driver' => 'log',
         ],
