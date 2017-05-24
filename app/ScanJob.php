@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScanJob extends Model
 {
-    use Uuids;
-
     public $incrementing = false;
 
     protected $guarded = array();

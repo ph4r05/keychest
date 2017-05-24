@@ -7,6 +7,7 @@
  */
 namespace App\Http\Controllers;
 
+use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
 use App\ScanJob;
 use Illuminate\Http\Response;
@@ -18,6 +19,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
 
 class SearchController extends Controller
@@ -61,10 +63,13 @@ class SearchController extends Controller
 
         // DB Job data
         $newJobDb = [
-            'id' => $uuid,
+            'uuid' => $uuid,
             'scan_scheme' => isset($parsed['scheme']) ? $parsed['scheme'] : null,
             'scan_host' => isset($parsed['host']) ? $parsed['host'] : $server,
             'scan_port' => isset($parsed['port']) ? $parsed['port'] : null,
+            'state' => 'init',
+            'user_ip' => request()->ip(),
+            'user_sess' => substr(md5(request()->session()->getId()), 0, 16),
         ];
 
         $curUser = Auth::user();
