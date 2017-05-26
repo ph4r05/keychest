@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Keychest\Queue\JsonJob;
-use App\ScanJob;
+use App\Models\ScanJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;

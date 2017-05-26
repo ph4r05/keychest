@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
-use App\ScanJob;
+use App\Models\ScanJob;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -80,7 +80,6 @@ class SearchController extends Controller
 
         $elJson = $newJobDb;
         $elDb = ScanJob::create($newJobDb);
-        // Log::info(var_export($elDb, true));
 
         // Queue entry to the scanner queue
         dispatch((new ScanHostJob($elDb, $elJson))->onQueue('scanner'));
