@@ -52,6 +52,37 @@ class SearchController extends Controller
      */
     public function search()
     {
+        list($newJobDb, $elDb) = $this->submitJob();
+
+        $data = ['job_id' => $newJobDb['uuid']];
+        return view('index', $data);
+    }
+
+    /**
+     * Rest endpoint for job submit
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function restSubmitJob()
+    {
+        list($newJobDb, $elDb) = $this->submitJob();
+        $data = [
+            'status' => 'success',
+            'uuid' => $newJobDb['uuid'],
+            'scan_scheme' => $newJobDb['scan_scheme'],
+            'scan_port' => $newJobDb['scan_port'],
+            'scan_host' => $newJobDb['scan_host'],
+        ];
+
+        //return response($json_data, 200)->header('Content-Type', 'application/json');
+        return response()->json($data, 200);
+    }
+
+    /**
+     * Submits the scan job to the queue
+     * @return array
+     */
+    protected function submitJob()
+    {
         $uuid = Uuid::generate()->string;
         $server = trim(Input::get('scan-target'));
         Log::info(sprintf('UUID: %s, target: %s', $uuid, $server));
@@ -84,8 +115,7 @@ class SearchController extends Controller
         // Queue entry to the scanner queue
         dispatch((new ScanHostJob($elDb, $elJson))->onQueue('scanner'));
 
-        $data = ['job_id' => $uuid];
-        return view('index', $data);
+        return [$newJobDb, $elDb];
     }
 
 }

@@ -13,6 +13,7 @@
 
 Route::get('/', 'SearchController@show');
 Route::post('/', 'SearchController@search');
+Route::post('/submitJob', 'SearchController@restSubmitJob');
 
 Route::get('/w', function () {
     return view('welcome');
