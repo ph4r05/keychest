@@ -78,6 +78,27 @@ class SearchController extends Controller
     }
 
     /**
+     * Returns current job state
+     */
+    public function restGetJobState()
+    {
+        $uuid = trim(Input::get('job_uuid'));
+        $job = ScanJob::query()->where('uuid', $uuid)->first();
+        if (empty($job)){
+            return response()->json(['status' => 'not-found'], 404);
+        }
+
+        // TODO: improvement, sleep 1-2 seconds for an event change.
+
+        $data = [
+            'status' => 'success',
+            'job' => $job,
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    /**
      * Submits the scan job to the queue
      * @return array
      */
