@@ -14,6 +14,7 @@ use App\Models\CertificateAltName;
 use App\Models\CrtShQuery;
 use App\Models\HandshakeScan;
 use App\Models\ScanJob;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -215,6 +216,7 @@ class SearchController extends Controller
         $certificate->updated_at_utc = $certificate->updated_at->getTimestamp();
         $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
         $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
+        $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
         $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
         return $certificate;
     }
