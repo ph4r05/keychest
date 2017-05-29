@@ -11,6 +11,7 @@ use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
 use App\Models\Certificate;
 use App\Models\CertificateAltName;
+use App\Models\CrtShQuery;
 use App\Models\HandshakeScan;
 use App\Models\ScanJob;
 use Illuminate\Http\Response;
@@ -117,34 +118,67 @@ class SearchController extends Controller
 
         // TLS scan results
         $tlsHandshakeScans = HandshakeScan::query()->where('job_id', $job->id)->get();
+        $tlsHandshakeScans->transform(function($val, $key){
+            $val->certs_ids = json_decode($val->certs_ids);
+            return $val;
+        });
 
-        // Fetch corresponding certificates
-        $handshakeCertsId = [];
-        foreach ($tlsHandshakeScans as $scan){
-            $handshakeCertsId += json_decode($scan->certs_ids);
-        }
-
-        $handshakeCertsId = array_unique($handshakeCertsId);
-        $scanCerts = Certificate::query()->whereIn('id', $handshakeCertsId)->get();
+        // Get corresponding certificates IDs
+        $handshakeCertsId = $this->certificateList($tlsHandshakeScans);
 
         // Search based on alt domain names from the scan query
-        $altNames = $this->altNames($job->scan_host);
+        $altNames = $this->altNames($job->scan_host) + [$job->scan_host];
         $altNamesCertIds = CertificateAltName::query()->select('cert_id')->distinct()
-                ->whereIn('alt_name', [$job->scan_host] + $altNames)->get();
+                ->whereIn('alt_name', $altNames)->get();
+
+        // crt.sh lookup
+        $crtShScans = CrtShQuery::query()->where('job_id', $job->id)->get();
+        $crtShScans->transform(function($val, $key){
+            $val->certs_ids = json_decode($val->certs_ids);
+            return $val;
+        });
+        $crtShCertsId = $this->certificateList($crtShScans)->values();
+
+        // Certificate fetch
+        $scanCerts = Certificate::query()->whereIn('id', $handshakeCertsId->merge($crtShCertsId)->all())->get();
+        $altNameCerts = Certificate::query()->whereIn('id', $altNamesCertIds->map(function($x, $key){
+            return $x->cert_id;
+        }))
+            ->orWhereIn('cname', $altNames)
+            ->get();
 
         // Search based on crt.sh search.
         $data = [
             'status' => 'success',
             'job' => $job,
             'tlsScans' => $tlsHandshakeScans,
+            'crtshScans' => $crtShScans,
             'scanCerts' => $scanCerts->map(function($item, $key) {
                 return $this->restizeCertificate($item);
             }),
-
-
+            'alt_names' => $altNames,
+            'altNameCerts' => $altNameCerts->map(function($item, $key) {
+                return $this->restizeCertificate($item);
+            }),
         ];
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * @param \Illuminate\Support\Collection $objects
+     * @return \Illuminate\Support\Collection|static
+     */
+    protected function certificateList($objects)
+    {
+        $handshakeCertsId = collect();
+        $objects->map(function($x, $val) use ($handshakeCertsId) {
+            foreach($x->certs_ids as $y) {
+                $handshakeCertsId->push($y);
+            }
+        });
+        $handshakeCertsId = $handshakeCertsId->unique();
+        return $handshakeCertsId;
     }
 
     /**
@@ -155,6 +189,11 @@ class SearchController extends Controller
     {
         $certificate->pem = null;
         $certificate->alt_names = json_decode($certificate->alt_names);
+
+        $certificate->created_at_utc = $certificate->created_at->getTimestamp();
+        $certificate->updated_at_utc = $certificate->updated_at->getTimestamp();
+        $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
+        $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
         return $certificate;
     }
 
