@@ -167,7 +167,7 @@ class SearchController extends Controller
             'job' => $job,
             'tlsScans' => $tlsHandshakeScans,
             'crtshScans' => $crtShScans,
-            'alt_names' => $altNames,
+            'altNames' => $altNames,
             'certificates' => $certificates->map(function($item, $key) {
                 return $this->restizeCertificate($item);
             })->keyBy('id'),
