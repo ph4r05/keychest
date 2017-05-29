@@ -1,6 +1,7 @@
 /**
  * Created by dusanklinec on 29.05.17.
  */
+"use strict";
 
 /**
  * Switches main loading overlay.
@@ -25,6 +26,42 @@ function bodyProgress(started){
  */
 function submitJob(target, onLoaded, onFail){
     $.getJSON("/submitJob", {'scan-target': target})
+        .done(function( json ) {
+            onLoaded(json);
+        })
+        .fail(function( jqxhr, textStatus, error ) {
+            var err = textStatus + ", " + error;
+            console.log( "Request Failed: " + err );
+            onFail(jqxhr, textStatus, error);
+        });
+}
+
+/**
+ * Performs call on job current state.
+ * @param uuid
+ * @param onLoaded
+ * @param onFail
+ */
+function getJobState(uuid, onLoaded, onFail){
+    $.getJSON("/jobState", {'job_uuid': uuid})
+        .done(function( json ) {
+            onLoaded(json);
+        })
+        .fail(function( jqxhr, textStatus, error ) {
+            var err = textStatus + ", " + error;
+            console.log( "Request Failed: " + err );
+            onFail(jqxhr, textStatus, error);
+        });
+}
+
+/**
+ * Performs call on job results.
+ * @param uuid
+ * @param onLoaded
+ * @param onFail
+ */
+function getJobResult(uuid, onLoaded, onFail){
+    $.getJSON("/jobResult", {'job_uuid': uuid})
         .done(function( json ) {
             onLoaded(json);
         })
