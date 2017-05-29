@@ -19,6 +19,11 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/req.js') }}"></script>
+
 </head>
 <body>
     <div id="app">
@@ -81,7 +86,9 @@
         @yield('content')
     </div>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <div class="modal">
+        <div class="modal-wrap"></div>
+    </div>
+
 </body>
 </html>
