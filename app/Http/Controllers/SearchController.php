@@ -180,7 +180,7 @@ class SearchController extends Controller
 
         $result = [];
         $ln = count($components);
-        for($i = 1; $i < $ln - 1; $ln++){
+        for($i = 1; $i < $ln - 1; $i++){
             $result[] = '*.' . join('.', array_slice($components, $i));
         }
 
