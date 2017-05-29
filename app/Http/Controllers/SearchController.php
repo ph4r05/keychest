@@ -127,9 +127,11 @@ class SearchController extends Controller
         $handshakeCertsId = $this->certificateList($tlsHandshakeScans);
 
         // Search based on alt domain names from the scan query
-        $altNames = $this->altNames($job->scan_host) + [$job->scan_host];
+        $altNames = array_merge($this->altNames($job->scan_host), [$job->scan_host]);
         $altNamesCertIds = CertificateAltName::query()->select('cert_id')->distinct()
-                ->whereIn('alt_name', $altNames)->get();
+                ->whereIn('alt_name', $altNames)->get()->pluck('cert_id');
+        $cnameCertIds = Certificate::query()->select('id')->distinct()
+            ->whereIn('cname', $altNames)->get()->pluck('id');
 
         // crt.sh lookup
         $crtShScans = CrtShQuery::query()->where('job_id', $job->id)->get();
@@ -140,12 +142,23 @@ class SearchController extends Controller
         $crtShCertsId = $this->certificateList($crtShScans)->values();
 
         // Certificate fetch
-        $scanCerts = Certificate::query()->whereIn('id', $handshakeCertsId->merge($crtShCertsId)->all())->get();
-        $altNameCerts = Certificate::query()->whereIn('id', $altNamesCertIds->map(function($x, $key){
-            return $x->cert_id;
-        }))
-            ->orWhereIn('cname', $altNames)
-            ->get();
+        $certIds = collect();
+        $certIds = $certIds
+            ->merge($handshakeCertsId)
+            ->merge($crtShCertsId)
+            ->merge($altNamesCertIds)
+            ->merge($cnameCertIds);
+
+        $certificates = Certificate::query()->whereIn('id', $certIds)->get();
+
+        // certificate attribution, which cert from which scan
+        $certificates->transform(function($x, $key) use ($handshakeCertsId, $crtShCertsId, $altNamesCertIds, $cnameCertIds) {
+            $this->attributeCertificate($x, $handshakeCertsId, 'found_tls_scan');
+            $this->attributeCertificate($x, $crtShCertsId, 'found_crt_sh');
+            $this->attributeCertificate($x, $altNamesCertIds, 'found_altname');
+            $this->attributeCertificate($x, $cnameCertIds, 'found_cname');
+            return $x;
+        });
 
         // Search based on crt.sh search.
         $data = [
@@ -153,11 +166,8 @@ class SearchController extends Controller
             'job' => $job,
             'tlsScans' => $tlsHandshakeScans,
             'crtshScans' => $crtShScans,
-            'scanCerts' => $scanCerts->map(function($item, $key) {
-                return $this->restizeCertificate($item);
-            }),
             'alt_names' => $altNames,
-            'altNameCerts' => $altNameCerts->map(function($item, $key) {
+            'certificates' => $certificates->map(function($item, $key) {
                 return $this->restizeCertificate($item);
             }),
         ];
@@ -179,6 +189,17 @@ class SearchController extends Controller
         });
         $handshakeCertsId = $handshakeCertsId->unique();
         return $handshakeCertsId;
+    }
+
+    /**
+     * @param $certificate
+     * @param \Illuminate\Support\Collection $idset
+     * @param string $val
+     */
+    protected function attributeCertificate($certificate, $idset, $val)
+    {
+        $certificate->$val = $idset->contains($certificate->id);
+        return $certificate;
     }
 
     /**
