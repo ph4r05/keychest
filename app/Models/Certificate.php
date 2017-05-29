@@ -18,4 +18,9 @@ class Certificate extends Model
     protected $guarded = array();
 
     protected $table = 'certificates';
+
+    public function getDates()
+    {
+        return array('created_at', 'updated_at', 'valid_from', 'valid_to');
+    }
 }
