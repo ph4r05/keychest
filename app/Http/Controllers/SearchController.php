@@ -184,6 +184,9 @@ class SearchController extends Controller
     {
         $handshakeCertsId = collect();
         $objects->map(function($x, $val) use ($handshakeCertsId) {
+            if (empty($x) || !isset($x->certs_ids)){
+                return;
+            }
             foreach($x->certs_ids as $y) {
                 $handshakeCertsId->push($y);
             }
