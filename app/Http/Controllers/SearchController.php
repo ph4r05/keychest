@@ -169,7 +169,7 @@ class SearchController extends Controller
             'alt_names' => $altNames,
             'certificates' => $certificates->map(function($item, $key) {
                 return $this->restizeCertificate($item);
-            }),
+            })->keyBy('id'),
         ];
 
         return response()->json($data, 200);
@@ -215,6 +215,7 @@ class SearchController extends Controller
         $certificate->updated_at_utc = $certificate->updated_at->getTimestamp();
         $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
         $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
+        $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
         return $certificate;
     }
 
