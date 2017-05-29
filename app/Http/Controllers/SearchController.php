@@ -9,6 +9,9 @@ namespace App\Http\Controllers;
 
 use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
+use App\Models\Certificate;
+use App\Models\CertificateAltName;
+use App\Models\HandshakeScan;
 use App\Models\ScanJob;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -96,6 +99,92 @@ class SearchController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * Basic job results
+     */
+    public function restJobResults()
+    {
+        $uuid = trim(Input::get('job_uuid'));
+        $job = ScanJob::query()->where('uuid', $uuid)->first();
+        if (empty($job)){
+            return response()->json(['status' => 'not-found'], 404);
+        }
+        if ($job->state != 'finished'){
+            return response()->json(['status' => 'not-finished'], 201);
+        }
+
+        // TLS scan results
+        $tlsHandshakeScans = HandshakeScan::query()->where('job_id', $job->id)->get();
+
+        // Fetch corresponding certificates
+        $handshakeCertsId = [];
+        foreach ($tlsHandshakeScans as $scan){
+            $handshakeCertsId += json_decode($scan->certs_ids);
+        }
+
+        $handshakeCertsId = array_unique($handshakeCertsId);
+        $scanCerts = Certificate::query()->whereIn('id', $handshakeCertsId)->get();
+
+        // Search based on alt domain names from the scan query
+        $altNames = $this->altNames($job->scan_host);
+        $altNamesCertIds = CertificateAltName::query()->select('cert_id')->distinct()
+                ->whereIn('alt_name', [$job->scan_host] + $altNames)->get();
+
+        // Search based on crt.sh search.
+        $data = [
+            'status' => 'success',
+            'job' => $job,
+            'tlsScans' => $tlsHandshakeScans,
+            'scanCerts' => $scanCerts->map(function($item, $key) {
+                return $this->restizeCertificate($item);
+            }),
+
+
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    /**
+     * Modifies certificate record before sending out
+     * @param $certificate
+     */
+    protected function restizeCertificate($certificate)
+    {
+        $certificate->pem = null;
+        $certificate->alt_names = json_decode($certificate->alt_names);
+        return $certificate;
+    }
+
+    /**
+     * Alt names matching the given domain search.
+     * test.alpha.dev.domain.com ->
+     *   - *.alpha.dev.domain.com
+     *   - *.dev.domain.com
+     *   - *.domain.com
+     * @param $domain
+     * @return array
+     */
+    protected function altNames($domain)
+    {
+        $components = explode('.', $domain);
+
+        // If % wildcard is present, skip.
+        foreach ($components as $comp){
+            if (strpos($comp, '%') !== false){
+                return [];
+            }
+        }
+
+        $result = [];
+        $ln = count($components);
+        for($i = 1; $i < $ln - 1; $ln++){
+            $result[] = '*.' . join('.', array_slice($components, $i));
+        }
+
+        return $result;
     }
 
     /**

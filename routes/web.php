@@ -13,7 +13,9 @@
 
 Route::get('/', 'SearchController@show');
 Route::post('/', 'SearchController@search');
-Route::post('/submitJob', 'SearchController@restSubmitJob');
+Route::get('/submitJob', 'SearchController@restSubmitJob');
+Route::get('/jobState', 'SearchController@restGetJobState');
+Route::get('/jobResult', 'SearchController@restJobResults');
 
 Route::get('/w', function () {
     return view('welcome');
