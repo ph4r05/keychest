@@ -179,7 +179,7 @@
             },
 
             searchStarted() {
-                bodyProgress(true);
+                // bodyProgress(true);
                 $('#search-form').hide();
                 $('#scan-results').hide();
                 $('#search-info').show();
@@ -311,7 +311,7 @@
 
                 this.searchStarted();
                 submitJob(domain, (function(json){
-                    bodyProgress(false);
+                    // bodyProgress(false);
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
                         return;
@@ -322,7 +322,7 @@
                     setTimeout(this.pollFinish, 500);
 
                 }).bind(this), (function(jqxhr, textStatus, error){
-                    bodyProgress(false);
+                    // bodyProgress(false);
                     this.errMsg(error);
                 }).bind(this));
             },
