@@ -171,7 +171,6 @@
         },
 
         mounted() {
-            console.log('Component mounted. x');
             this.$nextTick(function () {
                 this.hookup();
             })
