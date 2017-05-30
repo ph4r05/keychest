@@ -42,7 +42,7 @@
                             <div class="table-responsive">
                                 <table class="table">
                                     <tbody>
-                                    <tr>
+                                    <tr v-bind:class="{ success: tlsScan.valid_path, danger: !tlsScan.valid_path }">
                                         <th scope="row">Certificates valid</th>
                                         <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
                                     </tr>
@@ -63,15 +63,19 @@
                                         <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
                                     </tr>
                                     <tr >
-                                        <th scope="row">Certificate Valid</th>
+                                        <th scope="row">Cloudflare</th>
+                                        <td>{{ tlsScanLeafCert.is_cloudflare ? 'Yes' : 'No' }}</td>
+                                    </tr>
+                                    <tr >
+                                        <th scope="row">Time validity</th>
                                         <td>{{ tlsScanLeafCert.is_expired ? 'Expired' : 'Valid' }}</td>
                                     </tr>
                                     <tr >
-                                        <th scope="row">Certificate issued</th>
+                                        <th scope="row">Issued date</th>
                                         <td>{{ tlsScanLeafCert.valid_from }} ( {{ tlsScanLeafCert.valid_from_days }} days ago )</td>
                                     </tr>
                                     <tr >
-                                        <th scope="row">Certificate valid to</th>
+                                        <th scope="row">Valid time</th>
                                         <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
                                     </tr>
                                     </tbody>
@@ -100,6 +104,9 @@
                             </tr>
                             </tbody>
                         </table>
+                        <p v-if="ctValid.length == 0">
+                            No issued certificates found in databases.
+                        </p>
 
 
                         <h3>Expired Certificates</h3>
@@ -117,6 +124,9 @@
                             </tr>
                             </tbody>
                         </table>
+                        <p v-if="ctExpired.length == 0">
+                            No expired certificates found in databases.
+                        </p>
 
                     </div>
 
