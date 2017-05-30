@@ -254,7 +254,6 @@
                 $('#search-success').show();
                 setTimeout(()=>{
                     $('#search-success').hide('slow', ()=>{
-                        console.log('ok hidden');
                         this.resultsLoaded=true;
                         //$('#scan-results').show('slow');
                     });
