@@ -153,11 +153,14 @@ class SearchController extends Controller
         $certificates = Certificate::query()->whereIn('id', $certIds)->get();
 
         // certificate attribution, which cert from which scan
-        $certificates->transform(function($x, $key) use ($handshakeCertsId, $crtShCertsId, $altNamesCertIds, $cnameCertIds) {
+        $certificates->transform(function($x, $key) use ($handshakeCertsId, $crtShCertsId,
+            $altNamesCertIds, $cnameCertIds, $altNames, $job)
+        {
             $this->attributeCertificate($x, $handshakeCertsId, 'found_tls_scan');
             $this->attributeCertificate($x, $crtShCertsId, 'found_crt_sh');
             $this->attributeCertificate($x, $altNamesCertIds, 'found_altname');
             $this->attributeCertificate($x, $cnameCertIds, 'found_cname');
+            $this->augmentCertificate($x, $altNames, $job);
             return $x;
         });
 
@@ -207,21 +210,89 @@ class SearchController extends Controller
     }
 
     /**
+     * Extends certificate record
+     * @param $certificate
+     * @param $altNames
+     * @param $job
+     * @return mixed
+     */
+    protected function augmentCertificate($certificate, $altNames, $job)
+    {
+        $certificate->alt_names = json_decode($certificate->alt_names);
+        $alts = collect($certificate->alt_names);
+        if (!$alts->contains($job->scan_host)){
+            $alts->push($job->scan_host);
+        }
+
+        $certificate->created_at_utc = $certificate->created_at->getTimestamp();
+        $certificate->updated_at_utc = $certificate->updated_at->getTimestamp();
+        $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
+        $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
+
+        $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
+        $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
+        $certificate->is_cloudflare = strpos($certificate->cname, 'cloudflaressl.com') !== false;
+        $certificate->is_wildcard = $alts->contains($this->wildcardDomain($job->scan_host));
+
+        $fqdn = $this->fqdn($job->scan_host);
+        $certificate->matched_alt_names = $alts->intersect($altNames)->values()->all();
+        $certificate->related_names = $alts->filter(function ($val, $key) use ($fqdn) {
+            return empty($fqdn) ? false : strrpos($val, $fqdn) !== false;
+        })->values()->all();
+
+        return $certificate;
+    }
+
+    /**
      * Modifies certificate record before sending out
      * @param $certificate
      */
     protected function restizeCertificate($certificate)
     {
         $certificate->pem = null;
-        $certificate->alt_names = json_decode($certificate->alt_names);
-
-        $certificate->created_at_utc = $certificate->created_at->getTimestamp();
-        $certificate->updated_at_utc = $certificate->updated_at->getTimestamp();
-        $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
-        $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
-        $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
-        $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
         return $certificate;
+    }
+
+    /**
+     * Returns wildcard domain for the given one
+     * @param $domain
+     * @return string
+     */
+    protected function wildcardDomain($domain){
+        if (strpos($domain, '*.') === 0){
+           return $domain;
+        }
+
+        $fqdn = $this->fqdn($domain);
+        if (empty($fqdn)){
+            $fqdn = $domain;
+        }
+
+        return '*.' . $domain;
+    }
+
+    /**
+     * Returns FQDN, strips wildcards
+     * @param $domain
+     * @return string
+     */
+    protected function fqdn($domain){
+        $components = explode('.', $domain);
+        $ret = [];
+
+        foreach(array_reverse($components) as $comp){
+            if (strpos($comp, '.') !== false || strpos($comp, '%') !== false){
+                break;
+            }
+
+            $ret[] = $comp;
+        }
+
+        if (count($ret) < 2){
+            return null;
+        }
+
+        return join('.', array_reverse($ret));
     }
 
     /**
