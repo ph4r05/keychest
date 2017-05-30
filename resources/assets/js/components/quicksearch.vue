@@ -6,7 +6,7 @@
                 <form role="form" method="get" id="search-form" @submit.prevent="submitForm()">
                     <!--{{ Laravel.csrfToken }}-->
                     <div class="input-group">
-                        <input type="text" class="form-control input-sm" placeholder="Enter your server name"
+                        <input type="text" class="form-control input-sm" placeholder="Enter your domain to scan"
                                name="scan-target" id="scan-target" >
                         <span class="input-group-btn">
                             <button class="btn btn-default btn-sm" type="submit">
