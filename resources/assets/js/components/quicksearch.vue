@@ -94,7 +94,7 @@
                         <h2>Certificate databases</h2>
 
                         <div v-if="ctValid.length > 0 || ctExpired.length > 0">
-                        <h3>Issued Certificates</h3>
+                        <h3>Active Certificates</h3>
                         <table class="table table-striped table-responsive" v-if="ctValid.length > 0">
                             <thead>
                             <tr>
