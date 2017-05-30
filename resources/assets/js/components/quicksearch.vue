@@ -28,6 +28,10 @@
                     <strong>Success!</strong> Scan finished.
                 </div>
 
+                <div class="scan-results" id="scan-results" v-show="resultsLoaded">
+                    <strong>placeholder</strong>
+                </div>
+
             </div>
 
         </div>
@@ -41,7 +45,8 @@
             return {
                 curUuid: null,
                 curJob: null,
-
+                resultsLoaded: false,
+                results: null,
             };
         },
 
@@ -53,30 +58,26 @@
         },
 
         methods: {
-            hookup: function(){
-//                let sform = $('#search-form');
-//                sform.submit(function(e){
-//                    console.log('Form submitted x');
-//                    this.submitForm();
-//                    e.preventDefault(); // avoid to execute the actual submit of the form.
-//                });
-//                console.log(sform);
+            hookup(){
+
             },
 
-            errMsg: function(msg) {
+            errMsg(msg) {
                 $('#error-text').val(msg);
 
                 $('#search-info').hide();
+                $('#scan-results').hide();
                 $('#search-error').show();
             },
 
-             searchStarted: function() {
+            searchStarted() {
                 bodyProgress(true);
                 $('#search-form').hide();
+                $('#scan-results').hide();
                 $('#search-info').show();
             },
 
-            pollFinish: function() {
+            pollFinish() {
                 getJobState(this.curUuid, (function(json){
                     console.log(json);
 
@@ -98,7 +99,7 @@
                 }).bind(this));
             },
 
-            getResults: function() {
+            getResults() {
                 getJobResult(this.curUuid, (function(json){
                     if (json.status !== 'success'){
                         this.errMsg('Job results fail, retry...');
@@ -106,7 +107,6 @@
                         return;
                     }
 
-                    $('#search-info').hide();
                     this.showResults(json);
 
                 }).bind(this), (function(jqxhr, textStatus, error){
@@ -114,13 +114,26 @@
                 }).bind(this));
             },
 
-            showResults: function(json){
+            showResults(json){
                 console.log(json);
+                this.results = json;
+                this.resultsLoaded = true;
+
                 $('#search-info').hide();
                 $('#search-success').show();
+
+                // Process, show...
+                this.processTlsScan();
+
+                // Last step - show result window
+                $('#scan-results').show();
             },
 
-            submitForm: function(){
+            processTlsScan() {
+
+            },
+
+            submitForm(){
                 let starget = $('#scan-target');
                 let domain = starget.val();
 
