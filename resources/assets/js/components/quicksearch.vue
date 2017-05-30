@@ -93,13 +93,13 @@
                         <table class="table table-striped table-responsive" v-if="ctValid.length > 0">
                             <thead>
                             <tr>
-                                <th>CN</th>
+                                <th>Name</th>
                                 <th>Validity</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="cert in ctValid">
-                                <td>{{ cert.cname }} </td>
+                            <tr v-for="cert in take(ctValid, 20)">
+                                <td>{{ cert.matched_name }} </td>
                                 <td>{{ cert.valid_to }} ( {{ cert.valid_to_days }} days ) </td>
                             </tr>
                             </tbody>
@@ -113,13 +113,13 @@
                         <table class="table table-striped table-responsive" v-if="ctExpired.length > 0">
                             <thead>
                             <tr>
-                                <th>CN</th>
+                                <th>Name</th>
                                 <th>Expired</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="cert in ctExpired">
-                                <td>{{ cert.cname }} </td>
+                            <tr v-for="cert in take(ctExpired, 20)">
+                                <td>{{ cert.matched_name }} </td>
                                 <td>{{ cert.valid_to }} ( {{ -1*cert.valid_to_days }} days ago ) </td>
                             </tr>
                             </tbody>
@@ -169,6 +169,10 @@
         },
 
         methods: {
+            take(x, len){
+                return _.take(x, len);
+            },
+
             len(x) {
                 if (x){
                     return x.length;
@@ -259,6 +263,7 @@
                     const cert = this.results.certificates[certId];
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
+                    cert.matched_name = cert.matched_alt_names && cert.matched_alt_names.length > 0 ? cert.matched_alt_names[0] : cert.cname;
                 }
             },
 
