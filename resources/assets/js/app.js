@@ -8,6 +8,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.Req = require('./req.js');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -16,7 +17,9 @@ window.Vue = require('vue');
  */
 
 Vue.component('example', require('./components/Example.vue'));
+Vue.component('quicksearch', require('./components/quicksearch.vue'));
 
+console.log('Vue.js init');
 const app = new Vue({
     el: '#app'
 });

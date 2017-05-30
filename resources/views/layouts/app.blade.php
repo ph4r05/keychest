@@ -20,10 +20,6 @@
         ]) !!};
     </script>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('js/req.js') }}"></script>
-
 </head>
 <body>
     <div id="app">
@@ -89,6 +85,12 @@
     <div class="modal">
         <div class="modal-wrap"></div>
     </div>
+
+    <!-- Scripts -->
+    <script src="{{ mix('/js/manifest.js') }}"></script>
+    <script src="{{ mix('/js/vendor.js') }}"></script>
+    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ asset('/js/req-static.js') }}"></script>
 
 </body>
 </html>
