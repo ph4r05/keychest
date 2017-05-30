@@ -20,7 +20,7 @@
                     <strong>Error!</strong> <span id="error-text"></span>
                 </div>
 
-                <div class="alert alert-info" id="search-info" style="display: none">
+                <div class="alert alert-info alert-waiting" id="search-info" style="display: none">
                     <span id="info-text">Waiting for scan to finish...</span>
                 </div>
 
@@ -29,7 +29,34 @@
                 </div>
 
                 <div class="scan-results" id="scan-results" v-show="resultsLoaded">
-                    <strong>placeholder</strong>
+                    <div class="tls-results" id="tls-results">
+                        <h3>Direct connect</h3>
+
+                        <div class="alert alert-warning" v-show="tlsScanError">
+                            <strong>TLS error</strong>: Could not connect to {{ curJob.scan_host }} on port {{ curJob.port }}.
+                        </div>
+
+                        <div class="content" v-show="!tlsScanError">
+                            Number of certificates in the chain: {{ len(tlsScan.certs_ids) }}
+                            Certificate is valid: {{ tlsScan.valid_path ? 'Yes' : 'No' }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="ct-results" id="ct-results">
+                        <h3>Certificates</h3>
+                        <p>
+                            1
+                        </p>
+
+                        <h3>Expired Certificates</h3>
+                        <p>
+                            2
+                        </p>
+
+                    </div>
+
                 </div>
 
             </div>
@@ -40,13 +67,17 @@
 
 <script>
     export default {
-
         data: function() {
             return {
                 curUuid: null,
-                curJob: null,
+                curJob: {},
                 resultsLoaded: false,
                 results: null,
+
+                tlsScan: {},
+                tlsScanError: false,
+
+                Req: window.Req,
             };
         },
 
@@ -58,6 +89,13 @@
         },
 
         methods: {
+            len(x) {
+                if (x === undefined){
+                    return 0;
+                }
+                return x.length;
+            },
+
             hookup(){
 
             },
@@ -88,6 +126,7 @@
                     }
 
                     this.curJob = json.job;
+                    this.curJob.port = Req.defval(this.curJob.scan_port, 443);
                     if (this.curJob.state !== 'finished'){
                         setTimeout(this.pollFinish, 1000);
                     } else {
@@ -130,6 +169,19 @@
             },
 
             processTlsScan() {
+                if (!this.results.tlsScans || this.results.tlsScans.length === 0){
+                    this.tlsScanError = true;
+                    return;
+                }
+
+                this.tlsScan = this.results.tlsScans[0];
+                if (!this.tlsScan.certs_ids || this.tlsScan.status !== 1){
+                    this.tlsScanError = true;
+                    console.log('No TLS results');
+                    return;
+                }
+
+
 
             },
 

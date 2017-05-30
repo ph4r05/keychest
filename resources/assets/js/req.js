@@ -72,12 +72,24 @@ function getJobResult(uuid, onLoaded, onFail){
         });
 }
 
+/**
+ * Default value
+ * @param val
+ * @param def
+ * @returns {*}
+ */
+function defval(val, def){
+    return val ? val : def;
+}
+
 // Export
 module.exports = {
     bodyProgress: bodyProgress,
     submitJob: submitJob,
     getJobState: getJobState,
-    getJobResult: getJobResult
+    getJobResult: getJobResult,
+    defval: defval
+
 };
 
 
