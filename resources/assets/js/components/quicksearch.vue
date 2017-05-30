@@ -31,9 +31,13 @@
                 <transition name="fade">
                 <div class="scan-results" id="scan-results" v-show="resultsLoaded">
                     <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
-                    <div class="tls-results" id="tls-results">
 
-                        <div class="alert alert-warning" v-if="tlsScanError">
+                    <div class="tls-results" id="tls-results">
+                        <div class="alert alert-info" v-if="results && results.tlsScans.length == 0">
+                            No TLS scan was performed
+                        </div>
+
+                        <div class="alert alert-warning" v-else-if="tlsScanError">
                             <strong>TLS Error</strong>: Could not connect to {{ curJob.scan_host }} on port {{ curJob.port }}.
                         </div>
 
