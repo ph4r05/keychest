@@ -29,6 +29,7 @@
                 </div>
 
                 <div class="scan-results" id="scan-results" v-show="resultsLoaded">
+                    <h1>Results for {{ curJob.scan_host }}:{{ curJob.port }}</h1>
                     <div class="tls-results" id="tls-results">
                         <h2>Direct connect</h2>
 
@@ -40,36 +41,40 @@
 
                             <div class="table-responsive">
                                 <table class="table">
+                                    <tbody>
                                     <tr>
-                                        <th>Certificates valid</th>
+                                        <th scope="row">Certificates valid</th>
                                         <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Certificates in the chain</th>
+                                        <th scope="row">Certificates in the chain</th>
                                         <td>{{ len(tlsScan.certs_ids) }}</td>
                                     </tr>
+                                    </tbody>
 
                                 </table>
 
 
                                 <h3>Certificate details</h3>
                                 <table  class="table" v-if="tlsScanLeafCert !== null">
+                                    <tbody>
                                     <tr >
-                                        <th>Let's Encrypt</th>
+                                        <th scope="row">Let's Encrypt</th>
                                         <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
                                     </tr>
                                     <tr >
-                                        <th>Certificate Valid</th>
+                                        <th scope="row">Certificate Valid</th>
                                         <td>{{ tlsScanLeafCert.is_expired ? 'Expired' : 'Valid' }}</td>
                                     </tr>
                                     <tr >
-                                        <th>Certificate issued</th>
+                                        <th scope="row">Certificate issued</th>
                                         <td>{{ tlsScanLeafCert.valid_from }}</td>
                                     </tr>
                                     <tr >
-                                        <th>Certificate valid to</th>
+                                        <th scope="row">Certificate valid to</th>
                                         <td>{{ tlsScanLeafCert.valid_to }}</td>
                                     </tr>
+                                    </tbody>
                                 </table>
                             </div>
 
@@ -78,15 +83,40 @@
                     </div>
 
                     <div class="ct-results" id="ct-results">
-                        <h2>Issued Certificates</h2>
-                        <p>
-                            1
-                        </p>
+                        <h2>Certificate databases</h2>
+
+                        <h3>Issued Certificates</h3>
+                        <table class="table table-striped table-responsive" v-if="ctValid.length > 0">
+                            <thead>
+                            <tr>
+                                <th>CN</th>
+                                <th>Validity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="cert in ctValid">
+                                <td>{{ cert.cname }} </td>
+                                <td>{{ cert.valid_to }} ( {{ cert.valid_days }} days ) </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
 
                         <h3>Expired Certificates</h3>
-                        <p>
-                            2
-                        </p>
+                        <table class="table table-striped table-responsive" v-if="ctExpired.length > 0">
+                            <thead>
+                            <tr>
+                                <th>CN</th>
+                                <th>Expired</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="cert in ctExpired">
+                                <td>{{ cert.cname }} </td>
+                                <td>{{ cert.valid_to }} ( {{ -1*cert.valid_days }} days ago ) </td>
+                            </tr>
+                            </tbody>
+                        </table>
 
                     </div>
 
@@ -110,6 +140,12 @@
                 tlsScan: {},
                 tlsScanError: false,
                 tlsScanLeafCert: null,
+
+                ctScan: {},
+                ctScanError: false,
+
+                ctExpired: [],
+                ctValid: [],
 
                 Req: window.Req,
             };
@@ -188,18 +224,30 @@
             },
 
             showResults(json){
-                console.log(json);
                 this.results = json;
                 this.resultsLoaded = true;
 
                 $('#search-info').hide();
                 $('#search-success').show();
+                setTimeout(()=>{
+                    $('#search-success').hide('slow');
+                }, 1000);
 
                 // Process, show...
+                this.processResults();
                 this.processTlsScan();
+                this.processCtScan();
 
                 // Last step - show result window
                 $('#scan-results').show();
+            },
+
+            processResults() {
+                const curTime = new Date().getTime() / 1000.0;
+                for(const certId in this.results.certificates){
+                    const cert = this.results.certificates[certId];
+                    cert.valid_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
+                }
             },
 
             processTlsScan() {
@@ -220,7 +268,40 @@
                 }
 
 
+            },
 
+            processCtScan(){
+                if (!this.results.crtshScans || this.results.crtshScans.length === 0){
+                    this.ctScanError = true;
+                    return;
+                }
+
+                this.ctScan = this.results.crtshScans[0];
+
+                let expiredCerts = [];
+                let validCerts = [];
+
+                for(let certId of this.ctScan.certs_ids){
+                    if (!(certId in this.results.certificates)){
+                        continue;
+                    }
+
+                    let cert = this.results.certificates[certId];
+                    if (cert.is_ca){
+                        continue;
+                    }
+
+                    if (cert.is_expired){
+                        expiredCerts.push(cert);
+                    } else {
+                        validCerts.push(cert);
+                    }
+                }
+
+                validCerts.sort((a, b) => a.valid_to_utc - b.valid_to_utc);
+                expiredCerts.sort((a, b) => b.valid_to_utc - a.valid_to_utc);
+                this.ctExpired = expiredCerts;
+                this.ctValid = validCerts;
             },
 
             submitForm(){
