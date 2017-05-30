@@ -30,22 +30,55 @@
 
                 <div class="scan-results" id="scan-results" v-show="resultsLoaded">
                     <div class="tls-results" id="tls-results">
-                        <h3>Direct connect</h3>
+                        <h2>Direct connect</h2>
 
-                        <div class="alert alert-warning" v-show="tlsScanError">
+                        <div class="alert alert-warning" v-if="tlsScanError">
                             <strong>TLS error</strong>: Could not connect to {{ curJob.scan_host }} on port {{ curJob.port }}.
                         </div>
 
-                        <div class="content" v-show="!tlsScanError">
-                            Number of certificates in the chain: {{ len(tlsScan.certs_ids) }}
-                            Certificate is valid: {{ tlsScan.valid_path ? 'Yes' : 'No' }}
+                        <div class="content" v-if="!tlsScanError">
+
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th>Certificates valid</th>
+                                        <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Certificates in the chain</th>
+                                        <td>{{ len(tlsScan.certs_ids) }}</td>
+                                    </tr>
+
+                                </table>
+
+
+                                <h3>Certificate details</h3>
+                                <table  class="table" v-if="tlsScanLeafCert !== null">
+                                    <tr >
+                                        <th>Let's Encrypt</th>
+                                        <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
+                                    </tr>
+                                    <tr >
+                                        <th>Certificate Valid</th>
+                                        <td>{{ tlsScanLeafCert.is_expired ? 'Expired' : 'Valid' }}</td>
+                                    </tr>
+                                    <tr >
+                                        <th>Certificate issued</th>
+                                        <td>{{ tlsScanLeafCert.valid_from }}</td>
+                                    </tr>
+                                    <tr >
+                                        <th>Certificate valid to</th>
+                                        <td>{{ tlsScanLeafCert.valid_to }}</td>
+                                    </tr>
+                                </table>
+                            </div>
 
                         </div>
 
                     </div>
 
                     <div class="ct-results" id="ct-results">
-                        <h3>Certificates</h3>
+                        <h2>Issued Certificates</h2>
                         <p>
                             1
                         </p>
@@ -76,6 +109,7 @@
 
                 tlsScan: {},
                 tlsScanError: false,
+                tlsScanLeafCert: null,
 
                 Req: window.Req,
             };
@@ -90,10 +124,10 @@
 
         methods: {
             len(x) {
-                if (x === undefined){
-                    return 0;
+                if (x){
+                    return x.length;
                 }
-                return x.length;
+                return 0;
             },
 
             hookup(){
@@ -179,6 +213,10 @@
                     this.tlsScanError = true;
                     console.log('No TLS results');
                     return;
+                }
+
+                if (this.tlsScan.cert_id_leaf in this.results.certificates) {
+                    this.tlsScanLeafCert = this.results.certificates[this.tlsScan.cert_id_leaf];
                 }
 
 
