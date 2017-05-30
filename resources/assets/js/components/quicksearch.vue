@@ -28,60 +28,60 @@
                     <strong>Success!</strong> Scan finished.
                 </div>
 
+                <transition name="fade">
                 <div class="scan-results" id="scan-results" v-show="resultsLoaded">
                     <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
                     <div class="tls-results" id="tls-results">
-                        <h2>Direct connect</h2>
 
                         <div class="alert alert-warning" v-if="tlsScanError">
-                            <strong>TLS error</strong>: Could not connect to {{ curJob.scan_host }} on port {{ curJob.port }}.
+                            <strong>TLS Error</strong>: Could not connect to {{ curJob.scan_host }} on port {{ curJob.port }}.
                         </div>
 
                         <div class="content" v-if="!tlsScanError">
+                            <h3>Direct connect</h3>
+                            <table class="table table-responsive">
+                                <tbody>
+                                <tr v-bind:class="{ success: tlsScan.valid_path, danger: !tlsScan.valid_path }">
+                                    <th scope="row">Trusted</th>
+                                    <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
+                                </tr>
+                                <tr v-if="tlsScanLeafCert !== null">
+                                    <th scope="row">Validity</th>
+                                    <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
+                                </tr>
+                                </tbody>
 
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tbody>
-                                    <tr v-bind:class="{ success: tlsScan.valid_path, danger: !tlsScan.valid_path }">
-                                        <th scope="row">Certificates valid</th>
-                                        <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Certificates in the chain</th>
-                                        <td>{{ len(tlsScan.certs_ids) }}</td>
-                                    </tr>
-                                    </tbody>
+                            </table>
 
-                                </table>
-
-
-                                <h3>Certificate details</h3>
-                                <table  class="table" v-if="tlsScanLeafCert !== null">
-                                    <tbody>
-                                    <tr >
-                                        <th scope="row">Let's Encrypt</th>
-                                        <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
-                                    </tr>
-                                    <tr >
-                                        <th scope="row">Cloudflare</th>
-                                        <td>{{ tlsScanLeafCert.is_cloudflare ? 'Yes' : 'No' }}</td>
-                                    </tr>
-                                    <tr >
-                                        <th scope="row">Time validity</th>
-                                        <td>{{ tlsScanLeafCert.is_expired ? 'Expired' : 'Valid' }}</td>
-                                    </tr>
-                                    <tr >
-                                        <th scope="row">Issued date</th>
-                                        <td>{{ tlsScanLeafCert.valid_from }} ( {{ tlsScanLeafCert.valid_from_days }} days ago )</td>
-                                    </tr>
-                                    <tr >
-                                        <th scope="row">Valid time</th>
-                                        <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
+                            <h3>Certificate details</h3>
+                            <table  class="table" v-if="tlsScanLeafCert !== null">
+                                <tbody>
+                                <tr>
+                                    <th scope="row">Certificates in the chain</th>
+                                    <td>{{ len(tlsScan.certs_ids) }}</td>
+                                </tr>
+                                <tr >
+                                    <th scope="row">Let's Encrypt</th>
+                                    <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
+                                </tr>
+                                <tr >
+                                    <th scope="row" >Cloudflare</th>
+                                    <td>{{ tlsScanLeafCert.is_cloudflare ? 'Yes' : 'No' }}</td>
+                                </tr>
+                                <tr v-bind:class="{danger: tlsScanLeafCert.is_expired }">
+                                    <th scope="row">Time validity</th>
+                                    <td>{{ tlsScanLeafCert.is_expired ? 'Expired' : 'Valid' }}</td>
+                                </tr>
+                                <tr >
+                                    <th scope="row">Issued on</th>
+                                    <td>{{ tlsScanLeafCert.valid_from }} ( {{ tlsScanLeafCert.valid_from_days }} days ago )</td>
+                                </tr>
+                                <tr v-bind:class="{danger: tlsScanLeafCert.is_expired }">
+                                    <th scope="row">Valid to</th>
+                                    <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
 
                     </div>
@@ -131,7 +131,7 @@
                     </div>
 
                 </div>
-
+                </transition>
             </div>
 
         </div>
@@ -235,21 +235,22 @@
 
             showResults(json){
                 this.results = json;
-                this.resultsLoaded = true;
+                // this.resultsLoaded = true;
 
                 $('#search-info').hide();
                 $('#search-success').show();
                 setTimeout(()=>{
-                    $('#search-success').hide('slow');
-                }, 1000);
+                    $('#search-success').hide('slow', ()=>{
+                        console.log('ok hidden');
+                        this.resultsLoaded=true;
+                        //$('#scan-results').show('slow');
+                    });
+                }, 250);
 
                 // Process, show...
                 this.processResults();
                 this.processTlsScan();
                 this.processCtScan();
-
-                // Last step - show result window
-                $('#scan-results').show();
             },
 
             processResults() {
@@ -337,40 +338,6 @@
                 }).bind(this));
             },
 
-
-//            fetchTaskList: function() {
-//                this.$http.get('api/tasks').then(function (response) {
-//                    this.list = response.data
-//                });
-//            },
-//
-//            createTask: function () {
-//                this.$http.post('api/task/store', this.task)
-//                this.task.body = ''
-//                this.edit = false
-//                this.fetchTaskList()
-//            },
-//
-//            updateTask: function(id) {
-//                this.$http.patch('api/task/' + id, this.task)
-//                this.task.body = ''
-//                this.edit = false
-//                this.fetchTaskList()
-//            },
-//
-//            showTask: function(id) {
-//                this.$http.get('api/task/' + id).then(function(response) {
-//                    this.task.id = response.data.id
-//                    this.task.body = response.data.body
-//                })
-//                this.$els.taskinput.focus()
-//                this.edit = true
-//            },
-//
-//            deleteTask: function (id) {
-//                this.$http.delete('api/task/' + id)
-//                this.fetchTaskList()
-//            },
         }
     }
 </script>
@@ -379,6 +346,13 @@
 .scan-results-host {
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 1.0s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+    opacity: 0
 }
 </style>
 
