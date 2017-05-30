@@ -140,7 +140,8 @@ class SearchController extends Controller
             $val->certs_ids = json_decode($val->certs_ids);
             return $val;
         });
-        $crtShCertsId = $this->certificateList($crtShScans)->values();
+        $crtShCertsIdAll = $this->certificateList($crtShScans);
+        $crtShCertsId = $crtShCertsIdAll->sort()->take(20)->values();
 
         // Certificate fetch
         $certIds = collect();
@@ -153,11 +154,11 @@ class SearchController extends Controller
         $certificates = Certificate::query()->whereIn('id', $certIds)->get();
 
         // certificate attribution, which cert from which scan
-        $certificates->transform(function($x, $key) use ($handshakeCertsId, $crtShCertsId,
+        $certificates->transform(function($x, $key) use ($handshakeCertsId, $crtShCertsId, $crtShCertsIdAll,
             $altNamesCertIds, $cnameCertIds, $altNames, $job)
         {
             $this->attributeCertificate($x, $handshakeCertsId, 'found_tls_scan');
-            $this->attributeCertificate($x, $crtShCertsId, 'found_crt_sh');
+            $this->attributeCertificate($x, $crtShCertsIdAll->values(), 'found_crt_sh');
             $this->attributeCertificate($x, $altNamesCertIds, 'found_altname');
             $this->attributeCertificate($x, $cnameCertIds, 'found_cname');
             $this->augmentCertificate($x, $altNames, $job);
@@ -171,6 +172,7 @@ class SearchController extends Controller
             'tlsScans' => $tlsHandshakeScans,
             'crtshScans' => $crtShScans,
             'altNames' => $altNames,
+            'crtshSaturated' => $crtShCertsIdAll->count() > count($crtShCertsId),
             'certificates' => $certificates->map(function($item, $key) {
                 return $this->restizeCertificate($item);
             })->keyBy('id'),
