@@ -18,3 +18,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
 if (mix.config.inProduction) {
     mix.version();
 }
+
+mix.webpackConfig.watchOptions = mix.webpackConfig.watchOptions || {};
+mix.webpackConfig.watchOptions.poll = 500;
+mix.webpackConfig.watchOptions.ignored = '/node_modules/';
