@@ -64,11 +64,11 @@
                                     <th scope="row">Certificates in the chain</th>
                                     <td>{{ len(tlsScan.certs_ids) }}</td>
                                 </tr>
-                                <tr >
+                                <tr v-if="tlsScanLeafCert.is_le">
                                     <th scope="row">Let's Encrypt</th>
                                     <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
                                 </tr>
-                                <tr >
+                                <tr v-if="tlsScanLeafCert.is_cloudflare">
                                     <th scope="row" >Cloudflare</th>
                                     <td>{{ tlsScanLeafCert.is_cloudflare ? 'Yes' : 'No' }}</td>
                                 </tr>
