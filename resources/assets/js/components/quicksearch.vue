@@ -49,13 +49,24 @@
                                     <th scope="row">Trusted</th>
                                     <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
                                 </tr>
-                                <tr v-if="tlsScanLeafCert !== null">
+                                <tr v-if="tlsScanLeafCert !== null"
+                                    v-bind:class="{
+                                        success: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days >= 30,
+                                        warning: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days < 30,
+                                        danger: tlsScanLeafCert.is_expired }">
                                     <th scope="row">Validity</th>
                                     <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
                                 </tr>
                                 </tbody>
-
                             </table>
+
+                            <div class="alert alert-warning" v-if="tlsScanLeafCert && tlsScanLeafCert.is_le
+                                && tlsScanLeafCert.valid_to_days<30.0">
+                                <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
+                                the validity is less than 30 days.</p>
+
+                                <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
+                            </div>
 
                             <h3>Certificate details</h3>
                             <table  class="table" v-if="tlsScanLeafCert !== null">
