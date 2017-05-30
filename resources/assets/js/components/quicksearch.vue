@@ -89,6 +89,7 @@
                     <div class="ct-results" id="ct-results">
                         <h2>Certificate databases</h2>
 
+                        <div v-if="ctValid.length > 0 || ctExpired.length > 0">
                         <h3>Issued Certificates</h3>
                         <table class="table table-striped table-responsive" v-if="ctValid.length > 0">
                             <thead>
@@ -104,7 +105,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <p v-if="ctValid.length == 0">
+                        <p v-else>
                             No issued certificates found in databases.
                         </p>
 
@@ -124,8 +125,12 @@
                             </tr>
                             </tbody>
                         </table>
-                        <p v-if="ctExpired.length == 0">
+                        <p v-else>
                             No expired certificates found in databases.
+                        </p>
+                        </div>
+                        <p v-else>
+                            No match found in certificate databases.
                         </p>
 
                     </div>
