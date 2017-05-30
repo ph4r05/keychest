@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="scan-results" id="scan-results" v-show="resultsLoaded">
-                    <h1>Results for {{ curJob.scan_host }}:{{ curJob.port }}</h1>
+                    <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
                     <div class="tls-results" id="tls-results">
                         <h2>Direct connect</h2>
 
@@ -68,11 +68,11 @@
                                     </tr>
                                     <tr >
                                         <th scope="row">Certificate issued</th>
-                                        <td>{{ tlsScanLeafCert.valid_from }}</td>
+                                        <td>{{ tlsScanLeafCert.valid_from }} ( {{ tlsScanLeafCert.valid_from_days }} days ago )</td>
                                     </tr>
                                     <tr >
                                         <th scope="row">Certificate valid to</th>
-                                        <td>{{ tlsScanLeafCert.valid_to }}</td>
+                                        <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -96,7 +96,7 @@
                             <tbody>
                             <tr v-for="cert in ctValid">
                                 <td>{{ cert.cname }} </td>
-                                <td>{{ cert.valid_to }} ( {{ cert.valid_days }} days ) </td>
+                                <td>{{ cert.valid_to }} ( {{ cert.valid_to_days }} days ) </td>
                             </tr>
                             </tbody>
                         </table>
@@ -113,7 +113,7 @@
                             <tbody>
                             <tr v-for="cert in ctExpired">
                                 <td>{{ cert.cname }} </td>
-                                <td>{{ cert.valid_to }} ( {{ -1*cert.valid_days }} days ago ) </td>
+                                <td>{{ cert.valid_to }} ( {{ -1*cert.valid_to_days }} days ago ) </td>
                             </tr>
                             </tbody>
                         </table>
@@ -246,7 +246,8 @@
                 const curTime = new Date().getTime() / 1000.0;
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
-                    cert.valid_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
+                    cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
+                    cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                 }
             },
 
@@ -363,3 +364,11 @@
         }
     }
 </script>
+
+<style>
+.scan-results-host {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+</style>
+
