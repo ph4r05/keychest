@@ -229,10 +229,12 @@ class SearchController extends Controller
         $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
         $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
 
+        $certificate->is_wildcard = $alts->contains($this->wildcardDomain($job->scan_host));
         $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
         $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
-        $certificate->is_cloudflare = strpos($certificate->cname, 'cloudflaressl.com') !== false;
-        $certificate->is_wildcard = $alts->contains($this->wildcardDomain($job->scan_host));
+        $certificate->is_cloudflare = $alts->filter(function($val, $key){
+            return strpos($val, '.cloudflaressl.com') !== false;
+        })->isNotEmpty();
 
         $fqdn = $this->fqdn($job->scan_host);
         $certificate->matched_alt_names = $alts->intersect($altNames)->values()->all();
