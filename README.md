@@ -19,7 +19,10 @@ chmod +w storage/logs/
 ```bash
 npm run dev
 npm run prod
+npm run watch-poll
 ```
+
+On Vue component modification re-upload compiled resources in `public/`
 
 ### Operation
 
