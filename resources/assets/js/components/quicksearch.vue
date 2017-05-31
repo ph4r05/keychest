@@ -39,10 +39,11 @@
 
                         <div class="alert alert-warning" v-else-if="tlsScanError">
                             <strong>TLS Error</strong>: Could not scan {{ curJob.scan_host }} on port {{ curJob.port }}
-                            <span v-if="tlsScan && tlsScan.err_code == 1"> (TLS handshake error)</span>
-                            <span v-if="tlsScan && tlsScan.err_code == 2"> (Connection error)</span>
-                            <span v-if="tlsScan && tlsScan.err_code == 3"> (Timeout)</span>.
-                            <div v-if="tlsScan && tlsScan.follow_http_result == 'OK'">Did you mean {{ tlsScan.follow_http_url }} </div>
+                            <span v-if="tlsScan && tlsScan.err_code == 1"> ( TLS handshake error )</span>
+                            <span v-if="tlsScan && tlsScan.err_code == 2"> ( connection error )</span>
+                            <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>.
+                            <div v-if="didYouMeanUrl">Did you mean
+                                <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
                         </div>
 
                         <div class="content" v-if="!tlsScanError">
@@ -184,6 +185,7 @@
                 tlsScan: {},
                 tlsScanError: false,
                 tlsScanLeafCert: null,
+                didYouMeanUrl: null,
 
                 ctScan: {},
                 ctScanError: false,
@@ -226,6 +228,10 @@
                     this.jobSubmittedNow = new_job;
                     this.onUuidProvided(uuid);
                 }
+            },
+
+            didYouMeanUrlFull() {
+                return '/scan?url=' + encodeURI(this.didYouMeanUrl);
             },
 
             errMsg(msg) {
@@ -329,9 +335,13 @@
                 }
 
                 this.tlsScan = this.results.tlsScans[0];
+                if (this.tlsScan.follow_http_result === 'OK'){
+                    const urlp = URL(this.tlsScan.follow_http_url, true);
+                    this.didYouMeanUrl = 'https://' + urlp.host;
+                }
+
                 if (!this.tlsScan.certs_ids || this.tlsScan.status !== 1){
                     this.tlsScanError = true;
-                    console.log('No TLS results');
                     return;
                 }
 
@@ -340,7 +350,6 @@
                 }
 
                 this.tlsScan.valid_trusted = this.tlsScan.valid_path && this.tlsScan.valid_hostname;
-
             },
 
             processCtScan(){
