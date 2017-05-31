@@ -177,6 +177,7 @@
             return {
                 curUuid: null,
                 curJob: {},
+                jobSubmittedNow: false,
                 resultsLoaded: false,
                 results: null,
 
@@ -213,7 +214,18 @@
             },
 
             hookup(){
+                let uuid = Req.findGetParameter('uuid');
+                let url = Req.findGetParameter('url');
+                let new_job = Req.findGetParameter('new');
 
+                if (url){
+                    $('#scan-target').val(url);
+                }
+
+                if (uuid){
+                    this.jobSubmittedNow = new_job;
+                    this.onUuidProvided(uuid);
+                }
             },
 
             errMsg(msg) {
@@ -229,6 +241,16 @@
                 $('#search-form').hide();
                 $('#scan-results').hide();
                 $('#search-info').show();
+            },
+
+            onUuidProvided(uuid) {
+                // UUID provided from the GET parameter:
+                this.curUuid = uuid;
+                this.searchStarted();
+                if (!this.jobSubmittedNow){
+                    $('#info-text').text('Loading scan results...');
+                }
+                setTimeout(this.pollFinish, 10);
             },
 
             pollFinish() {
@@ -271,16 +293,18 @@
 
             showResults(json){
                 this.results = json;
-                // this.resultsLoaded = true;
 
                 $('#search-info').hide();
-                $('#search-success').show();
-                setTimeout(()=>{
-                    $('#search-success').hide('slow', ()=>{
-                        this.resultsLoaded=true;
-                        //$('#scan-results').show('slow');
-                    });
-                }, 250);
+                if (this.jobSubmittedNow) {
+                    $('#search-success').show();
+                    setTimeout(() => {
+                        $('#search-success').hide('slow', () => {
+                            this.resultsLoaded = true;
+                        });
+                    }, 250);
+                } else {
+                    this.resultsLoaded = true;
+                }
 
                 // Process, show...
                 this.processResults();
@@ -362,8 +386,20 @@
                     }
 
                     console.log(json);
-                    this.curUuid = json.uuid;
-                    setTimeout(this.pollFinish, 500);
+
+                    // Update URL so it contains params - job ID & url
+                    let new_url = "/scan?uuid=" + json.uuid + '&url=' + encodeURI(domain);
+                    try{
+                        history.pushState(null, null, new_url); // new URL with history
+                        history.replaceState(null, null, new_url); // replace the existing
+
+                        this.curUuid = json.uuid;
+                        this.jobSubmittedNow = true;
+                        setTimeout(this.pollFinish, 500);
+
+                    } catch(e) {
+                        window.location.replace(new_url + '&new=1');
+                    }
 
                 }).bind(this), (function(jqxhr, textStatus, error){
                     // bodyProgress(false);
