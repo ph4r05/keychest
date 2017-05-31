@@ -14,13 +14,16 @@
 Route::get('/', 'SearchController@show');
 Route::post('/', 'SearchController@search');
 
+Route::get('/scan/', 'SearchController@show');
+Route::post('/scan/', 'SearchController@search');
+
 Route::get('/submitJob', 'SearchController@restSubmitJob');
 Route::get('/jobState', 'SearchController@restGetJobState');
 Route::get('/jobResult', 'SearchController@restJobResults');
 
-Route::get('/w', function () {
-    return view('welcome');
-});
+//Route::get('/w', function () {
+//    return view('welcome');
+//});
 
 // Auth routes
 Route::auth();
