@@ -4,6 +4,22 @@
 'use strict';
 
 /**
+ * Returns GET parameter
+ * @param parameterName
+ * @returns {*}
+ */
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    var items = location.search.substr(1).split("&");
+    for (var index = 0; index < items.length; index++) {
+        tmp = items[index].split("=");
+        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    }
+    return result;
+}
+
+/**
  * Switches main loading overlay.
  * @param started if true overlay is displayed. Hidden otherwise.
  */
@@ -31,7 +47,7 @@ function submitJob(target, onLoaded, onFail){
         })
         .fail(function( jqxhr, textStatus, error ) {
             var err = textStatus + ", " + error;
-            console.log( "Request Failed: " + err );
+            console.log( "Submit job Request Failed: " + err );
             onFail(jqxhr, textStatus, error);
         });
 }
@@ -49,7 +65,7 @@ function getJobState(uuid, onLoaded, onFail){
         })
         .fail(function( jqxhr, textStatus, error ) {
             var err = textStatus + ", " + error;
-            console.log( "Request Failed: " + err );
+            console.log( "Get Job state Request Failed: " + err );
             onFail(jqxhr, textStatus, error);
         });
 }
@@ -67,7 +83,7 @@ function getJobResult(uuid, onLoaded, onFail){
         })
         .fail(function( jqxhr, textStatus, error ) {
             var err = textStatus + ", " + error;
-            console.log( "Request Failed: " + err );
+            console.log( "Get Job result Request Failed: " + err );
             onFail(jqxhr, textStatus, error);
         });
 }
@@ -85,11 +101,11 @@ function defval(val, def){
 // Export
 module.exports = {
     bodyProgress: bodyProgress,
+    findGetParameter: findGetParameter,
     submitJob: submitJob,
     getJobState: getJobState,
     getJobResult: getJobResult,
     defval: defval
-
 };
 
 
