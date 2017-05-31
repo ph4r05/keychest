@@ -38,16 +38,20 @@
                         </div>
 
                         <div class="alert alert-warning" v-else-if="tlsScanError">
-                            <strong>TLS Error</strong>: Could not connect to {{ curJob.scan_host }} on port {{ curJob.port }}.
+                            <strong>TLS Error</strong>: Could not scan {{ curJob.scan_host }} on port {{ curJob.port }}
+                            <span v-if="tlsScan && tlsScan.err_code == 1"> (TLS handshake error)</span>
+                            <span v-if="tlsScan && tlsScan.err_code == 2"> (Connection error)</span>
+                            <span v-if="tlsScan && tlsScan.err_code == 3"> (Timeout)</span>.
+                            <div v-if="tlsScan && tlsScan.follow_http_result == 'OK'">Did you mean {{ tlsScan.follow_http_url }} </div>
                         </div>
 
                         <div class="content" v-if="!tlsScanError">
                             <h3>Direct connect</h3>
                             <table class="table table-responsive">
                                 <tbody>
-                                <tr v-bind:class="{ success: tlsScan.valid_path, danger: !tlsScan.valid_path }">
+                                <tr v-bind:class="{ success: tlsScan.valid_trusted, danger: !tlsScan.valid_trusted }">
                                     <th scope="row">Trusted</th>
-                                    <td>{{ tlsScan.valid_path ? 'Yes' : 'No' }}</td>
+                                    <td>{{ tlsScan.valid_trusted ? 'Yes' : 'No' }}</td>
                                 </tr>
                                 <tr v-if="tlsScanLeafCert !== null"
                                     v-bind:class="{
@@ -60,8 +64,17 @@
                                 </tbody>
                             </table>
 
+                            <div class="alert alert-danger" v-if="!tlsScan.valid_trusted && !tlsScan.valid_path">
+                                <p><strong>Error: </strong>The certificate is not valid</p>
+                            </div>
+
+                            <div class="alert alert-danger" v-if="!tlsScan.valid_trusted && tlsScan.valid_path
+                            && !tlsScan.valid_hostname">
+                                <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
+                            </div>
+
                             <div class="alert alert-warning" v-if="tlsScanLeafCert && tlsScanLeafCert.is_le
-                                && tlsScanLeafCert.valid_to_days<30.0">
+                                && tlsScanLeafCert.valid_to_days<30.0 && tlsScanLeafCert.valid_to_days > 0">
                                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
                                 the validity is less than 30 days.</p>
 
@@ -302,6 +315,7 @@
                     this.tlsScanLeafCert = this.results.certificates[this.tlsScan.cert_id_leaf];
                 }
 
+                this.tlsScan.valid_trusted = this.tlsScan.valid_path && this.tlsScan.valid_hostname;
 
             },
 
