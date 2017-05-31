@@ -217,7 +217,7 @@
             },
 
             errMsg(msg) {
-                $('#error-text').val(msg);
+                $('#error-text').text(msg);
 
                 $('#search-info').hide();
                 $('#scan-results').hide();
