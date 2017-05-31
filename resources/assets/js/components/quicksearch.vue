@@ -316,11 +316,7 @@
                 let expiredCerts = [];
                 let validCerts = [];
 
-                for(let certId of this.ctScan.certs_ids){
-                    if (!(certId in this.results.certificates)){
-                        continue;
-                    }
-
+                for(let certId in this.results.certificates){
                     let cert = this.results.certificates[certId];
                     if (cert.is_ca){
                         continue;
