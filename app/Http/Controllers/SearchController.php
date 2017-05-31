@@ -141,7 +141,7 @@ class SearchController extends Controller
             return $val;
         });
         $crtShCertsIdAll = $this->certificateList($crtShScans);
-        $crtShCertsId = $crtShCertsIdAll->sort()->take(30)->values();
+        $crtShCertsId = $crtShCertsIdAll->sort()->reverse()->take(30)->values();
 
         // Certificate fetch
         $certIds = collect();
