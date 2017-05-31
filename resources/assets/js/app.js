@@ -9,6 +9,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.Req = require('./req.js');
+window.URL = require('url-parse');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
