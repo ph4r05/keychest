@@ -27,7 +27,7 @@
 
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="page-container">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
@@ -85,6 +85,7 @@
         </nav>
 
         @yield('content')
+
     </div>
 
     <div class="modal">
