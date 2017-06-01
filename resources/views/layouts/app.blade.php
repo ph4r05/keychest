@@ -79,6 +79,7 @@
                                 </ul>
                             </li>
                         @endif
+                        @yield('content-nav')
                     </ul>
                 </div>
             </div>
