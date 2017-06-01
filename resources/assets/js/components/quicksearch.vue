@@ -1,6 +1,7 @@
 <template>
 
-    <div class="bloc bloc-fill-screen tc-onyx bgc-white l-bloc" id="intro" style="height: 854px;">
+    <div class="bloc bloc-fill-screen tc-onyx bgc-white l-bloc" id="intro" style="height: 800px;"
+         v-bind:class="{'kc-search': showSearch, 'kc-loading': !showSearch && !resultsLoaded, 'kc-results': resultsLoaded}" >
         <div class="container">
             <div class="row">
 
@@ -13,11 +14,9 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-12">
-
                     <div class="col-sm-8 col-sm-offset-2">
                         <div class="form-group">
-                            <form role="form" method="get" id="search-form" @submit.prevent="submitForm()">
+                            <form role="form" id="search-form" @submit.prevent="submitForm()">
                                 <div class="input-group">
                                     <input type="text" class="form-control input"
                                            placeholder="Type your domain name, e.g., enigmabridge.com"
@@ -29,40 +28,21 @@
                                     </span>
                                 </div>
                             </form>
+
+                            <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
+                                <strong>Error!</strong> <span id="error-text"></span>
+                            </div>
+
+                            <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
+                                <span id="info-text">Waiting for scan to finish...</span>
+                            </div>
+
+                            <div class="alert alert-success scan-alert" id="search-success" style="display: none">
+                                <strong>Success!</strong> Scan finished.
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <a class="btn btn-lg pull-right btn-rich-electric-blue" id="btn-check-expire">Check expiry</a>
-                        </div>
-                        <div class="col-sm-6">
-                            <a class="btn btn-lg pull-left btn-rich-electric-blue"
-                               onclick="scrollToTarget('#register')">Create account</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row search">
-                <div class="col-sm-8 col-sm-offset-2">
-                    <div class="alert alert-danger" id="search-error" style="display: none">
-                        <strong>Error!</strong> <span id="error-text"></span>
-                    </div>
-
-                    <div class="alert alert-info alert-waiting" id="search-info" style="display: none">
-                        <span id="info-text">Waiting for scan to finish...</span>
-                    </div>
-
-                    <div class="alert alert-success" id="search-success" style="display: none">
-                        <strong>Success!</strong> Scan finished.
-                    </div>
-
-                    <transition name="fade">
+                    <transition name="fade" v-on:leave="recomp", v-on:enter="recomp">
                     <div class="scan-results" id="scan-results" v-show="resultsLoaded">
                         <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
@@ -206,9 +186,31 @@
 
             </div>
 
+            <div class="row" v-if="showSearch">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <!-- Logged in vs. new visitor -->
+                        <div v-bind:class="{
+                                    'col-sm-6': Laravel.authGuest,
+                                    'col-sm-2': !Laravel.authGuest,
+                                    'col-sm-offset-5': !Laravel.authGuest,
+                                    'text-center': !Laravel.authGuest}">
+                            <a class="btn btn-lg btn-rich-electric-blue" v-bind:class="{'pull-right' : Laravel.authGuest}"
+                               id="btn-check-expire" v-on:click.stop="submitForm()">
+                                Check expiry</a>
+                        </div>
+
+                        <div class="col-sm-6" v-if="Laravel.authGuest">
+                            <a class="btn btn-lg pull-left btn-rich-electric-blue" :url="Laravel.urlRegister">
+                                Create account</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="container fill-bloc-bottom-edge">
+        <div class="container fill-bloc-bottom-edge" v-if="showSearch">
             <div class="row row-no-gutters">
                 <div class="col-sm-12">
                     <a id="scroll-hero" class="blocs-hero-btn-dwn" href="https://keychest.net/#"><span class="fa fa-chevron-down"></span></a>
@@ -217,7 +219,8 @@
         </div>
 
     </div>
-    
+
+
 </template>
 
 <script>
@@ -229,6 +232,7 @@
                 jobSubmittedNow: false,
                 resultsLoaded: false,
                 results: null,
+                showSearch: true,
 
                 tlsScan: {},
                 tlsScanError: false,
@@ -242,6 +246,7 @@
                 ctValid: [],
 
                 Req: window.Req,
+                Laravel: window.Laravel
             };
         },
 
@@ -261,6 +266,10 @@
                     return x.length;
                 }
                 return 0;
+            },
+
+            recomp(){
+                setTimeout(setFillScreenBlocHeight, 0);
             },
 
             hookup(){
@@ -288,9 +297,11 @@
                 $('#search-info').hide();
                 $('#scan-results').hide();
                 $('#search-error').show();
+                this.recomp();
             },
 
             searchStarted() {
+                this.showSearch = false;
                 $('#search-form').hide();
                 $('#scan-results').hide();
                 $('#search-info').show();
@@ -353,11 +364,13 @@
                     setTimeout(() => {
                         $('#search-success').hide('slow', () => {
                             this.resultsLoaded = true;
+                            this.recomp();
                         });
                     }, 250);
                 } else {
                     this.resultsLoaded = true;
                 }
+                this.recomp();
 
                 // Process, show...
                 this.processResults();
@@ -432,6 +445,12 @@
             submitForm(){
                 let starget = $('#scan-target');
                 let domain = starget.val();
+
+                // Minor domain validation.
+                if (_.isEmpty(domain)){
+                    starget.shake();
+                    return;
+                }
 
                 this.searchStarted();
                 Req.submitJob(domain, (function(json){

@@ -181,25 +181,28 @@ a,button{outline: none!important;} /* Prevent ugly blue glow on chrome and safar
 -------------------------------------------------------------- */
 
 .navbar{
-  margin-bottom: 0;
+  margin-bottom: 22px;
   z-index:1;
 }
+
 .navbar-brand{
   height:auto;
-  padding:3px 15px;
-  font-size:25px;
-  font-weight:normal;
-  font-weight:600;
-  line-height:44px;
+  padding:14px 15px;
+  font-size:18px;
+  font-weight:400;
+  line-height:22px;
 }
+
 .navbar-brand img{
   max-height: 200px;
   margin: 0 5px 0 0;
   display:inline;
 }
+
 .nav-center .navbar-brand img{
   margin:0;
 }
+
 .navbar .nav{
   padding-top: 2px;
   margin-right: -16px;
