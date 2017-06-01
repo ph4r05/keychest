@@ -243,7 +243,6 @@
             },
 
             searchStarted() {
-                // bodyProgress(true);
                 $('#search-form').hide();
                 $('#scan-results').hide();
                 $('#search-info').show();
@@ -260,7 +259,7 @@
             },
 
             pollFinish() {
-                getJobState(this.curUuid, (function(json){
+                Req.getJobState(this.curUuid, (function(json){
                     console.log(json);
 
                     if (json.status !== 'success'){
@@ -283,7 +282,7 @@
             },
 
             getResults() {
-                getJobResult(this.curUuid, (function(json){
+                Req.getJobResult(this.curUuid, (function(json){
                     if (json.status !== 'success'){
                         this.errMsg('Job results fail, retry...');
                         setTimeout(this.getResults, 1000);
@@ -387,8 +386,7 @@
                 let domain = starget.val();
 
                 this.searchStarted();
-                submitJob(domain, (function(json){
-                    // bodyProgress(false);
+                Req.submitJob(domain, (function(json){
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
                         return;
@@ -411,7 +409,6 @@
                     }
 
                 }).bind(this), (function(jqxhr, textStatus, error){
-                    // bodyProgress(false);
                     this.errMsg(error);
                 }).bind(this));
             },
