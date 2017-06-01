@@ -339,8 +339,8 @@ class SearchController extends Controller
         Log::info(sprintf('UUID: %s, target: %s', $uuid, $server));
 
         $parsed = parse_url($server);
-        if (empty($parsed)){
-            return view('index', []);
+        if (empty($parsed) || strpos($server, '.') === false){
+            return [null, null];
         }
 
         // DB Job data
