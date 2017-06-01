@@ -54,6 +54,9 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
+                        <!-- component navigation -->
+                        @yield('content-nav')
+
                         <!-- Authentication Links -->
                         @if (Auth::guest())
                             <li><a href="{{ route('login') }}">Login</a></li>
@@ -79,7 +82,6 @@
                                 </ul>
                             </li>
                         @endif
-                        @yield('content-nav')
                     </ul>
                 </div>
             </div>
