@@ -42,7 +42,7 @@
                             </div>
                         </div>
 
-                    <transition name="fade" v-on:leave="recomp", v-on:enter="recomp">
+                    <transition name="fade" v-on:leave="recomp" v-on:enter="recomp">
                     <div class="scan-results" id="scan-results" v-show="resultsLoaded">
                         <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
@@ -186,6 +186,7 @@
 
             </div>
 
+            <!-- Buttons section -->
             <div class="row" v-if="showSearch">
                 <div class="col-sm-12">
                     <div class="row">
@@ -201,13 +202,15 @@
                         </div>
 
                         <div class="col-sm-6" v-if="Laravel.authGuest">
-                            <a class="btn btn-lg pull-left btn-rich-electric-blue" :url="Laravel.urlRegister">
+                            <a class="btn btn-lg pull-left btn-rich-electric-blue" v-bind:href="Laravel.urlRegister">
                                 Create account</a>
                         </div>
 
                     </div>
                 </div>
             </div>
+            <!-- End of buttons section -->
+
         </div>
 
         <div class="container fill-bloc-bottom-edge" v-if="showSearch">
