@@ -356,7 +356,7 @@ class SearchController extends Controller
 
         $curUser = Auth::user();
         if (!empty($curUser)){
-            $newJobDb['user'] = $curUser;
+            // Manual user association, could be done via ->user()->associate($usr) on the ORM inserted object.
             $newJobDb['user_id'] = $curUser->getAuthIdentifier();
         }
 
