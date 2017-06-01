@@ -11,6 +11,8 @@ window.Vue = require('vue');
 window.Req = require('./req.js');
 window.URL = require('url-parse');
 
+require('jquery-ui/ui/effects/effect-shake');
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
