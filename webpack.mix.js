@@ -15,6 +15,13 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .extract(['vue', 'jquery', 'axios', 'lodash']);
 
+mix.scripts([
+    'resources/assets/js/blocs.js'
+], 'public/js/misc.js');
+
+// var bootstrap_sass = './node_modules/bootstrap-sass/';
+// mix.copy(bootstrap_sass+"assets/fonts/bootstrap",'public/fonts');
+
 if (mix.config.inProduction) {
     mix.version();
 }

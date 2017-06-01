@@ -20,6 +20,11 @@
         ]) !!};
     </script>
 
+    <!-- Font Awesome CDN version -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700">
+
 </head>
 <body>
     <div id="app">
@@ -90,7 +95,7 @@
     <script src="{{ mix('/js/manifest.js') }}"></script>
     <script src="{{ mix('/js/vendor.js') }}"></script>
     <script src="{{ mix('/js/app.js') }}"></script>
-    <script src="{{ asset('/js/req-static.js') }}"></script>
+    <script src="{{ asset('/js/misc.js') }}"></script>
 
 </body>
 </html>
