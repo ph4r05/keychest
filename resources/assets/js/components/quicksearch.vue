@@ -17,7 +17,7 @@
                     <div class="col-sm-8 col-sm-offset-2">
                         <div class="form-group">
                             <form role="form" id="search-form" @submit.prevent="submitForm()">
-                                <div class="input-group">
+                                <div class="input-group" id="scan-wrapper">
                                     <input type="text" class="form-control input"
                                            placeholder="Type your domain name, e.g., enigmabridge.com"
                                            name="scan-target" id="scan-target">
@@ -447,8 +447,8 @@
                 let domain = starget.val();
 
                 // Minor domain validation.
-                if (_.isEmpty(domain)){
-                    starget.shake();
+                if (_.isEmpty(domain) || domain.split('.').length <= 1){
+                    $( "#search-form" ).effect( "shake" );
                     return;
                 }
 
