@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content-nav')
-    <li><a onclick="scrollToTarget('#learn')">Learn more</a></li>
+    {{--<li><a onclick="scrollToTarget('#learn')">Learn more</a></li>--}}
 @endsection
 
 @section('content')
