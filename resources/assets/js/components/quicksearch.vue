@@ -48,7 +48,90 @@
                                 v-on:enter="transition_hook"
                                 v-on:before-enter="transition_hook"
                                 v-on:after-enter="transition_hook">
-                    <div class="scan-results" id="scan-results" v-show="resultsLoaded">
+
+                    <!-- brief stats -->
+                    <div class="scan-results" id="scan-results-brief" v-show="resultsLoaded && !showExpertStats">
+
+                        <!-- No TLS scan -->
+                        <div class="alert alert-info" v-if="results && results.tlsScans.length == 0">
+                            No TLS scan was performed
+                        </div>
+
+                        <!-- TLS Error: problem with the scan -->
+                        <div class="alert alert-warning" v-else-if="tlsScanError">
+                            <strong>TLS Error</strong>: Could not scan <strong>{{ curJob.scan_host }}</strong> on port {{ curJob.port }}
+                            <span v-if="tlsScan && tlsScan.err_code == 1"> ( TLS handshake error )</span>
+                            <span v-if="tlsScan && tlsScan.err_code == 2"> ( connection error )</span>
+                            <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>
+                            <div v-if="didYouMeanUrl">Did you mean
+                                <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
+                        </div>
+
+                        <!-- Brief results table -->
+                        <table class="table" v-if="results && results.tlsScans.length > 0
+                                                    && !tlsScanError && tlsScanLeafCert && tlsScan">
+                            <tbody>
+                            <tr v-bind:class="{
+                                            success: form.defcon==5,
+                                            warning: form.defcon<=4 && form.defcon>=2,
+                                            danger: form.defcon==1 }"
+                            >
+                                <th>{{ curJob.scan_host }}{{ curJob.portString }}</th>
+                                <td v-if="tlsScanLeafCert.is_expired">expired {{ (-1)*tlsScanLeafCert.valid_to_days }} days</td>
+                                <td v-else>expires in {{ tlsScanLeafCert.valid_to_days }} days</td>
+                                <td> {{ form.textStatus }} </td>
+                            </tr>
+
+                            <tr v-bind:class="{
+                                            success: form.defcon==5,
+                                            warning: form.defcon<=4 && form.defcon>=2,
+                                            danger: form.defcon==1 }">
+
+                                <td colspan="3" v-if="tlsScanLeafCert.is_expired && tlsScan.hsts_present">
+                                    Certificate expired. Your server is down (HSTS is set). Create an account to track or ask for help.</td>
+                                <td colspan="3" v-else-if="tlsScanLeafCert.is_expired">
+                                    Certificate expired. Your server shows as "Not Secure". Create an account to track or ask for help.</td>
+                                <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<2">
+                                    The validity is less than 2 days. Renew now to avoid downtime! Create an account to track or ask for help.</td>
+                                <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<30">
+                                    The validity is less than 30 days. Plan renewal now! Create an account or ask for help.</td>
+                                <td colspan="3" v-else>
+                                    There is nothing to do. Well done! Create an account to say in green.</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+
+                        <!-- Aux errors -->
+                        <div class="alert alert-danger" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && !tlsScan.valid_trusted && !tlsScan.valid_path">
+                            <p><strong>Error: </strong>The certificate is not trusted</p>
+                        </div>
+
+                        <div class="alert alert-danger" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && !tlsScan.valid_trusted && tlsScan.valid_path
+                                && !tlsScan.valid_hostname">
+                            <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
+                        </div>
+
+                        <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && tlsScanLeafCert.is_le
+                                    && tlsScanLeafCert.valid_to_days<30.0 && tlsScanLeafCert.valid_to_days > 0">
+                            <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
+                                the validity is less than 30 days.</p>
+
+                            <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
+                        </div>
+
+                    </div>
+                    </transition>
+                    <!-- End of brief stats -->
+
+                    <!-- Expert stats - will be shown later, on icon click -->
+                    <transition name="fade"
+                                v-on:leave="transition_hook"
+                                v-on:after-leave="transition_hook"
+                                v-on:enter="transition_hook"
+                                v-on:before-enter="transition_hook"
+                                v-on:after-enter="transition_hook">
+                    <div class="scan-results" id="scan-results" v-show="resultsLoaded && showExpertStats">
                         <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
                         <div class="tls-results" id="tls-results">
@@ -57,10 +140,10 @@
                             </div>
 
                             <div class="alert alert-warning" v-else-if="tlsScanError">
-                                <strong>TLS Error</strong>: Could not scan {{ curJob.scan_host }} on port {{ curJob.port }}
+                                <strong>TLS Error</strong>: Could not scan <strong>{{ curJob.scan_host }}</strong> on port {{ curJob.port }}
                                 <span v-if="tlsScan && tlsScan.err_code == 1"> ( TLS handshake error )</span>
                                 <span v-if="tlsScan && tlsScan.err_code == 2"> ( connection error )</span>
-                                <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>.
+                                <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>
                                 <div v-if="didYouMeanUrl">Did you mean
                                     <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
                             </div>
@@ -102,7 +185,7 @@
                                 </div>
 
                                 <h3>Certificate details</h3>
-                                <table  class="table" v-if="tlsScanLeafCert !== null">
+                                <table class="table" v-if="tlsScanLeafCert !== null">
                                     <tbody>
                                     <tr>
                                         <th scope="row">Certificates in the chain</th>
@@ -131,6 +214,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- End of expert stats -->
 
                         </div>
 
@@ -237,10 +321,15 @@
             return {
                 curUuid: null,
                 curJob: {},
+                form: {
+                    defcon: 5,
+                    textStatus: 'OK'
+                },
                 jobSubmittedNow: false,
                 resultsLoaded: false,
                 results: null,
                 searchEnabled: true,
+                showExpertStats: false,
 
                 tlsScan: {},
                 tlsScanError: false,
@@ -402,6 +491,7 @@
                 this.processResults();
                 this.processTlsScan();
                 this.processCtScan();
+                this.postprocessResults();
             },
 
             processResults() {
@@ -411,6 +501,30 @@
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.matched_name = cert.matched_alt_names && cert.matched_alt_names.length > 0 ? cert.matched_alt_names[0] : cert.cname;
+                }
+            },
+
+            postprocessResults(){
+                this.curJob.portString = this.curJob.port === 443 ? '' : ':' + this.curJob.port;
+                if (!this.tlsScanLeafCert || !this.tlsScan){
+                    return;
+                }
+
+                // Results validity
+                if (this.tlsScanLeafCert.is_expired){
+                    this.form.defcon = 1;
+                    this.form.textStatus = 'ERROR';
+                } else {
+                    if (this.tlsScanLeafCert.valid_to_days < 2){
+                        this.form.defcon = 2;
+                        this.form.textStatus = 'WARNING';
+                    } else if (this.tlsScanLeafCert.valid_to_days < 30){
+                        this.form.defcon = 3;
+                        this.form.textStatus = 'OK';
+                    } else {
+                        this.form.defcon = 5;
+                        this.form.textStatus = 'OK';
+                    }
                 }
             },
 
@@ -468,6 +582,28 @@
                 this.ctValid = validCerts;
             },
 
+            cleanResults(){
+                this.curUuid = {};
+                this.curJob = {};
+                this.form.defcon = 5;
+                this.form.textStatus = 'OK';
+                this.jobSubmittedNow = false;
+                this.resultsLoaded = false;
+                this.results = null;
+                this.showExpertStats = false;
+
+                this.tlsScan = {};
+                this.tlsScanError = false;
+                this.tlsScanLeafCert = null;
+                this.didYouMeanUrl = null;
+
+                this.ctScan = {};
+                this.ctScanError = false;
+
+                this.ctExpired = [];
+                this.ctValid= [];
+            },
+
             submitForm(){
                 let starget = $('#scan-target');
                 let domain = starget.val();
@@ -479,6 +615,7 @@
                 }
 
                 this.searchStarted();
+                this.cleanResults();
                 Req.submitJob(domain, (function(json){
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
