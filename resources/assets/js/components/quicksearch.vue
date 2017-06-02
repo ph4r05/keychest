@@ -203,7 +203,7 @@
 
                         <div class="col-sm-6" v-if="Laravel.authGuest">
                             <a class="btn btn-lg pull-left btn-rich-electric-blue" v-bind:href="Laravel.urlRegister">
-                                Create account</a>
+                                Start tracking</a>
                         </div>
 
                     </div>
