@@ -1,7 +1,7 @@
 <template>
 
     <div class="bloc bloc-fill-screen tc-onyx bgc-white l-bloc" id="intro" style="height: 800px;"
-         v-bind:class="{'kc-search': showSearch, 'kc-loading': !showSearch && !resultsLoaded, 'kc-results': resultsLoaded}" >
+         v-bind:class="{'kc-search': searchEnabled, 'kc-loading': !searchEnabled && !resultsLoaded, 'kc-results': resultsLoaded}" >
         <div class="container">
             <div class="row">
 
@@ -14,35 +14,40 @@
             </div>
 
             <div class="row">
-                    <div class="col-sm-8 col-sm-offset-2">
-                        <div class="form-group">
-                            <form role="form" id="search-form" @submit.prevent="submitForm()">
-                                <div class="input-group" id="scan-wrapper">
-                                    <input type="text" class="form-control input"
-                                           placeholder="Type your domain name, e.g., enigmabridge.com"
-                                           name="scan-target" id="scan-target">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default btn" type="submit">
-                                            <span class="glyphicon glyphicon-search"></span>
-                                        </button>
-                                    </span>
-                                </div>
-                            </form>
-
-                            <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
-                                <strong>Error!</strong> <span id="error-text"></span>
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="form-group">
+                        <form role="form" id="search-form" @submit.prevent="submitForm()">
+                            <div class="input-group" id="scan-wrapper">
+                                <input type="text" class="form-control input"
+                                       placeholder="Type your domain name, e.g., enigmabridge.com"
+                                       name="scan-target" id="scan-target">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default btn" type="submit">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </span>
                             </div>
+                        </form>
 
-                            <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-                                <span id="info-text">Waiting for scan to finish...</span>
-                            </div>
-
-                            <div class="alert alert-success scan-alert" id="search-success" style="display: none">
-                                <strong>Success!</strong> Scan finished.
-                            </div>
+                        <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
+                            <strong>Error!</strong> <span id="error-text"></span>
                         </div>
 
-                    <transition name="fade" v-on:leave="recomp" v-on:enter="recomp">
+                        <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
+                            <span id="info-text">Waiting for scan to finish...</span>
+                        </div>
+
+                        <div class="alert alert-success scan-alert" id="search-success" style="display: none">
+                            <strong>Success!</strong> Scan finished.
+                        </div>
+                    </div>
+
+                    <transition name="fade"
+                                v-on:leave="transition_hook"
+                                v-on:after-leave="transition_hook"
+                                v-on:enter="transition_hook"
+                                v-on:before-enter="transition_hook"
+                                v-on:after-enter="transition_hook">
                     <div class="scan-results" id="scan-results" v-show="resultsLoaded">
                         <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
@@ -187,7 +192,7 @@
             </div>
 
             <!-- Buttons section -->
-            <div class="row" v-if="showSearch">
+            <div class="row" v-if="searchEnabled">
                 <div class="col-sm-12">
                     <div class="row">
                         <!-- Logged in vs. new visitor -->
@@ -213,7 +218,7 @@
 
         </div>
 
-        <div class="container fill-bloc-bottom-edge" v-if="showSearch">
+        <div class="container fill-bloc-bottom-edge" v-if="searchEnabled">
             <div class="row row-no-gutters">
                 <div class="col-sm-12">
                     <a id="scroll-hero" class="blocs-hero-btn-dwn" href="https://keychest.net/#"><span class="fa fa-chevron-down"></span></a>
@@ -235,7 +240,7 @@
                 jobSubmittedNow: false,
                 resultsLoaded: false,
                 results: null,
-                showSearch: true,
+                searchEnabled: true,
 
                 tlsScan: {},
                 tlsScanError: false,
@@ -271,6 +276,10 @@
                 return 0;
             },
 
+            transition_hook(el){
+                this.recomp();
+            },
+
             recomp(){
                 setTimeout(setFillScreenBlocHeight, 0);
             },
@@ -294,20 +303,32 @@
                 return '/scan?url=' + encodeURI(this.didYouMeanUrl);
             },
 
+            formBlock(block){
+                // $('#search-form').hide();
+                $("#search-form").find(":input").attr("disabled", block);
+            },
+
             errMsg(msg) {
                 $('#error-text').text(msg);
+                this.formBlock(false);
+                this.resultsLoaded = false;
 
                 $('#search-info').hide();
-                $('#scan-results').hide();
                 $('#search-error').show();
                 this.recomp();
             },
 
             searchStarted() {
-                this.showSearch = false;
-                $('#search-form').hide();
-                $('#scan-results').hide();
+                this.searchEnabled = false;
+                this.formBlock(true);
+                this.resultsLoaded = false;
+
                 $('#search-info').show();
+                try {
+                    this.recomp();
+                }catch(e){
+                    setTimeout(this.recomp, 1000);
+                }
             },
 
             onUuidProvided(uuid) {
@@ -373,6 +394,8 @@
                 } else {
                     this.resultsLoaded = true;
                 }
+
+                this.formBlock(false);
                 this.recomp();
 
                 // Process, show...
