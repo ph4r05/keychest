@@ -9,3 +9,13 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 .env
+public/css/app.css
+public/fonts/vendor
+public/images/vendor
+public/js/app.js
+public/js/manifest.js
+public/js/misc.js
+public/js/req.js
+public/js/vendor.js
+public/mix-manifest.json
+
