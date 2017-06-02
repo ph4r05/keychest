@@ -6,9 +6,9 @@
             <div class="row">
 
                 <div class="col-sm-12">
-                    <img src="/images/logo2-rgb_cropped.gif" class="img-responsive center-block" width="300">
-                    <h3 class="text-center mg-lg hero-bloc-text-sub  tc-outer-space">
-                        KeyChest - the free certificate planner
+                    <img src="./images/logo2-rgb_keychest.png" class="img-responsive center-block" width="300">
+                    <h3 class="text-center mg-lg hero-bloc-text-sub  tc-rich-electric-blue">
+                        Track and plan for 100% HTTPS uptime 
                     </h3>
                 </div>
             </div>
