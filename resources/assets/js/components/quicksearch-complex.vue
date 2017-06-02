@@ -1,7 +1,7 @@
 <template>
 
     <div class="bloc bloc-fill-screen tc-onyx bgc-white l-bloc" id="intro" style="height: 800px;"
-         v-bind:class="{'kc-search': showSearch, 'kc-loading': !showSearch && !resultsLoaded, 'kc-results': resultsLoaded}" >
+         v-bind:class="{'kc-search': searchEnabled, 'kc-loading': !searchEnabled && !resultsLoaded, 'kc-results': resultsLoaded}" >
         <div class="container">
             <div class="row">
 
@@ -187,7 +187,7 @@
             </div>
 
             <!-- Buttons section -->
-            <div class="row" v-if="showSearch">
+            <div class="row" v-if="searchEnabled">
                 <div class="col-sm-12">
                     <div class="row">
                         <!-- Logged in vs. new visitor -->
@@ -213,7 +213,7 @@
 
         </div>
 
-        <div class="container fill-bloc-bottom-edge" v-if="showSearch">
+        <div class="container fill-bloc-bottom-edge" v-if="searchEnabled">
             <div class="row row-no-gutters">
                 <div class="col-sm-12">
                     <a id="scroll-hero" class="blocs-hero-btn-dwn" href="https://keychest.net/#"><span class="fa fa-chevron-down"></span></a>
@@ -235,7 +235,7 @@
                 jobSubmittedNow: false,
                 resultsLoaded: false,
                 results: null,
-                showSearch: true,
+                searchEnabled: true,
 
                 tlsScan: {},
                 tlsScanError: false,
@@ -304,7 +304,7 @@
             },
 
             searchStarted() {
-                this.showSearch = false;
+                this.searchEnabled = false;
                 $('#search-form').hide();
                 $('#scan-results').hide();
                 $('#search-info').show();
