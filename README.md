@@ -7,11 +7,12 @@ Certificate monitor
 Edit `.env` file.
 
 ```bash
+mkdir -p storage/logs/
+chmod +w storage/logs/
+
 composer install
 npm install
 php artisan migrate --force
-mkdir -p storage/logs/
-chmod +w storage/logs/
 ```
 
 ### Resource compilation
@@ -24,18 +25,20 @@ npm run watch-poll
 
 On Vue component modification re-upload compiled resources in `public/`
 
+Do not edit CSS / JS files in `public/` directly, its generated. Changes will be lost.
+
 ### Operation
 
 Queue management - obsolete now processed by python component.
 
 ```bash
-php artisan queue:work redis --queue=scanner
+php artisan queue:work redis --queue=scanner --sleep 0.05
 ```
 
 Queued events processing
 
 ```bash
-php artisan queue:work 
+php artisan queue:work --sleep 0.05
 ```
 
 ### EC2 dep
