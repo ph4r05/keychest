@@ -520,7 +520,7 @@
                         this.form.textStatus = 'WARNING';
                     } else if (this.tlsScanLeafCert.valid_to_days < 30){
                         this.form.defcon = 3;
-                        this.form.textStatus = 'OK';
+                        this.form.textStatus = 'PLAN';
                     } else {
                         this.form.defcon = 5;
                         this.form.textStatus = 'OK';
