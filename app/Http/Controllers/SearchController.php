@@ -168,7 +168,6 @@ class SearchController extends Controller
         });
 
         // downtime computation
-        $downtimeGlobal = $this->computeDowntime($certificates);
         $downtimeMatch = $this->computeDowntime($certificates, collect($altNames));
 
         // Search based on crt.sh search.
@@ -183,7 +182,6 @@ class SearchController extends Controller
                 return $this->restizeCertificate($item);
             })->keyBy('id'),
             'downtime' => $downtimeMatch,
-            'downtimeGlobal' => $downtimeGlobal
         ];
 
         return response()->json($data, 200);
