@@ -17,6 +17,7 @@ use App\Models\HandshakeScan;
 use App\Models\ScanJob;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -166,6 +167,10 @@ class SearchController extends Controller
             return $x;
         });
 
+        // downtime computation
+        $downtimeGlobal = $this->computeDowntime($certificates);
+        $downtimeMatch = $this->computeDowntime($certificates, collect($altNames));
+
         // Search based on crt.sh search.
         $data = [
             'status' => 'success',
@@ -177,12 +182,21 @@ class SearchController extends Controller
             'certificates' => $certificates->map(function($item, $key) {
                 return $this->restizeCertificate($item);
             })->keyBy('id'),
+            'downtime' => $downtimeMatch,
+            'downtimeGlobal' => $downtimeGlobal
         ];
 
         return response()->json($data, 200);
     }
 
-    protected function computeDowntime($certificates){
+    /**
+     * Computes overall downtime without valid certificate fo the given certificates in
+     * last 2 years.
+     * @param $certificates
+     * @param $domains
+     * @return \stdClass
+     */
+    protected function computeDowntime($certificates, $domains=null){
         $newCol = collect($certificates->all());
         $sorted = $newCol->sortBy('valid_from_utc');
 
@@ -190,6 +204,7 @@ class SearchController extends Controller
         $since = $now - 3600*24*365*2;
 
         $downtime = 0;
+        $intervals = 0;
         $wrapInterval = null;
         foreach($sorted->all() as $cert){
             $curInterval = new Interval($cert->valid_from_utc, $cert->valid_to_utc);
@@ -198,17 +213,25 @@ class SearchController extends Controller
                 continue;
             }
 
+            if ($domains != null){
+                if ($this->matchingDomains($cert, $domains)->isEmpty()){
+                    continue;
+                }
+            }
+
             if ($wrapInterval == null){
                 $wrapInterval = $curInterval;
                 continue;
             }
 
             $downtime += $wrapInterval->absorb($curInterval);
+            $intervals += 1;
         }
 
         $ret = new \stdClass();
         $ret->downtime = $downtime;
-        $ret->size = $wrapInterval->size();
+        $ret->size = $wrapInterval == null ? 0 : $wrapInterval->size();
+        $ret->count = $intervals;
         return $ret;
     }
 
@@ -253,8 +276,8 @@ class SearchController extends Controller
     {
         $certificate->alt_names = json_decode($certificate->alt_names);
         $alts = collect($certificate->alt_names);
-        if (!$alts->contains($job->scan_host)){
-            $alts->push($job->scan_host);
+        if (!$alts->contains($certificate->cname)){
+            $alts->push($certificate->cname);
         }
 
         $certificate->created_at_utc = $certificate->created_at->getTimestamp();
@@ -286,6 +309,24 @@ class SearchController extends Controller
     {
         $certificate->pem = null;
         return $certificate;
+    }
+
+    /**
+     * @param $certificate
+     * @param $domains
+     * @return Collection of matching domains
+     */
+    protected function matchingDomains($certificate, $domains){
+        if (!($domains instanceof Collection)){
+            $domains = collect(array_merge($this->altNames($domains), [$domains]))->unique();
+        }
+
+        $alts = collect($certificate->alt_names);
+        if (!$alts->contains($certificate->cname)){
+            $alts->push($certificate->cname);
+        }
+
+        return $alts->intersect($domains)->values();
     }
 
     /**
