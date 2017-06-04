@@ -412,6 +412,7 @@
                 this.formBlock(true);
                 this.resultsLoaded = false;
 
+                $('#search-error').hide();
                 $('#search-info').show();
                 try {
                     this.recomp();
