@@ -366,7 +366,7 @@ class SearchController extends Controller
     protected function submitJob()
     {
         $uuid = Uuid::generate()->string;
-        $server = trim(Input::get('scan-target'));
+        $server = strtolower(trim(Input::get('scan-target')));
         Log::info(sprintf('UUID: %s, target: %s', $uuid, $server));
 
         $parsed = parse_url($server);
