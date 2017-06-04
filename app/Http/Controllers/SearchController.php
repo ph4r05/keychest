@@ -194,7 +194,7 @@ class SearchController extends Controller
         foreach($sorted->all() as $cert){
             $curInterval = new Interval($cert->valid_from_utc, $cert->valid_to_utc);
 
-            if (!$curInterval->in($since)){
+            if (!$curInterval->contains($since)){
                 continue;
             }
 

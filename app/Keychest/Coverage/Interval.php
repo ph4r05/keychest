@@ -36,7 +36,7 @@ class Interval {
      * @param $point
      * @return bool
      */
-    public function in($point){
+    public function contains($point){
         return $point >= $this->start && $point <= $this->end;
     }
 
