@@ -217,13 +217,13 @@ class SearchController extends Controller
                 }
             }
 
+            $intervals += 1;
             if ($wrapInterval == null){
                 $wrapInterval = $curInterval;
                 continue;
             }
 
             $downtime += $wrapInterval->absorb($curInterval);
-            $intervals += 1;
         }
 
         $ret = new \stdClass();
