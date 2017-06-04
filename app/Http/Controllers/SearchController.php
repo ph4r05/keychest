@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
+use App\Keychest\Coverage\Interval;
 use App\Models\Certificate;
 use App\Models\CertificateAltName;
 use App\Models\CrtShQuery;
@@ -141,7 +142,7 @@ class SearchController extends Controller
             return $val;
         });
         $crtShCertsIdAll = $this->certificateList($crtShScans);
-        $crtShCertsId = $crtShCertsIdAll->sort()->reverse()->take(30)->values();
+        $crtShCertsId = $crtShCertsIdAll->sort()->reverse()->take(100)->values();
 
         // Certificate fetch
         $certIds = collect();
@@ -179,6 +180,36 @@ class SearchController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    protected function computeDowntime($certificates){
+        $newCol = collect($certificates->all());
+        $sorted = $newCol->sortBy('valid_from_utc');
+
+        $now = time();
+        $since = $now - 3600*24*365*2;
+
+        $downtime = 0;
+        $wrapInterval = null;
+        foreach($sorted->all() as $cert){
+            $curInterval = new Interval($cert->valid_from_utc, $cert->valid_to_utc);
+
+            if (!$curInterval->in($since)){
+                continue;
+            }
+
+            if ($wrapInterval == null){
+                $wrapInterval = $curInterval;
+                continue;
+            }
+
+            $downtime += $wrapInterval->absorb($curInterval);
+        }
+
+        $ret = new \stdClass();
+        $ret->downtime = $downtime;
+        $ret->size = $wrapInterval->size();
+        return $ret;
     }
 
     /**
