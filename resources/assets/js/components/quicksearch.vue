@@ -91,7 +91,7 @@
                                 <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<28">
                                     The validity is less than 28 days. Plan renewal now! Create an account or ask for help.</td>
                                 <td colspan="3" v-else-if="tlsScan.hsts_present">
-                                    There is nothing to do. Well done! HSTS is enabled, start tracking to avoid unavailability.</td>
+                                    There is nothing to do. Well done! Our compliments for using HSTS. Start tracking to avoid unavailability.</td>
                                 <td colspan="3" v-else>
                                     There is nothing to do. Well done! Create an account to stay on top of your certs.</td>
                             </tr>
