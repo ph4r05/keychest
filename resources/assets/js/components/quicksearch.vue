@@ -120,12 +120,7 @@
                     <!-- End of brief stats -->
 
                     <!-- Expert stats - will be shown later, on icon click -->
-                    <transition name="fade"
-                                v-on:leave="transition_hook"
-                                v-on:after-leave="transition_hook"
-                                v-on:enter="transition_hook"
-                                v-on:before-enter="transition_hook"
-                                v-on:after-enter="transition_hook">
+                    <transition name="fade" v-on:after-leave="transition_hook">
                     <div class="scan-results" id="scan-results" v-show="resultsLoaded && showExpertStats">
                         <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
