@@ -45,7 +45,7 @@ class Interval {
      * @param Interval $interval
      * @return bool
      */
-    public function overlap($interval){
+    public function hasOverlap($interval){
         return !(
             ($this->start <= $interval->start && $this->end <= $interval->start) ||
             ($this->start >= $interval->end   && $this->end >= $interval->end)
@@ -57,8 +57,8 @@ class Interval {
      * @param Interval $interval
      * @return int
      */
-    public function gap($interval){
-        if ($this->overlap($interval)){
+    public function hasGap($interval){
+        if ($this->hasOverlap($interval)){
             return 0;
         }
 
@@ -70,15 +70,32 @@ class Interval {
     }
 
     /**
+     * Returns gap between two intervals, null if there is an overlap
+     * @param Interval $interval
+     * @return Interval|null
+     */
+    public function gap($interval){
+        if ($this->hasOverlap($interval)){
+            return null;
+        }
+
+        if ($interval->getEnd() <= $this->getStart()){
+            return new Interval($interval->getEnd(), $this->getStart());
+        } else {
+            return new Interval($this->getEnd(), $interval->getStart());
+        }
+    }
+
+    /**
      * Absorbs interval to the current one so the resulting interval covers both.
      *
      * @param Interval $interval
      * @param $alsoNonOverlaping
-     * @return integer gap when absorbing non-overlaping intervals (gaps)
+     * @return Interval|null gap interval when absorbing non-overlaping intervals, or null on overlap
      * @throws \Exception when absorbing non-overlaping intervals
      */
     public function absorb($interval, $alsoNonOverlaping=true){
-        if (!$alsoNonOverlaping && $this->overlap($interval)){
+        if (!$alsoNonOverlaping && $this->hasOverlap($interval)){
             throw new \Exception("Absorbing non-overlaping intervals");
         }
 

@@ -203,14 +203,17 @@ class SearchController extends Controller
 
         $downtime = 0;
         $intervals = 0;
+        $gaps = [];
         $wrapInterval = null;
         foreach($sorted->all() as $cert){
             $curInterval = new Interval($cert->valid_from_utc, $cert->valid_to_utc);
 
+            // Validity filter, only recent certificates
             if (!$curInterval->contains($since) && $cert->valid_from_utc < $since){
                 continue;
             }
 
+            // Domain name filter
             if ($domains != null){
                 if ($this->matchingDomains($cert, $domains)->isEmpty()){
                     continue;
@@ -223,13 +226,18 @@ class SearchController extends Controller
                 continue;
             }
 
-            $downtime += $wrapInterval->absorb($curInterval);
+            $gapInterval = $wrapInterval->absorb($curInterval);
+            if ($gapInterval != null) {
+                $downtime += $gapInterval->size();
+                $gaps[] = ['from'=>$gapInterval->getStart(), 'to'=>$gapInterval->getEnd()];
+            }
         }
 
         $ret = new \stdClass();
         $ret->downtime = $downtime;
         $ret->size = $wrapInterval == null ? 0 : $wrapInterval->size();
         $ret->count = $intervals;
+        $ret->gaps = $gaps;
         return $ret;
     }
 
@@ -311,7 +319,8 @@ class SearchController extends Controller
 
     /**
      * @param $certificate
-     * @param $domains
+     * @param string|array|Collection $domains list of domains to intersect with.
+     *      If not instance of Collection, wildcard names are added.
      * @return Collection of matching domains
      */
     protected function matchingDomains($certificate, $domains){
