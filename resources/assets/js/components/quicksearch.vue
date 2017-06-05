@@ -41,7 +41,7 @@
                     <div class="alert alert-success scan-alert" id="search-success" style="display: none">
                         <strong>Success!</strong> Scan finished.
                     </div>
-                    
+
                     <transition name="fade" v-on:after-leave="transition_hook">
 
                     <!-- brief stats -->
@@ -72,8 +72,8 @@
                                             danger: form.defcon==1 }"
                             >
                                 <th>{{ curJob.scan_host }}{{ curJob.portString }}</th>
-                                <td v-if="tlsScanLeafCert.is_expired">expired {{ (-1)*tlsScanLeafCert.valid_to_days }} days</td>
-                                <td v-else>expires in {{ tlsScanLeafCert.valid_to_days }} days</td>
+                                <td v-if="tlsScanLeafCert.is_expired">expired {{ Math.round((-1)*tlsScanLeafCert.valid_to_days) }} days</td>
+                                <td v-else>expires in {{ Math.round(tlsScanLeafCert.valid_to_days) }} days</td>
                                 <td> {{ form.textStatus }} </td>
                             </tr>
 
