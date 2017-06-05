@@ -230,6 +230,11 @@ class SearchController extends Controller
         $gaps = [];
         $wrapInterval = null;
         foreach($sorted->all() as $cert){
+            // Cert type filter - no CA certs
+            if ($cert->is_ca || $cert->is_precert || $cert->is_precert_ca){
+                continue;
+            }
+
             $curInterval = new Interval($cert->valid_from_utc, $cert->valid_to_utc);
 
             // Validity filter, only recent certificates
@@ -348,7 +353,7 @@ class SearchController extends Controller
      */
     protected function findTlsLeafCertificate($certificates){
         foreach($certificates as $cert){
-            if ($cert->is_ca){
+            if ($cert->is_ca || $cert->is_precert || $cert->is_precert_ca){
                 continue;
             }
 
