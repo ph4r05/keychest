@@ -8,7 +8,7 @@
                 <div class="col-sm-12">
                     <img src="/images/logo2-rgb_keychest.png" class="img-responsive center-block" width="300">
                     <h3 class="text-center mg-lg hero-bloc-text-sub  tc-rich-electric-blue">
-                        Track and plan for 100% HTTPS uptime 
+                        Track and plan for 100% HTTPS uptime
                     </h3>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                                 <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<30">
                                     The validity is less than 30 days. Plan renewal now! Create an account or ask for help.</td>
                                 <td colspan="3" v-else>
-                                    There is nothing to do. Well done! Create an account to say in green.</td>
+                                    There is nothing to do. Well done! Create an account to stay on top of your certs.</td>
                             </tr>
 
                             </tbody>

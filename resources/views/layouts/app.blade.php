@@ -62,7 +62,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        <img src="/images/logo2-rgb_keychest.png" height="30" title="{{ config('app.name', 'Laravel') }}">
+                        <img src="/images/logo2-rgb_keychest.png" height="30" title="{{ config('app.name', 'Keychest') }}">
                     </a>
                 </div>
 
@@ -79,7 +79,9 @@
 
                         <!-- Authentication Links -->
                         @if (Auth::guest())
-                            <li><a href="{{ route('login') }}">Login</a></li>
+                            <li><a href="{{ route('/') }}">Early BETA</a></li>
+
+                            {{--<li><a href="{{ route('login') }}">Login</a></li>--}}
                             <li><a href="{{ route('register') }}">Create account</a></li>
                         @else
                             <li class="dropdown">
