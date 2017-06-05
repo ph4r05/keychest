@@ -169,6 +169,12 @@ class SearchController extends Controller
 
         // downtime computation
         $downtimeMatch = $this->computeDowntime($certificates, collect($altNames));
+        $downtimeTls = null;
+
+        $tlsCert = $this->findTlsLeafCertificate($certificates);
+        if ($tlsCert != null){
+            $downtimeTls = $this->computeDowntime($certificates, null, $tlsCert);
+        }
 
         // Search based on crt.sh search.
         $data = [
@@ -182,6 +188,7 @@ class SearchController extends Controller
                 return $this->restizeCertificate($item);
             })->keyBy('id'),
             'downtime' => $downtimeMatch,
+            'downtimeTls' => $downtimeTls,
         ];
 
         return response()->json($data, 200);
@@ -190,13 +197,30 @@ class SearchController extends Controller
     /**
      * Computes overall downtime without valid certificate fo the given certificates in
      * last 2 years.
-     * @param $certificates
-     * @param $domains
+     * @param array|Collection $certificates
+     * @param array|Collection|null $domains
+     * @param \stdClass|null $tlsCert
      * @return \stdClass
      */
-    protected function computeDowntime($certificates, $domains=null){
+    protected function computeDowntime($certificates, $domains=null, $tlsCert=null){
         $newCol = collect($certificates->all());
         $sorted = $newCol->sortBy('valid_from_utc');
+
+        // Collection conversion
+        if ($domains != null && !($domains instanceof Collection)){
+            $domains = collect($domains);
+        }
+
+        // Tls leaf cert filter - domain filter build
+        if ($tlsCert != null){
+            if ($domains == null){
+                $domains = collect();
+            }
+
+            $domains = $domains->merge($tlsCert->alt_names);
+            $domains = $domains->push($tlsCert->cname);
+            $domains = $domains->unique();
+        }
 
         $now = time();
         $since = $now - 3600*24*365*2;
@@ -318,14 +342,32 @@ class SearchController extends Controller
     }
 
     /**
+     * Returns TLS leaf certificate - found during scan.
+     * @param Collection $certificates
+     * @return \stdClass|null
+     */
+    protected function findTlsLeafCertificate($certificates){
+        foreach($certificates as $cert){
+            if ($cert->is_ca){
+                continue;
+            }
+
+            if ($cert->found_tls_scan){
+                return $cert;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param $certificate
-     * @param string|array|Collection $domains list of domains to intersect with.
-     *      If not instance of Collection, wildcard names are added.
+     * @param array|Collection $domains list of domains to intersect with.
      * @return Collection of matching domains
      */
     protected function matchingDomains($certificate, $domains){
         if (!($domains instanceof Collection)){
-            $domains = collect(array_merge($this->altNames($domains), [$domains]))->unique();
+            $domains = collect($domains)->unique();
         }
 
         $alts = collect($certificate->alt_names);
