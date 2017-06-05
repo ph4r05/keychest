@@ -22,32 +22,27 @@
                                        placeholder="Type your domain name, e.g., enigmabridge.com"
                                        name="scan-target" id="scan-target">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default btn" type="submit">
+                                    <button class="btn btn-default" type="submit">
                                         <span class="glyphicon glyphicon-search"></span>
                                     </button>
                                 </span>
                             </div>
                         </form>
-
-                        <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
-                            <strong>Error!</strong> <span id="error-text"></span>
-                        </div>
-
-                        <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-                            <span id="info-text">Waiting for scan to finish...</span>
-                        </div>
-
-                        <div class="alert alert-success scan-alert" id="search-success" style="display: none">
-                            <strong>Success!</strong> Scan finished.
-                        </div>
                     </div>
 
-                    <transition name="fade"
-                                v-on:leave="transition_hook"
-                                v-on:after-leave="transition_hook"
-                                v-on:enter="transition_hook"
-                                v-on:before-enter="transition_hook"
-                                v-on:after-enter="transition_hook">
+                    <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
+                        <strong>Error!</strong> <span id="error-text"></span>
+                    </div>
+
+                    <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
+                        <span id="info-text">Waiting for scan to finish...</span>
+                    </div>
+
+                    <div class="alert alert-success scan-alert" id="search-success" style="display: none">
+                        <strong>Success!</strong> Scan finished.
+                    </div>
+                    
+                    <transition name="fade" v-on:after-leave="transition_hook">
 
                     <!-- brief stats -->
                     <div class="scan-results" id="scan-results-brief" v-show="resultsLoaded && !showExpertStats">
