@@ -88,8 +88,8 @@
                                     Certificate expired. Your server shows as "Not Secure". Create an account to track or ask for help.</td>
                                 <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<2">
                                     The validity is less than 2 days. Renew now to avoid downtime! Create an account to track or ask for help.</td>
-                                <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<30">
-                                    The validity is less than 30 days. Plan renewal now! Create an account or ask for help.</td>
+                                <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<28">
+                                    The validity is less than 28 days. Plan renewal now! Create an account or ask for help.</td>
                                 <td colspan="3" v-else>
                                     There is nothing to do. Well done! Create an account to stay on top of your certs.</td>
                             </tr>
@@ -117,7 +117,7 @@
                                 </p>
                         </div>
 
-                        <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && tlsScanLeafCert.is_le
+                        <div class="alert alert-warning" v-if="false && !tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && tlsScanLeafCert.is_le
                                     && tlsScanLeafCert.valid_to_days<30.0 && tlsScanLeafCert.valid_to_days > 0">
                             <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
                                 the validity is less than 30 days.</p>
@@ -158,8 +158,8 @@
                                     </tr>
                                     <tr v-if="tlsScanLeafCert !== null"
                                         v-bind:class="{
-                                            success: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days >= 30,
-                                            warning: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days < 30,
+                                            success: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days >= 28,
+                                            warning: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days < 28,
                                             danger: tlsScanLeafCert.is_expired }">
                                         <th scope="row">Validity</th>
                                         <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
@@ -529,7 +529,7 @@
                     if (this.tlsScanLeafCert.valid_to_days < 2){
                         this.form.defcon = 2;
                         this.form.textStatus = 'WARNING';
-                    } else if (this.tlsScanLeafCert.valid_to_days < 30){
+                    } else if (this.tlsScanLeafCert.valid_to_days < 28){
                         this.form.defcon = 3;
                         this.form.textStatus = 'PLAN';
                     } else {
