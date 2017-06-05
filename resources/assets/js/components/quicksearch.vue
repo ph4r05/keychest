@@ -108,10 +108,13 @@
                         </div>
 
                         <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && downtimeWarning">
-                            <p><strong>Warning!</strong> In the last 2 years the the server had no valid certificate
-                                for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
+                            <p><strong>Warning!</strong>
+                                We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
+                                uptime. You were "not secure" for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
                                 hours<span v-if="results.downtimeTls.downtime > 3600*24*3">
-                                     ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }} days)</span>. </p>
+                                     ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }} days)</span>.
+                                Start tracking now.
+                                </p>
                         </div>
 
                         <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && tlsScanLeafCert.is_le
