@@ -107,6 +107,13 @@
                             <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
                         </div>
 
+                        <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && downtimeWarning">
+                            <p><strong>Warning!</strong> In the last 2 years the the server had no valid certificate
+                                for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
+                                hours<span v-if="results.downtimeTls.downtime > 3600*24*3">
+                                     ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }} days)</span>. </p>
+                        </div>
+
                         <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && tlsScanLeafCert.is_le
                                     && tlsScanLeafCert.valid_to_days<30.0 && tlsScanLeafCert.valid_to_days > 0">
                             <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
@@ -325,6 +332,7 @@
                 tlsScanError: false,
                 tlsScanLeafCert: null,
                 didYouMeanUrl: null,
+                downtimeWarning: false,
 
                 ctScan: {},
                 ctScanError: false,
@@ -499,6 +507,15 @@
                 this.curJob.portString = this.curJob.port === 443 ? '' : ':' + this.curJob.port;
                 if (!this.tlsScanLeafCert || !this.tlsScan){
                     return;
+                }
+
+                // Downtime analysis
+                if (this.results.downtimeTls){
+                    this.downtimeWarning = this.results.downtimeTls.count > 0
+                        && this.results.downtimeTls.downtime > 0
+                        && this.results.downtimeTls.gaps
+                        && this.results.downtimeTls.gaps.length > 0
+                        && this.results.downtimeTls.size > 0;
                 }
 
                 // Results validity
