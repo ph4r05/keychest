@@ -8,8 +8,8 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-window.Req = require('./req.js');
 window.URL = require('url-parse');
+window.Req = require('./req.js');
 
 require('jquery-ui/ui/effects/effect-shake');
 

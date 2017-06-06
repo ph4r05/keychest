@@ -98,6 +98,67 @@ function defval(val, def){
     return val ? val : def;
 }
 
+/**
+ * Returns true if is undefined / empty
+ * @param x
+ * @returns {boolean}
+ */
+function isEmpty(x){
+    return _.isUndefined(x) || _.isEmpty(x);
+}
+
+/**
+ * Simple scheme / port filler one form another, http, https supported only.
+ * @param scheme
+ * @param port
+ * @returns {*}
+ */
+function autoFillSchemePort(scheme, port){
+    if (!isEmpty(scheme) && !isEmpty(port)){
+        return [scheme, port];
+    }
+
+    if (isEmpty(scheme) && isEmpty(port)){
+        return ['https', 443];
+    }
+
+    if (isEmpty(scheme)){
+        if (port === 80){
+            return ['http', 80];
+        } else if (port === 443){
+            return ['https', 443];
+        }
+
+    } else {
+        if (scheme === 'http'){
+            return ['http', 80];
+        } else if (scheme === 'https'){
+            return ['https', 443];
+        }
+    }
+
+    return [scheme, port];
+}
+
+/**
+ * Compares URL in the context of verification.
+ * @param schemeA
+ * @param hostA
+ * @param portA
+ * @param schemeB
+ * @param hostB
+ * @param portB
+ */
+function isSameUrl(schemeA, hostA, portA, schemeB, hostB, portB){
+    if (hostA !== hostB){
+        return false;
+    }
+
+    const a = autoFillSchemePort(schemeA, portA);
+    const b = autoFillSchemePort(schemeB, portB);
+    return _.isEqual(a, b);
+}
+
 // Export
 module.exports = {
     bodyProgress: bodyProgress,
@@ -105,7 +166,9 @@ module.exports = {
     submitJob: submitJob,
     getJobState: getJobState,
     getJobResult: getJobResult,
-    defval: defval
+    defval: defval,
+    isEmpty: isEmpty,
+    isSameUrl: isSameUrl
 };
 
 
