@@ -19,7 +19,6 @@ require('jquery-ui/ui/effects/effect-shake');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
 Vue.component('quicksearch', require('./components/quicksearch.vue'));
 Vue.component('feedback_form', require('./components/feedback_form.vue'));
 
