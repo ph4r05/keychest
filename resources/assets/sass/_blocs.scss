@@ -163,7 +163,9 @@ a,button{outline: none!important;} /* Prevent ugly blue glow on chrome and safar
 
 /* Bloc text custom styling */
 
-#intro h3{
+#intro h3,
+#intro-placeholder h3
+{
   font-size: 24px;
 }
 #learn p{

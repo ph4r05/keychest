@@ -377,6 +377,9 @@
             },
 
             hookup(){
+                Req.bodyProgress(false);
+                $('#intro-placeholder').hide();
+
                 let uuid = Req.findGetParameter('uuid');
                 let url = Req.findGetParameter('url');
                 let new_job = Req.findGetParameter('new');
