@@ -109,7 +109,7 @@
                             <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
                         </div>
 
-                        <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && downtimeWarning">
+                        <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && downtimeWarning && results.downtimeTls.downtime > 60">
                             <p><strong>Warning!</strong>
                                 We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
                                 uptime. You were "not secure" for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
