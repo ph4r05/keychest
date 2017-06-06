@@ -101,12 +101,13 @@
 
                         <!-- Aux errors -->
                         <div class="alert alert-danger" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && !tlsScan.valid_trusted && !tlsScan.valid_path">
-                            <p><strong>Error: </strong>The certificate is not trusted</p>
+                            <p><strong>Error: </strong>The certificate is not trusted.
+                            <span v-if="tlsScan.certs_ids.length == 1">There is only leaf certificate in the chain.</span></p>
                         </div>
 
                         <div class="alert alert-danger" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && !tlsScan.valid_trusted && tlsScan.valid_path
                                 && !tlsScan.valid_hostname">
-                            <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
+                            <p><strong>Error: </strong>The certificate is valid but the domain does not match.</p>
                         </div>
 
                         <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && downtimeWarning && results.downtimeTls.downtime > 60">
