@@ -100,17 +100,21 @@
                         </table>
 
                         <!-- Aux errors -->
-                        <div class="alert alert-danger" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && !tlsScan.valid_trusted && !tlsScan.valid_path">
+                        <div class="alert alert-danger" v-if="errTrusted">
                             <p><strong>Error: </strong>The certificate is not trusted.
-                            <span v-if="tlsScan.certs_ids.length == 1">There is only leaf certificate in the chain.</span></p>
+                            <span v-if="tlsScan.certs_ids.length == 1">There is only a leaf certificate in the chain.</span></p>
                         </div>
 
-                        <div class="alert alert-danger" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && !tlsScan.valid_trusted && tlsScan.valid_path
-                                && !tlsScan.valid_hostname">
+                        <div class="alert alert-danger" v-if="errHostname">
                             <p><strong>Error: </strong>The certificate is valid but the domain does not match.</p>
+                            <div v-if="neighbourhood.length > 0"> Certificate domains:
+                                <ul class="domain-neighbours">
+                                    <li v-for="domain in neighbourhood">{{ domain }}</li>
+                                </ul>
+                            </div>
                         </div>
 
-                        <div class="alert alert-warning" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && downtimeWarning && results.downtimeTls.downtime > 60">
+                        <div class="alert alert-warning" v-if="downtimeWarning && results.downtimeTls.downtime > 60">
                             <p><strong>Warning!</strong>
                                 We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
                                 uptime. You were "not secure" for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
@@ -128,7 +132,7 @@
                             <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
                         </div>
 
-                        <div class="alert alert-info" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && neighbourhood.length > 3">
+                        <div class="alert alert-info" v-if="tlsScanLeafCert && !errHostname && neighbourhood.length > 2">
                             <p>Here are domains from your neighbourhood:</p>
                             <ul class="domain-neighbours">
                                 <li v-for="domain in neighbourhood">{{ domain }}</li>
@@ -347,6 +351,8 @@
                 didYouMeanUrl: null,
                 downtimeWarning: false,
                 neighbourhood: [],
+                errTrusted: false,
+                errHostname: false,
 
                 ctScan: {},
                 ctScanError: false,
@@ -530,7 +536,8 @@
 
                 // Downtime analysis
                 if (this.results.downtimeTls){
-                    this.downtimeWarning = this.results.downtimeTls.count > 0
+                    this.downtimeWarning = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan && this.tlsScanLeafCert
+                        && this.results.downtimeTls.count > 0
                         && this.results.downtimeTls.downtime > 0
                         && this.results.downtimeTls.gaps
                         && this.results.downtimeTls.gaps.length > 0
@@ -553,6 +560,12 @@
                         this.form.textStatus = 'OK';
                     }
                 }
+
+                this.errTrusted = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan
+                    && !this.tlsScan.valid_trusted && !this.tlsScan.valid_path;
+
+                this.errHostname = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan
+                    && !this.tlsScan.valid_trusted && this.tlsScan.valid_path && !this.tlsScan.valid_hostname;
 
                 // Neighbourhood
                 if (this.tlsScanLeafCert){
@@ -630,6 +643,9 @@
                 this.tlsScanError = false;
                 this.tlsScanLeafCert = null;
                 this.didYouMeanUrl = null;
+                this.neighbourhood = [];
+                this.errTrusted = false;
+                this.errHostname = false;
 
                 this.ctScan = {};
                 this.ctScanError = false;
