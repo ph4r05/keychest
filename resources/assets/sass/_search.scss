@@ -78,3 +78,20 @@ body.loading .modal {
   margin-right: 0;
 }
 
+.domain-neighbours {
+  display: inline;
+  list-style: none;
+  padding-left: 0;
+}
+
+.domain-neighbours li {
+  display: inline;
+}
+
+.domain-neighbours li:after {
+  content: ", ";
+}
+
+.domain-neighbours li:last-child:after {
+  content: "";
+}

@@ -127,6 +127,13 @@
                             <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
                         </div>
 
+                        <div class="alert alert-info" v-if="!tlsScanError && tlsScanLeafCert && tlsScan && neighbourhood.length > 3">
+                            <p>Here are domains from your neighbourhood:</p>
+                            <ul class="domain-neighbours">
+                                <li v-for="domain in neighbourhood">{{ domain }}</li>
+                            </ul>
+                        </div>
+
                     </div>
                     </transition>
                     <!-- End of brief stats -->
