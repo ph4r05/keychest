@@ -30,7 +30,6 @@ function bodyProgress(started){
     } else {
         htmlBody.removeClass("loading");
     }
-    console.log('Progress: ' + started);
     return true;
 }
 
