@@ -22,9 +22,9 @@ mix.scripts([
 // var bootstrap_sass = './node_modules/bootstrap-sass/';
 // mix.copy(bootstrap_sass+"assets/fonts/bootstrap",'public/fonts');
 
-if (mix.config.inProduction) {
-    mix.version();
-}
+// if (mix.config.inProduction) {
+//     mix.version();
+// }
 
 mix.webpackConfig.watchOptions = mix.webpackConfig.watchOptions || {};
 mix.webpackConfig.watchOptions.poll = 500;
