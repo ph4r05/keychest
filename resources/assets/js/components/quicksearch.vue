@@ -290,26 +290,21 @@
             </div>
 
             <!-- Buttons section -->
-            <div class="row" v-if="searchEnabled">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <!-- Logged in vs. new visitor -->
-                        <div v-bind:class="{
-                                    'col-sm-6': Laravel.authGuest,
-                                    'col-sm-2': !Laravel.authGuest,
-                                    'col-sm-offset-5': !Laravel.authGuest,
-                                    'text-center': !Laravel.authGuest}">
-                            <a class="btn btn-lg btn-rich-electric-blue" v-bind:class="{'pull-right' : Laravel.authGuest}"
-                               id="btn-check-expire" v-on:click.stop="submitForm()">
-                                Check expiry</a>
-                        </div>
+            <div class="row search-buttons" v-if="searchEnabled">
+                <!-- Logged in vs. new visitor -->
+                <div v-bind:class="{
+                            'col-sm-6': Laravel.authGuest,
+                            'col-sm-2': !Laravel.authGuest,
+                            'col-sm-offset-5': !Laravel.authGuest,
+                            'text-center': !Laravel.authGuest}">
+                    <a class="btn btn-lg btn-rich-electric-blue" v-bind:class="{'pull-right' : Laravel.authGuest}"
+                       id="btn-check-expire" v-on:click.stop="submitForm()">
+                        Check expiry</a>
+                </div>
 
-                        <div class="col-sm-6" v-if="Laravel.authGuest">
-                            <a class="btn btn-lg pull-left btn-rich-electric-blue" v-bind:href="Laravel.urlRegister">
-                                Start tracking</a>
-                        </div>
-
-                    </div>
+                <div class="col-sm-6" v-if="Laravel.authGuest">
+                    <a class="btn btn-lg pull-left btn-rich-electric-blue" v-bind:href="Laravel.urlRegister">
+                        Start tracking</a>
                 </div>
             </div>
             <!-- End of buttons section -->
