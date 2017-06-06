@@ -391,6 +391,8 @@
                 if (uuid){
                     this.jobSubmittedNow = new_job;
                     this.onUuidProvided(uuid);
+                } else if (url){
+                    setTimeout(this.submitForm, 550); // auto submit after page load
                 }
             },
 
