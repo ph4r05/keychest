@@ -392,15 +392,25 @@
             },
 
             hookup(){
+                // Hide loading placeholders
                 Req.bodyProgress(false);
                 $('#intro-placeholder').hide();
 
                 let uuid = Req.findGetParameter('uuid');
                 let url = Req.findGetParameter('url');
                 let new_job = Req.findGetParameter('new');
+                let scanTarget = $('#scan-target');
+
+                // lowercase input
+                $.fn.lowercaseFilter = function() {
+                    $(this).css('text-transform', 'lowercase').bind('blur change', function(){
+                        this.value = this.value.toLowerCase();
+                    });
+                };
+                scanTarget.lowercaseFilter();
 
                 if (url){
-                    $('#scan-target').val(url);
+                    scanTarget.val(url);
                 }
 
                 if (uuid){
