@@ -66,6 +66,32 @@ class SearchController extends Controller
     }
 
     /**
+     * Sends email
+     */
+    public function voteFeedback(){
+        $email = trim(Input::get('email'));
+        $message = trim(Input::get('message'));
+        if(empty($message)) {
+            return false;
+        }
+
+        $to = 'keychest@enigmabridge.com'; // Email submissions are sent to this email
+
+        // Create email
+        $email_subject = "Message from keychest.net.";
+        $email_body = "You have received a new message. \n\n".
+            "Email: $email \nMessage4: $message \n";
+        $headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
+        $headers .= "From: register@keychest.net\n";
+        if (!empty($email)) {
+            $headers .= "Reply-To: $email";
+        }
+
+        mail($to,$email_subject,$email_body,$headers); // Post message
+        return redirect('')->with('info', 'Mail sent');
+    }
+
+    /**
      * Rest endpoint for job submit
      * @return \Illuminate\Http\JsonResponse
      */

@@ -175,17 +175,21 @@
                 <div class="col-sm-12">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form id="form_6" novalidate="" success-msg="Your message has been sent." fail-msg="Bugger, something broke down. Please email us directly at keychest@enigmabridge.com">
+                            <form id="form_6" novalidate="" method="POST" action="{{ route('feedback') }}"
+                                  success-msg="Your message has been sent."
+                                  fail-msg="Bugger, something broke down. Please email us directly at keychest@enigmabridge.com">
+                                {{ csrf_field() }}
+
                                 <div class="form-group">
                                     <label>
                                         Email (if you want)
                                     </label>
-                                    <input id="email" class="form-control" type="email">
+                                    <input id="email" class="form-control" type="email" name="email">
                                     <div class="help-block"></div></div>
                                 <div class="form-group">
                                     <label>
                                         I would find quite useful:
-                                    </label><textarea id="message" class="form-control" rows="4" cols="50" required=""></textarea>
+                                    </label><textarea id="message" class="form-control" rows="4" cols="50" required="" name="message"></textarea>
                                     <div class="help-block"></div></div>
                                 <button class="bloc-button btn btn-lg btn-block btn-rich-electric-blue" type="submit">
                                     Add my vote for these features
@@ -199,71 +203,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- bloc-3 END -->
-
-    <!-- Bloc Group -->
-    <div class="bloc-group">
-
-        <!-- register -->
-        <div class="bloc bloc-tile-2 tc-onyx bgc-white" id="register">
-            <div class="container bloc-lg">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form id="form_4" novalidate="" success-msg="Your message has been sent." fail-msg="Sorry it seems that our mail server is not responding. Can you please email us directly at keychest@enigmabridge.com? Sorry for the inconvenience!">
-                            <div class="form-group">
-                                <label>
-                                    Name
-                                </label>
-                                <input id="name" class="form-control">
-                                <div class="help-block"></div></div>
-                            <div class="form-group">
-                                <label>
-                                    Email
-                                </label>
-                                <input id="email4" class="form-control" type="email" required="">
-                                <div class="help-block"></div></div>
-                            <div class="form-group">
-                                <label>
-                                    Message
-                                </label><textarea id="message4" class="form-control" rows="4" cols="50"></textarea>
-                                <div class="help-block"></div></div>
-                            <button class="bloc-button btn btn-lg btn-block btn-rich-electric-blue" type="submit">
-                                Submit
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- register END -->
-
-        <!-- bloc-5 -->
-        <div class="bloc bloc-tile-2 bgc-white tc-onyx l-bloc" id="bloc-5">
-            <div class="container bloc-lg">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h3 class="mg-md tc-rich-electric-blue">
-                            <strong>Register to keep in touch</strong>
-                        </h3>
-                        <p>
-                            We would very much love to hear what you think, what kind of assistance would be useful for you.&nbsp;<br> <br>You can also get in touch directly via email at keychest@enigmabridge.com or via Twitter -&nbsp;<a class="ltc-rich-electric-blue" href="https://twitter.com/enigmabridge">@enigmabridge</a>. We accept DMs from anyone so you don’t have to follow us. <br> <br> <br> <br><a class="ltc-rich-electric-blue" href="https://enigmabridge.com/" target="_blank">Enigma Bridge, 20 Bridge St, Cambridge, CB2 1UF</a><br>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- bloc-5 END -->
-    </div>
-    <!-- Bloc Group END -->
-
-    <!-- ScrollToTop Button -->
-    <a class="bloc-button btn btn-d scrollToTop" onclick="scrollToTarget('1')"><span class="fa fa-chevron-up"></span></a>
-    <!-- ScrollToTop Button END-->
-
-
-    <!-- Footer - bloc-7 -->
-    <div class="bloc bgc-white tc-outer-space" id="bloc-7">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -273,6 +212,17 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- bloc-3 END -->
+
+    <!-- ScrollToTop Button -->
+    <a class="bloc-button btn btn-d scrollToTop" onclick="scrollToTarget('1')"><span class="fa fa-chevron-up"></span></a>
+    <!-- ScrollToTop Button END-->
+
+
+    <!-- Footer - bloc-7 -->
+    <div class="bloc bgc-white tc-outer-space" id="bloc-7">
+
     </div>
     <!-- Footer - bloc-7 END -->
 

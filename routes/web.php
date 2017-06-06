@@ -13,13 +13,14 @@
 
 Route::get('/', 'SearchController@show');
 Route::post('/', 'SearchController@search');
+Route::post('feedback', 'SearchController@voteFeedback')->name('feedback');
 
-Route::get('/scan/', 'SearchController@show');
-Route::post('/scan/', 'SearchController@search');
+Route::get('scan', 'SearchController@show');
+Route::post('scan', 'SearchController@search');
 
-Route::get('/submitJob', 'SearchController@restSubmitJob');
-Route::get('/jobState', 'SearchController@restGetJobState');
-Route::get('/jobResult', 'SearchController@restJobResults');
+Route::get('submitJob', 'SearchController@restSubmitJob');
+Route::get('jobState', 'SearchController@restGetJobState');
+Route::get('jobResult', 'SearchController@restJobResults');
 
 //Route::get('/w', function () {
 //    return view('welcome');
@@ -29,4 +30,4 @@ Route::get('/jobResult', 'SearchController@restJobResults');
 Route::auth();
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('home', 'HomeController@index')->name('home');
