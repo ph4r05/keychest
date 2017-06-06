@@ -530,8 +530,7 @@ class SearchController extends Controller
             return false;
         }
 
-//        $to = 'keychest@enigmabridge.com'; // Email submissions are sent to this email
-        $to = 'ph4r05@gmail.com'; // Email submissions are sent to this email
+        $to = 'keychest@enigmabridge.com'; // Email submissions are sent to this email
 
         // Create email
         $email_subject = "Message from keychest.net.";

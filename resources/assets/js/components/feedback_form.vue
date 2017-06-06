@@ -7,26 +7,27 @@
             </label>
             <input id="feedback_email" class="form-control" type="email" name="email">
             <div class="help-block"></div></div>
+
         <div class="form-group">
             <label for="feedback_message">
                 I would find quite useful:
             </label><textarea id="feedback_message" class="form-control" rows="4" cols="50" required="" name="message"></textarea>
             <div class="help-block"></div></div>
 
-        <transition name="fade">
-            <div class="alert alert-info alert-waiting scan-alert" v-if="sentState == 2">
-                <span id="info-text">Sending...</span>
-            </div>
-        </transition>
+        <div class="alert alert-info alert-waiting scan-alert" v-if="sentState == 2">
+            <span id="info-text">Sending...</span>
+        </div>
 
         <transition name="fade">
-            <div class="alert alert-danger" v-if="sentState == -1">
+            <div class="alert alert-danger alert-dismissable" v-if="sentState == -1">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Bugger,</strong> something broke down. Please email us directly at <em>keychest@enigmabridge.com</em>.
             </div>
         </transition>
 
         <transition name="fade">
-            <div class="alert alert-success" v-if="sentState == 1">
+            <div class="alert alert-success alert-dismissable" v-if="sentState == 1">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Thanks!</strong> Your message has been sent.
             </div>
         </transition>
@@ -62,6 +63,7 @@
             },
 
             submitForm(){
+                this.sentState = 0;
                 const $form = $('#feedback_form');
                 const $email = $('#feedback_email');
                 const $message = $('#feedback_message');
