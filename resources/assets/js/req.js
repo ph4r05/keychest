@@ -159,6 +159,48 @@ function isSameUrl(schemeA, hostA, portA, schemeB, hostB, portB){
     return _.isEqual(a, b);
 }
 
+/**
+ * Removes wildcard if domain starts on wildcard
+ * @param domain
+ */
+function removeWildcard(domain){
+    if (isEmpty(domain)){
+        return domain;
+    }
+    if (_.startsWith(domain, '*.')){
+        return domain.substring(2);
+    }
+
+    return domain;
+}
+
+/**
+ * Removes cloudflaressl domain, removes wildcard domains, sort domains.
+ * @param domainList
+ */
+function neighbourDomainList(domainList){
+    let domains = [];
+    if (isEmpty(domainList)){
+        return domains;
+    }
+
+    for(const domain of domainList){
+        let pureDomain = removeWildcard(domain);
+        if (_.endsWith(pureDomain, 'cloudflaressl.com')){
+            continue;
+        }
+
+        if (pureDomain.match(/sni[0-9a-fA-F]+\.cloudflaressl\.com/g)){
+            continue;
+        }
+
+        domains.push(pureDomain);
+    }
+
+    return _.sortedUniq(domains.sort());
+}
+
+
 // Export
 module.exports = {
     bodyProgress: bodyProgress,
@@ -168,7 +210,9 @@ module.exports = {
     getJobResult: getJobResult,
     defval: defval,
     isEmpty: isEmpty,
-    isSameUrl: isSameUrl
+    isSameUrl: isSameUrl,
+    removeWildcard: removeWildcard,
+    neighbourDomainList: neighbourDomainList
 };
 
 

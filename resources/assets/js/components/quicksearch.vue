@@ -338,6 +338,7 @@
                 tlsScanLeafCert: null,
                 didYouMeanUrl: null,
                 downtimeWarning: false,
+                neighbourhood: [],
 
                 ctScan: {},
                 ctScanError: false,
@@ -543,6 +544,11 @@
                         this.form.defcon = 5;
                         this.form.textStatus = 'OK';
                     }
+                }
+
+                // Neighbourhood
+                if (this.tlsScanLeafCert){
+                    this.neighbourhood = Req.neighbourDomainList(this.tlsScanLeafCert.alt_names);
                 }
             },
 
