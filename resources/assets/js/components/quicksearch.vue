@@ -547,6 +547,7 @@
                 // Downtime analysis
                 if (this.results.downtimeTls){
                     this.downtimeWarning = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan && this.tlsScanLeafCert
+                        && this.results.downtimeTls
                         && this.results.downtimeTls.count > 0
                         && this.results.downtimeTls.downtime > 0
                         && this.results.downtimeTls.gaps
@@ -654,6 +655,7 @@
                 this.tlsScanLeafCert = null;
                 this.didYouMeanUrl = null;
                 this.neighbourhood = [];
+                this.downtimeWarning = false;
                 this.errTrusted = false;
                 this.errHostname = false;
 
