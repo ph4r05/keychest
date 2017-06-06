@@ -100,3 +100,15 @@ body.loading .modal {
   font-family: "Helvetica", serif;
 }
 
+@media (max-width: 767px) {
+  .alert p {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  #app .table > tbody > tr > td,
+  #app .table > tbody > tr > th {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
