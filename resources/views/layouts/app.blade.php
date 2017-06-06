@@ -22,6 +22,7 @@
             'urlLogin' => route('login'),
             'urlRegister' => route('register'),
             'urlLogout' => route('logout'),
+            'urlFeedback' => route('rfeedback'),
             'authUserName' => Auth::guest() ? null : Auth::user()->name,
             'authUserId' => Auth::guest() ? null : Auth::user()->getAuthIdentifier()
         ]) !!};

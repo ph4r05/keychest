@@ -11,9 +11,10 @@
 |
 */
 
-Route::get('/', 'SearchController@show');
+Route::get('/', 'SearchController@show')->name('/');
 Route::post('/', 'SearchController@search');
 Route::post('feedback', 'SearchController@voteFeedback')->name('feedback');
+Route::post('rfeedback', 'SearchController@restSubmitFeedback')->name('rfeedback');
 
 Route::get('scan', 'SearchController@show');
 Route::post('scan', 'SearchController@search');

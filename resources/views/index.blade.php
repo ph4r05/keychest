@@ -175,26 +175,7 @@
                 <div class="col-sm-12">
                     <div class="row">
                         <div class="col-sm-12">
-                            <form id="form_6" novalidate="" method="POST" action="{{ route('feedback') }}"
-                                  success-msg="Your message has been sent."
-                                  fail-msg="Bugger, something broke down. Please email us directly at keychest@enigmabridge.com">
-                                {{ csrf_field() }}
-
-                                <div class="form-group">
-                                    <label>
-                                        Email (if you want)
-                                    </label>
-                                    <input id="email" class="form-control" type="email" name="email">
-                                    <div class="help-block"></div></div>
-                                <div class="form-group">
-                                    <label>
-                                        I would find quite useful:
-                                    </label><textarea id="message" class="form-control" rows="4" cols="50" required="" name="message"></textarea>
-                                    <div class="help-block"></div></div>
-                                <button class="bloc-button btn btn-lg btn-block btn-rich-electric-blue" type="submit">
-                                    Add my vote for these features
-                                </button>
-                            </form>
+                            <feedback_form></feedback_form>
                         </div>
                     </div>
                     <p>

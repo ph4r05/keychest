@@ -66,29 +66,27 @@ class SearchController extends Controller
     }
 
     /**
-     * Sends email
+     * Sends email with a feedback
      */
     public function voteFeedback(){
-        $email = trim(Input::get('email'));
-        $message = trim(Input::get('message'));
-        if(empty($message)) {
-            return false;
+        $res = $this->submitFeedback();
+        if ($res){
+            redirect()->back()->with('info', 'Mail sent');
+        } else {
+            redirect()->back()->with('info', 'Mail sent');
         }
+    }
 
-        $to = 'keychest@enigmabridge.com'; // Email submissions are sent to this email
-
-        // Create email
-        $email_subject = "Message from keychest.net.";
-        $email_body = "You have received a new message. \n\n".
-            "Email: $email \nMessage4: $message \n";
-        $headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
-        $headers .= "From: register@keychest.net\n";
-        if (!empty($email)) {
-            $headers .= "Reply-To: $email";
+    /**
+     * Rest endpoint for feedback submit
+     */
+    public function restSubmitFeedback(){
+        $res = $this->submitFeedback();
+        if ($res){
+            return response()->json(['status' => 'success'], 200);
+        } else {
+            return response()->json(['status' => 'error'], 200);
         }
-
-        mail($to,$email_subject,$email_body,$headers); // Post message
-        return redirect('')->with('info', 'Mail sent');
     }
 
     /**
@@ -519,6 +517,34 @@ class SearchController extends Controller
         dispatch((new ScanHostJob($elDb, $elJson))->onQueue('scanner'));
 
         return [$newJobDb, $elDb];
+    }
+
+    /**
+     * Submits feedback - sends an email
+     * @return bool
+     */
+    protected function submitFeedback(){
+        $email = trim(Input::get('email'));
+        $message = trim(Input::get('message'));
+        if(empty($message)) {
+            return false;
+        }
+
+//        $to = 'keychest@enigmabridge.com'; // Email submissions are sent to this email
+        $to = 'ph4r05@gmail.com'; // Email submissions are sent to this email
+
+        // Create email
+        $email_subject = "Message from keychest.net.";
+        $email_body = "You have received a new message. \n\n".
+            "Email: $email \nMessage4: $message \n";
+        $headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";
+        $headers .= "From: feedback@keychest.net\n";
+        if (!empty($email)) {
+            $headers .= "Reply-To: $email";
+        }
+
+        mail($to,$email_subject,$email_body,$headers); // Post message
+        return true;
     }
 
 }
