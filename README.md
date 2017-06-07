@@ -41,6 +41,18 @@ Queued events processing
 php artisan queue:work --sleep 0.05
 ```
 
+### Mac Setup
+
+```
+echo 'export PATH=${PATH}:~/.composer/vendor/bin' >> ~/.bashrc
+
+# install GNU sed
+brew install gnu-sed --with-default-names
+
+# place GNU sed on the path before using admin LTE cmds.
+export PATH=/usr/local/bin/:$PATH
+```
+
 ### EC2 dep
 
 Install NodeJS
@@ -94,3 +106,23 @@ sudo chkconfig --add redis-server
 sudo chkconfig --level 345 redis-server on
 sudo service redis-server start
 ```
+
+
+### Admin LTE
+
+https://github.com/acacha/adminlte-laravel
+
+```
+composer global require "acacha/adminlte-laravel-installer=~3.0"
+
+adminlte-laravel install
+
+llum boot
+```
+
+Social OAuths:
+
+```
+adminlte-laravel social
+```
+
