@@ -14,6 +14,7 @@ const { mix } = require('laravel-mix');
 mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/app-user.js', 'public/js/app-user.js')
     .sass('resources/assets/sass/app.scss', 'public/css')
+    .sass('resources/assets/sass/app-landing.scss', 'public/css')
 
     // Admin LTE
     .less('node_modules/bootstrap-less/bootstrap/bootstrap.less', 'public/css/bootstrap.css')
