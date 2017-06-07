@@ -109,8 +109,8 @@
 
     </div>
 
-    <div class="modal">
-        <div class="modal-wrap"></div>
+    <div class="ph4-modal">
+        <div class="ph4-modal-wrap"></div>
     </div>
 
     <!-- Scripts -->

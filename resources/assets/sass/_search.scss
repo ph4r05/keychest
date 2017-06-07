@@ -7,7 +7,7 @@
     or: http://preloaders.net/
     or: http://cssload.net/
 */
-.modal {
+.ph4-modal {
   display:    none;
   position:   fixed;
   z-index:    1000;
@@ -21,7 +21,7 @@
   text-align: center;
 }
 
-.modal .modal-wrap {
+.ph4-modal .ph4-modal-wrap {
   background: rgba( 255, 255, 255, .90 )
   url('../images/ajax-loader.gif')
   50% 50%
@@ -48,7 +48,7 @@ body.loading {
 
 /* Anytime the body has the loading class, our
    modal element will be visible */
-body.loading .modal {
+body.loading .ph4-modal {
   display: block;
 }
 
