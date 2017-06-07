@@ -9,6 +9,7 @@
         "acacha/admin-lte-template-laravel": "^4.1",
         "acacha/filesystem": "^0.1.0",
         "acacha/helpers": "^0.1.3",
+        "acacha/laravel-social": "^0.1.9",
         "acacha/user": "~0.2",
         "barryvdh/laravel-debugbar": "^2.4",
         "barryvdh/laravel-ide-helper": "^2.3",

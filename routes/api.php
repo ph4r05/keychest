@@ -20,3 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Route::post('/submitJob', 'SearchController@restSubmitJob');
 //Route::post('/jobState', 'SearchController@restGetJobState');
 //Route::post('/jobResult', 'SearchController@restJobResults');
+
+
+Route::group(['prefix' => 'v1','middleware' => 'auth:api'], function () {
+    //    Route::resource('task', 'TasksController');
+
+    //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
+    #adminlte_api_routes
+});
+
