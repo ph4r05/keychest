@@ -43,7 +43,7 @@
 
 </head>
 <body>
-    <div id="app" class="page-container">
+    <div id="app" class="page-container search-page">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="navbar-header">

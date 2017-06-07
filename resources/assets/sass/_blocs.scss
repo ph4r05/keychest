@@ -329,7 +329,7 @@ nav .caret{
 /* = Buttons
 -------------------------------------------------------------- */
 
-.btn{
+.bloc .btn{
   margin: 0 5px 5px 0;
 }
 .btn.pull-right{
@@ -353,7 +353,7 @@ button{
   background:transparent!important;
   border:2px solid transparent;
 }
-.btn .caret{
+.bloc .btn .caret{
   margin:0 0 0 5px}.dropdown a .caret{
                      margin:0 0 0 5px}.btn-dropdown .dropdown-menu .dropdown{
                                         padding: 3px 20px;
