@@ -242,6 +242,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Uuid' => Webpatser\Uuid\Uuid::class,
+
         /*
          * Acacha Llum Aliases...
          *
