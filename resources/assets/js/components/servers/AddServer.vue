@@ -75,6 +75,12 @@
                     this.sentState = -1;
                 }).bind(this);
 
+                const onDuplicate = (function(){
+                    this.sentState = 0;
+                    $('#add-server-wrapper').effect( "shake" );
+                    toastr.error('This host is already being monitored.', 'Already present');
+                }).bind(this);
+
                 const onSuccess = (function(data){
                     this.sentState = 1;
                     this.newItem = {'server':''};
@@ -90,8 +96,7 @@
                         if (!response || !response.data) {
                             onFail();
                         } else if (response.data['status'] === 'already-present'){
-                            $('#add-server-wrapper').effect( "shake" );
-                            toastr.error('This host is already being monitored.', 'Already present');
+                            onDuplicate();
                         } else if (response.data['status'] === 'success') {
                             onSuccess(response.data);
                         } else {
@@ -99,8 +104,12 @@
                         }
                     })
                     .catch(e => {
-                        console.log( "Add server failed: " + e );
-                        onFail();
+                        if (e && e.response && e.response.status === 410){
+                            onDuplicate();
+                        } else {
+                            console.log("Add server failed: " + e);
+                            onFail();
+                        }
                     });
             }
         }
