@@ -33,6 +33,7 @@
         </transition>
 
         <button class="bloc-button btn btn-lg btn-block btn-rich-electric-blue"
+                v-bind:disabled="sentState == 2"
                 v-bind:class="{'disabled' : sentState == 2}" type="submit">
             Add my vote for these features
         </button>
