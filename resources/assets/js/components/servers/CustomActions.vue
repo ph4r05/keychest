@@ -1,8 +1,7 @@
 <template>
     <div class="custom-actions">
-        <button class="btn btn-sm" @click="itemAction('view-item', rowData, rowIndex)"><i class="glyphicon glyphicon-zoom-in"></i></button>
-        <button class="btn btn-sm" @click="itemAction('edit-item', rowData, rowIndex)"><i class="glyphicon glyphicon-pencil"></i></button>
-        <button class="btn btn-sm btn-danger" @click="itemAction('delete-item', rowData, rowIndex)"><i class="glyphicon glyphicon-trash"></i></button>
+        <button class="btn btn-sm btn-primary" @click="editItemAction('edit-item', rowData, rowIndex)"><i class="glyphicon glyphicon-pencil"></i></button>
+        <button class="btn btn-sm btn-danger" @click="deleteItemAction('delete-item', rowData, rowIndex)"><i class="glyphicon glyphicon-trash"></i></button>
     </div>
 </template>
 
@@ -18,8 +17,15 @@
             }
         },
         methods: {
-            itemAction (action, data, index) {
-                console.log('custom-actions: ' + action, data.name, index)
+            deleteItemAction (action, data, index) {
+                // Can be implemented here or by this.$emit('deleteServer', data); https://forum.vuejs.org/t/passing-data-back-to-parent/1201/2
+                this.$emit('onDeleteServer', data);
+                this.$events.fire('on-delete-server', data);
+            },
+            editItemAction (action, data, index) {
+                // Can be implemented here or by this.$emit('deleteServer', data); https://forum.vuejs.org/t/passing-data-back-to-parent/1201/2
+                this.$emit('onEditServer', data);
+                this.$events.fire('on-edit-server', data);
             }
         }
     }

@@ -63,13 +63,6 @@
             }
         },
         methods: {
-            doFilter () {
-                this.$events.fire('filter-set', this.filterText);
-            },
-            resetFilter () {
-                this.filterText = '';
-                this.$events.fire('filter-reset');
-            },
             createItem() {
                 // Minor domain validation.
                 if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1){
