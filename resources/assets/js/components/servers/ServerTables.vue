@@ -5,13 +5,12 @@
 
     <div class="table-responsive">
     <vuetable ref="vuetable"
-      api-url="http://vuetable.ratiw.net/api/users"
+      api-url="/home/servers/get"
       :fields="fields"
       pagination-path=""
       :css="css.table"
       :sort-order="sortOrder"
       :multi-sort="true"
-      detail-row-component="my-detail-row"
       :append-params="moreParams"
       @vuetable:cell-clicked="onCellClicked"
       @vuetable:pagination-data="onPaginationData"
@@ -66,21 +65,19 @@ export default {
           dataClass: 'text-right'
         },
         {
-          name: '__checkbox',
-          titleClass: 'text-center',
-          dataClass: 'text-center',
+          name: 'scan_host',
+          sortField: 'scan_host',
+          title: 'Host',
         },
         {
-          name: 'hostname',
-          sortField: 'hostname',
+          name: 'scan_port',
+          sortField: 'scan_port',
+          title: 'Port',
         },
         {
-          name: 'port',
-          sortField: 'port'
-        },
-        {
-          name: 'scheme',
-          sortField: 'scheme'
+          name: 'scan_scheme',
+          sortField: 'scan_scheme',
+          title: 'Scheme',
         },
         {
           name: 'created_at',
