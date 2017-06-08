@@ -10,7 +10,7 @@
 
     <!-- Create Item Modal -->
     <div class="modal fade" id="create-item" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog" id="add-server-wrapper" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -27,7 +27,7 @@
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                         </div>
 
-                        <div class="alert alert-waiting scan-alert" v-if="sentState == 2">
+                        <div class="alert alert-info scan-alert" v-show="sentState == 2">
                             <span id="info-text">Sending...</span>
                         </div>
 
@@ -39,7 +39,7 @@
                         </transition>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="submit" class="btn btn-success" v-bind:disabled="sentState == 2">Submit</button>
                         </div>
 
                     </form>
@@ -74,8 +74,9 @@
             },
             createItem() {
                 // Minor domain validation.
-                if (_.isEmpty(this.newItem.server)){
-                    $('#new-server-form').effect( "shake" );
+                if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1){
+                    $('#add-server-wrapper').effect( "shake" );
+                    toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
                     return;
                 }
 
