@@ -2,7 +2,7 @@
     <div class="crease-server">
     <div class="create-server-bar">
         <div class="pull-right">
-            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#create-item">
+            <button type="button" class="btn btn-sm btn-success" v-on:click.prevent="showModal()">
                 Add Server
             </button>
         </div>
@@ -23,7 +23,8 @@
                         <div class="form-group">
                             <label for="server-add-title">Server:</label>
                             <input type="text" name="server" id="server-add-title" class="form-control"
-                                   v-model="newItem.server" placeholder="e.g., https://enigmabridge.com"/>
+                                   v-model="newItem.server" placeholder="e.g., https://enigmabridge.com"
+                                   autofocus="autofocus"/>
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                         </div>
 
@@ -63,6 +64,12 @@
             }
         },
         methods: {
+            showModal(){
+                $('#create-item').modal();
+                setTimeout(()=>{
+                    $('#server-add-title').focus();
+                }, 500);
+            },
             createItem() {
                 // Minor domain validation.
                 if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1){

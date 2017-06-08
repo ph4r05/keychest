@@ -14,9 +14,10 @@
                         <form method="POST" id="update-server-form" enctype="multipart/form-data" v-on:submit.prevent="createItem">
 
                             <div class="form-group">
-                                <label for="upd-server-add-title">Server:</label>
-                                <input type="text" name="server" id="upd-server-add-title" class="form-control"
-                                       v-model="serverItem.server" placeholder="e.g., https://enigmabridge.com"/>
+                                <label for="upd-server-name">Server:</label>
+                                <input type="text" name="server" id="upd-server-name" class="form-control"
+                                       v-model="serverItem.server" placeholder="e.g., https://enigmabridge.com"
+                                       autofocus="autofocus"/>
                                 <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                             </div>
 
@@ -111,6 +112,9 @@
                 this.serverItem = data;
                 this.serverItem.server = window.Req.buildUrl(data.scan_scheme, data.scan_host, data.scan_port);
                 $("#update-item").modal('show');
+                setTimeout(()=>{
+                    $("#upd-server-name").focus();
+                }, 500);
             },
         }
     }
