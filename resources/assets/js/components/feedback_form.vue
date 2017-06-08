@@ -73,6 +73,7 @@
 
                 // Minor domain validation.
                 if (_.isEmpty(message)){
+                    toastr.error('Empty message.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
                     $form.effect( "shake" );
                     return;
                 }
