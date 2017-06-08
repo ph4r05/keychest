@@ -51,142 +51,142 @@ Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
 
 export default {
-  components: {
-    Vuetable,
-    VuetablePagination,
-    VuetablePaginationInfo,
-  },
-  data () {
-    return {
-      fields: [
-        {
-          name: '__sequence',
-          title: '#',
-          titleClass: 'text-right',
-          dataClass: 'text-right'
-        },
-        {
-          name: 'scan_host',
-          sortField: 'scan_host',
-          title: 'Host',
-        },
-        {
-          name: 'scan_port',
-          sortField: 'scan_port',
-          title: 'Port',
-        },
-        {
-          name: 'scan_scheme',
-          sortField: 'scan_scheme',
-          title: 'Scheme',
-        },
-        {
-          name: 'created_at',
-          title: 'Created',
-          sortField: 'created_at',
-          titleClass: 'text-center',
-          dataClass: 'text-center',
-          callback: 'formatDate|DD-MM-YYYY'
-        },
-        {
-          name: 'updated_at',
-          title: 'Update',
-          sortField: 'updated_at',
-          titleClass: 'text-center',
-          dataClass: 'text-center',
-          callback: 'formatDate|DD-MM-YYYY'
-        },
-        {
-          name: 'last_scan_at',
-          title: 'Last scan',
-          sortField: 'last_scan_at',
-          titleClass: 'text-center',
-          dataClass: 'text-center',
-          callback: 'formatDate|DD-MM-YYYY'
-        },
-        {
-          name: '__component:custom-actions',
-          title: 'Actions',
-          titleClass: 'text-center',
-          dataClass: 'text-center'
+    components: {
+        Vuetable,
+        VuetablePagination,
+        VuetablePaginationInfo,
+    },
+    data () {
+        return {
+            fields: [
+                {
+                    name: '__sequence',
+                    title: '#',
+                    titleClass: 'text-right',
+                    dataClass: 'text-right'
+                },
+                {
+                    name: 'scan_host',
+                    sortField: 'scan_host',
+                    title: 'Host',
+                },
+                {
+                    name: 'scan_port',
+                    sortField: 'scan_port',
+                    title: 'Port',
+                },
+                {
+                    name: 'scan_scheme',
+                    sortField: 'scan_scheme',
+                    title: 'Scheme',
+                },
+                {
+                    name: 'created_at',
+                    title: 'Created',
+                    sortField: 'created_at',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center',
+                    callback: 'formatDate|DD-MM-YYYY'
+                },
+                {
+                    name: 'updated_at',
+                    title: 'Update',
+                    sortField: 'updated_at',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center',
+                    callback: 'formatDate|DD-MM-YYYY'
+                },
+                {
+                    name: 'last_scan_at',
+                    title: 'Last scan',
+                    sortField: 'last_scan_at',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center',
+                    callback: 'formatDate|DD-MM-YYYY'
+                },
+                {
+                    name: '__component:custom-actions',
+                    title: 'Actions',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center'
+                }
+            ],
+            css: {
+                table: {
+                    tableClass: 'table table-bordered table-striped table-hover',
+                    ascendingIcon: 'glyphicon glyphicon-chevron-up',
+                    descendingIcon: 'glyphicon glyphicon-chevron-down'
+                },
+                pagination: {
+                    wrapperClass: 'pagination',
+                    activeClass: 'active',
+                    disabledClass: 'disabled',
+                    pageClass: 'page',
+                    linkClass: 'link',
+                },
+                icons: {
+                    first: 'glyphicon glyphicon-step-backward',
+                    prev: 'glyphicon glyphicon-chevron-left',
+                    next: 'glyphicon glyphicon-chevron-right',
+                    last: 'glyphicon glyphicon-step-forward',
+                },
+            },
+            sortOrder: [
+                {field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
+            ],
+            moreParams: {}
         }
-      ],
-      css: {
-        table: {
-          tableClass: 'table table-bordered table-striped table-hover',
-          ascendingIcon: 'glyphicon glyphicon-chevron-up',
-          descendingIcon: 'glyphicon glyphicon-chevron-down'
-        },
-        pagination: {
-          wrapperClass: 'pagination',
-          activeClass: 'active',
-          disabledClass: 'disabled',
-          pageClass: 'page',
-          linkClass: 'link',
-        },
-        icons: {
-          first: 'glyphicon glyphicon-step-backward',
-          prev: 'glyphicon glyphicon-chevron-left',
-          next: 'glyphicon glyphicon-chevron-right',
-          last: 'glyphicon glyphicon-step-forward',
-        },
-      },
-      sortOrder: [
-        { field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
-      ],
-      moreParams: {}
-    }
-  },
+    },
 
-  methods: {
-    allcap (value) {
-      return value.toUpperCase()
+    methods: {
+        allcap (value) {
+            return value.toUpperCase()
+        },
+        formatNumber (value) {
+            return accounting.formatNumber(value, 2)
+        },
+        formatDate (value, fmt = 'DD-MM-YYYY') {
+            return (value === null) ? '' : moment(value, 'YYYY-MM-DD').format(fmt);
+        },
+        onPaginationData (paginationData) {
+            this.$refs.pagination.setPaginationData(paginationData);
+            this.$refs.paginationInfo.setPaginationData(paginationData);
+        },
+        onChangePage (page) {
+            this.$refs.vuetable.changePage(page);
+        },
+        onCellClicked (data, field, event) {
+            console.log('cellClicked: ', field.name);
+            this.$refs.vuetable.toggleDetailRow(data.id);
+        },
+        onDeleteServer(data){
+            console.log('ondeletemeth');
+        },
+        onEditServer(data){
+            console.log('on edit');
+        },
     },
-    formatNumber (value) {
-      return accounting.formatNumber(value, 2)
-    },
-    formatDate (value, fmt = 'DD-MM-YYYY') {
-      return (value === null) ? '' : moment(value, 'YYYY-MM-DD').format(fmt);
-    },
-    onPaginationData (paginationData) {
-      this.$refs.pagination.setPaginationData(paginationData);
-      this.$refs.paginationInfo.setPaginationData(paginationData);
-    },
-    onChangePage (page) {
-      this.$refs.vuetable.changePage(page);
-    },
-    onCellClicked (data, field, event) {
-      console.log('cellClicked: ', field.name);
-      this.$refs.vuetable.toggleDetailRow(data.id);
-    },
-    onDeleteServer(data){
-      console.log('ondeletemeth');
-    },
-    onEditServer(data){
-      console.log('on edit');
-    },
-  },
-  events: {
-    'filter-set' (filterText) {
-      this.moreParams = {
-        filter: filterText
-      };
-      Vue.nextTick( () => this.$refs.vuetable.refresh() )
-    },
-    'filter-reset' () {
-      this.moreParams = {};
-      Vue.nextTick( () => this.$refs.vuetable.refresh() );
-    },
-    'on-server-added' (data) {
-      Vue.nextTick( () => this.$refs.vuetable.refresh() );
-    },
-    'on-delete-server'(data) {
-        this.onDeleteServer(data);
-    },
-    'on-edit-server'(data) {
-        this.onEditServer(data);
+    events: {
+        'filter-set' (filterText) {
+            this.moreParams = {
+                filter: filterText
+            };
+            Vue.nextTick(() => this.$refs.vuetable.refresh())
+        },
+        'filter-reset' () {
+            this.moreParams = {};
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
+        },
+        'on-server-added' (data) {
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
+        },
+        'on-delete-server'(data) {
+            this.onDeleteServer(data);
+        },
+        'on-edit-server'(data) {
+            this.onEditServer(data);
+        }
     }
-  }
 }
 </script>
 <style>
