@@ -2,6 +2,7 @@
   <div>
     <filter-bar></filter-bar>
     <add-server></add-server>
+    <edit-server></edit-server>
 
     <div class="table-responsive">
     <vuetable ref="vuetable"
@@ -43,12 +44,14 @@ import CustomActions from './CustomActions';
 import DetailRow from './DetailRow';
 import FilterBar from './FilterBar';
 import AddServer from './AddServer.vue';
+import EditServer from './EditServer.vue';
 
 Vue.use(VueEvents);
 Vue.component('custom-actions', CustomActions);
 Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
+Vue.component('edit-server', EditServer);
 
 export default {
     components: {
@@ -198,9 +201,6 @@ export default {
                 });
 
         },
-        onEditServer(data){
-            console.log('on edit');
-        },
     },
     events: {
         'filter-set' (filterText) {
@@ -216,12 +216,12 @@ export default {
         'on-server-added' (data) {
             Vue.nextTick(() => this.$refs.vuetable.refresh());
         },
+        'on-server-updated'(data) {
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
+        },
         'on-delete-server'(data) {
             this.onDeleteServer(data);
         },
-        'on-edit-server'(data) {
-            this.onEditServer(data);
-        }
     }
 }
 </script>

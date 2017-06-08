@@ -7,6 +7,7 @@ use App\Models\WatchTarget;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -84,14 +85,19 @@ class ServersController extends Controller
         // DB Job data
         $curUser = Auth::user();
         $newJobDb = [
-            'scan_scheme' => isset($parsed['scheme']) ? $parsed['scheme'] : null,
-            'scan_host' => isset($parsed['host']) ? $parsed['host'] : $server,
-            'scan_port' => isset($parsed['port']) ? $parsed['port'] : null,
             'scan_connect' => 0,
             'created_at' => Carbon::now(),
             'user_id' => $curUser->getAuthIdentifier()
         ];
 
+        $criteria = $this->buildCriteria($parsed, $server);
+
+        // Duplicity detection
+        if ($this->getHostsBy($criteria, $curUser->getAuthIdentifier())->isNotEmpty()){
+            return response()->json(['status' => 'already-present'], 410);
+        }
+
+        $newJobDb = array_merge($newJobDb, $criteria);
         $elDb = WatchTarget::create($newJobDb);
         return response()->json(['status' => 'success', 'server' => $newJobDb], 200);
     }
@@ -100,8 +106,6 @@ class ServersController extends Controller
      * Delete the server
      */
     public function del(){
-        Log::info(var_export($_REQUEST, true));
-        Log::info(var_export(Input::get('id'), true));
         $id = intval(Input::get('id'));
         if (empty($id)){
             return response()->json([], 500);
@@ -116,8 +120,76 @@ class ServersController extends Controller
         }
     }
 
+    /**
+     * Updates the server watcher record.
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(){
-        Log::info(var_export($_REQUEST, true));
-        return response()->json([], 200);
+        $id = intval(Input::get('id'));
+        $server = strtolower(trim(Input::get('server')));
+        $parsed = parse_url($server);
+
+        if (empty($id) || empty($parsed) || strpos($server, '.') === false){
+            return response()->json(['status' => 'invalid-domain'], 422);
+        }
+
+        $curUser = Auth::user();
+        $ent = WatchTarget::query()
+            ->where('user_id', $curUser->getAuthIdentifier())
+            ->where('id', $id)
+            ->first();
+        if (empty($ent)){
+            return response()->json(['status' => 'not-found'], 404);
+        }
+
+        $criteria = $this->buildCriteria($parsed, $server);
+
+        // Duplicity detection
+        $duplicates = $this->getHostsBy($criteria, $curUser->getAuthIdentifier());
+        if ($duplicates->isNotEmpty()){
+            return response()->json(['status' => 'already-present'], 410);
+        }
+
+        // Update
+        foreach ($criteria as $key => $val){
+            $ent->$key = $val;
+        }
+
+        $ent->save();
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    /**
+     * Used to load hosts for update / add to detect duplicates
+     * @param $criteria
+     * @param $userId
+     * @return Collection
+     */
+    protected function getHostsBy($criteria, $userId){
+        $query = WatchTarget::query();
+
+        if (!empty($userId)){
+            $query = $query->where('user_id', $userId);
+        }
+
+        foreach ($criteria as $key => $val){
+            $query = $query->where($key, $val);
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * Builds simple criteria from parsed domain
+     * @param $parsed
+     * @param $server
+     * @return array
+     */
+    protected function buildCriteria($parsed, $server){
+        return [
+            'scan_scheme' => isset($parsed['scheme']) ? $parsed['scheme'] : 'https',
+            'scan_host' => isset($parsed['host']) ? $parsed['host'] : $server,
+            'scan_port' => isset($parsed['port']) ? $parsed['port'] : 443,
+        ];
     }
 }

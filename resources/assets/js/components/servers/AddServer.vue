@@ -87,10 +87,15 @@
                 this.sentState = 2;
                 axios.post('/home/servers/add', this.newItem)
                     .then(response => {
-                        if (!response || !response.data || response.data['status'] !== 'success'){
+                        if (!response || !response.data) {
                             onFail();
-                        } else {
+                        } else if (response.data['status'] === 'already-present'){
+                            $('#add-server-wrapper').effect( "shake" );
+                            toastr.error('This host is already being monitored.', 'Already present');
+                        } else if (response.data['status'] === 'success') {
                             onSuccess(response.data);
+                        } else {
+                            onFail();
                         }
                     })
                     .catch(e => {
