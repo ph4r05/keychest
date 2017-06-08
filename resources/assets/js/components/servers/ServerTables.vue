@@ -156,11 +156,47 @@ export default {
             this.$refs.vuetable.changePage(page);
         },
         onCellClicked (data, field, event) {
-            console.log('cellClicked: ', field.name);
             this.$refs.vuetable.toggleDetailRow(data.id);
         },
         onDeleteServer(data){
-            console.log('ondeletemeth');
+            swal({
+                title: 'Are you sure?',
+                text: "Server will be permanently removed",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes'
+            }).then((function () {
+                this.onDeleteServerConfirmed(data);
+            }).bind(this)).catch(() => {});
+        },
+        onDeleteServerConfirmed(data){
+            const onFail = (function(){
+                this.moreParams.deleteState = -1;
+                swal('Delete error', 'Server delete failed :(', 'error');
+            }).bind(this);
+
+            const onSuccess = (function(data){
+                this.moreParams.deleteState = 1;
+                Vue.nextTick(() => this.$refs.vuetable.refresh());
+                this.$emit('onServerDeleted', data);
+                this.$events.fire('on-server-deleted', data);
+                toastr.success('Server deleted successfully.', 'Success');
+            }).bind(this);
+
+            this.moreParams.deleteState = 2;
+            axios.post('/home/servers/del', data)
+                .then(response => {
+                    if (!response || !response.data || response.data['status'] !== 'success'){
+                        onFail();
+                    } else {
+                        onSuccess(response.data);
+                    }
+                })
+                .catch(e => {
+                    console.log( "Del server failed: " + e );
+                    onFail();
+                });
+
         },
         onEditServer(data){
             console.log('on edit');

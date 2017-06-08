@@ -101,7 +101,19 @@ class ServersController extends Controller
      */
     public function del(){
         Log::info(var_export($_REQUEST, true));
-        return response()->json([], 200);
+        Log::info(var_export(Input::get('id'), true));
+        $id = intval(Input::get('id'));
+        if (empty($id)){
+            return response()->json([], 500);
+        }
+
+        $curUser = Auth::user();
+        $deletedRows = WatchTarget::where('user_id', $curUser->getAuthIdentifier())->where('id', $id)->delete();
+        if ($deletedRows) {
+            return response()->json(['status' => 'success'], 200);
+        } else {
+            return response()->json(['status' => 'not-deleted'], 422);
+        }
     }
 
     public function update(){
