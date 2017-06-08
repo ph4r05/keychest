@@ -95,4 +95,17 @@ class ServersController extends Controller
         $elDb = WatchTarget::create($newJobDb);
         return response()->json(['status' => 'success', 'server' => $newJobDb], 200);
     }
+
+    /**
+     * Delete the server
+     */
+    public function del(){
+        Log::info(var_export($_REQUEST, true));
+        return response()->json([], 200);
+    }
+
+    public function update(){
+        Log::info(var_export($_REQUEST, true));
+        return response()->json([], 200);
+    }
 }

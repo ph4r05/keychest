@@ -159,6 +159,12 @@ export default {
       console.log('cellClicked: ', field.name);
       this.$refs.vuetable.toggleDetailRow(data.id);
     },
+    onDeleteServer(data){
+      console.log('ondeletemeth');
+    },
+    onEditServer(data){
+      console.log('on edit');
+    },
   },
   events: {
     'filter-set' (filterText) {
@@ -173,6 +179,12 @@ export default {
     },
     'on-server-added' (data) {
       Vue.nextTick( () => this.$refs.vuetable.refresh() );
+    },
+    'on-delete-server'(data) {
+        this.onDeleteServer(data);
+    },
+    'on-edit-server'(data) {
+        this.onEditServer(data);
     }
   }
 }
