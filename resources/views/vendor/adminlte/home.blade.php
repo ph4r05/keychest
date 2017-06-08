@@ -4,6 +4,12 @@
 	{{ trans('adminlte_lang::message.home') }}
 @endsection
 
+@section('contentheader_title')
+	{{ trans('admin.dashboard') }}
+@endsection
+
+@section('contentheader_description')
+@endsection
 
 @section('main-content')
 	<div class="container-fluid spark-screen">
