@@ -37,7 +37,7 @@ Vue.component('register-form', require('./components/auth/RegisterForm.vue'));
 Vue.component('login-form', require('./components/auth/LoginForm.vue'));
 Vue.component('email-reset-password-form', require('./components/auth/EmailResetPasswordForm.vue'));
 Vue.component('reset-password-form', require('./components/auth/ResetPasswordForm.vue'));
-
+Vue.component('server-tables', require('./components/servers/ServerTables.vue'));
 
 console.log('Vue.js init');
 const app = new Vue({
