@@ -44,7 +44,6 @@
 
                     </form>
 
-
                 </div>
             </div>
         </div>
@@ -58,7 +57,6 @@
     export default {
         data () {
             return {
-                filterText: '',
                 newItem: {},
                 formErrors: {},
                 sentState: 0,
@@ -84,9 +82,11 @@
                     this.sentState = -1;
                 }).bind(this);
 
-                const onSuccess = (function(){
+                const onSuccess = (function(data){
                     this.sentState = 1;
                     this.newItem = {'title':'','description':''};
+                    this.$emit('onServerAdded', data);
+                    this.$events.fire('on-server-added', data);
                     $("#create-item").modal('hide');
                     toastr.success('Item Created Successfully.', 'Success Alert', {timeOut: 5000});
                 }).bind(this);
@@ -97,7 +97,7 @@
                         if (!response || !response.data || response.data['status'] !== 'success'){
                             onFail();
                         } else {
-                            onSuccess();
+                            onSuccess(response.data);
                         }
                     })
                     .catch(e => {

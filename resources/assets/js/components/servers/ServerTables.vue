@@ -168,6 +168,9 @@ export default {
     'filter-reset' () {
       this.moreParams = {};
       Vue.nextTick( () => this.$refs.vuetable.refresh() );
+    },
+    'on-server-added' (data) {
+      Vue.nextTick( () => this.$refs.vuetable.refresh() );
     }
   }
 }
