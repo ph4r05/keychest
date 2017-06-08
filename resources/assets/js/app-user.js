@@ -11,6 +11,7 @@ window.Vue = require('vue');
 window.URL = require('url-parse');
 window.Req = require('./req.js');
 window.toastr = require('toastr');
+window.swal = require('sweetalert2');
 
 require('jquery-ui/ui/effects/effect-shake');
 
