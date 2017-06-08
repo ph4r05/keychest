@@ -146,7 +146,7 @@ class ServersController extends Controller
 
         // Duplicity detection
         $duplicates = $this->getHostsBy($criteria, $curUser->getAuthIdentifier());
-        if ($duplicates->isNotEmpty()){
+        if ($duplicates->isNotEmpty() && ($duplicates->first()->id != $ent->id || $duplicates->count() > 1)){
             return response()->json(['status' => 'already-present'], 410);
         }
 
@@ -187,9 +187,9 @@ class ServersController extends Controller
      */
     protected function buildCriteria($parsed, $server){
         return [
-            'scan_scheme' => isset($parsed['scheme']) ? $parsed['scheme'] : 'https',
-            'scan_host' => isset($parsed['host']) ? $parsed['host'] : $server,
-            'scan_port' => isset($parsed['port']) ? $parsed['port'] : 443,
+            'scan_scheme' => isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https',
+            'scan_host' => isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : $server,
+            'scan_port' => isset($parsed['port']) && !empty($parsed['port']) ? $parsed['port'] : 443,
         ];
     }
 }
