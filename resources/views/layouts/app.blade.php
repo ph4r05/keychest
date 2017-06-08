@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app-landing.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/all-landing.css') }}" rel="stylesheet">
 
     <!-- Scripts -->
     <script>

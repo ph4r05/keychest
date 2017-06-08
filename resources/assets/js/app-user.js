@@ -10,6 +10,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 window.URL = require('url-parse');
 window.Req = require('./req.js');
+window.toastr = require('toastr');
 
 require('jquery-ui/ui/effects/effect-shake');
 
@@ -17,7 +18,6 @@ require('jquery-ui/ui/effects/effect-shake');
  * Admin LTE
  */
 require('admin-lte');
-window.toastr = require('toastr');
 require('icheck');
 
 Vue.prototype.trans = (key) => {

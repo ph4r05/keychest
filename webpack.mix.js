@@ -28,8 +28,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
         'public/css/toastr.css'
     ], 'public/css/all.css')
     .combine([
-        'public/css/bootstrap.css',
-        'resources/assets/css/main.css'
+        'public/css/app-landing.css',
+        'public/css/toastr.css'
     ], 'public/css/all-landing.css')
 
     //APP RESOURCES
@@ -47,7 +47,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .extract(['vue', 'jquery', 'jquery-ui', 'axios', 'lodash']);
 
 mix.scripts([
-    'resources/assets/js/blocs.js'
+    'resources/assets/js/blocs.js',
 ], 'public/js/misc.js');
 
 // if (mix.config.inProduction) {
