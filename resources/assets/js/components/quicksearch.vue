@@ -668,6 +668,7 @@
                 // Minor domain validation.
                 if (_.isEmpty(domain) || domain.split('.').length <= 1){
                     $( "#search-form" ).effect( "shake" );
+                    toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000});
                     return;
                 }
 
