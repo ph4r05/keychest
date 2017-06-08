@@ -212,7 +212,7 @@ export default {
   float: left;
 }
 i.sort-icon {
-  padding-left: 5px;
+  /*padding-left: 5px;*/
   font-size: 11px;
   padding-top: 4px;
 }

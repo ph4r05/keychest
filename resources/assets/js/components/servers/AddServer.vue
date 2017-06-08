@@ -18,7 +18,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form method="POST" enctype="multipart/form-data" v-on:submit.prevent="createItem">
+                    <form method="POST" id="new-server-form" enctype="multipart/form-data" v-on:submit.prevent="createItem">
 
                         <div class="form-group">
                             <label for="server-add-title">Server:</label>
@@ -26,6 +26,17 @@
                                    v-model="newItem.server" placeholder="e.g., https://enigmabridge.com"/>
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                         </div>
+
+                        <div class="alert alert-waiting scan-alert" v-if="sentState == 2">
+                            <span id="info-text">Sending...</span>
+                        </div>
+
+                        <transition name="fade">
+                            <div class="alert alert-danger alert-dismissable" v-if="sentState == -1">
+                                <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>Bugger,</strong> something broke down. Please try again or report this issue.
+                            </div>
+                        </transition>
 
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Submit</button>
@@ -43,12 +54,14 @@
 </template>
 
 <script>
+    import axios from 'axios';
     export default {
         data () {
             return {
                 filterText: '',
                 newItem: {},
-                formErrors: {}
+                formErrors: {},
+                sentState: 0,
             }
         },
         methods: {
@@ -60,7 +73,36 @@
                 this.$events.fire('filter-reset');
             },
             createItem() {
+                // Minor domain validation.
+                if (_.isEmpty(this.newItem.server)){
+                    $('#new-server-form').effect( "shake" );
+                    return;
+                }
 
+                const onFail = (function(){
+                    this.sentState = -1;
+                }).bind(this);
+
+                const onSuccess = (function(){
+                    this.sentState = 1;
+                    this.newItem = {'title':'','description':''};
+                    $("#create-item").modal('hide');
+                    toastr.success('Item Created Successfully.', 'Success Alert', {timeOut: 5000});
+                }).bind(this);
+
+                this.sentState = 2;
+                axios.post('/home/servers/add', this.newItem)
+                    .then(response => {
+                        if (!response || !response.data || response.data['status'] !== 'success'){
+                            onFail();
+                        } else {
+                            onSuccess();
+                        }
+                    })
+                    .catch(e => {
+                        console.log( "Add server failed: " + e );
+                        onFail();
+                    });
             }
         }
     }

@@ -33,6 +33,7 @@ Auth::routes();
 
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('home/servers', 'ServersController@index')->name('servers');
+Route::post('home/servers/add', 'ServersController@add')->name('servers/add');
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes

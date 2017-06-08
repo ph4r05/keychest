@@ -29,4 +29,18 @@ class ServersController extends Controller
     {
         return view('servers');
     }
+
+    /**
+     * Adds a new server
+     *
+     * @return Response
+     */
+    public function add()
+    {
+        if (rand(1, 10) == 2) {
+            return response()->json(['status' => 'success'], 200);
+        } else {
+            return response()->json(['status' => 'fail'], 422);
+        }
+    }
 }
