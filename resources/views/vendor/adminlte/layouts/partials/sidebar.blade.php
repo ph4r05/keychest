@@ -33,15 +33,15 @@
         <ul class="sidebar-menu">
             <li class="header">{{ trans('adminlte_lang::message.header') }}</li>
 
-            <li class="active">
+            <li class="{{ Request::path() ==  'home' ? 'active' : ''  }}">
                 <a href="{{ url('home') }}"><i class='fa fa-dashboard'></i> <span>{{ trans('admin.dashboard') }}</span></a>
             </li>
 
-            <li>
+            <li class="{{ Request::path() ==  'home/scan' ? 'active' : ''  }}">
                 <a href="{{ url('home/scan') }}"><i class='fa fa-wpexplorer'></i> <span>{{ trans('admin.scan') }}</span></a>
             </li>
 
-            <li>
+            <li class="{{ Request::path() ==  'home/servers' ? 'active' : ''  }}">
                 <a href="{{ url('home/servers') }}"><i class='fa fa-server'></i> <span>{{ trans('admin.servers') }}</span></a>
             </li>
 

@@ -12,7 +12,7 @@
             <h3 class="control-sidebar-heading">{{ trans('adminlte_lang::message.recentactivity') }}</h3>
             <ul class='control-sidebar-menu'>
                 <li>
-                    <a href='javascript::;'>
+                    <a href='javascript:;'>
                         <i class="menu-icon fa fa-birthday-cake bg-red"></i>
                         <div class="menu-info">
                             <h4 class="control-sidebar-subheading">{{ trans('adminlte_lang::message.birthday') }}</h4>
