@@ -11,6 +11,7 @@
       :css="css.table"
       :sort-order="sortOrder"
       :multi-sort="true"
+      :per-page="100"
       :append-params="moreParams"
       @vuetable:cell-clicked="onCellClicked"
       @vuetable:pagination-data="onPaginationData"
@@ -131,11 +132,12 @@ export default {
         },
       },
       sortOrder: [
-        { field: 'email', sortField: 'email', direction: 'asc'}
+        { field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
       ],
       moreParams: {}
     }
   },
+
   methods: {
     allcap (value) {
       return value.toUpperCase()
