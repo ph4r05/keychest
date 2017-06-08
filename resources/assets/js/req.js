@@ -140,6 +140,54 @@ function autoFillSchemePort(scheme, port){
 }
 
 /**
+ * Removes trailing colon from protocol
+ * @param x
+ */
+function protocolFixTrailingColon(x){
+    if (isEmpty(x)){
+        return x;
+    }
+
+    return x.endsWith(':') ? x.substring(0, x.length-1) : x;
+}
+
+/**
+ * Adds default scheme & port
+ * @param url
+ * @param defaultScheme
+ * @param defaultPort
+ */
+function normalizeUrl(url, defaultScheme='https', defaultPort=443){
+    if (isEmpty(url)){
+        return url;
+    }
+
+    if (!url.match(/^([a-zA-Z0-9]+):\/\//)){
+        url = defaultScheme + '://' + url;
+    }
+
+    const urlp = URL(url, true);
+    const comps = autoFillSchemePort(protocolFixTrailingColon(urlp.protocol), urlp.port);
+    return comps[0] + '://' + urlp.host + comps[1];
+}
+
+/**
+ * Assembles url from components
+ * @param scheme
+ * @param host
+ * @param port
+ * @param defaultScheme
+ */
+function buildUrl(scheme, host, port, defaultScheme='https'){
+    if (isEmpty(scheme)){
+        scheme = defaultScheme;
+    }
+
+    let ret = scheme + '://' + host;
+    return isEmpty(port) ? ret : ret + ':' + port;
+}
+
+/**
  * Compares URL in the context of verification.
  * @param schemeA
  * @param hostA
@@ -210,6 +258,9 @@ module.exports = {
     defval: defval,
     isEmpty: isEmpty,
     isSameUrl: isSameUrl,
+    autoFillSchemePort: autoFillSchemePort,
+    normalizeUrl: normalizeUrl,
+    buildUrl: buildUrl,
     removeWildcard: removeWildcard,
     neighbourDomainList: neighbourDomainList
 };
