@@ -77,11 +77,11 @@
 
                 const onSuccess = (function(data){
                     this.sentState = 1;
-                    this.newItem = {'title':'','description':''};
+                    this.newItem = {'server':''};
                     this.$emit('onServerAdded', data);
                     this.$events.fire('on-server-added', data);
                     $("#create-item").modal('hide');
-                    toastr.success('Item Created Successfully.', 'Success Alert', {timeOut: 5000});
+                    toastr.success('Server Added Successfully.', 'Success');
                 }).bind(this);
 
                 this.sentState = 2;
