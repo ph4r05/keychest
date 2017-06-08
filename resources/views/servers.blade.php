@@ -13,14 +13,11 @@
 @endsection
 
 @section('main-content')
-    <div class="container-fluid spark-screen">
+    <div class="servers-wrapper container-fluid spark-screen">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="servers-tab col-md-8 col-md-offset-2">
 
-
-
-
-                <!-- /.box -->
+                <server-tables></server-tables>
 
             </div>
         </div>

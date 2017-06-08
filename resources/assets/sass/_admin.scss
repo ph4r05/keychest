@@ -1,3 +1,11 @@
 #app .wrapper .main-header .sidebar-toggle {
   padding: 14px 14px;
 }
+
+@media (max-width: 767px) {
+  .servers-wrapper .servers-tab {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+

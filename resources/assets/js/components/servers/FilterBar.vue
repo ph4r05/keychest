@@ -3,9 +3,10 @@
       <form class="form-inline">
         <div class="form-group">
           <label>Search for:</label>
-          <input type="text" v-model="filterText" class="form-control" @keyup.enter="doFilter" placeholder="name, nickname, or email">
-          <button class="btn btn-primary" @click.prevent="doFilter">Go</button>
-          <button class="btn" @click.prevent="resetFilter">Reset</button>
+          <input type="text" v-model="filterText" class="form-control input-sm"
+                 @keyup.enter="doFilter" placeholder="server name">
+          <button class="btn btn-sm btn-primary" @click.prevent="doFilter">Go</button>
+          <button class="btn btn-sm" @click.prevent="resetFilter">Reset</button>
         </div>
       </form>
     </div>
@@ -32,5 +33,6 @@
 <style>
 .filter-bar {
   padding: 10px;
+  float: left;
 }
 </style>

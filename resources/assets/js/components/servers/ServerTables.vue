@@ -1,6 +1,9 @@
 <template>
   <div>
     <filter-bar></filter-bar>
+    <add-server></add-server>
+
+    <div class="table-responsive">
     <vuetable ref="vuetable"
       api-url="http://vuetable.ratiw.net/api/users"
       :fields="fields"
@@ -12,7 +15,9 @@
       :append-params="moreParams"
       @vuetable:cell-clicked="onCellClicked"
       @vuetable:pagination-data="onPaginationData"
-    ></vuetable> 
+    ></vuetable>
+    </div>
+
     <div class="vuetable-pagination">
       <vuetable-pagination-info ref="paginationInfo"
         info-class="pagination-info"
@@ -37,11 +42,13 @@ import VueEvents from 'vue-events';
 import CustomActions from './CustomActions';
 import DetailRow from './DetailRow';
 import FilterBar from './FilterBar';
+import AddServer from './AddServer.vue';
 
 Vue.use(VueEvents);
 Vue.component('custom-actions', CustomActions);
 Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
+Vue.component('add-server', AddServer);
 
 export default {
   components: {
@@ -77,6 +84,7 @@ export default {
         },
         {
           name: 'created_at',
+          title: 'Created',
           sortField: 'created_at',
           titleClass: 'text-center',
           dataClass: 'text-center',
@@ -84,6 +92,7 @@ export default {
         },
         {
           name: 'updated_at',
+          title: 'Update',
           sortField: 'updated_at',
           titleClass: 'text-center',
           dataClass: 'text-center',
@@ -91,6 +100,7 @@ export default {
         },
         {
           name: 'last_scan_at',
+          title: 'Last scan',
           sortField: 'last_scan_at',
           titleClass: 'text-center',
           dataClass: 'text-center',
@@ -200,5 +210,10 @@ export default {
 }
 .pagination-info {
   float: left;
+}
+i.sort-icon {
+  padding-left: 5px;
+  font-size: 11px;
+  padding-top: 4px;
 }
 </style>
