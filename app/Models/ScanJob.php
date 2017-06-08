@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScanJob extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $guarded = array();
 

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CrtShQueryResult extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $guarded = array();
 
