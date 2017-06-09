@@ -631,7 +631,7 @@
                     console.log(json);
 
                     // Update URL so it contains params - job ID & url
-                    let new_url = "/scan?uuid=" + json.uuid + '&url=' + encodeURI(domain);
+                    let new_url = window.location.pathname + "?uuid=" + json.uuid + '&url=' + encodeURI(targetUri);
                     try{
                         history.pushState(null, null, new_url); // new URL with history
                         history.replaceState(null, null, new_url); // replace the existing
