@@ -13,6 +13,7 @@ return [
     'dashboard' => 'Dashboard',
     'servers' => 'Servers',
     'scan' => 'Scan',
+    'scan_desc' => 'your hosts',
     'home-page' => 'Intro page',
 
     'servers_desc' => ' list for regular scanning'

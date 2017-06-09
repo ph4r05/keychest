@@ -53,6 +53,17 @@ class SearchController extends Controller
     }
 
     /**
+     * Show the main index page
+     *
+     * @return Response
+     */
+    public function showHome()
+    {
+        $data = [];
+        return view('scan', $data);
+    }
+
+    /**
      * Performs the search / check
      *
      * @return Response
