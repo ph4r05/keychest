@@ -126,3 +126,11 @@ Social OAuths:
 adminlte-laravel social
 ```
 
+### Social endpoints
+
+* https://github.com/acacha/laravel-social
+* https://developers.facebook.com/apps/
+* https://console.developers.google.com
+* https://apps.twitter.com/app/new
+* https://www.linkedin.com/secure/developer
+
