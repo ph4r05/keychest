@@ -39,7 +39,7 @@
 					Welcome to KeyChest
 				</h1>
 				<p>
-					KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy. You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use them for your web servers, email servers, on-premise web services, or to protect your infrastructure.&nbsp;We treat all certs equal, whether you paid $500 for each, got them free from LetsEncrypt, or created them yourself.<br> <br>When you create an account, you can quickly populate your dashboard using domain names with wildcards and print the first set of KPIs within minutes.
+					KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy. You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use them for your web servers, email servers, on-premise web services, or to protect your infrastructure.&nbsp;We treat all certs equal, whether you paid $500 for each, got them free from LetsEncrypt, or created them yourself.<br> <br>When you create an account, you can quickly populate your dashboard using domain names with wildcards and print the first set of KPIs within minutes.<br> <br>&nbsp;
 				</p>
 
 				<div class="row">
@@ -112,7 +112,7 @@
 									</li>
 									<li>
 										<h6 class=" mg-sm">
-											incidents - servers without valid certificate
+											incidents - servers without a valid certificate
 										</h6>
 									</li>
 									<li>
@@ -123,6 +123,11 @@
 									<li>
 										<h6 class=" mg-sm">
 											several certificate statistics (issuers, domains per certificate, legacy certificates)
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											weekly emails with important indicators and tasks for next 28 days
 										</h6>
 									</li>
 									<li>
@@ -165,9 +170,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							networking
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class=" mg-clear tc-rich-electric-blue">
@@ -182,9 +187,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							rule-per-server views
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class=" mg-clear tc-rich-electric-blue">
@@ -199,9 +204,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							one server at a time
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class=" mg-clear tc-rich-electric-blue">
@@ -216,9 +221,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							servers directly
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class=" mg-clear tc-rich-electric-blue">
@@ -233,9 +238,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							hourly
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class=" mg-clear tc-rich-electric-blue">
@@ -250,9 +255,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							certs - once before expiration
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class=" mg-clear tc-rich-electric-blue">
@@ -267,9 +272,9 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							150+ stations
-						</p>
+						</h6>
 					</div>
 					<div class="col-sm-5">
 						<h5 class="mg-clear  tc-rich-electric-blue">
@@ -284,14 +289,14 @@
 						</h4>
 					</div>
 					<div class="col-sm-4">
-						<p>
+						<h6>
 							simple
-						</p>
+						</h6>
 						<ul>
 							<li>
-								<p>
+								<h6>
 									certs expiry on selected servers
-								</p>
+								</h6>
 							</li>
 						</ul>
 					</div>
