@@ -39,7 +39,107 @@
 					Welcome to KeyChest
 				</h1>
 				<p>
-					KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy. You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use them for your web servers, email servers, on-premise web services, or to protect your infrastructure.&nbsp;We treat all certs equal, whether you paid $500 for each, got them free from LetsEncrypt, or created them yourself.<br> <br>When you create an account, you can quickly populate your dashboard using domain names with wildcards and print the first set of KPIs within minutes. <br> <br>The following table compares features of KeyChest with Letsmonitor.org.
+					KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy. You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use them for your web servers, email servers, on-premise web services, or to protect your infrastructure.&nbsp;We treat all certs equal, whether you paid $500 for each, got them free from LetsEncrypt, or created them yourself.<br> <br>When you create an account, you can quickly populate your dashboard using domain names with wildcards and print the first set of KPIs within minutes.
+				</p>
+
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="panel">
+							<div class="panel-heading">
+								<h3 class="mg-clear tc-rich-electric-blue">
+									Spot-checker
+								</h3>
+							</div>
+							<div class="panel-body">
+								<ul>
+									<li>
+										<h6 class=" mg-sm">
+											expiration date / validity of a certificate on the server
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											certificate chain completeness
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											correct name in the certificate
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											SSL/TLS version - it should be TLS version 1.2
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											HTTP Strict Transport Security (HSTS) flag from web servers
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											time gaps in certificates over the last 2 years
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											certificate neighbors - other domain names in the server&rsquo;s certificate
+										</h6>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="panel">
+							<div class="panel-heading">
+								<h3 class="mg-clear tc-rich-electric-blue">
+									Accounts (subject to changes)
+								</h3>
+							</div>
+							<div class="panel-body">
+								<ul>
+									<li>
+										<h6 class=" mg-sm">
+											plan for next 28 days
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											monthly certificate renewal estimates for next 12 months
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											incidents - servers without valid certificate
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											certificate inventory over the last 12 months
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											several certificate statistics (issuers, domains per certificate, legacy certificates)
+										</h6>
+									</li>
+									<li>
+										<h6 class=" mg-sm">
+											tbd
+										</h6>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<h3 class="mg-md tc-rich-electric-blue">
+					Letsencrypt users seem to like letsmonitor.org - here&rsquo;s how we compare
+				</h3>
+				<p>
+					The following table compares features of KeyChest with Letsmonitor.org.
 				</p>
 				<div class="row bgc-capri">
 					<div class="col-sm-3">
@@ -257,15 +357,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <p>
-                        We are Enigma Bridge, 20 Bridge St, Cambridge, CB2 1UF, United Kingdom and we read keychest@enigmabridge.com
-                    </p>
-                </div>
-            </div>
-        </div>
+
     </div>
     <!-- bloc-3 END -->
 
@@ -275,9 +367,24 @@
 
 
     <!-- Footer - bloc-7 -->
-    <div class="bloc bgc-white tc-outer-space" id="bloc-7">
-
-    </div>
+	<div class="bloc bgc-white l-bloc tc-onyx" id="bloc-22">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="row voffset-lg">
+						<div class="col-sm-10">
+							<p class="mg-md ">
+								We are&nbsp;<a class="ltc-rich-electric-blue" href="https://enigmabridge.com" target="_blank">Enigma Bridge Ltd</a>, 20 Bridge St, Cambridge, CB2 1UF, United Kingdom and we read keychest@enigmabridge.com
+							</p>
+						</div>
+						<div class="col-sm-2">
+							<img src="/images/logo2-rgb_cropped.gif" class="img-responsive mg-md" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
     <!-- Footer - bloc-7 END -->
 
 @endsection
