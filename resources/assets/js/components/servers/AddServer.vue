@@ -94,7 +94,7 @@
                     this.$emit('onServerAdded', data);
                     this.$events.fire('on-server-added', data);
                     $("#create-item").modal('hide');
-                    toastr.success('Server Added Successfully.', 'Success');
+                    toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
                 }).bind(this);
 
                 this.sentState = 2;
