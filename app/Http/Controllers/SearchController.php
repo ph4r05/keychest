@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
 use App\Keychest\Coverage\Interval;
+use App\Keychest\Utils\DomainTools;
 use App\Models\Certificate;
 use App\Models\CertificateAltName;
 use App\Models\CrtShQuery;
@@ -165,7 +166,7 @@ class SearchController extends Controller
         $handshakeCertsId = $this->certificateList($tlsHandshakeScans);
 
         // Search based on alt domain names from the scan query
-        $altNames = array_merge($this->altNames($job->scan_host), [$job->scan_host]);
+        $altNames = array_merge(DomainTools::altNames($job->scan_host), [$job->scan_host]);
         $altNamesCertIds = CertificateAltName::query()->select('cert_id')->distinct()
                 ->whereIn('alt_name', $altNames)->get()->pluck('cert_id');
         $cnameCertIds = Certificate::query()->select('id')->distinct()
@@ -355,14 +356,14 @@ class SearchController extends Controller
         $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
         $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
 
-        $certificate->is_wildcard = $alts->contains($this->wildcardDomain($job->scan_host));
+        $certificate->is_wildcard = $alts->contains(DomainTools::wildcardDomain($job->scan_host));
         $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
         $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
         $certificate->is_cloudflare = $alts->filter(function($val, $key){
             return strpos($val, '.cloudflaressl.com') !== false;
         })->isNotEmpty();
 
-        $fqdn = $this->fqdn($job->scan_host);
+        $fqdn = DomainTools::fqdn($job->scan_host);
         $certificate->matched_alt_names = $alts->intersect($altNames)->values()->all();
         $certificate->related_names = $alts->filter(function ($val, $key) use ($fqdn) {
             return empty($fqdn) ? false : strrpos($val, $fqdn) !== false;
@@ -416,77 +417,6 @@ class SearchController extends Controller
         }
 
         return $alts->intersect($domains)->values();
-    }
-
-    /**
-     * Returns wildcard domain for the given one
-     * @param $domain
-     * @return string
-     */
-    protected function wildcardDomain($domain){
-        if (strpos($domain, '*.') === 0){
-           return $domain;
-        }
-
-        $fqdn = $this->fqdn($domain);
-        if (empty($fqdn)){
-            $fqdn = $domain;
-        }
-
-        return '*.' . $domain;
-    }
-
-    /**
-     * Returns FQDN, strips wildcards
-     * @param $domain
-     * @return string
-     */
-    protected function fqdn($domain){
-        $components = explode('.', $domain);
-        $ret = [];
-
-        foreach(array_reverse($components) as $comp){
-            if (strpos($comp, '.') !== false || strpos($comp, '%') !== false){
-                break;
-            }
-
-            $ret[] = $comp;
-        }
-
-        if (count($ret) < 2){
-            return null;
-        }
-
-        return join('.', array_reverse($ret));
-    }
-
-    /**
-     * Alt names matching the given domain search.
-     * test.alpha.dev.domain.com ->
-     *   - *.alpha.dev.domain.com
-     *   - *.dev.domain.com
-     *   - *.domain.com
-     * @param $domain
-     * @return array
-     */
-    protected function altNames($domain)
-    {
-        $components = explode('.', $domain);
-
-        // If % wildcard is present, skip.
-        foreach ($components as $comp){
-            if (strpos($comp, '%') !== false){
-                return [];
-            }
-        }
-
-        $result = [];
-        $ln = count($components);
-        for($i = 1; $i < $ln - 1; $i++){
-            $result[] = '*.' . join('.', array_slice($components, $i));
-        }
-
-        return $result;
     }
 
     /**
