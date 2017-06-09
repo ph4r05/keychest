@@ -150,6 +150,10 @@ a,button{outline: none!important;} /* Prevent ugly blue glow on chrome and safar
   margin-top:30px;
 }
 
+.voffset-lg{
+        margin-top:80px;
+}
+
 /* Column No Gutters */
 
 .row-no-gutters{
@@ -169,7 +173,11 @@ a,button{outline: none!important;} /* Prevent ugly blue glow on chrome and safar
   font-size: 24px;
 }
 #learn p{
-  font-size: 18px;
+  font-size: 16px;
+  line-height: 20px;
+}
+#learn h6{
+font-size:14px;
 }
 #bloc-5 p{
   font-size: 18px;
@@ -311,7 +319,7 @@ nav .caret{
 -------------------------------------------------------------- */
 
 .mg-clear{
-  margin:0;
+  /*margin:0;*/
 }
 .mg-sm{
   margin-top:10px;
@@ -479,6 +487,13 @@ iframe{
 h1,h2,h3,h4,h5,h6,p,label,.btn,a{
   font-family:"Helvetica";
 }
+
+h3 {
+  margin:0px;
+}
+h4,h5,h6{
+  vertical-align: middle;
+}
 .container{
   max-width:1170px;
 }
@@ -503,6 +518,9 @@ h1,h2,h3,h4,h5,h6,p,label,.btn,a{
 }
 .bgc-isabelline{
   background-color:#EEEEEE;
+}
+.bgc-capri{
+        background-color:#00C5FF;
 }
 /* Text colour styles */
 
