@@ -23,10 +23,6 @@ Route::get('submitJob', 'SearchController@restSubmitJob');
 Route::get('jobState', 'SearchController@restGetJobState');
 Route::get('jobResult', 'SearchController@restJobResults');
 
-//Route::get('/w', function () {
-//    return view('welcome');
-//});
-
 // Auth routes
 Route::auth();
 Auth::routes();
@@ -37,6 +33,7 @@ Route::get('home/servers/get', 'ServersController@getList')->name('servers/get')
 Route::post('home/servers/add', 'ServersController@add')->name('servers/add');
 Route::post('home/servers/del', 'ServersController@del')->name('servers/del');
 Route::post('home/servers/update', 'ServersController@update')->name('servers/update');
+Route::post('home/servers/canAdd', 'ServersController@canAddHost')->name('servers/canAdd');
 Route::get('home/scan', 'SearchController@showHome')->name('home/scan')->middleware('auth');
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.

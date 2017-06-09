@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Keychest\Services\ServerManager;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,10 +20,17 @@ use Illuminate\Support\Facades\Log;
 class ServersController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * @var ServerManager
      */
-    public function __construct()
+    protected $serverManager;
+
+    /**
+     * Create a new controller instance.
+     * @param ServerManager $serverManager
+     */
+    public function __construct(ServerManager $serverManager)
     {
+        $this->serverManager = $serverManager;
         $this->middleware('auth');
     }
 
@@ -75,8 +83,6 @@ class ServersController extends Controller
     public function add()
     {
         $server = strtolower(trim(Input::get('server')));
-        Log::info(sprintf('Target: %s', $server));
-
         $parsed = parse_url($server);
         if (empty($parsed) || strpos($server, '.') === false){
             return response()->json(['status' => 'fail'], 422);
@@ -90,10 +96,10 @@ class ServersController extends Controller
             'user_id' => $curUser->getAuthIdentifier()
         ];
 
-        $criteria = $this->buildCriteria($parsed, $server);
+        $criteria = $this->serverManager->buildCriteria($parsed, $server);
 
         // Duplicity detection
-        if ($this->getHostsBy($criteria, $curUser->getAuthIdentifier())->isNotEmpty()){
+        if ($this->serverManager->getHostsBy($criteria, $curUser->getAuthIdentifier())->isNotEmpty()){
             return response()->json(['status' => 'already-present'], 410);
         }
 
@@ -142,10 +148,10 @@ class ServersController extends Controller
             return response()->json(['status' => 'not-found'], 404);
         }
 
-        $criteria = $this->buildCriteria($parsed, $server);
+        $criteria = $this->serverManager->buildCriteria($parsed, $server);
 
         // Duplicity detection
-        $duplicates = $this->getHostsBy($criteria, $curUser->getAuthIdentifier());
+        $duplicates = $this->serverManager->getHostsBy($criteria, $curUser->getAuthIdentifier());
         if ($duplicates->isNotEmpty() && ($duplicates->first()->id != $ent->id || $duplicates->count() > 1)){
             return response()->json(['status' => 'already-present'], 410);
         }
@@ -160,36 +166,25 @@ class ServersController extends Controller
     }
 
     /**
-     * Used to load hosts for update / add to detect duplicates
-     * @param $criteria
-     * @param $userId
-     * @return Collection
+     * Checks if the host can be added to the certificate monitor
      */
-    protected function getHostsBy($criteria, $userId){
-        $query = WatchTarget::query();
-
-        if (!empty($userId)){
-            $query = $query->where('user_id', $userId);
+    public function canAddHost(){
+        $server = strtolower(trim(Input::get('server')));
+        $parsed = parse_url($server);
+        if (empty($parsed) || strpos($server, '.') === false){
+            return response()->json(['status' => 'fail'], 422);
         }
 
-        foreach ($criteria as $key => $val){
-            $query = $query->where($key, $val);
+        // DB Job data
+        $curUser = Auth::user();
+        $criteria = $this->serverManager->buildCriteria($parsed, $server);
+
+        // Duplicity detection
+        if ($this->serverManager->getHostsBy($criteria, $curUser->getAuthIdentifier())->isNotEmpty()){
+            return response()->json(['status' => 'already-present'], 410);
         }
 
-        return $query->get();
+        return response()->json(['status' => 'success'], 200);
     }
 
-    /**
-     * Builds simple criteria from parsed domain
-     * @param $parsed
-     * @param $server
-     * @return array
-     */
-    protected function buildCriteria($parsed, $server){
-        return [
-            'scan_scheme' => isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https',
-            'scan_host' => isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : $server,
-            'scan_port' => isset($parsed['port']) && !empty($parsed['port']) ? $parsed['port'] : 443,
-        ];
-    }
 }
