@@ -383,7 +383,7 @@
                 this.$emit('onError', msg);
             },
 
-            searchStarted() {
+            searchStarted(data) {
                 this.searchEnabled = false;
                 this.formBlock(true);
                 this.resultsLoaded = false;
@@ -391,7 +391,7 @@
                 $('#search-error').hide();
                 $('#search-info').show();
                 this.recomp();
-                this.$emit('onSearchStart');
+                this.$emit('onSearchStart', data);
             },
 
             onUuidProvided(uuid) {
@@ -524,6 +524,8 @@
                 if (this.tlsScanLeafCert){
                     this.neighbourhood = Req.neighbourDomainList(this.tlsScanLeafCert.alt_names);
                 }
+
+                this.$emit('onResultsProcessed', this.results);
             },
 
             processTlsScan() {
@@ -611,24 +613,25 @@
 
             submitForm(){
                 let starget = $('#scan-target');
-                let domain = starget.val();
+                let targetUri = starget.val();
 
                 // Minor domain validation.
-                if (_.isEmpty(domain) || domain.split('.').length <= 1){
+                if (_.isEmpty(targetUri) || targetUri.split('.').length <= 1){
                     $( "#search-form" ).effect( "shake" );
                     toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000});
                     return;
                 }
 
-                this.searchStarted();
+                this.searchStarted({'host': targetUri});
                 this.cleanResults();
-                Req.submitJob(domain, (function(json){
+                Req.submitJob(targetUri, (function(json){
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
                         return;
                     }
 
                     console.log(json);
+                    this.$emit('onjobSubmitted', json);
 
                     // Update URL so it contains params - job ID & url
                     let new_url = window.location.pathname + "?uuid=" + json.uuid + '&url=' + encodeURI(targetUri);
