@@ -2,9 +2,22 @@
 
 Certificate monitor
 
+## Installation
+
+* Install composer: https://getcomposer.org/download/
+* Install NodeJS v6 + NPM
+
+```
+cd keychest/
+
+composer install
+npm istall
+```
+
 ## Development - setup
 
-Edit `.env` file.
+The `.env` file contains current configuration for the environment Keychest is deployed on. 
+`.env` file must not be commited to the Git.
 
 ```bash
 mkdir -p storage/logs/
@@ -15,11 +28,35 @@ npm install
 php artisan migrate --force
 ```
 
+Recommended approach - have more `.env` files on the server, like
+```
+.env.dev
+.env.test
+.env.prod
+```
+
+Then symlink the `.env` file so it points to the file it corresponds to, e.g.,
+for the development deployment:
+
+```
+ln -s .env.dev .env
+```
+
 ### Resource compilation
 
+Do not ever edit CSS/JS in `/public`, it is automatically generated
+from resources. 
+
+To recompile all resources call
+
 ```bash
+# on dev
 npm run dev
+
+# on production (minification)
 npm run prod
+
+# dev with watching file changes
 npm run watch-poll
 ```
 
@@ -35,7 +72,7 @@ Queue management - obsolete now processed by python component.
 php artisan queue:work redis --queue=scanner --sleep 0.05
 ```
 
-Queued events processing
+Queued events processing - processing events from web / python worker.
 
 ```bash
 php artisan queue:work --sleep 0.05
