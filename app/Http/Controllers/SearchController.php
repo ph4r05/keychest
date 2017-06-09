@@ -188,7 +188,7 @@ class SearchController extends Controller
             ->merge($altNamesCertIds)
             ->merge($cnameCertIds);
 
-        $certificates = Certificate::query()->whereIn('id', $certIds)->get();
+        $certificates = Certificate::query()->whereIn('id', $certIds->unique())->get();
 
         // certificate attribution, which cert from which scan
         $certificates->transform(function($x, $key) use ($handshakeCertsId, $crtShCertsId, $crtShCertsIdAll,
