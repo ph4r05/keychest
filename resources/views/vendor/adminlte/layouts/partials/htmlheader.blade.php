@@ -28,4 +28,19 @@
             echo json_encode($trans);
         @endphp
     </script>
+
+    <!-- Scripts -->
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+            'authGuest' => Auth::guest(),
+            'urlBase' => url('/'),
+            'urlLogin' => route('login'),
+            'urlRegister' => route('register'),
+            'urlLogout' => route('logout'),
+            'urlFeedback' => route('rfeedback'),
+            'authUserName' => Auth::guest() ? null : Auth::user()->name,
+            'authUserId' => Auth::guest() ? null : Auth::user()->getAuthIdentifier()
+        ]) !!};
+    </script>
 </head>
