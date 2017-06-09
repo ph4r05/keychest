@@ -21,6 +21,7 @@ require('jquery-ui/ui/effects/effect-shake');
  */
 
 Vue.component('quicksearch', require('./components/quicksearch.vue'));
+Vue.component('quicksearch-main', require('./components/quicksearch-main.vue'));
 Vue.component('feedback_form', require('./components/feedback_form.vue'));
 
 console.log('Vue.js init');

@@ -28,7 +28,7 @@
     </div>
 
     <!-- Vue search component -->
-    <quicksearch></quicksearch>
+    <quicksearch-main></quicksearch-main>
 
     <!-- learn -->
     <div class="bloc tc-onyx bgc-isabelline" id="learn">
