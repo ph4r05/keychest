@@ -134,3 +134,6 @@ adminlte-laravel social
 * https://apps.twitter.com/app/new
 * https://www.linkedin.com/secure/developer
 
+Facebook, Google and Linked in support more callback URIs,
+for Github and Twitter there has to be a separate app for each 
+new domain (test, dev, production).
