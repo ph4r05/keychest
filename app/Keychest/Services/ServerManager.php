@@ -9,7 +9,9 @@
 namespace App\Keychest\Services;
 
 use App\Models\WatchTarget;
+use App\User;
 use Illuminate\Contracts\Auth\Factory as FactoryContract;
+use Illuminate\Support\Facades\Auth;
 
 class ServerManager {
 
@@ -24,11 +26,33 @@ class ServerManager {
      * Create a new Auth manager instance.
      *
      * @param  \Illuminate\Foundation\Application  $app
-     * @return void
      */
     public function __construct($app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Checks if the host can be added to the certificate monitor
+     * @param $server
+     * @param User|null $curUser
+     * @return int
+     */
+    public function canAddHost($server, $curUser=null){
+        $parsed = parse_url($server);
+        if (empty($parsed) || strpos($server, '.') === false){
+            return -1;
+        }
+
+        $criteria = $this->buildCriteria($parsed, $server);
+        $userId = empty($curUser) ? null : $curUser->getAuthIdentifier();
+
+        // Duplicity detection
+        if ($this->getHostsBy($criteria, $userId)->isNotEmpty()){
+            return 0;
+        }
+
+        return 1;
     }
 
     /**

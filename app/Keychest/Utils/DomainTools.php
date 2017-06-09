@@ -86,4 +86,21 @@ class DomainTools {
 
         return $result;
     }
+
+    /**
+     * Assembless full url from parts
+     * @param $scheme
+     * @param $host
+     * @param $port
+     * @return string
+     */
+    public static function assembleUrl($scheme, $host, $port){
+        if (empty($scheme)){
+            $scheme = 'https';
+        }
+        if (empty($port)){
+            $port = 443;
+        }
+        return $scheme . '://' . $host . ':' . $port;
+    }
 }

@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 use App\Events\ScanJobProgress;
 use App\Jobs\ScanHostJob;
 use App\Keychest\Coverage\Interval;
+use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DomainTools;
 use App\Models\Certificate;
 use App\Models\CertificateAltName;
@@ -35,11 +36,17 @@ class SearchController extends Controller
     // use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * IndexController constructor.
+     * @var ServerManager
      */
-    public function __construct()
-    {
+    protected $serverManager;
 
+    /**
+     * Create a new controller instance.
+     * @param ServerManager $serverManager
+     */
+    public function __construct(ServerManager $serverManager)
+    {
+        $this->serverManager = $serverManager;
     }
 
     /**
@@ -212,6 +219,15 @@ class SearchController extends Controller
             $downtimeTls = $this->computeDowntime($certificates, null, $tlsCert);
         }
 
+        // Can add to my server watch list?
+        $curUser = Auth::user();
+        $canAddToList = false;
+        if (!empty($curUser)){
+            $canAdd = $this->serverManager->canAddHost(
+                DomainTools::assembleUrl($job->scan_scheme, $job->scan_host, $job->scan_port), $curUser);
+            $canAddToList = $canAdd == 1;
+        }
+
         // Search based on crt.sh search.
         $data = [
             'status' => 'success',
@@ -225,6 +241,7 @@ class SearchController extends Controller
             })->keyBy('id'),
             'downtime' => $downtimeMatch,
             'downtimeTls' => $downtimeTls,
+            'canAddToList' => $canAddToList
         ];
 
         return response()->json($data, 200);

@@ -170,21 +170,15 @@ class ServersController extends Controller
      */
     public function canAddHost(){
         $server = strtolower(trim(Input::get('server')));
-        $parsed = parse_url($server);
-        if (empty($parsed) || strpos($server, '.') === false){
+        $canAdd = $this->serverManager->canAddHost($server, Auth::user());
+        if ($canAdd == -1){
             return response()->json(['status' => 'fail'], 422);
-        }
-
-        // DB Job data
-        $curUser = Auth::user();
-        $criteria = $this->serverManager->buildCriteria($parsed, $server);
-
-        // Duplicity detection
-        if ($this->serverManager->getHostsBy($criteria, $curUser->getAuthIdentifier())->isNotEmpty()){
+        } elseif ($canAdd == 0){
             return response()->json(['status' => 'already-present'], 410);
+        } elseif ($canAdd == 1) {
+            return response()->json(['status' => 'success'], 200);
+        } else {
+            return response()->json(['status' => 'unrecognized-error', 'code' => $canAdd], 500);
         }
-
-        return response()->json(['status' => 'success'], 200);
     }
-
 }
