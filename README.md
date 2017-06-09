@@ -59,13 +59,13 @@ To recompile all resources call
 
 ```bash
 # on dev
-npm run dev
+nice -n 19 npm run dev
 
 # on production (minification)
-npm run prod
+nice -n 19 npm run prod
 
 # dev with watching file changes
-npm run watch-poll
+nice -n 19 npm run watch-poll
 ```
 
 On Vue component modification re-upload compiled resources in `public/`
