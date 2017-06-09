@@ -2,6 +2,15 @@
 
 Certificate monitor
 
+## Important
+
+.env file is important - needed to be added as not versioned
+
+1. never edit /public files
+2. just sync /resource files, should be OK for changes in the "look"
+3. then you need to rebuild CSS/JS - "npm run dev" in the project root - more info below
+
+
 ## Development - setup
 
 Edit `.env` file.
