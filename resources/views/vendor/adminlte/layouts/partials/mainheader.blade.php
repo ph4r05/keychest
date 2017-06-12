@@ -23,31 +23,31 @@
                     <!-- Menu toggle button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-envelope-o"></i>
-                        <span class="label label-success">4</span>
+                        {{--<span class="label label-success">4</span>--}}
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">{{ trans('adminlte_lang::message.tabmessages') }}</li>
+                        <li class="header">No messages</li>
                         <li>
                             <!-- inner menu: contains the messages -->
                             <ul class="menu">
-                                <li><!-- start message -->
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <!-- User Image -->
-                                            <img src="{{ Gravatar::get($user->email) }}" class="img-circle" alt="User Image"/>
-                                        </div>
-                                        <!-- Message title and timestamp -->
-                                        <h4>
-                                            {{ trans('adminlte_lang::message.supteam') }}
-                                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                                        </h4>
-                                        <!-- The message -->
-                                        <p>{{ trans('adminlte_lang::message.awesometheme') }}</p>
-                                    </a>
-                                </li><!-- end message -->
+                                {{--<li><!-- start message -->--}}
+                                    {{--<a href="#">--}}
+                                        {{--<div class="pull-left">--}}
+                                            {{--<!-- User Image -->--}}
+                                            {{--<img src="{{ Gravatar::get($user->email) }}" class="img-circle" alt="User Image"/>--}}
+                                        {{--</div>--}}
+                                        {{--<!-- Message title and timestamp -->--}}
+                                        {{--<h4>--}}
+                                            {{--{{ trans('adminlte_lang::message.supteam') }}--}}
+                                            {{--<small><i class="fa fa-clock-o"></i> 5 mins</small>--}}
+                                        {{--</h4>--}}
+                                        {{--<!-- The message -->--}}
+                                        {{--<p>{{ trans('adminlte_lang::message.awesometheme') }}</p>--}}
+                                    {{--</a>--}}
+                                {{--</li><!-- end message -->--}}
                             </ul><!-- /.menu -->
                         </li>
-                        <li class="footer"><a href="#">c</a></li>
+                        {{--<li class="footer"><a href="#"></a></li>--}}
                     </ul>
                 </li><!-- /.messages-menu -->
 
@@ -56,21 +56,21 @@
                     <!-- Menu toggle button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning">10</span>
+                        {{--<span class="label label-warning">10</span>--}}
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">{{ trans('adminlte_lang::message.notifications') }}</li>
-                        <li>
-                            <!-- Inner Menu: contains the notifications -->
-                            <ul class="menu">
-                                <li><!-- start notification -->
-                                    <a href="#">
-                                        <i class="fa fa-users text-aqua"></i> {{ trans('adminlte_lang::message.newmembers') }}
-                                    </a>
-                                </li><!-- end notification -->
-                            </ul>
-                        </li>
-                        <li class="footer"><a href="#">{{ trans('adminlte_lang::message.viewall') }}</a></li>
+                        <li class="header">No notifications</li>
+                        {{--<li>--}}
+                            {{--<!-- Inner Menu: contains the notifications -->--}}
+                            {{--<ul class="menu">--}}
+                                {{--<li><!-- start notification -->--}}
+                                    {{--<a href="#">--}}
+                                        {{--<i class="fa fa-users text-aqua"></i> {{ trans('adminlte_lang::message.newmembers') }}--}}
+                                    {{--</a>--}}
+                                {{--</li><!-- end notification -->--}}
+                            {{--</ul>--}}
+                        {{--</li>--}}
+                        {{--<li class="footer"><a href="#">{{ trans('adminlte_lang::message.viewall') }}</a></li>--}}
                     </ul>
                 </li>
                 <!-- Tasks Menu -->
@@ -78,34 +78,34 @@
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-flag-o"></i>
-                        <span class="label label-danger">9</span>
+                        {{--<span class="label label-danger">9</span>--}}
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">{{ trans('adminlte_lang::message.tasks') }}</li>
-                        <li>
-                            <!-- Inner menu: contains the tasks -->
-                            <ul class="menu">
-                                <li><!-- Task item -->
-                                    <a href="#">
-                                        <!-- Task title and progress text -->
-                                        <h3>
-                                            {{ trans('adminlte_lang::message.tasks') }}
-                                            <small class="pull-right">20%</small>
-                                        </h3>
-                                        <!-- The progress bar -->
-                                        <div class="progress xs">
-                                            <!-- Change the css width attribute to simulate progress -->
-                                            <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                <span class="sr-only">20% {{ trans('adminlte_lang::message.complete') }}</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li><!-- end task item -->
-                            </ul>
-                        </li>
-                        <li class="footer">
-                            <a href="#">{{ trans('adminlte_lang::message.alltasks') }}</a>
-                        </li>
+                        <li class="header">No tasks</li>
+                        {{--<li>--}}
+                            {{--<!-- Inner menu: contains the tasks -->--}}
+                            {{--<ul class="menu">--}}
+                                {{--<li><!-- Task item -->--}}
+                                    {{--<a href="#">--}}
+                                        {{--<!-- Task title and progress text -->--}}
+                                        {{--<h3>--}}
+                                            {{--{{ trans('adminlte_lang::message.tasks') }}--}}
+                                            {{--<small class="pull-right">20%</small>--}}
+                                        {{--</h3>--}}
+                                        {{--<!-- The progress bar -->--}}
+                                        {{--<div class="progress xs">--}}
+                                            {{--<!-- Change the css width attribute to simulate progress -->--}}
+                                            {{--<div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">--}}
+                                                {{--<span class="sr-only">20% {{ trans('adminlte_lang::message.complete') }}</span>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                    {{--</a>--}}
+                                {{--</li><!-- end task item -->--}}
+                            {{--</ul>--}}
+                        {{--</li>--}}
+                        {{--<li class="footer">--}}
+                            {{--<a href="#">{{ trans('adminlte_lang::message.alltasks') }}</a>--}}
+                        {{--</li>--}}
                     </ul>
                 </li>
                 @if (Auth::guest())
@@ -127,26 +127,28 @@
                                 <img src="{{ Gravatar::get($user->email) }}" class="img-circle" alt="User Image" />
                                 <p>
                                     {{ Auth::user()->name }}
-                                    <small>{{ trans('adminlte_lang::message.login') }} Nov. 2012</small>
+                                    <small>Registered: {{ Auth::user()->created_at }}</small>
                                 </p>
                             </li>
+
                             <!-- Menu Body -->
-                            <li class="user-body">
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">{{ trans('adminlte_lang::message.followers') }}</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">{{ trans('adminlte_lang::message.sales') }}</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">{{ trans('adminlte_lang::message.friends') }}</a>
-                                </div>
-                            </li>
+                            {{--<li class="user-body">--}}
+                                {{--<div class="col-xs-4 text-center">--}}
+                                    {{--<a href="#">{{ trans('adminlte_lang::message.followers') }}</a>--}}
+                                {{--</div>--}}
+                                {{--<div class="col-xs-4 text-center">--}}
+                                    {{--<a href="#">{{ trans('adminlte_lang::message.sales') }}</a>--}}
+                                {{--</div>--}}
+                                {{--<div class="col-xs-4 text-center">--}}
+                                    {{--<a href="#">{{ trans('adminlte_lang::message.friends') }}</a>--}}
+                                {{--</div>--}}
+                            {{--</li>--}}
+
                             <!-- Menu Footer-->
                             <li class="user-footer">
-                                <div class="pull-left">
-                                    <a href="{{ url('/settings') }}" class="btn btn-default btn-flat">{{ trans('adminlte_lang::message.profile') }}</a>
-                                </div>
+                                {{--<div class="pull-left">--}}
+                                    {{--<a href="{{ url('/settings') }}" class="btn btn-default btn-flat">{{ trans('adminlte_lang::message.profile') }}</a>--}}
+                                {{--</div>--}}
                                 <div class="pull-right">
                                     <a href="{{ url('/logout') }}" class="btn btn-default btn-flat" id="logout"
                                        onclick="event.preventDefault();
