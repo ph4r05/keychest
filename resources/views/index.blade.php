@@ -39,7 +39,16 @@
 					Welcome to KeyChest
 				</h1>
 				<p>
-					KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy. You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use them for your web servers, email servers, on-premise web services, or to protect your infrastructure.&nbsp;We treat all certs equal, whether you paid $500 for each, got them free from LetsEncrypt, or created them yourself.<br> <br>When you create an account, you can quickly populate your dashboard using domain names with wildcards and print the first set of KPIs within minutes.<br> <br>&nbsp;
+					KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy.
+					You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert
+					KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use them
+					for your web servers, email servers, on-premise web services, or to protect your infrastructure.&nbsp;
+					We treat all certs equal, whether you paid $500 for each, got them free from LetsEncrypt, or
+					created them yourself.<br> <br>Note: We treat the name you enter as a server, rather than a "domain
+					name". This is particularly important when testing web servers, as we don't follow re-directs. However,
+					if we detect an active re-direct, you will be given an option to check it.
+					<br> <br>When you create an account, you can quickly populate your dashboard
+					using domain names with wildcards to search for server and print the first set of KPIs within minutes.<br> <br>&nbsp;
 				</p>
 
 				<div class="row">
