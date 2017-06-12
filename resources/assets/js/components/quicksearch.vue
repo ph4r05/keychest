@@ -570,8 +570,8 @@
 
                 if (this.tlsScanLeafCert){
                     this.tlsScanHostCert = this.tlsScanLeafCert;
-                } else if (this.results.certificates && Object.keys(this.results.certificates).length === 1){
-                    this.tlsScanHostCert = this.results.certificates[Object.keys(this.results.certificates)[0]];
+                } else if (this.tlsScan.certs_ids && this.tlsScan.certs_ids.length === 1){
+                    this.tlsScanHostCert = this.results.certificates[this.tlsScan.certs_ids[0]];
                 }
 
                 this.tlsScan.valid_trusted = this.tlsScan.valid_path && this.tlsScan.valid_hostname;
