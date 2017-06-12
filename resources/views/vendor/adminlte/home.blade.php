@@ -29,7 +29,12 @@
 						</div>
 					</div>
 					<div class="box-body">
-						{{ trans('adminlte_lang::message.logged') }} Welcome to Keychest.
+						<p>
+							{{ trans('adminlte_lang::message.logged') }} Welcome to Keychest.
+						</p>
+						<p>
+							We are working on a new dashboard, stay tuned.
+						</p>
 					</div>
 					<!-- /.box-body -->
 				</div>
