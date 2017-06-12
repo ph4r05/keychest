@@ -51,7 +51,7 @@
 
             <!-- Brief results table -->
             <table class="table" v-if="results && results.tlsScans.length > 0
-                                        && !tlsScanError && tlsScanLeafCert && tlsScan">
+                                        && !tlsScanError && tlsScanHostCert && tlsScan">
                 <tbody>
                 <tr v-bind:class="{
                                 success: form.defcon==5,
@@ -59,8 +59,8 @@
                                 danger: form.defcon==1 }"
                 >
                     <th>{{ curJob.scan_host }}{{ curJob.portString }}</th>
-                    <td v-if="tlsScanLeafCert.is_expired">expired {{ Math.round((-1)*tlsScanLeafCert.valid_to_days) }} days</td>
-                    <td v-else>expires in {{ Math.round(tlsScanLeafCert.valid_to_days) }} days</td>
+                    <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days</td>
+                    <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }} days</td>
                     <td> {{ form.textStatus }} </td>
                 </tr>
 
@@ -69,13 +69,13 @@
                                 warning: form.defcon<=4 && form.defcon>=2,
                                 danger: form.defcon==1 }">
 
-                    <td colspan="3" v-if="tlsScanLeafCert.is_expired && tlsScan.hsts_present">
+                    <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
                         Certificate expired. Your server is down (HSTS is set). Create an account to track or ask for help.</td>
-                    <td colspan="3" v-else-if="tlsScanLeafCert.is_expired">
+                    <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
                         Certificate expired. Your server shows as "Not Secure". Create an account to track or ask for help.</td>
-                    <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<2">
+                    <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<2">
                         The validity is less than 2 days. Renew now to avoid downtime! Create an account to track or ask for help.</td>
-                    <td colspan="3" v-else-if="tlsScanLeafCert.valid_to_days<28">
+                    <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
                         The validity is less than 28 days. Plan renewal now! Create an account or ask for help.</td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
                         There is nothing to do. Well done! Our compliments for using HSTS. Start tracking to avoid unavailability.</td>
@@ -88,8 +88,19 @@
 
             <!-- Aux errors -->
             <div class="alert alert-danger" v-if="errTrusted">
-                <p><strong>Error: </strong>The certificate is not trusted.
-                <span v-if="tlsScan.certs_ids.length == 1">There is only a leaf certificate in the chain.</span></p>
+                <div v-if="tlsScanHostCert && tlsScanHostCert.is_self_signed">
+                    We detected an untrusted self-signed certificate. Please get in touch, if you want to track your own certificates.
+                </div>
+                <div v-else-if="tlsScanHostCert && tlsScanHostCert.is_ca">
+                    We detected an untrusted certificate. Please get in touch, if you want to track your own certificates.
+                </div>
+                <div v-else="">
+                    <p><strong>Error: </strong>The certificate is not trusted. <span
+                            v-if="tlsScan.certs_ids.length === 0">No certificate was found.</span><span
+                            v-else-if="!tlsScanHostCert">Host certificate could not be detected.</span><span
+                            v-else-if="tlsScan.certs_ids.length === 1 && tlsScanLeafCert">There is only a leaf certificate in the chain (probably missing intermediate?).</span>
+                    </p>
+                </div>
             </div>
 
             <div class="alert alert-danger" v-if="errHostname">
@@ -111,15 +122,15 @@
                     </p>
             </div>
 
-            <div class="alert alert-warning" v-if="false && !tlsScanError && tlsScanLeafCert && tlsScan && tlsScanLeafCert && tlsScanLeafCert.is_le
-                        && tlsScanLeafCert.valid_to_days<30.0 && tlsScanLeafCert.valid_to_days > 0">
+            <div class="alert alert-warning" v-if="false && !tlsScanError && tlsScanHostCert && tlsScan && tlsScanHostCert && tlsScanHostCert.is_le
+                        && tlsScanHostCert.valid_to_days<30.0 && tlsScanHostCert.valid_to_days > 0">
                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
                     the validity is less than 30 days.</p>
 
                 <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
             </div>
 
-            <div class="alert alert-info" v-if="tlsScanLeafCert && !errHostname && neighbourhood.length > 2">
+            <div class="alert alert-info" v-if="tlsScanHostCert && !errHostname && neighbourhood.length > 2">
                 <p>Here are domains from your neighbourhood:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">{{ domain }}</li>
@@ -157,13 +168,13 @@
                             <th scope="row">Trusted</th>
                             <td>{{ tlsScan.valid_trusted ? 'Yes' : 'No' }}</td>
                         </tr>
-                        <tr v-if="tlsScanLeafCert !== null"
+                        <tr v-if="tlsScanHostCert !== null"
                             v-bind:class="{
-                                success: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days >= 28,
-                                warning: !tlsScanLeafCert.is_expired && tlsScanLeafCert.valid_to_days < 28,
-                                danger: tlsScanLeafCert.is_expired }">
+                                success: !tlsScanHostCert.is_expired && tlsScanHostCert.valid_to_days >= 28,
+                                warning: !tlsScanHostCert.is_expired && tlsScanHostCert.valid_to_days < 28,
+                                danger: tlsScanHostCert.is_expired }">
                             <th scope="row">Validity</th>
-                            <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
+                            <td>{{ tlsScanHostCert.valid_to }} ( {{ tlsScanHostCert.valid_to_days }} days ) </td>
                         </tr>
                         </tbody>
                     </table>
@@ -177,8 +188,8 @@
                         <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
                     </div>
 
-                    <div class="alert alert-warning" v-if="tlsScanLeafCert && tlsScanLeafCert.is_le
-                        && tlsScanLeafCert.valid_to_days<30.0 && tlsScanLeafCert.valid_to_days > 0">
+                    <div class="alert alert-warning" v-if="tlsScanHostCert && tlsScanHostCert.is_le
+                        && tlsScanHostCert.valid_to_days<30.0 && tlsScanHostCert.valid_to_days > 0">
                         <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
                         the validity is less than 30 days.</p>
 
@@ -186,31 +197,31 @@
                     </div>
 
                     <h3>Certificate details</h3>
-                    <table class="table" v-if="tlsScanLeafCert !== null">
+                    <table class="table" v-if="tlsScanHostCert !== null">
                         <tbody>
                         <tr>
                             <th scope="row">Certificates in the chain</th>
                             <td>{{ len(tlsScan.certs_ids) }}</td>
                         </tr>
-                        <tr v-if="tlsScanLeafCert.is_le">
+                        <tr v-if="tlsScanHostCert.is_le">
                             <th scope="row">Let's Encrypt</th>
-                            <td>{{ tlsScanLeafCert.is_le ? 'Yes' : 'No' }}</td>
+                            <td>{{ tlsScanHostCert.is_le ? 'Yes' : 'No' }}</td>
                         </tr>
-                        <tr v-if="tlsScanLeafCert.is_cloudflare">
+                        <tr v-if="tlsScanHostCert.is_cloudflare">
                             <th scope="row" >Cloudflare</th>
-                            <td>{{ tlsScanLeafCert.is_cloudflare ? 'Yes' : 'No' }}</td>
+                            <td>{{ tlsScanHostCert.is_cloudflare ? 'Yes' : 'No' }}</td>
                         </tr>
-                        <tr v-bind:class="{danger: tlsScanLeafCert.is_expired }">
+                        <tr v-bind:class="{danger: tlsScanHostCert.is_expired }">
                             <th scope="row">Time validity</th>
-                            <td>{{ tlsScanLeafCert.is_expired ? 'Expired' : 'Valid' }}</td>
+                            <td>{{ tlsScanHostCert.is_expired ? 'Expired' : 'Valid' }}</td>
                         </tr>
                         <tr >
                             <th scope="row">Issued on</th>
-                            <td>{{ tlsScanLeafCert.valid_from }} ( {{ tlsScanLeafCert.valid_from_days }} days ago )</td>
+                            <td>{{ tlsScanHostCert.valid_from }} ( {{ tlsScanHostCert.valid_from_days }} days ago )</td>
                         </tr>
-                        <tr v-bind:class="{danger: tlsScanLeafCert.is_expired }">
+                        <tr v-bind:class="{danger: tlsScanHostCert.is_expired }">
                             <th scope="row">Valid to</th>
-                            <td>{{ tlsScanLeafCert.valid_to }} ( {{ tlsScanLeafCert.valid_to_days }} days ) </td>
+                            <td>{{ tlsScanHostCert.valid_to }} ( {{ tlsScanHostCert.valid_to_days }} days ) </td>
                         </tr>
                         </tbody>
                     </table>
@@ -294,6 +305,7 @@
                 tlsScan: {},
                 tlsScanError: false,
                 tlsScanLeafCert: null,
+                tlsScanHostCert: null,
                 didYouMeanUrl: null,
                 downtimeWarning: false,
                 neighbourhood: [],
@@ -482,13 +494,18 @@
 
             postprocessResults(){
                 this.curJob.portString = this.curJob.port === 443 ? '' : ':' + this.curJob.port;
-                if (!this.tlsScanLeafCert || !this.tlsScan){
+                if (!this.tlsScanHostCert){
+                    this.errMsg('Could not detect host certificate');
+                    return;
+                }
+
+                if (!this.tlsScan){
                     return;
                 }
 
                 // Downtime analysis
                 if (this.results.downtimeTls){
-                    this.downtimeWarning = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan && this.tlsScanLeafCert
+                    this.downtimeWarning = !this.tlsScanError && this.tlsScanHostCert && this.tlsScan && this.tlsScanHostCert
                         && this.results.downtimeTls
                         && this.results.downtimeTls.count > 0
                         && this.results.downtimeTls.downtime > 0
@@ -498,14 +515,14 @@
                 }
 
                 // Results validity
-                if (this.tlsScanLeafCert.is_expired){
+                if (this.tlsScanHostCert.is_expired){
                     this.form.defcon = 1;
                     this.form.textStatus = 'ERROR';
                 } else {
-                    if (this.tlsScanLeafCert.valid_to_days < 2){
+                    if (this.tlsScanHostCert.valid_to_days < 2){
                         this.form.defcon = 2;
                         this.form.textStatus = 'WARNING';
-                    } else if (this.tlsScanLeafCert.valid_to_days < 28){
+                    } else if (this.tlsScanHostCert.valid_to_days < 28){
                         this.form.defcon = 3;
                         this.form.textStatus = 'PLAN';
                     } else {
@@ -514,15 +531,15 @@
                     }
                 }
 
-                this.errTrusted = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan
+                this.errTrusted = !this.tlsScanError && this.tlsScanHostCert && this.tlsScan
                     && !this.tlsScan.valid_trusted && !this.tlsScan.valid_path;
 
-                this.errHostname = !this.tlsScanError && this.tlsScanLeafCert && this.tlsScan
+                this.errHostname = !this.tlsScanError && this.tlsScanHostCert && this.tlsScan
                     && !this.tlsScan.valid_trusted && this.tlsScan.valid_path && !this.tlsScan.valid_hostname;
 
                 // Neighbourhood
-                if (this.tlsScanLeafCert){
-                    this.neighbourhood = Req.neighbourDomainList(this.tlsScanLeafCert.alt_names);
+                if (this.tlsScanHostCert){
+                    this.neighbourhood = Req.neighbourDomainList(this.tlsScanHostCert.alt_names);
                 }
 
                 this.$emit('onResultsProcessed', this.results);
@@ -549,6 +566,12 @@
 
                 if (this.tlsScan.cert_id_leaf in this.results.certificates) {
                     this.tlsScanLeafCert = this.results.certificates[this.tlsScan.cert_id_leaf];
+                }
+
+                if (this.tlsScanLeafCert){
+                    this.tlsScanHostCert = this.tlsScanLeafCert;
+                } else if (this.results.certificates && Object.keys(this.results.certificates).length === 1){
+                    this.tlsScanHostCert = this.results.certificates[Object.keys(this.results.certificates)[0]];
                 }
 
                 this.tlsScan.valid_trusted = this.tlsScan.valid_path && this.tlsScan.valid_hostname;
@@ -596,7 +619,7 @@
 
                 this.tlsScan = {};
                 this.tlsScanError = false;
-                this.tlsScanLeafCert = null;
+                this.tlsScanHostCert = null;
                 this.didYouMeanUrl = null;
                 this.neighbourhood = [];
                 this.downtimeWarning = false;
