@@ -131,7 +131,7 @@
             </div>
 
             <div class="alert alert-info" v-if="tlsScanHostCert && !errHostname && neighbourhood.length > 2">
-                <p>Here are domains from your neighbourhood:</p>
+                <p>Here are domains from your neighborhood:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">{{ domain }}</li>
                 </ul>
