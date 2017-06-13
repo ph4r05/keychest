@@ -391,7 +391,7 @@
             },
 
             didYouMeanUrlFull() {
-                return '/scan?url=' + encodeURI(this.didYouMeanUrl);
+                return '?url=' + encodeURI(this.didYouMeanUrl);
             },
 
             formBlock(block){
@@ -566,7 +566,9 @@
                 this.tlsScan = this.results.tlsScans[0];
                 if (this.tlsScan.follow_http_result === 'OK'){
                     const urlp = URL(this.tlsScan.follow_http_url, true);
-                    if (!Req.isSameUrl('https', urlp.host, 443, this.curJob.scan_scheme, this.curJob.scan_host, this.curJob.scan_port)) {
+                    if (!Req.isSameUrl(
+                            'https', urlp.host, 443,
+                            this.curJob.scan_scheme, this.curJob.scan_host, this.curJob.scan_port)) {
                         this.didYouMeanUrl = 'https://' + urlp.host;
                     }
                 }
