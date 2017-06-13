@@ -39,7 +39,7 @@
         <div class="scan-results" id="scan-results-brief" v-show="resultsLoaded && !showExpertStats">
 
             <!-- No TLS scan - probably invalid domain -->
-            <div class="alert alert-info" v-if="results && results.tlsScans.length == 0">
+            <div class="alert alert-info" v-if="isTlsScanEmpty">
                 No TLS scan was performed
             </div>
 
@@ -184,7 +184,7 @@
             <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
             <div class="tls-results" id="tls-results">
-                <div class="alert alert-info" v-if="results && results.tlsScans.length == 0">
+                <div class="alert alert-info" v-if="isTlsScanEmpty">
                     No TLS scan was performed
                 </div>
 
@@ -337,7 +337,7 @@
                 },
                 jobSubmittedNow: false,
                 resultsLoaded: false,
-                results: null,
+                results: { },
                 searchEnabled: true,
                 showExpertStats: false,
                 addingStatus: 0,
@@ -378,9 +378,21 @@
                 return !this.Laravel.authGuest;
             },
 
+            isTlsScanEmpty(){
+                return !this.results || !this.results.tlsScans || this.results.tlsScans.length === 0;
+            },
+
             showResultsTable(){
-                return this.results && this.results.tlsScans.length > 0
-                    && !this.tlsScanError && this.tlsScanHostCert && this.tlsScan;
+                try {
+                    return this.results
+                        && this.results.tlsScans
+                        && this.results.tlsScans.length > 0
+                        && !this.tlsScanError
+                        && this.tlsScanHostCert
+                        && this.tlsScan;
+                } catch(e){
+                    return false;
+                }
             },
 
             showTrackingButton(){
@@ -593,19 +605,21 @@
                 }
 
                 // Results validity
-                if (this.tlsScanHostCert.is_expired){
-                    this.form.defcon = 1;
-                    this.form.textStatus = 'ERROR';
-                } else {
-                    if (this.tlsScanHostCert.valid_to_days < 2){
-                        this.form.defcon = 2;
-                        this.form.textStatus = 'WARNING';
-                    } else if (this.tlsScanHostCert.valid_to_days < 28){
-                        this.form.defcon = 3;
-                        this.form.textStatus = 'PLAN';
+                if (this.tlsScanHostCert) {
+                    if (this.tlsScanHostCert.is_expired) {
+                        this.form.defcon = 1;
+                        this.form.textStatus = 'ERROR';
                     } else {
-                        this.form.defcon = 5;
-                        this.form.textStatus = 'OK';
+                        if (this.tlsScanHostCert.valid_to_days < 2) {
+                            this.form.defcon = 2;
+                            this.form.textStatus = 'WARNING';
+                        } else if (this.tlsScanHostCert.valid_to_days < 28) {
+                            this.form.defcon = 3;
+                            this.form.textStatus = 'PLAN';
+                        } else {
+                            this.form.defcon = 5;
+                            this.form.textStatus = 'OK';
+                        }
                     }
                 }
 
@@ -621,7 +635,7 @@
             },
 
             processTlsScan() {
-                if (!this.results.tlsScans || this.results.tlsScans.length === 0){
+                if (this.isTlsScanEmpty){
                     this.tlsScanError = true;
                     return;
                 }
