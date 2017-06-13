@@ -100,6 +100,14 @@ body.loading .ph4-modal {
   font-family: "Helvetica", serif;
 }
 
+@media (min-width: 768px) {
+  #app .table > tbody > tr > td,
+  #app .table > tbody > tr > th {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
 @media (max-width: 767px) {
   .alert p {
     padding-left: 0 !important;
