@@ -80,6 +80,8 @@
 
                 const onFail = (function(){
                     this.sentState = -1;
+                    $('#add-server-wrapper').effect( "shake" );
+                    toastr.error('Error while adding the server, please, try again later', 'Error');
                 }).bind(this);
 
                 const onDuplicate = (function(){
