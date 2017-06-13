@@ -222,6 +222,19 @@ function removeWildcard(domain){
 }
 
 /**
+ * Returns true if domain is wildcard
+ * @param domain
+ * @returns {boolean}
+ */
+function isWildcard(domain){
+    if (isEmpty(domain)){
+        return false;
+    }
+
+    return _.startsWith(domain, '*.');
+}
+
+/**
  * Removes cloudflaressl domain, removes wildcard domains, sort domains.
  * @param domainList
  */
@@ -261,6 +274,7 @@ module.exports = {
     autoFillSchemePort: autoFillSchemePort,
     normalizeUrl: normalizeUrl,
     buildUrl: buildUrl,
+    isWildcard: isWildcard,
     removeWildcard: removeWildcard,
     neighbourDomainList: neighbourDomainList
 };
