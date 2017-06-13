@@ -27,11 +27,12 @@
             <div class="register-box-body">
                 <p class="login-box-msg">{{ trans('adminlte_lang::message.registermember') }}</p>
 
+                <a href="{{ url('/login') }}" class="text-center">{{ trans('adminlte_lang::message.membreship') }}</a>
+
                 <register-form></register-form>
 
                 @include('adminlte::auth.partials.social_login')
 
-                <a href="{{ url('/login') }}" class="text-center">{{ trans('adminlte_lang::message.membreship') }}</a>
             </div><!-- /.form-box -->
         </div><!-- /.register-box -->
     </div>
