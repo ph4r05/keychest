@@ -576,7 +576,7 @@
                 }
 
                 this.tlsScan = this.results.tlsScans[0];
-                if (this.tlsScan.follow_http_result === 'OK'){
+                if (this.tlsScan.follow_http_url){
                     const urlp = URL(this.tlsScan.follow_http_url, true);
                     if (!Req.isSameUrl(
                             'https', urlp.host, 443,
@@ -584,7 +584,15 @@
                         this.didYouMeanUrl = 'https://' + urlp.host;
                     }
                 }
-                if (!this.didYouMeanUrl && this.tlsScan.follow_http_url)
+
+                if (!this.didYouMeanUrl && this.tlsScan.follow_https_url){
+                    const urlp = URL(this.tlsScan.follow_https_url, true);
+                    if (!Req.isSameUrl(
+                            'https', urlp.host, 443,
+                            this.curJob.scan_scheme, this.curJob.scan_host, this.curJob.scan_port)) {
+                        this.didYouMeanUrl = 'https://' + urlp.host;
+                    }
+                }
 
                 if (!this.tlsScan.certs_ids || this.tlsScan.status !== 1){
                     this.tlsScanError = true;
