@@ -706,6 +706,7 @@
                 this.tlsScan = {};
                 this.tlsScanError = false;
                 this.tlsScanHostCert = null;
+                this.tlsScanLeafCert = null;
                 this.didYouMeanUrl = null;
                 this.neighbourhood = [];
                 this.downtimeWarning = false;
