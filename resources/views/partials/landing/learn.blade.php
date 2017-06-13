@@ -23,7 +23,7 @@
                         <div class="panel">
                             <div class="panel-heading">
                                 <h3 class="mg-clear tc-rich-electric-blue">
-                                    Spot-checker
+                                    Spot check
                                 </h3>
                             </div>
                             <div class="panel-body">
@@ -71,7 +71,7 @@
                         <div class="panel">
                             <div class="panel-heading">
                                 <h3 class="mg-clear tc-rich-electric-blue">
-                                    Accounts (subject to changes)
+                                    Accounts (still subject to changes)
                                 </h3>
                             </div>
                             <div class="panel-body">
