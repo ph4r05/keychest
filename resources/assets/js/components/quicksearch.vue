@@ -93,6 +93,7 @@
             </table>
 
             <!-- Aux errors -->
+            <!-- Cert not trusted -->
             <div class="alert alert-danger" v-if="errTrusted">
                 <div v-if="tlsScanHostCert && tlsScanHostCert.is_self_signed">
                     We detected an untrusted self-signed certificate. Please get in touch, if you want to track your own certificates.
@@ -115,15 +116,19 @@
                 </div>
             </div>
 
+            <!-- Hostname mismatch -->
             <div class="alert alert-danger" v-if="errHostname">
                 <p><strong>Error: </strong>The certificate is valid but the domain does not match.</p>
                 <div v-if="neighbourhood.length > 0"> Certificate domains:
                     <ul class="domain-neighbours">
-                        <li v-for="domain in neighbourhood">{{ domain }}</li>
+                        <li v-for="domain in neighbourhood">
+                            <a v-bind:href="'?url=' + encodeURI(Req.removeWildcard(domain))">{{ domain }}</a>
+                        </li>
                     </ul>
                 </div>
             </div>
 
+            <!-- Downtime -->
             <div class="alert alert-warning" v-if="downtimeWarning && results.downtimeTls.downtime > 60">
                 <p><strong>Warning!</strong>
                     We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
@@ -134,6 +139,7 @@
                     </p>
             </div>
 
+            <!-- LE validity < 30 days -->
             <div class="alert alert-warning" v-if="false && !tlsScanError && tlsScanHostCert && tlsScan && tlsScanHostCert && tlsScanHostCert.is_le
                         && tlsScanHostCert.valid_to_days<30.0 && tlsScanHostCert.valid_to_days > 0">
                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
@@ -142,6 +148,12 @@
                 <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
             </div>
 
+            <!-- Redirect - scan that too? -->
+            <div class="alert alert-info" v-if="!tlsScanError && didYouMeanUrl">
+                Do you also want to check redirected domain <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?
+            </div>
+
+            <!-- Neighbours -->
             <div class="alert alert-info" v-if="tlsScanHostCert && !errHostname && neighbourhood.length > 2">
                 <p>Here are domains from your neighborhood:</p>
                 <ul class="domain-neighbours">
@@ -572,6 +584,7 @@
                         this.didYouMeanUrl = 'https://' + urlp.host;
                     }
                 }
+                if (!this.didYouMeanUrl && this.tlsScan.follow_http_url)
 
                 if (!this.tlsScan.certs_ids || this.tlsScan.status !== 1){
                     this.tlsScanError = true;
