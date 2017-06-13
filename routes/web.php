@@ -27,6 +27,16 @@ Route::get('jobResult', 'SearchController@restJobResults');
 Route::auth();
 Auth::routes();
 
+// Terms
+Route::get('terms', function () {
+    return view('terms');
+});
+
+Route::get('privacy-policy', function () {
+    return view('policy');
+});
+
+// Registered user space
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('home/servers', 'ServersController@index')->name('servers');
 Route::get('home/servers/get', 'ServersController@getList')->name('servers/get');
