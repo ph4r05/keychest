@@ -2,6 +2,8 @@
     <div class="search-wrapper"
          v-bind:class="{'kc-search': searchEnabled, 'kc-loading': !searchEnabled && !resultsLoaded, 'kc-results': resultsLoaded}"
     >
+
+        <!-- input form -->
         <div class="form-group">
             <form role="form" id="search-form" @submit.prevent="submitForm()">
                 <div class="input-group" id="scan-wrapper">
@@ -16,6 +18,7 @@
                 </div>
             </form>
         </div>
+        <!-- end of input form -->
 
         <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
             <strong>Error!</strong> <span id="error-text"></span>
@@ -35,7 +38,7 @@
         <!-- brief stats -->
         <div class="scan-results" id="scan-results-brief" v-show="resultsLoaded && !showExpertStats">
 
-            <!-- No TLS scan -->
+            <!-- No TLS scan - probably invalid domain -->
             <div class="alert alert-info" v-if="results && results.tlsScans.length == 0">
                 No TLS scan was performed
             </div>
@@ -50,12 +53,13 @@
                     <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
             </div>
 
-            <!-- Brief results table -->
+            <!-- Label for loaded test (performed previously) -->
             <h3 class="loaded-test-label" v-if="results && results.tlsScans.length > 0
                                         && !tlsScanError && tlsScanHostCert && tlsScan
                                         && !jobSubmittedNow && curJob"
             >The scan was performed {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}</h3>
 
+            <!-- Brief results table -->
             <table class="table" v-if="results && results.tlsScans.length > 0
                                         && !tlsScanError && tlsScanHostCert && tlsScan">
                 <tbody>
@@ -70,6 +74,7 @@
                     <td> {{ form.textStatus }} </td>
                 </tr>
 
+                <!-- Overal validity status, else-ifs from the most urgent to least -->
                 <tr v-bind:class="{
                                 success: form.defcon==5,
                                 warning: form.defcon<=4 && form.defcon>=2,
@@ -139,7 +144,7 @@
                     </p>
             </div>
 
-            <!-- LE validity < 30 days -->
+            <!-- LE validity < 30 days (disabled temporarily) -->
             <div class="alert alert-warning" v-if="false && !tlsScanError && tlsScanHostCert && tlsScan && tlsScanHostCert && tlsScanHostCert.is_le
                         && tlsScanHostCert.valid_to_days<30.0 && tlsScanHostCert.valid_to_days > 0">
                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
