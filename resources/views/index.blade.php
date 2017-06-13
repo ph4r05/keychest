@@ -51,7 +51,7 @@
 					using domain names with wildcards to search for server and print the first set of KPIs within minutes.<br> <br>&nbsp;
 				</p>
 
-				<div class="row">
+				<div class="row equal">
 					<div class="col-sm-6">
 						<div class="panel">
 							<div class="panel-heading">
