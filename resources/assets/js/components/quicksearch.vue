@@ -146,7 +146,7 @@
                     uptime. You were "not secure" for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
                     hours<span v-if="results.downtimeTls.downtime > 3600*24*3">
                          ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }} days)</span>.
-                    Start tracking now.
+                    <span v-if="!isMonitored">Start tracking now.</span>
                     </p>
             </div>
 
