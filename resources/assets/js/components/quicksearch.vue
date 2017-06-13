@@ -97,6 +97,23 @@
                 </tbody>
             </table>
 
+            <!-- Start tracking -->
+            <transition name="fade" v-on:after-leave="transition_hook">
+            <div v-if="results && results.canAddToList && addingStatus!==3 && addingStatus!==1" id="start-tracking-wrapper">
+                <div class="form-group start-tracking">
+                    <a v-if="Laravel.authGuest"
+                       class="btn btn-primary btn-block btn-lg"
+                       href="/register">Start tracking</a
+                    ><a id="start-tracking-button" v-else=""
+                       class="btn btn-primary btn-block btn-lg"
+                       v-bind:disabled="addingStatus==2"
+                       v-on:click.stop="startTracking"
+                    >Start tracking</a>
+                </div>
+            </div>
+            </transition>
+            <!-- end of start tracking -->
+
             <!-- Aux errors -->
             <!-- Cert not trusted -->
             <div class="alert alert-danger" v-if="errTrusted">
@@ -319,11 +336,13 @@
 </template>
 
 <script>
+    import axios from 'axios';
     export default {
         data: function() {
             return {
                 curUuid: null,
                 curJob: {},
+                curUrl: null,
                 form: {
                     defcon: 5,
                     textStatus: 'OK'
@@ -333,6 +352,7 @@
                 results: null,
                 searchEnabled: true,
                 showExpertStats: false,
+                addingStatus: 0,
 
                 tlsScan: {},
                 tlsScanError: false,
@@ -396,6 +416,7 @@
                 scanTarget.lowercaseFilter();
 
                 if (url){
+                    this.curUrl = url;
                     scanTarget.val(url);
                 }
 
@@ -464,7 +485,7 @@
                     }
 
                 }).bind(this), (function(jqxhr, textStatus, error){
-                    this.errMsg('Job failed');
+                    this.errMsg('Could not load scan with given ID');
                 }).bind(this));
             },
 
@@ -522,7 +543,14 @@
             },
 
             postprocessResults(){
+                if (!this.curJob){
+                    this.errMsg('Scan not found');
+                    return;
+                }
+
                 this.curJob.portString = this.curJob.port === 443 ? '' : ':' + this.curJob.port;
+                this.curUrl = Req.buildUrl(this.curJob.scan_scheme, this.curJob.scan_host, this.curJob.port);
+
                 if (!this.tlsScanError && !this.tlsScanHostCert){
                     this.errMsg('Could not detect host certificate');
                     return;
@@ -656,6 +684,7 @@
                 this.resultsLoaded = false;
                 this.results = null;
                 this.showExpertStats = false;
+                this.addingStatus = 0;
 
                 this.tlsScan = {};
                 this.tlsScanError = false;
@@ -687,6 +716,7 @@
 
                 this.searchStarted({'host': targetUri});
                 this.cleanResults();
+                this.curUrl = targetUri;
                 this.jobSubmittedNow = true;
 
                 Req.submitJob(targetUri, (function(json){
@@ -716,6 +746,60 @@
                 }).bind(this));
             },
 
+            startTracking(){
+                const server2monitor = this.curUrl;
+
+                // Minor domain validation.
+                if (_.isEmpty(server2monitor) || server2monitor.split('.').length <= 1){
+                    $('#start-tracking-wrapper').effect( "shake" );
+                    toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
+                    return;
+                }
+
+                Req.bodyProgress(true);
+
+                const onFail = (function(){
+                    Req.bodyProgress(false);
+                    this.addingStatus = -1;
+                    $('#start-tracking-wrapper').effect( "shake" );
+                    toastr.error('Error while adding the server, please, try again later', 'Error');
+                }).bind(this);
+
+                const onDuplicate = (function(){
+                    Req.bodyProgress(false);
+                    this.addingStatus = 3;
+                    toastr.success('This host is already being monitored.', 'Already present');
+                }).bind(this);
+
+                const onSuccess = (function(data){
+                    Req.bodyProgress(false);
+                    this.addingStatus = 1;
+                    this.$emit('onServerAdded', data);
+                    toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
+                }).bind(this);
+
+                this.addingStatus = 2;
+                axios.post('/home/servers/add', {'server': server2monitor})
+                    .then(response => {
+                        if (!response || !response.data) {
+                            onFail();
+                        } else if (response.data['status'] === 'already-present'){
+                            onDuplicate();
+                        } else if (response.data['status'] === 'success') {
+                            onSuccess(response.data);
+                        } else {
+                            onFail();
+                        }
+                    })
+                    .catch(e => {
+                        if (e && e.response && e.response.status === 410){
+                            onDuplicate();
+                        } else {
+                            console.log("Add server failed: " + e);
+                            onFail();
+                        }
+                    });
+            }
         }
     }
 </script>
