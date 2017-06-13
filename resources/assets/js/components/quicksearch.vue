@@ -94,12 +94,18 @@
                 <div v-else-if="tlsScanHostCert && tlsScanHostCert.is_ca">
                     We detected an untrusted certificate. Please get in touch, if you want to track your own certificates.
                 </div>
+                <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length > 1">
+                    We detected an untrusted certificate chain. Please get in touch, if you want to track your own certificates.
+                </div>
+                <div v-else-if="tlsScanHostCert">
+                    We detected an untrusted certificate. Please get in touch, if you want to track your own certificates.
+                </div>
                 <div v-else="">
-                    <p><strong>Error: </strong>The certificate is not trusted. <span
+                    <strong>Error: </strong>The certificate is not trusted. <span
                             v-if="tlsScan.certs_ids.length === 0">No certificate was found.</span><span
                             v-else-if="!tlsScanHostCert">Host certificate could not be detected.</span><span
-                            v-else-if="tlsScan.certs_ids.length === 1 && tlsScanLeafCert">There is only a leaf certificate in the chain (probably missing intermediate?).</span>
-                    </p>
+                            v-else-if="tlsScan.certs_ids.length === 1 && tlsScanLeafCert">There is only a leaf certificate in the chain (probably missing intermediate?).</span><!--
+                    -->
                 </div>
             </div>
 
