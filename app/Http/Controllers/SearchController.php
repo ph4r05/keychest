@@ -224,10 +224,12 @@ class SearchController extends Controller
         // Can add to my server watch list?
         $curUser = Auth::user();
         $canAddToList = false;
+        $isMonitored = false;
         if (!empty($curUser)){
             $canAdd = $this->serverManager->canAddHost(
                 DomainTools::assembleUrl($job->scan_scheme, $job->scan_host, $job->scan_port), $curUser);
             $canAddToList = $canAdd == 1;
+            $isMonitored = $canAdd == 0;
         }
 
         // Search based on crt.sh search.
@@ -243,7 +245,8 @@ class SearchController extends Controller
             })->keyBy('id'),
             'downtime' => $downtimeMatch,
             'downtimeTls' => $downtimeTls,
-            'canAddToList' => $canAddToList
+            'canAddToList' => $canAddToList,
+            'isMonitored' => $isMonitored
         ];
 
         return response()->json($data, 200);

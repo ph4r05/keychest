@@ -54,20 +54,13 @@
             </div>
 
             <!-- Label for loaded test (performed previously) -->
-            <h3 class="loaded-test-label" v-if="results && results.tlsScans.length > 0
-                                        && !tlsScanError && tlsScanHostCert && tlsScan
-                                        && !jobSubmittedNow && curJob"
+            <h3 class="loaded-test-label" v-if="showResultsTable && !jobSubmittedNow && curJob"
             >The scan was performed {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}</h3>
 
             <!-- Brief results table -->
-            <table class="table" v-if="results && results.tlsScans.length > 0
-                                        && !tlsScanError && tlsScanHostCert && tlsScan">
+            <table class="table" v-if="showResultsTable">
                 <tbody>
-                <tr v-bind:class="{
-                                success: form.defcon==5,
-                                warning: form.defcon<=4 && form.defcon>=2,
-                                danger: form.defcon==1 }"
-                >
+                <tr v-bind:class="defconStyle">
                     <th>{{ curJob.scan_host }}{{ curJob.portString }}</th>
                     <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days</td>
                     <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }} days</td>
@@ -75,11 +68,7 @@
                 </tr>
 
                 <!-- Overal validity status, else-ifs from the most urgent to least -->
-                <tr v-bind:class="{
-                                success: form.defcon==5,
-                                warning: form.defcon<=4 && form.defcon>=2,
-                                danger: form.defcon==1 }">
-
+                <tr v-bind:class="defconStyle">
                     <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
                         Certificate expired. Your server is down (HSTS is set). Create an account to track or ask for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
@@ -89,9 +78,9 @@
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
                         The validity is less than 28 days. Plan renewal now! Create an account or ask for help.</td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
-                        There is nothing to do. Well done! Our compliments for using HSTS. Start tracking to avoid unavailability.</td>
+                        There is nothing to do. Well done! Our compliments for using HSTS. <span v-if="!isMonitored">Start tracking to avoid unavailability.</span></td>
                     <td colspan="3" v-else>
-                        There is nothing to do. Well done! Create an account to stay on top of your certs.</td>
+                        There is nothing to do. Well done! <span v-if="!isMonitored">Start tracking to stay on top of your certs.</span></td>
                 </tr>
 
                 </tbody>
@@ -99,7 +88,7 @@
 
             <!-- Start tracking -->
             <transition name="fade" v-on:after-leave="transition_hook">
-            <div v-if="results && results.canAddToList && addingStatus!==3 && addingStatus!==1" id="start-tracking-wrapper">
+            <div v-if="showTrackingButton" id="start-tracking-wrapper">
                 <div class="form-group start-tracking">
                     <a v-if="Laravel.authGuest"
                        class="btn btn-primary btn-block btn-lg"
@@ -162,8 +151,7 @@
             </div>
 
             <!-- LE validity < 30 days (disabled temporarily) -->
-            <div class="alert alert-warning" v-if="false && !tlsScanError && tlsScanHostCert && tlsScan && tlsScanHostCert && tlsScanHostCert.is_le
-                        && tlsScanHostCert.valid_to_days<30.0 && tlsScanHostCert.valid_to_days > 0">
+            <div class="alert alert-warning" v-if="false && showLeWarning">
                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
                     the validity is less than 30 days.</p>
 
@@ -381,6 +369,38 @@
             })
         },
 
+        computed: {
+            isMonitored(){
+                return (this.results && this.results.isMonitored) || this.addingStatus === 1;
+            },
+
+            hasAccount(){
+                return !this.Laravel.authGuest;
+            },
+
+            showResultsTable(){
+                return this.results && this.results.tlsScans.length > 0
+                    && !this.tlsScanError && this.tlsScanHostCert && this.tlsScan;
+            },
+
+            showTrackingButton(){
+                return this.results && this.results.canAddToList && this.addingStatus!==3 && this.addingStatus!==1;
+            },
+
+            showLeWarning(){
+                return !this.tlsScanError && this.tlsScanHostCert && this.tlsScan
+                    && this.tlsScanHostCert && this.tlsScanHostCert.is_le
+                    && this.tlsScanHostCert.valid_to_days<30.0 && this.tlsScanHostCert.valid_to_days > 0;
+            },
+
+            defconStyle(){
+                return {
+                    success: this.form.defcon===5,
+                    warning: this.form.defcon<=4 && this.form.defcon>=2,
+                    danger: this.form.defcon===1 };
+            }
+        },
+
         methods: {
             take(x, len){
                 return _.take(x, len);
@@ -594,10 +614,7 @@
                 this.errHostname = !this.tlsScanError && this.tlsScanHostCert && this.tlsScan
                     && !this.tlsScan.valid_trusted && this.tlsScan.valid_path && !this.tlsScan.valid_hostname;
 
-                // Neighbourhood
-                if (this.tlsScanHostCert){
-                    this.neighbourhood = Req.neighbourDomainList(this.tlsScanHostCert.alt_names);
-                }
+                this.neighbourhood = this.tlsScanHostCert ? Req.neighbourDomainList(this.tlsScanHostCert.alt_names) : [];
 
                 this.$emit('onResultsProcessed', this.results);
             },
@@ -699,7 +716,7 @@
                 this.ctScanError = false;
 
                 this.ctExpired = [];
-                this.ctValid= [];
+                this.ctValid = [];
                 this.$emit('onReset');
             },
 
@@ -714,8 +731,8 @@
                     return;
                 }
 
-                this.searchStarted({'host': targetUri});
                 this.cleanResults();
+                this.searchStarted({'host': targetUri});
                 this.curUrl = targetUri;
                 this.jobSubmittedNow = true;
 
