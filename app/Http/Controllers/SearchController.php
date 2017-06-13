@@ -142,7 +142,7 @@ class SearchController extends Controller
 
         $data = [
             'status' => 'success',
-            'job' => $job,
+            'job' => $this->augmentScanJob($job),
         ];
 
         return response()->json($data, 200);
@@ -158,6 +158,8 @@ class SearchController extends Controller
         if (empty($job)){
             return response()->json(['status' => 'not-found'], 404);
         }
+
+        $job = $this->augmentScanJob($job);
         if ($job->state != 'finished'){
             return response()->json(['status' => 'not-finished'], 201);
         }
@@ -245,6 +247,20 @@ class SearchController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * Augments json record for scan job.
+     * @param $job
+     */
+    protected function augmentScanJob($job){
+        if (empty($job)){
+            return $job;
+        }
+
+        $job->created_at_utc = $job->created_at->getTimestamp();
+        $job->updated_at_utc = $job->updated_at->getTimestamp();
+        return $job;
     }
 
     /**

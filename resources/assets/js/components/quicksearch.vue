@@ -51,6 +51,11 @@
             </div>
 
             <!-- Brief results table -->
+            <h3 class="loaded-test-label" v-if="results && results.tlsScans.length > 0
+                                        && !tlsScanError && tlsScanHostCert && tlsScan
+                                        && !jobSubmittedNow && curJob"
+            >The scan was performed {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}</h3>
+
             <table class="table" v-if="results && results.tlsScans.length > 0
                                         && !tlsScanError && tlsScanHostCert && tlsScan">
                 <tbody>
