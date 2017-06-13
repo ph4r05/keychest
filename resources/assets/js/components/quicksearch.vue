@@ -384,7 +384,8 @@
             },
 
             showTrackingButton(){
-                return this.results && this.results.canAddToList && this.addingStatus!==3 && this.addingStatus!==1;
+                return (this.results && this.addingStatus!==3)
+                    && ((this.results.canAddToList  && this.addingStatus!==1) || !this.hasAccount);
             },
 
             showLeWarning(){
