@@ -72,6 +72,8 @@
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Beta link -->
                         <li><a href="{{ route('/') }}">Early BETA</a></li>
+                        <li><a href="{{ url('/terms') }}">Terms of Service</a></li>
+                        <li><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
 
                         <!-- component navigation -->
                         @yield('content-nav')
