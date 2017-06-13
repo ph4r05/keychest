@@ -22,7 +22,8 @@
         </div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-            <span id="info-text">Waiting for scan to finish...</span>
+            <span v-if="jobSubmittedNow">Waiting for scan to finish...</span>
+            <span v-else="">Loading scan results...</span>
         </div>
 
         <div class="alert alert-success scan-alert" id="search-success" style="display: none">
@@ -416,9 +417,6 @@
                 // UUID provided from the GET parameter:
                 this.curUuid = uuid;
                 this.searchStarted();
-                if (!this.jobSubmittedNow){
-                    $('#info-text').text('Loading scan results...');
-                }
                 setTimeout(this.pollFinish, 10);
             },
 
@@ -653,23 +651,24 @@
 
                 this.searchStarted({'host': targetUri});
                 this.cleanResults();
+                this.jobSubmittedNow = true;
+
                 Req.submitJob(targetUri, (function(json){
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
                         return;
                     }
 
-                    console.log(json);
                     this.$emit('onjobSubmitted', json);
 
                     // Update URL so it contains params - job ID & url
-                    let new_url = window.location.pathname + "?uuid=" + json.uuid + '&url=' + encodeURI(targetUri);
+                    let new_url = window.location.pathname + "?uuid=" + json.uuid
+                        + '&url=' + encodeURI(targetUri);
                     try{
                         history.pushState(null, null, new_url); // new URL with history
                         history.replaceState(null, null, new_url); // replace the existing
 
                         this.curUuid = json.uuid;
-                        this.jobSubmittedNow = true;
                         setTimeout(this.pollFinish, 500);
 
                     } catch(e) {
