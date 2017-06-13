@@ -54,8 +54,8 @@
             </div>
 
             <!-- Label for loaded test (performed previously) -->
-            <h3 class="loaded-test-label" v-if="showResultsTable && !jobSubmittedNow && curJob"
-            >The scan was performed {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}</h3>
+            <h5 class="loaded-test-label" v-if="showResultsTable && !jobSubmittedNow && curJob"
+            >We tested the server on {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}</h5>
 
             <!-- Brief results table -->
             <table class="table" v-if="showResultsTable">
