@@ -506,7 +506,7 @@
 
             postprocessResults(){
                 this.curJob.portString = this.curJob.port === 443 ? '' : ':' + this.curJob.port;
-                if (!this.tlsScanHostCert){
+                if (!this.tlsScanError && !this.tlsScanHostCert){
                     this.errMsg('Could not detect host certificate');
                     return;
                 }
