@@ -31,31 +31,113 @@ function setUpSpecialNavs() {
         $(a.target).closest(".dropdown-toggle").length || $(".close-special-menu").mousedown()
     })
 }
+
 function hideNavOnItemClick() {
     $(".site-navigation a").click(function (a) {
         $(a.target).closest(".dropdown-toggle").length || $(".navbar-collapse").collapse("hide")
     })
 }
+
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ */
+function detectIE() {
+    const ua = window.navigator.userAgent;
+
+    const msie = ua.indexOf('MSIE ');
+    if (msie > 0) {
+        // IE 10 or older => return version number
+        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+    }
+
+    const trident = ua.indexOf('Trident/');
+    if (trident > 0) {
+        // IE 11 => return version number
+        const rv = ua.indexOf('rv:');
+        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+    }
+
+    const edge = ua.indexOf('Edge/');
+    if (edge > 0) {
+        // Edge (IE 12+) => return version number
+        return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+    }
+
+    // other browser
+    return false;
+}
+
+/**
+ * Computes height of the children.
+ * @param x
+ */
+function subHeightChildren(x){
+    if (!x){
+        return 0;
+    }
+    let subHeight = 0;
+    x.children().each(function(xx){
+        subHeight += $(this).outerHeight();
+    });
+
+    return subHeight;
+}
+
+/**
+ * Height computation, IE friendly.
+ * @param bsub
+ */
+function heightOfObject(bsub){
+    if (!bsub){
+        return 0;
+    }
+
+    // IE workaround, "initial" keyword is not working properly, set it to "auto"
+    if (window.blocs.isIE) {
+        if (bsub.hasClass('fill-bloc-bottom-edge')) {
+            if (bsub.css('top') === 'initial') {
+                bsub.css('top', 'auto');
+            }
+        }
+    }
+
+    const elemHeight = bsub.outerHeight();
+    return elemHeight;
+}
+
 function setFillScreenBlocHeight() {
     $(".bloc-fill-screen").each(function (a) {
-        var b = $(this);
-        window.fillBodyHeight = 0, $(this).find(".container").each(function (a) {
-            fillPadding = 2 * parseInt($(this).css("padding-top")), b.hasClass("bloc-group") ? fillBodyHeight = fillPadding + $(this).outerHeight() + 50 : fillBodyHeight = fillBodyHeight + fillPadding + $(this).outerHeight() + 50
-        }), $(this).css("height", getFillHeight() + "px")
+        const b = $(this);
+        window.fillBodyHeight = 0;
+
+        $(this).find(".container").each(function (a) {
+            const bsub = $(this);
+            const fillPadding = 2 * parseInt(bsub.css("padding-top"));
+            const elemHeight = heightOfObject(bsub);
+            b.hasClass("bloc-group") ? fillBodyHeight = fillPadding + elemHeight + 50
+                    : fillBodyHeight = fillBodyHeight + fillPadding + elemHeight + 50;
+        });
+
+        $(this).css("height", getFillHeight() + "px")
     })
 }
+
 function getFillHeight() {
     var a = $(window).height();
     return a < fillBodyHeight && (a = fillBodyHeight + 100), a
 }
+
 function scrollToTarget(a) {
     1 == a ? a = 0 : 2 == a ? a = $(document).height() : (a = $(a).offset().top, $(".sticky-nav").length && (a -= $(".sticky-nav").height())), $("html,body").animate({scrollTop: a}, "slow"), $(".navbar-collapse").collapse("hide")
 }
+
 function animateWhenVisible() {
     hideAll(), inViewCheck(), $(window).scroll(function () {
         inViewCheck(), scrollToTopView(), stickyNavToggle()
     })
 }
+
 function setUpDropdownSubs() {
     $("ul.dropdown-menu [data-toggle=dropdown]").on("click", function (a) {
         a.preventDefault(), a.stopPropagation(), $(this).parent().siblings().removeClass("open"), $(this).parent().toggleClass("open");
@@ -63,6 +145,7 @@ function setUpDropdownSubs() {
         c > $(window).width() && b.addClass("dropmenu-flow-right")
     })
 }
+
 function stickyNavToggle() {
     var a = 0, b = "sticky";
     if ($(".sticky-nav").hasClass("fill-bloc-top-edge")) {
@@ -71,11 +154,13 @@ function stickyNavToggle() {
     }
     $(window).scrollTop() > a ? ($(".sticky-nav").addClass(b), "sticky" == b && $(".page-container").css("padding-top", $(".sticky-nav").height())) : ($(".sticky-nav").removeClass(b).removeAttr("style"), $(".page-container").removeAttr("style"))
 }
+
 function hideAll() {
     $(".animated").each(function (a) {
         $(this).closest(".hero").length || $(this).removeClass("animated").addClass("hideMe")
     })
 }
+
 function inViewCheck() {
     $($(".hideMe").get().reverse()).each(function (a) {
         var b = jQuery(this), c = b.offset().top + b.height(), d = $(window).scrollTop() + $(window).height();
@@ -87,9 +172,11 @@ function inViewCheck() {
         }
     })
 }
+
 function scrollToTopView() {
     $(window).scrollTop() > $(window).height() / 3 ? $(".scrollToTop").hasClass("showScrollTop") || $(".scrollToTop").addClass("showScrollTop") : $(".scrollToTop").removeClass("showScrollTop")
 }
+
 function setUpVisibilityToggle() {
     $(document).on("click", "[data-toggle-visibility]", function (a) {
         function d(a) {
@@ -106,6 +193,7 @@ function setUpVisibilityToggle() {
         } else d($("#" + b))
     })
 }
+
 function setUpLightBox() {
     window.targetLightbox, $(document).on("click", "[data-lightbox]", function (a) {
         a.preventDefault(), targetLightbox = $(this);
@@ -130,14 +218,32 @@ function setUpLightBox() {
         targetLightbox = d, $(".next-lightbox, .prev-lightbox").hide(), "no-gallery-set" == b ? ($("a[data-lightbox]").index(d) != $("a[data-lightbox]").length - 1 && $(".next-lightbox").show(), $("a[data-lightbox]").index(d) > 0 && $(".prev-lightbox").show()) : ($('a[data-gallery-id="' + b + '"]').index(d) != $('a[data-gallery-id="' + b + '"]').length - 1 && $(".next-lightbox").show(), $('a[data-gallery-id="' + b + '"]').index(d) > 0 && $(".prev-lightbox").show())
     })
 }
+
 $(document).ready(function () {
-    $("body").append('<div id="page-loading-blocs-notifaction"></div>'), $(".bloc-fill-screen").css("height", $(window).height() + "px"), $("#scroll-hero").click(function (a) {
-        a.preventDefault(), $("html,body").animate({scrollTop: $("#scroll-hero").closest(".bloc").height()}, "slow")
-    }), hideNavOnItemClick(), setUpSpecialNavs(), setUpDropdownSubs(), setUpLightBox(), setUpVisibilityToggle()
+    $("body").append('<div id="page-loading-blocs-notifaction"></div>');
+    $(".bloc-fill-screen").css("height", $(window).height() + "px");
+    $("#scroll-hero").click(function (a) {
+        a.preventDefault();
+        $("html,body").animate({scrollTop: $("#scroll-hero").closest(".bloc").height()}, "slow");
+    });
+    hideNavOnItemClick();
+    setUpSpecialNavs();
+    setUpDropdownSubs();
+    setUpLightBox();
+    setUpVisibilityToggle();
+
 }), $(window).ready(function () {
-    setFillScreenBlocHeight(), animateWhenVisible(), $("#page-loading-blocs-notifaction").remove()
+    window.blocs = {
+        isIE: detectIE()
+    };
+
+    setFillScreenBlocHeight();
+    animateWhenVisible();
+    $("#page-loading-blocs-notifaction").remove();
+
 }).resize(function () {
-    setFillScreenBlocHeight()
+    setFillScreenBlocHeight();
+
 }), $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 });

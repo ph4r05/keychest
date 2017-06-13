@@ -1,6 +1,6 @@
 <template>
 
-    <div class="bloc bloc-fill-screen tc-onyx bgc-white l-bloc" id="intro" style="height: 800px;"
+    <div class="bloc bloc-fill-screen tc-onyx bgc-white l-bloc" id="intro" style="height: 400px;"
          v-bind:class="{'kc-search': searchEnabled, 'kc-loading': !searchEnabled && !resultsLoaded, 'kc-results': resultsLoaded}" >
         <div class="container">
             <div class="row">

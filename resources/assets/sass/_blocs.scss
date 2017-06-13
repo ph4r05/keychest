@@ -73,6 +73,7 @@ a,button{outline: none!important;} /* Prevent ugly blue glow on chrome and safar
 }
 .bloc-fill-screen .fill-bloc-bottom-edge{
   top: initial;
+  top: auto;
   bottom: 20px;
 }
 .blocs-hero-btn-dwn{
