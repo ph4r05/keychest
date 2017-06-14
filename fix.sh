@@ -1,3 +1,4 @@
 #!/bin/bash
-chown -R nginx:ec2-user /var/www/keychest-test
-chmod -R g+rw /var/www/keychest-test
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+chown -R nginx:ec2-user $DIR
+chmod -R g+rw $DIR
