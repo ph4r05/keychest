@@ -103,4 +103,34 @@ class DomainTools {
         }
         return $scheme . '://' . $host . ':' . $port;
     }
+
+    /**
+     * Removes path part from the url
+     * @param $url
+     * @return string
+     */
+    public static function removeUrlPath($url){
+        if (empty($url)){
+            return $url;
+        }
+
+        $parts = explode('://', $url, 2);
+        $host = count($parts) <= 1 ? $url : $parts[1];
+        $pos = strpos($host, '/');
+        return $pos === false ? $host : substr($host, 0, $pos);
+    }
+
+    /**
+     * Normalizes URL (adds default https scheme and default port 443 if not present).
+     * Strips path, query, fragment away.
+     * @param $url
+     * @return string
+     */
+    public static function normalizeUrl($url){
+        $parsed = parse_url($url);
+        $scheme = isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https';
+        $host = isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : self::removeUrlPath($url);
+        $port = isset($parsed['port']) && !empty($parsed['port']) ? $parsed['port'] : 443;
+        return self::assembleUrl($scheme, $host, $port);
+    }
 }
