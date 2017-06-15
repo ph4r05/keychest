@@ -26,4 +26,18 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Watch targets that belongs to the user
+     */
+    public function watchTargets()
+    {
+        return $this->belongsToMany(
+            'App\Models\WatchTarget',
+            'user_watch_target',
+            'user_id',
+            'watch_id')
+            ->withTimestamps()
+            ->withPivot(['deleted_at', 'scan_periodicity', 'scan_type']);
+    }
 }

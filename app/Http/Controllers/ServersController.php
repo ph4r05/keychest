@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Keychest\Services\ServerManager;
+use App\Keychest\Utils\DomainTools;
+use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -50,6 +52,7 @@ class ServersController extends Controller
     public function getList()
     {
         $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
 
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
@@ -61,7 +64,14 @@ class ServersController extends Controller
             $asc = $ordtxt == 'asc';
         }
 
-        $query = WatchTarget::query()->where('user_id', $curUser->getAuthIdentifier());
+        $watchTbl = (new WatchTarget())->getTable();
+        $watchAssocTbl = (new WatchAssoc())->getTable();
+
+        $query = WatchAssoc::query()
+            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
+            ->select($watchTbl.'.*', $watchAssocTbl.'.*')
+            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->whereNull($watchAssocTbl.'.deleted_at');
 
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
@@ -90,26 +100,54 @@ class ServersController extends Controller
 
         // DB Job data
         $curUser = Auth::user();
-        $newJobDb = [
-            'scan_connect' => 0,
+        $userId = $curUser->getAuthIdentifier();
+        $newServerDb = [
             'created_at' => Carbon::now(),
-            'user_id' => $curUser->getAuthIdentifier()
         ];
 
         $criteria = $this->serverManager->buildCriteria($parsed, $server);
+        $newServerDb = array_merge($newServerDb, $criteria);
 
-        // Duplicity detection
-        if ($this->serverManager->getHostsBy($criteria, $curUser->getAuthIdentifier())->isNotEmpty()){
+        // TODO: update criteria with test type
+        // ...
+
+        // Duplicity detection, soft delete manipulation
+        $hosts = $this->serverManager->getAllHostsBy($criteria);   // load all matching host records
+        $hostAssoc = $this->serverManager->getHostAssociations($userId, $hosts->pluck('id'));
+        $userHosts = $this->serverManager->filterHostsWithAssoc($hosts, $hostAssoc);
+
+        if ($this->serverManager->allHostsEnabled($userHosts)){
             return response()->json(['status' => 'already-present'], 410);
         }
 
-        $newJobDb = array_merge($newJobDb, $criteria);
-        $elDb = WatchTarget::create($newJobDb);
-        return response()->json(['status' => 'success', 'server' => $newJobDb], 200);
+        // Empty hosts - create new bare record
+        $hostRecord = $hosts->first();
+        if (empty($hostRecord)){
+            $hostRecord = WatchTarget::create($newServerDb);
+        }
+
+        // Association not present -> create a new one
+        if ($userHosts->isEmpty()) {
+            $assocInfo = [
+                'user_id' => $userId,
+                'watch_id' => $hostRecord->id,
+            ];
+
+            $assocDb = WatchAssoc::create($assocInfo);
+            $newServerDb['assoc'] = $assocDb;
+
+        } else {
+            $assoc = $hostAssoc->first();
+            $assoc->deleted_at = null;
+            $assoc->save();
+            $newServerDb['assoc'] = $assoc;
+        }
+
+        return response()->json(['status' => 'success', 'server' => $newServerDb], 200);
     }
 
     /**
-     * Delete the server
+     * Delete the server association
      */
     public function del(){
         $id = intval(Input::get('id'));
@@ -118,11 +156,16 @@ class ServersController extends Controller
         }
 
         $curUser = Auth::user();
-        $deletedRows = WatchTarget::where('user_id', $curUser->getAuthIdentifier())->where('id', $id)->delete();
-        if ($deletedRows) {
-            return response()->json(['status' => 'success'], 200);
-        } else {
+        $userId = $curUser->getAuthIdentifier();
+
+        $assoc = WatchAssoc::where('id', $id)->where('user_id', $userId)->get()->first();
+        if (empty($assoc) || !empty($assoc->deleted_at)){
             return response()->json(['status' => 'not-deleted'], 422);
+        } else {
+            $assoc->deleted_at = Carbon::now();
+            $assoc->updated_at = Carbon::now();
+            $assoc->save();
+            return response()->json(['status' => 'success'], 200);
         }
     }
 
@@ -140,28 +183,61 @@ class ServersController extends Controller
         }
 
         $curUser = Auth::user();
-        $ent = WatchTarget::query()
-            ->where('user_id', $curUser->getAuthIdentifier())
-            ->where('id', $id)
-            ->first();
-        if (empty($ent)){
+        $userId = $curUser->getAuthIdentifier();
+
+        $curAssoc = WatchAssoc::query()->where('id', $id)->where('user_id', $userId)->first();
+        if (empty($curAssoc)){
             return response()->json(['status' => 'not-found'], 404);
         }
 
-        $criteria = $this->serverManager->buildCriteria($parsed, $server);
+        $curHost = WatchTarget::query()->where('id', $curAssoc->watch_id)->first();
+        $oldUrl = DomainTools::assembleUrl($curHost->scan_scheme, $curHost->scan_host, $curHost->scan_port);
+        $newUrl = DomainTools::normalizeUrl($server);
+        if ($oldUrl == $newUrl){
+            return response()->json(['status' => 'success', 'message' => 'nothing-changed'], 200);
+        }
 
-        // Duplicity detection
-        $duplicates = $this->serverManager->getHostsBy($criteria, $curUser->getAuthIdentifier());
-        if ($duplicates->isNotEmpty() && ($duplicates->first()->id != $ent->id || $duplicates->count() > 1)){
+        $parsedNew = parse_url($newUrl);
+        $criteriaNew = $this->serverManager->buildCriteria($parsedNew);
+
+        // Duplicity detection, host might be already monitored in a different association record.
+        $newHosts = $this->serverManager->getAllHostsBy($criteriaNew);   // load all matching host records
+        $hostNewAssoc = $this->serverManager->getHostAssociations($userId, $newHosts->pluck('id'));
+        $userNewHosts = $this->serverManager->filterHostsWithAssoc($newHosts, $hostNewAssoc);
+        if ($this->serverManager->allHostsEnabled($userNewHosts)){
             return response()->json(['status' => 'already-present'], 410);
         }
 
-        // Update
-        foreach ($criteria as $key => $val){
-            $ent->$key = $val;
+        // Invalidate the old association - delete equivalent
+        $curAssoc->deleted_at = Carbon::now();
+        $curAssoc->updated_at = Carbon::now();
+        $curAssoc->save();
+
+        // Is there some association with the new url already present but disabled? Enable it then
+        $newHost = $newHosts->first();
+        if (!empty($newHost) && $userNewHosts->isNotEmpty()){
+            $assoc = $hostNewAssoc->first();
+            $assoc->deleted_at = null;
+            $assoc->updated_at = Carbon::now();
+            $assoc->save();
+
+        } else {
+            // Try to fetch new target record or create a new one.
+            if (empty($newHost)){
+                $newServerDb = array_merge(['created_at' => Carbon::now()], $criteriaNew);
+                $newHost = WatchTarget::create($newServerDb);
+            }
+
+            // New association record
+            $assocInfo = [
+                'user_id' => $userId,
+                'watch_id' => $newHost->id,
+                'created_at' => Carbon::now()
+            ];
+
+            $assocDb = WatchAssoc::create($assocInfo);
         }
 
-        $ent->save();
         return response()->json(['status' => 'success'], 200);
     }
 
