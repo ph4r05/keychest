@@ -14,6 +14,7 @@
         "barryvdh/laravel-debugbar": "^2.4",
         "barryvdh/laravel-ide-helper": "^2.3",
         "creativeorange/gravatar": "~1.0",
+        "graham-campbell/markdown": "^7.0",
         "laracasts/utilities": "~2.0",
         "laravel/browser-kit-testing": "^1.0.2",
         "laravel/dusk": "^1.0",
