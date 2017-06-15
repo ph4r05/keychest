@@ -152,6 +152,15 @@ sudo chkconfig --level 345 redis-server on
 sudo service redis-server start
 ```
 
+Init script change to support `chkconfig`:
+
+```
+# chkconfig: - 65 37
+# description:  Redis server
+# processname: redis-server
+# config: /etc/redis/6379.conf
+# pidfile: /var/run/redis_6379.pid
+```
 
 ### Admin LTE
 
