@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Models\DnsResult;
+use App\Models\HandshakeScan;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Illuminate\Database\Query\JoinClause;
@@ -43,15 +44,53 @@ class DashboardController extends Controller
         $activeWatchesIds = $activeWatches->pluck('wid');
         Log::info('Active watches ids: ' . var_export($activeWatchesIds->all(), true));
 
+        // Load all newest DNS scans for active watches
         $q = $this->getNewestDnsScans($activeWatchesIds);
         Log::info(var_export($q->toSql(), true));
         $dnsScans = $q->get();
         Log::info(var_export($dnsScans->count(), true));
 
-        // TODO: load all newest DNS scans for active watches
-        // determine primary IP addresses
-        // load latest TLS scans for active watchers for primary IP addresses.
-        //
+        // Determine primary IP addresses
+        // ...
+
+
+        // Load latest TLS scans for active watchers for primary IP addresses.
+        $q = $this->getNewestTlsScans($activeWatchesIds, $dnsScans);
+        Log::info(var_export($q->toSql(), true));
+        $tlsScans = $q->get();
+        Log::info(var_export($tlsScans->count(), true));
+    }
+
+    /**
+     * Returns the newest TLS scans given the watches of interest and loaded DNS scans
+     * @param $watches
+     * @param $dnsScans
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getNewestTlsScans($watches, $dnsScans){
+        $table = (new HandshakeScan())->getTable();
+
+        $qq = DnsResult::query()
+            ->select(['x.watch_id', 'x.ip_scanned'])
+            ->selectRaw('MAX(x.last_scan_at) AS last_scan')
+            ->from($table . ' AS x')
+            ->whereIn('x.watch_id', $watches)
+            ->whereNotNull('x.ip_scanned')
+            ->groupBy('x.watch_id', 'x.ip_scanned');
+        $qqSql = $qq->toSql();
+
+        $q = DnsResult::query()
+            ->from($table . ' AS s')
+            ->join(
+                DB::raw('(' . $qqSql. ') AS ss'),
+                function(JoinClause $join) use ($qq) {
+                    $join->on('s.watch_id', '=', 'ss.watch_id')
+                        ->on('s.ip_scanned', '=', 'ss.ip_scanned')
+                        ->on('s.last_scan_at', '=', 'ss.last_scan')
+                        ->addBinding($qq->getBindings());
+                });
+
+        return $q;
     }
 
     /**
@@ -72,7 +111,8 @@ class DashboardController extends Controller
         $dnsTable = (new DnsResult())->getTable();
 
         $qq = DnsResult::query()
-            ->selectRaw('x.watch_id, MAX(x.last_scan_at) as last_scan')
+            ->select('x.watch_id')
+            ->selectRaw('MAX(x.last_scan_at) AS last_scan')
             ->from($dnsTable . ' AS x')
             ->whereIn('x.watch_id', $watches)
             ->groupBy('x.watch_id');
