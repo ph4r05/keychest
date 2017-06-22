@@ -11,6 +11,7 @@ use App\Models\DnsResult;
 use App\Models\HandshakeScan;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
+use Exception;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -51,11 +52,19 @@ class DashboardController extends Controller
         Log::info(var_export($dnsScans->count(), true));
 
         // Determine primary IP addresses
-        // ...
-
+        $primaryIPs = $dnsScans->mapWithKeys(function ($item) {
+            try{
+                $dns = json_decode($item->dns);
+                $primary = empty($dns) ? null : $dns[0][1];
+                return [intval($item->watch_id) => $primary];
+            } catch (Exception $e){
+                return [];
+            }
+        });
+        Log::info(var_export($primaryIPs->toJson(), true));
 
         // Load latest TLS scans for active watchers for primary IP addresses.
-        $q = $this->getNewestTlsScans($activeWatchesIds, $dnsScans);
+        $q = $this->getNewestTlsScans($activeWatchesIds, $dnsScans, $primaryIPs);
         Log::info(var_export($q->toSql(), true));
         $tlsScans = $q->get();
         Log::info(var_export($tlsScans->count(), true));
@@ -65,9 +74,10 @@ class DashboardController extends Controller
      * Returns the newest TLS scans given the watches of interest and loaded DNS scans
      * @param $watches
      * @param $dnsScans
+     * @param Collection $primaryIPs
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function getNewestTlsScans($watches, $dnsScans){
+    protected function getNewestTlsScans($watches, $dnsScans, $primaryIPs){
         $table = (new HandshakeScan())->getTable();
 
         $qq = DnsResult::query()
@@ -75,8 +85,19 @@ class DashboardController extends Controller
             ->selectRaw('MAX(x.last_scan_at) AS last_scan')
             ->from($table . ' AS x')
             ->whereIn('x.watch_id', $watches)
-            ->whereNotNull('x.ip_scanned')
-            ->groupBy('x.watch_id', 'x.ip_scanned');
+            ->whereNotNull('x.ip_scanned');
+
+        if ($primaryIPs != null && $primaryIPs->isNotEmpty()){
+            $qq = $qq->whereIn('x.ip_scanned',
+                $primaryIPs
+                    ->values()
+                    ->reject(function($item){
+                        return empty($item);
+                    })
+                    ->all());
+        }
+
+        $qq = $qq->groupBy('x.watch_id', 'x.ip_scanned');
         $qqSql = $qq->toSql();
 
         $q = DnsResult::query()
