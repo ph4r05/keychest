@@ -62,7 +62,7 @@
                 <tbody>
                 <tr v-bind:class="defconStyle">
                     <th>{{ curJob.scan_host }}{{ curJob.portString }}</th>
-                    <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days</td>
+                    <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days ago</td>
                     <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }} days</td>
                     <td> {{ form.textStatus }} </td>
                 </tr>
