@@ -7,10 +7,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Models\DnsResult;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -39,10 +43,52 @@ class DashboardController extends Controller
         $activeWatchesIds = $activeWatches->pluck('wid');
         Log::info('Active watches ids: ' . var_export($activeWatchesIds->all(), true));
 
+        $q = $this->getNewestDnsScans($activeWatchesIds);
+        Log::info(var_export($q->toSql(), true));
+        $dnsScans = $q->get();
+        Log::info(var_export($dnsScans->count(), true));
+
         // TODO: load all newest DNS scans for active watches
         // determine primary IP addresses
         // load latest TLS scans for active watchers for primary IP addresses.
         //
+    }
+
+    /**
+     * Returns a query builder for getting newest DNS results for the given watch array.
+     *
+     * @param Collection $watches
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getNewestDnsScans($watches){
+        // DNS records for given watches.
+        // select * from scan_dns s
+        // inner join (
+        //      select x.watch_id, max(x.last_scan_at) as last_scan
+        //      from scan_dns x
+        //      WHERE x.watch_id IN (23)
+        //      group by x.watch_id ) ss
+        // ON s.watch_id = ss.watch_id AND s.last_scan_at = ss.last_scan;
+        $dnsTable = (new DnsResult())->getTable();
+
+        $qq = DnsResult::query()
+            ->selectRaw('x.watch_id, MAX(x.last_scan_at) as last_scan')
+            ->from($dnsTable . ' AS x')
+            ->whereIn('x.watch_id', $watches)
+            ->groupBy('x.watch_id');
+        $qqSql = $qq->toSql();
+
+        $q = DnsResult::query()
+            ->from($dnsTable . ' AS s')
+            ->join(
+                DB::raw('(' . $qqSql. ') AS ss'),
+                function(JoinClause $join) use ($qq) {
+                    $join->on('s.watch_id', '=', 'ss.watch_id')
+                        ->on('s.last_scan_at', '=', 'ss.last_scan')
+                        ->addBinding($qq->getBindings());
+                });
+
+        return $q;
     }
 
     /**
