@@ -44,7 +44,7 @@ class DomainTools {
         $ret = [];
 
         foreach(array_reverse($components) as $comp){
-            if (strpos($comp, '.') !== false || strpos($comp, '%') !== false){
+            if (strpos($comp, '*') !== false || strpos($comp, '%') !== false){
                 break;
             }
 
