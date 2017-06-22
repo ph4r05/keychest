@@ -46,6 +46,9 @@ Route::post('home/servers/update', 'ServersController@update')->name('servers/up
 Route::post('home/servers/canAdd', 'ServersController@canAddHost')->name('servers/canAdd');
 Route::get('home/scan', 'SearchController@showHome')->name('home/scan')->middleware('auth');
 
+Route::get('home/dashboard/data', 'DashboardController@loadActiveCerts')
+    ->name('dashboard/data')->middleware('auth');
+
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
 
