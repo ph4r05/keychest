@@ -13,7 +13,8 @@ table tbody td.warning-hi {
   background-color: #ffe9db;
 }
 
-table tbody td.warning-hi:hover {
+table tbody td.warning-hi:hover,
+table tbody tr:hover td.warning-hi {
   background-color: #ffdabc;
 }
 
