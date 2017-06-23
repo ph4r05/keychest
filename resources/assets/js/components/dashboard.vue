@@ -14,37 +14,64 @@
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
-            <div v-if="loadingState == 1">
+        <div v-if="loadingState == 10">
 
-                <!-- certificate list -->
-                <h3>Certificate list</h3>
-                <p>Active certificates found on servers</p>
+            <!-- DNS problem notices -->
+            <!-- TLS connection fail notices - last attempt -->
+            <!-- TLS certificate expired notices - last attempt -->
+            <!-- Whois domain expiration notices -->
+
+            <!-- Imminent renewals -->
+            <div v-if="showImminentRenewals" class="row">
+                <div class="col-md-12">
+                <h3>Imminent Renewals (next 28 days)</h3>
                 <table class="table table-bordered table-striped table-hover">
                     <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Expiration</th>
-                        <th>Domains</th>
-                    </tr>
+                        <tr>
+                            <th>Deadline</th>
+                            <th>Certificates</th>
+                        </tr>
                     </thead>
-
                     <tbody>
-                    <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                        <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
-                        <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                        <td v-bind:class="cert.planCss.tbl">
-                            <ul class="domain-list">
-                                <li v-for="domain in cert.watch_hosts">
-                                    {{ domain }}
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
+
                     </tbody>
                 </table>
-
-
+                </div>
             </div>
+
+            <!-- Certificate list -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Certificate list</h3>
+                    <p>Active certificates found on servers</p>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Expiration</th>
+                            <th>Domains</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
+                            <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
+                            <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                            <td v-bind:class="cert.planCss.tbl">
+                                <ul class="domain-list">
+                                    <li v-for="domain in cert.watch_hosts">
+                                        {{ domain }}
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
         </transition>
     </div>
 
@@ -84,6 +111,12 @@
             tlsCerts(){
                 return _.filter(this.certs, o => { return o.found_tls_scan; });
             },
+
+            showImminentRenewals(){
+                return _.reduce(this.tlsCerts, (acc, cur) => {
+                    return acc + (cur.valid_to_days <= 28);
+                }, 0) > 0;
+            }
         },
 
         methods: {
@@ -188,11 +221,13 @@
                         'success': cert.valid_to_days >= 14 && cert.valid_to_days <= 28,
                         'warning': cert.valid_to_days >= 7 && cert.valid_to_days <= 14,
                         'warning-hi': cert.valid_to_days <= 7,
-                    }}
+                    }};
                 }
 
+                this.$set(this.results, 'certificates', this.results.certificates);
                 this.$forceUpdate();
                 this.$emit('onProcessed');
+                this.loadingState = 10;
             },
 
             postprocessResults(){
