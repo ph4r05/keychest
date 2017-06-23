@@ -24,6 +24,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Traversable;
 
 /**
  * Class DashboardController
@@ -60,7 +61,6 @@ class DashboardController extends Controller
 
         // Determine primary IP addresses
         $primaryIPs = $this->getPrimaryIPs($dnsScans);
-        Log::info(var_export($primaryIPs->toJson(), true));
 
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->getNewestTlsScans($activeWatchesIds, $dnsScans, $primaryIPs);
@@ -74,24 +74,39 @@ class DashboardController extends Controller
 
         // Certificate IDs from TLS scans - more important certs.
         // Load also crtsh certificates.
-        $tlsCertsIds = $tlsScans->map(function($item, $key){
-            return $item->cert_id_leaf;
-        })->reject(function($item){
+        $tlsCertMap = collect($tlsScans->mapWithKeys(function($item, $key){
+            return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf];
+        }));
+        // watch_id -> leaf cert from the last tls scanning
+        $tlsCertsIds = $tlsCertMap->values()->reject(function($item){
             return empty($item);
         })->unique();
 
+        // watch_id -> array of certificate ids
+        $crtshCertMap = collect($crtshScans->mapWithKeys(function($item, $key){
+            return empty($item->certs_ids) ? [] : [$item->watch_id => $item->certs_ids];
+        }));
         $crtshCertIds = $crtshScans->reduce(function($carry, $item){
             return $carry->union(collect($item->certs_ids));
         }, collect())->unique()->sort()->reverse()->take(100);
 
-        $certsToLoad = $tlsCertsIds->union($crtshCertIds)->unique()->values();
+        // cert id -> watches contained in, tls watch, crtsh watch detection
+        $cert2watchTls = $this->invertMap($tlsCertMap);
+        $cert2watchCrtsh = $this->invertMap($crtshCertMap);
+
+        $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique();
         $certs = $this->loadCertificates($certsToLoad)->get();
-        $certs->transform(function ($item, $key) use ($tlsCertsIds, $certsToLoad) {
-            $this->attributeCertificate($item, $tlsCertsIds->values(), 'found_tls_scan');
-            $this->attributeCertificate($item, $certsToLoad->values(), 'found_crt_sh');
-            $this->augmentCertificate($item);
-            return $item;
+        $certs = $certs->transform(
+            function ($item, $key) use ($tlsCertsIds, $certsToLoad, $cert2watchTls, $cert2watchCrtsh) {
+                $this->attributeCertificate($item, $tlsCertsIds->values(), 'found_tls_scan');
+                $this->attributeCertificate($item, $certsToLoad->values(), 'found_crt_sh');
+                $this->augmentCertificate($item);
+                $this->addWatchIdToCert($item, $cert2watchTls, $cert2watchCrtsh);
+                return $item;
+        })->mapWithKeys(function ($item){
+            return [$item->id => $item];
         });
+
         Log::info(var_export($certs->count(), true));
 
         // TODO: downtime computation?
@@ -108,11 +123,49 @@ class DashboardController extends Controller
             'wids' => $activeWatchesIds->all(),
             'dns' => $dnsScans,
             'primary_ip' => $primaryIPs,
+            'tls_cert_map' => $tlsCertMap,
+            'crtsh_cert_map' => $crtshCertMap,
+            'crt_to_watch_tls' => $cert2watchTls,
+            'crt_to_watch_crtsh' => $cert2watchCrtsh,
             'certificates' => $certs
 
         ];
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * Inverts collection mapping.
+     * watch id -> [certs] mapping turns into cert -> [watches]
+     * @param Collection $map
+     * @return Collection
+     */
+    protected function invertMap($map){
+        $inverted = collect();
+        $map->map(function($item, $key) use ($inverted){
+            $nitem = $item;
+            if (!is_array($nitem) && !($item instanceof Traversable)){
+                $nitem = [$nitem];
+            }
+
+            foreach($nitem as $cur){
+                $submap = $inverted->get($cur, array());
+                $submap[] = $key;
+                $inverted->put($cur, $submap);
+            }
+        });
+        return $inverted;
+    }
+
+    /**
+     * Adds watch_id to the certificate record
+     * @param $certificate
+     * @param Collection $tls_map
+     * @param Collection $crt_sh_map
+     */
+    protected function addWatchIdToCert($certificate, $tls_map, $crt_sh_map){
+        $certificate->tls_watches = $tls_map->get($certificate->id, []);
+        $certificate->crtsh_watches = $crt_sh_map->get($certificate->id, []);
     }
 
     /**
@@ -144,6 +197,7 @@ class DashboardController extends Controller
         $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
         $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
 
+        $certificate->is_legacy = false;  // will be defined by a separate relation
         $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
         $certificate->is_le = strpos($certificate->issuer, 'Let\'s Encrypt') !== false;
         $certificate->is_cloudflare = $alts->filter(function($val, $key){
