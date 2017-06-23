@@ -89,7 +89,8 @@ class DashboardController extends Controller
         $certs->transform(function ($item, $key) use ($tlsCertsIds, $certsToLoad) {
             $this->attributeCertificate($item, $tlsCertsIds->values(), 'found_tls_scan');
             $this->attributeCertificate($item, $certsToLoad->values(), 'found_crt_sh');
-            return $this->augmentCertificate($item);
+            $this->augmentCertificate($item);
+            return $item;
         });
         Log::info(var_export($certs->count(), true));
 
@@ -163,6 +164,7 @@ class DashboardController extends Controller
                 'id', 'crt_sh_id', 'crt_sh_ca_id', 'fprint_sha1', 'fprint_sha256',
                 'valid_from', 'valid_to', 'created_at', 'updated_at', 'cname', 'subject',
                 'issuer', 'is_ca', 'is_self_signed', 'parent_id', 'is_le', 'is_cloudflare',
+                'is_precert', 'is_precert_ca',
                 'alt_names', 'source')
             ->whereIn('id', $ids);
     }
