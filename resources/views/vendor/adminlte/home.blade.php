@@ -42,5 +42,13 @@
 
 			</div>
 		</div>
+
+		<!-- dashboard -->
+		<div class="row">
+			<div class="col-md-12">
+				<dashboard></dashboard>
+			</div>
+		</div>
+
 	</div>
 @endsection
