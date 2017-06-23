@@ -50,7 +50,10 @@ class DashboardController extends Controller
         $userId = $curUser->getAuthIdentifier();
 
         $wq = $this->getActiveWatcher($userId);
-        $activeWatches = $wq->get();
+        $activeWatches = $wq->get()->mapWithKeys(function($item){
+            return [$item->watch_id => $item];
+        });
+
         $activeWatchesIds = $activeWatches->pluck('wid');
         Log::info('Active watches ids: ' . var_export($activeWatchesIds->all(), true));
 
