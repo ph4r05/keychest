@@ -14,7 +14,37 @@
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
+            <div v-if="loadingState == 1">
 
+                <!-- certificate list -->
+                <h3>Certificate list</h3>
+                <p>Active certificates found on servers</p>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Expiration</th>
+                        <th>Domains</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr v-for="cert in sortExpiry(tlsCerts)">
+                        <td>{{ cert.id }}</td>
+                        <td>{{ cert.valid_to }}</td>
+                        <td>
+                            <ul class="domain-list">
+                                <li v-for="domain in cert.watch_hosts">
+                                    {{ domain }}
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
         </transition>
     </div>
 
@@ -27,6 +57,8 @@
             return {
                 loadingState: 0,
                 results: null,
+
+                test : {},
 
                 Req: window.Req,
                 Laravel: window.Laravel
@@ -42,6 +74,17 @@
         computed: {
             hasAccount(){
                 return !this.Laravel.authGuest;
+            },
+
+            certs(){
+                if (this.results && this.results.certificates){
+                    return this.results.certificates;
+                }
+                return [];
+            },
+
+            tlsCerts(){
+                return _.filter(this.certs, o => { return o.found_tls_scan; });
             },
         },
 
@@ -80,6 +123,10 @@
                 this.$emit('onError', msg);
             },
 
+            sortExpiry(x){
+                return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
+            },
+
             loadData(){
                 const onFail = (function(){
                     this.loadingState = -1;
@@ -110,17 +157,39 @@
             },
 
             processData(){
-                console.log('process data now...');
+                this.$nextTick(function () {
+                    console.log('process data now...');
+                    this.processResults();
+                });
             },
 
             processResults() {
                 const curTime = new Date().getTime() / 1000.0;
+                for(const watch_id in this.results.watches){
+                    const watch = this.results.watches[watch_id];
+                    watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, watch.scan_port);
+                }
+
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
-                    cert.matched_name = cert.matched_alt_names && cert.matched_alt_names.length > 0 ? cert.matched_alt_names[0] : cert.cname;
+                    cert.watch_hosts = [];
+                    cert.watch_urls = [];
+                    for(const ii in cert.tls_watches){
+                        const watch_id = cert.tls_watches[ii];
+                        if (watch_id in this.results.watches){
+                            cert.watch_hosts.push(this.results.watches[watch_id].scan_host);
+                            cert.watch_urls.push(this.results.watches[watch_id].url);
+                        }
+                    }
+
+                    cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
+                    cert.watch_urls = _.uniq(cert.watch_urls.sort());
                 }
+
+                this.$forceUpdate();
+                this.$emit('onProcessed');
             },
 
             postprocessResults(){
@@ -267,6 +336,14 @@
 </script>
 
 <style>
+    ul.domain-list {
+        padding-left: 0;
+    }
+
+    ul.domain-list li {
+        list-style-type: none;
+    }
+
     .scan-results-host {
         padding-left: 5px;
         padding-right: 5px;
