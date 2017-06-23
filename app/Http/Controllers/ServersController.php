@@ -93,6 +93,7 @@ class ServersController extends Controller
     public function add()
     {
         $server = strtolower(trim(Input::get('server')));
+        $server = DomainTools::replaceHttp($server);
         $parsed = parse_url($server);
         if (empty($parsed) || strpos($server, '.') === false){
             return response()->json(['status' => 'fail'], 422);
@@ -176,6 +177,7 @@ class ServersController extends Controller
     public function update(){
         $id = intval(Input::get('id'));
         $server = strtolower(trim(Input::get('server')));
+        $server = DomainTools::replaceHttp($server);
         $parsed = parse_url($server);
 
         if (empty($id) || empty($parsed) || strpos($server, '.') === false){

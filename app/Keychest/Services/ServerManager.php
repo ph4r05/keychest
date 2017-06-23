@@ -176,4 +176,19 @@ class ServerManager {
         ];
     }
 
+    /**
+     * Replaces http/80 with https/443 as it makes no sense to scan 80 for tls.
+     * @param $criteria
+     * @return mixed
+     */
+    public function replaceHttp($criteria){
+        $scheme = $criteria['scan_scheme'];
+        $port = $criteria['scan_port'];
+        if ($scheme == 'http' || $port === 80){
+            $criteria['scan_scheme'] = 'https';
+            $criteria['scan_port'] = 443;
+        }
+        return $criteria;
+    }
+
 }

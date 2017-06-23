@@ -133,4 +133,13 @@ class DomainTools {
         $port = isset($parsed['port']) && !empty($parsed['port']) ? $parsed['port'] : 443;
         return self::assembleUrl($scheme, $host, $port);
     }
+
+    /**
+     * If http:// is present it is replaced with https://
+     * @param string $url
+     * @return mixed
+     */
+    public static function replaceHttp($url){
+        return str_replace('http://', 'https://', $url);
+    }
 }
