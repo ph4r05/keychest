@@ -120,7 +120,7 @@ export default {
                     sortField: 'last_scan_at',
                     titleClass: 'text-center',
                     dataClass: 'text-center',
-                    callback: 'formatDate|DD-MM-YYYY'
+                    callback: 'formatDate|DD-MM-YYYY HH:mm'
                 },
                 {
                     name: '__component:custom-actions',
@@ -167,7 +167,7 @@ export default {
             return accounting.formatNumber(value, 2)
         },
         formatDate (value, fmt = 'DD-MM-YYYY') {
-            return (value === null) ? '' : moment(value, 'YYYY-MM-DD').format(fmt);
+            return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
         },
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData);
