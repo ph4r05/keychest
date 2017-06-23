@@ -7,10 +7,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Models\BaseDomain;
+use App\Models\CrtShQuery;
 use App\Models\DnsResult;
 use App\Models\HandshakeScan;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
+use App\Models\WhoisResult;
 use Exception;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
@@ -52,15 +55,7 @@ class DashboardController extends Controller
         Log::info(var_export($dnsScans->count(), true));
 
         // Determine primary IP addresses
-        $primaryIPs = $dnsScans->mapWithKeys(function ($item) {
-            try{
-                $dns = json_decode($item->dns);
-                $primary = empty($dns) ? null : $dns[0][1];
-                return [intval($item->watch_id) => $primary];
-            } catch (Exception $e){
-                return [];
-            }
-        });
+        $primaryIPs = $this->getPrimaryIPs($dnsScans);
         Log::info(var_export($primaryIPs->toJson(), true));
 
         // Load latest TLS scans for active watchers for primary IP addresses.
@@ -68,10 +63,80 @@ class DashboardController extends Controller
         Log::info(var_export($q->toSql(), true));
         $tlsScans = $q->get();
         Log::info(var_export($tlsScans->count(), true));
+
+        // Latest CRTsh scan
+        $crtshScans = $this->getNewestCrtshScans($activeWatchesIds)->get();
+        Log::info(var_export($crtshScans->toJson(), true));
+
+        
+    }
+
+    /**
+     * Returns a query builder for getting newest Whois results for the given watch array.
+     * TODO: there is no watch association, fix it...
+     * @param Collection $watches
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getNewestWhoisScans($watches){
+        $table = (new WhoisResult())->getTable();
+        $domainsTable = (new BaseDomain())->getTable();
+
+        $qq = WhoisResult::query()
+            ->select('x.watch_id')
+            ->selectRaw('MAX(x.last_scan_at) AS last_scan')
+            ->from($table . ' AS x')
+            ->whereIn('x.watch_id', $watches)
+            ->groupBy('x.watch_id');
+        $qqSql = $qq->toSql();
+
+        $q = WhoisResult::query()
+            ->from($table . ' AS s')
+            ->select(['s.*', $domainsTable.'.domain_name AS domain'])
+            ->join(
+                DB::raw('(' . $qqSql. ') AS ss'),
+                function(JoinClause $join) use ($qq) {
+                    $join->on('s.watch_id', '=', 'ss.watch_id')
+                        ->on('s.last_scan_at', '=', 'ss.last_scan')
+                        ->addBinding($qq->getBindings());
+                })
+            ->join($domainsTable, $domainsTable.'.id', '=', 's.domain_id');
+
+        return $q;
+    }
+
+    /**
+     * Returns a query builder for getting newest CRT SH results for the given watch array.
+     *
+     * @param Collection $watches
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getNewestCrtshScans($watches){
+        $table = (new CrtShQuery())->getTable();
+
+        $qq = CrtShQuery::query()
+            ->select('x.watch_id')
+            ->selectRaw('MAX(x.last_scan_at) AS last_scan')
+            ->from($table . ' AS x')
+            ->whereIn('x.watch_id', $watches)
+            ->groupBy('x.watch_id');
+        $qqSql = $qq->toSql();
+
+        $q = CrtShQuery::query()
+            ->from($table . ' AS s')
+            ->join(
+                DB::raw('(' . $qqSql. ') AS ss'),
+                function(JoinClause $join) use ($qq) {
+                    $join->on('s.watch_id', '=', 'ss.watch_id')
+                        ->on('s.last_scan_at', '=', 'ss.last_scan')
+                        ->addBinding($qq->getBindings());
+                });
+
+        return $q;
     }
 
     /**
      * Returns the newest TLS scans given the watches of interest and loaded DNS scans
+     *
      * @param $watches
      * @param $dnsScans
      * @param Collection $primaryIPs
@@ -115,6 +180,24 @@ class DashboardController extends Controller
     }
 
     /**
+     * Builds collection mapping watch_id -> primary IP address.
+     *
+     * @param Collection $dnsScans
+     * @return Collection
+     */
+    protected function getPrimaryIPs($dnsScans){
+        return $dnsScans->mapWithKeys(function ($item) {
+            try{
+                $dns = json_decode($item->dns);
+                $primary = empty($dns) ? null : $dns[0][1];
+                return [intval($item->watch_id) => $primary];
+            } catch (Exception $e){
+                return [];
+            }
+        });
+    }
+
+    /**
      * Returns a query builder for getting newest DNS results for the given watch array.
      *
      * @param Collection $watches
@@ -154,6 +237,7 @@ class DashboardController extends Controller
 
     /**
      * Returns the query builder for the active watchers for the user id.
+     *
      * @param $userId
      * @return \Illuminate\Database\Eloquent\Builder
      */
