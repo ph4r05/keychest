@@ -18,4 +18,12 @@ class HandshakeScan extends Model
     protected $guarded = array();
 
     protected $table = 'scan_handshakes';
+
+    /**
+     * Get the watch_id record for this result
+     */
+    public function watch_target()
+    {
+        return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
+    }
 }

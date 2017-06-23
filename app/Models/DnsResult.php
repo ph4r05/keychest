@@ -19,4 +19,11 @@ class DnsResult extends Model
 
     protected $table = 'scan_dns';
 
+    /**
+     * Get the watch_id record for this result
+     */
+    public function watch_target()
+    {
+        return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
+    }
 }
