@@ -29,10 +29,10 @@
                     </thead>
 
                     <tbody>
-                    <tr v-for="cert in sortExpiry(tlsCerts)">
-                        <td>{{ cert.id }}</td>
-                        <td>{{ cert.valid_to }}</td>
-                        <td>
+                    <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
+                        <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
+                        <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                        <td v-bind:class="cert.planCss.tbl">
                             <ul class="domain-list">
                                 <li v-for="domain in cert.watch_hosts">
                                     {{ domain }}
@@ -57,8 +57,6 @@
             return {
                 loadingState: 0,
                 results: null,
-
-                test : {},
 
                 Req: window.Req,
                 Laravel: window.Laravel
@@ -186,6 +184,11 @@
 
                     cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
                     cert.watch_urls = _.uniq(cert.watch_urls.sort());
+                    cert.planCss = {tbl: {
+                        'success': cert.valid_to_days >= 14 && cert.valid_to_days <= 28,
+                        'warning': cert.valid_to_days >= 7 && cert.valid_to_days <= 14,
+                        'warning-hi': cert.valid_to_days <= 7,
+                    }}
                 }
 
                 this.$forceUpdate();
