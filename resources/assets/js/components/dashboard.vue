@@ -33,6 +33,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-for="grp in imminentRenewalCerts">
+                            <td v-bind:class="grp[0].planCss.tbl">{{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
+                            <td v-bind:class="grp[0].planCss.tbl">{{ grp.length }} </td>
+                        </tr>
 
                     </tbody>
                 </table>
@@ -79,6 +83,8 @@
 
 <script>
     import axios from 'axios';
+    import moment from 'moment';
+
     export default {
         data: function() {
             return {
@@ -116,6 +122,14 @@
                 return _.reduce(this.tlsCerts, (acc, cur) => {
                     return acc + (cur.valid_to_days <= 28);
                 }, 0) > 0;
+            },
+
+            imminentRenewalCerts(){
+                const imm = _.filter(this.tlsCerts, x => { return x.valid_to_days <= 28 });
+                const grp = _.groupBy(imm, x => {
+                    return x.valid_to_dayfmt;
+                });
+                return grp;
             }
         },
 
@@ -203,6 +217,7 @@
 
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
+                    cert.valid_to_dayfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.watch_hosts = [];
