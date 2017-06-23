@@ -17,3 +17,9 @@ table tbody td.warning-hi:hover {
   background-color: #ffdabc;
 }
 
+.loading .vuetable-th-sequence {
+  background-image: url(../images/ajax-loader.gif);
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+  background-position: 20% 50%;
+}

@@ -1,33 +1,43 @@
 <template>
   <div>
-    <filter-bar></filter-bar>
-    <add-server></add-server>
-    <edit-server></edit-server>
 
-    <div class="table-responsive">
-    <vuetable ref="vuetable"
-      api-url="/home/servers/get"
-      :fields="fields"
-      pagination-path=""
-      :css="css.table"
-      :sort-order="sortOrder"
-      :multi-sort="true"
-      :per-page="50"
-      :append-params="moreParams"
-      @vuetable:cell-clicked="onCellClicked"
-      @vuetable:pagination-data="onPaginationData"
-    ></vuetable>
+    <div class="alert alert-info alert-waiting scan-alert" id="search-info"
+         v-if="loadingState == 0">
+      <span>Loading data, please wait...</span>
     </div>
 
-    <div class="vuetable-pagination">
-      <vuetable-pagination-info ref="paginationInfo"
-        info-class="pagination-info"
-        :css="css.info"
-      ></vuetable-pagination-info>
-      <vuetable-pagination-bootstrap ref="pagination"
-        :css="css.pagination"
-        @vuetable-pagination:change-page="onChangePage"
-      ></vuetable-pagination-bootstrap>
+    <div v-show="loadingState != 0">
+      <filter-bar></filter-bar>
+      <add-server></add-server>
+      <edit-server></edit-server>
+
+      <div class="table-responsive" v-bind:class="{'loading' : loadingState==2}">
+      <vuetable ref="vuetable"
+        api-url="/home/servers/get"
+        :fields="fields"
+        pagination-path=""
+        :css="css.table"
+        :sort-order="sortOrder"
+        :multi-sort="true"
+        :per-page="50"
+        :append-params="moreParams"
+        @vuetable:cell-clicked="onCellClicked"
+        @vuetable:pagination-data="onPaginationData"
+        @vuetable:loaded="onLoaded"
+        @vuetable:loading="onLoading"
+      ></vuetable>
+      </div>
+
+      <div class="vuetable-pagination">
+        <vuetable-pagination-info ref="paginationInfo"
+          info-class="pagination-info"
+          :css="css.info"
+        ></vuetable-pagination-info>
+        <vuetable-pagination-bootstrap ref="pagination"
+          :css="css.pagination"
+          @vuetable-pagination:change-page="onChangePage"
+        ></vuetable-pagination-bootstrap>
+      </div>
     </div>
   </div>
 </template>
@@ -65,6 +75,7 @@ export default {
     },
     data () {
         return {
+            loadingState: 0,
             fields: [
                 {
                     name: '__sequence',
@@ -167,6 +178,16 @@ export default {
         },
         onCellClicked (data, field, event) {
             this.$refs.vuetable.toggleDetailRow(data.id);
+        },
+        onLoading(){
+            if (this.loadingState != 0){
+                this.loadingState = 2;
+            }
+            console.log('loading');
+        },
+        onLoaded(){
+            this.loadingState = 1;
+            console.log('loaded');
         },
         onDeleteServer(data){
             swal({
@@ -293,4 +314,9 @@ i.sort-icon {
   font-size: 11px;
   padding-top: 4px;
 }
+.loading .vuetable {
+
+}
+
+
 </style>
