@@ -56,7 +56,7 @@ class DashboardController extends Controller
         });
 
         $activeWatchesIds = $activeWatches->pluck('wid');
-        Log::info('Active watches ids: ' . var_export($activeWatchesIds->all(), true));
+        Log::info('Active watches ids: ' . var_export($activeWatchesIds->toJson(), true));
 
         // Load all newest DNS scans for active watches
         $q = $this->getNewestDnsScans($activeWatchesIds);
@@ -113,6 +113,17 @@ class DashboardController extends Controller
 
         Log::info(var_export($certs->count(), true));
 
+        // Whois scan load
+        $topDomainsMap = $activeWatches->mapWithKeys(function($item){
+            return empty($item->top_domain_id) ? [] : [$item->watch_id => $item->top_domain_id];
+        });
+        $topDomainToWatch = DataTools::invertMap($topDomainsMap);
+        $topDomainIds = $activeWatches->reject(function($item){
+            return empty($item->top_domain_id);
+        })->pluck('top_domain_id')->unique();
+        $whoisScans = $this->getNewestWhoisScans($topDomainIds)->get();
+        $whoisScans = $this->processWhoisScans($whoisScans);
+
         // TODO: downtime computation?
         // TODO: CAs?
         // TODO: self signed?
@@ -126,11 +137,13 @@ class DashboardController extends Controller
             'watches' => $activeWatches->all(),
             'wids' => $activeWatchesIds->all(),
             'dns' => $dnsScans,
+            'whois' => $whoisScans,
             'primary_ip' => $primaryIPs,
             'tls_cert_map' => $tlsCertMap,
             'crtsh_cert_map' => $crtshCertMap,
             'crt_to_watch_tls' => $cert2watchTls,
             'crt_to_watch_crtsh' => $cert2watchCrtsh,
+            'domain_to_watch' => $topDomainToWatch,
             'certificates' => $certs
 
         ];
@@ -206,20 +219,19 @@ class DashboardController extends Controller
 
     /**
      * Returns a query builder for getting newest Whois results for the given watch array.
-     * TODO: there is no watch association, fix it...
-     * @param Collection $watches
+     * @param Collection $domainIds
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function getNewestWhoisScans($watches){
+    protected function getNewestWhoisScans($domainIds){
         $table = (new WhoisResult())->getTable();
         $domainsTable = (new BaseDomain())->getTable();
 
         $qq = WhoisResult::query()
-            ->select('x.watch_id')
+            ->select('x.domain_id')
             ->selectRaw('MAX(x.last_scan_at) AS last_scan')
             ->from($table . ' AS x')
-            ->whereIn('x.watch_id', $watches)
-            ->groupBy('x.watch_id');
+            ->whereIn('x.domain_id', $domainIds->values())
+            ->groupBy('x.domain_id');
         $qqSql = $qq->toSql();
 
         $q = WhoisResult::query()
@@ -228,13 +240,34 @@ class DashboardController extends Controller
             ->join(
                 DB::raw('(' . $qqSql. ') AS ss'),
                 function(JoinClause $join) use ($qq) {
-                    $join->on('s.watch_id', '=', 'ss.watch_id')
-                        ->on('s.last_scan_at', '=', 'ss.last_scan')
-                        ->addBinding($qq->getBindings());
+                    $join->on('s.domain_id', '=', 'ss.domain_id')
+                         ->on('s.last_scan_at', '=', 'ss.last_scan')
+                         ->addBinding($qq->getBindings());
                 })
             ->join($domainsTable, $domainsTable.'.id', '=', 's.domain_id');
 
         return $q;
+    }
+
+    /**
+     * Processes loaded Whois scan results
+     * @param Collection $whoisScans
+     * @return Collection
+     */
+    protected function processWhoisScans($whoisScans){
+        return $whoisScans->mapWithKeys(function ($item){
+            try{
+                $item->dns = json_decode($item->dns);
+            } catch (Exception $e){
+            }
+
+            try{
+                $item->emails = json_decode($item->emails);
+            } catch (Exception $e){
+            }
+
+            return [intval($item->domain_id) => $item];
+        });
     }
 
     /**

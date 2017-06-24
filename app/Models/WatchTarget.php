@@ -27,6 +27,14 @@ class WatchTarget extends Model
     }
 
     /**
+     * Gets the top domain associated with Whois check
+     */
+    public function topDomain()
+    {
+        return $this->belongsTo('App\Models\BaseDomain', 'top_domain_id');
+    }
+
+    /**
      * Watch targets that belongs to the user
      */
     public function users()
