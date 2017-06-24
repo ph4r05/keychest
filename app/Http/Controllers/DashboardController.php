@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
 use App\Models\BaseDomain;
 use App\Models\Certificate;
@@ -94,8 +95,8 @@ class DashboardController extends Controller
         }, collect())->unique()->sort()->reverse()->take(100);
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
-        $cert2watchTls = $this->invertMap($tlsCertMap);
-        $cert2watchCrtsh = $this->invertMap($crtshCertMap);
+        $cert2watchTls = DataTools::invertMap($tlsCertMap);
+        $cert2watchCrtsh = DataTools::invertMap($crtshCertMap);
 
         $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique();
         $certs = $this->loadCertificates($certsToLoad)->get();
@@ -135,29 +136,6 @@ class DashboardController extends Controller
         ];
 
         return response()->json($data, 200);
-    }
-
-    /**
-     * Inverts collection mapping.
-     * watch id -> [certs] mapping turns into cert -> [watches]
-     * @param Collection $map
-     * @return Collection
-     */
-    protected function invertMap($map){
-        $inverted = collect();
-        $map->map(function($item, $key) use ($inverted){
-            $nitem = $item;
-            if (!is_array($nitem) && !($item instanceof Traversable)){
-                $nitem = [$nitem];
-            }
-
-            foreach($nitem as $cur){
-                $submap = $inverted->get($cur, array());
-                $submap[] = $key;
-                $inverted->put($cur, $submap);
-            }
-        });
-        return $inverted;
     }
 
     /**
