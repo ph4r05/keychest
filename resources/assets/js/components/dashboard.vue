@@ -480,6 +480,8 @@
                         responsive: true,
                         maintainAspectRatio: true,
                         scaleShowGridLines: true,
+                        scaleGridLineColor: "rgba(0,0,0,.02)",
+                        scaleGridLineWidth: 1,
                         scales: {
                             xAxes: [{
                                 stacked: true,
