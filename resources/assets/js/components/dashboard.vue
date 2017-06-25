@@ -20,6 +20,7 @@
             <!-- Google Chart - renewal planner TLS+CT -->
             <!-- Google Chart - renewal planner historical -->
             <!-- Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
+            <!-- Google Chart - Certificate coverage for domain? Downtime graph -->
             <!-- DNS problem notices -->
             <!-- DNS changes over time -->
             <!-- TLS connection fail notices - last attempt -->
@@ -359,6 +360,22 @@
                 this.loadingState = 10;
             },
 
+            certTypes(certSet){
+                // certificate type aggregation
+                const certTypes = [0, 0, 0];  // LE, Cloudflare, Public / other
+
+                for(const crtIdx in certSet){
+                    const ccrt = certSet[crtIdx];
+                    if (ccrt.is_le){
+                        certTypes[0] += 1
+                    } else if (ccrt.is_cloudflare){
+                        certTypes[1] += 1
+                    } else {
+                        certTypes[2] += 1
+                    }
+                }
+                return certTypes;
+            },
 
             monthDataGen(certSet){
                 // cert per months, LE, Cloudflare, Others
@@ -388,19 +405,8 @@
                     const label = curMoment.format('MM/YY');
 
                     fillGap(ret, lastGrp, curMoment);
-                    const curEntry = [label, 0, 0, 0];
-
-                    for(const crtIdx in grp){
-                        const ccrt = grp[crtIdx];
-                        if (ccrt.is_le){
-                            curEntry[1] += 1
-                        } else if (ccrt.is_cloudflare){
-                            curEntry[2] += 1
-                        } else {
-                            curEntry[3] += 1
-                        }
-                    }
-
+                    const certTypesStat = this.certTypes(grp);
+                    const curEntry = [label, certTypesStat[0], certTypesStat[1], certTypesStat[2]];
                     ret.push(curEntry);
                     lastGrp = curMoment;
                 }
