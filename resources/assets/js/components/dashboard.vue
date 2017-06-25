@@ -63,7 +63,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 180">
+                        <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 365">
                             <td v-bind:class="cur_whois.planCss.tbl"> {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }} </td>
                             <td v-bind:class="cur_whois.planCss.tbl"> {{ cur_whois.domain }} </td>
                         </tr>
@@ -174,7 +174,7 @@
 
             showExpiringDomains(){
                 return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (cur.expires_at_days <= 180);
+                        return acc + (cur.expires_at_days <= 365);
                     }, 0) > 0;
             },
 
