@@ -16,9 +16,16 @@
         <transition name="fade" v-on:after-leave="transition_hook">
         <div v-if="loadingState == 10">
 
+            <!-- Google Chart - renewal planner -->
+            <!-- Google Chart - renewal planner TLS+CT -->
+            <!-- Google Chart - renewal planner historical -->
+            <!-- Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
             <!-- DNS problem notices -->
+            <!-- DNS changes over time -->
             <!-- TLS connection fail notices - last attempt -->
             <!-- TLS certificate expired notices - last attempt -->
+            <!-- TLS certificate changes over time on the IP -->
+            <!-- connection stats, small inline graphs? like status -->
             <!-- Whois domain expiration notices -->
 
             <!-- Imminent renewals -->
