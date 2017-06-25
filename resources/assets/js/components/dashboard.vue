@@ -106,6 +106,16 @@
                 </div>
             </div>
 
+            <!-- Certificate types -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h3>Certificate types</h3>
+                        <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <!-- Certificate list -->
             <div class="row">
                 <div class="col-md-12">
@@ -167,6 +177,8 @@
 
                 crtTlsMonth: null,
                 crtAllMonth: null,
+                certTypesStats: null,
+                certTypesStatsAll: null,
 
                 Req: window.Req,
                 Laravel: window.Laravel,
@@ -402,6 +414,8 @@
                     return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
                 this.crtAllMonth = this.monthDataGen(_.filter(this.certs, o => {
                     return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
+                this.certTypesStats = this.certTypes(this.tlsCerts);
+                this.certTypesStatsAll = this.certTypes(this.certs);
 
                 this.$set(this.results, 'certificates', this.results.certificates);
                 this.$forceUpdate();
@@ -508,8 +522,45 @@
                     text: 'Monthly planner - 12 months, all certs, CT'
                 };
 
+                // Cert types
+                const graphCertTypes = {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: this.certTypesStats,
+                            backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                            label: 'TLS active'
+                        },
+                            {
+                            data: this.certTypesStatsAll,
+                            backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                            label: 'All TLS + CT'
+                        }],
+                        labels: [
+                            'Let\'s Encrypt',
+                            'Cloudflare',
+                            'Other'
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Certificate types'
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
                 new Chart(document.getElementById("columnchart_certificates_all_js"), graphCrtAllData);
+                new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
             },
 
             renderGoogleGraphs(){
@@ -634,11 +685,6 @@
 
     .coma-list li:last-child:after {
         content: "";
-    }
-
-    .scan-results-host {
-        padding-left: 5px;
-        padding-right: 5px;
     }
 
     .fade-enter-active, .fade-leave-active {
