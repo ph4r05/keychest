@@ -91,9 +91,11 @@
                 <div class="col-md-12">
                     <h3>Domains with unknown expiration</h3>
                     <p>We were unable to detect expiration domain date for the following domains:</p>
-                    <ul class="coma-list">
-                        <li v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days">{{ cur_whois.domain }}</li>
-                    </ul>
+                    <div class="form-group">
+                        <ul class="coma-list">
+                            <li v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days">{{ cur_whois.domain }}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
