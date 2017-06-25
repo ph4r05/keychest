@@ -31,13 +31,15 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>
+                    <!--<div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>-->
+                    <canvas id="columnchart_certificates_js" style="width: 100%; height: 350px;"></canvas>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                    <div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>
+                    <!--<div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>-->
+                    <canvas id="columnchart_certificates_all_js" style="width: 100%; height: 350px;"></canvas>
                 </div>
             </div>
 
@@ -143,12 +145,16 @@
     import axios from 'axios';
     import moment from 'moment';
     import sprintf from 'sprintf-js';
+    import VueCharts from 'vue-chartjs';
+    import { Bar, Line } from 'vue-chartjs';
+    import Chart from 'chart.js';
 
     export default {
         data: function() {
             return {
                 loadingState: 0,
                 results: null,
+                useGoogleCharts: false,
 
                 graphLibLoaded: false,
                 graphsRendered: false,
@@ -158,7 +164,23 @@
                 crtAllMonth: null,
 
                 Req: window.Req,
-                Laravel: window.Laravel
+                Laravel: window.Laravel,
+
+                chartColors: [
+                    '#00c0ef',
+                    '#f39c12',
+                    '#00a65a',
+                    '#f56954',
+                    '#3c8dbc',
+                    '#d2d6de',
+                    '#ff6384',
+                    '#ff9f40',
+                    '#ffcd56',
+                    '#4bc0c0',
+                    '#36a2eb',
+                    '#9966ff',
+                    '#c9cbcf'
+                ]
             };
         },
 
@@ -252,8 +274,10 @@
 
             hookup(){
                 setTimeout(this.loadData, 0);
-                google.charts.load('current', {'packages':['bar']});
-                google.charts.setOnLoadCallback(this.onGraphLibLoaded);
+                if (this.useGoogleCharts) {
+                    google.charts.load('current', {'packages':['bar']});
+                    google.charts.setOnLoadCallback(this.onGraphLibLoaded);
+                }
             },
 
             errMsg(msg) {
@@ -381,6 +405,7 @@
 
                 this.$nextTick(function () {
                     this.graphDataReady = true;
+                    this.graphLibLoaded = !this.useGoogleCharts;
                     this.renderCharts();
                 });
             },
@@ -400,7 +425,98 @@
                 }
 
                 this.graphsRendered = true;
+                if (this.useGoogleCharts) {
+                    this.renderGoogleGraphs();
+                } else {
+                    this.renderChartjs();
+                }
+            },
 
+            graphDataConv(data){
+                // [[dataset names], [label, d1, d2, ...], [label, d1, d2, ...]]
+                // converts to charjs data set format.
+                if (_.isEmpty(data) || _.isEmpty(data[0])){
+                    return {};
+                }
+
+                const ln = data[0].length;
+                const labels = [];
+                const datasets = [];
+                for(let i=0; i<ln-1; i++){
+                    datasets.push({
+                        label: data[0][i+1],
+                        backgroundColor: this.chartColors[i % this.chartColors.length],
+                        data: []
+                    });
+                }
+
+                _.forEach(data, function(value, idx){
+                    if (idx===0){
+                        return;
+                    }
+                    labels.push(value[0]);
+                    for(let i=1; i < ln; i++){
+                        datasets[i-1].data.push(value[i]);
+                    }
+                });
+                return {labels: labels, datasets: datasets};
+            },
+
+            renderChartjs(){
+                let rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
+                let rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
+                rawCrtTlsData = this.graphDataConv(rawCrtTlsData);
+                rawCrtAllData = this.graphDataConv(rawCrtAllData);
+
+                const baseOptions = {
+                    type: 'bar',
+                    options: {
+                        scaleBeginAtZero: true,
+                        responsive: true,
+                        
+                        maintainAspectRatio: true,
+                        scaleShowGridLines: true,
+                        scales: {
+                            xAxes: [{
+                                stacked: true,
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                }};
+
+                const graphCrtTlsData = {
+                    data: rawCrtTlsData,
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Monthly planner - 12 months'
+                        },
+                    }
+                };
+
+                const graphCrtAllData = {
+                    data: rawCrtAllData,
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Monthly planner - 12 months, all certs, CT'
+                        },
+                    }
+                };
+
+                new Chart(document.getElementById("columnchart_certificates_js"),
+                    _.extend(graphCrtTlsData, baseOptions));
+                new Chart(document.getElementById("columnchart_certificates_all_js"),
+                    _.extend(graphCrtAllData, baseOptions));
+            },
+
+            renderGoogleGraphs(){
                 const rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
                 const rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
 
