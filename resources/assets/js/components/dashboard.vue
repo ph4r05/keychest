@@ -94,6 +94,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Expiration</th>
+                            <th>Type</th>
                             <th>Domains</th>
                         </tr>
                         </thead>
@@ -102,6 +103,7 @@
                         <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
                             <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
                             <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                            <td v-bind:class="cert.planCss.tbl">{{ cert.type }}</td>
                             <td v-bind:class="cert.planCss.tbl">
                                 <ul class="domain-list">
                                     <li v-for="domain in cert.watch_hosts">
@@ -317,6 +319,14 @@
                         'warning': cert.valid_to_days > 7 && cert.valid_to_days <= 14,
                         'warning-hi': cert.valid_to_days <= 7,
                     }};
+
+                    if (cert.is_le) {
+                        cert.type = 'Let\'s Encrypt';
+                    } else if (cert.is_cloudflare){
+                        cert.type = 'Cloudflare';
+                    } else {
+                        cert.type = 'Public';
+                    }
                 }
 
                 for(const whois_id in this.results.whois){
