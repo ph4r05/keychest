@@ -129,7 +129,7 @@
                 const grp = _.groupBy(imm, x => {
                     return x.valid_to_dayfmt;
                 });
-                return grp;
+                return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
             }
         },
 
