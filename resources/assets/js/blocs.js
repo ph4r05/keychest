@@ -94,7 +94,7 @@ function heightOfObject(bsub){
     }
 
     // IE workaround, "initial" keyword is not working properly, set it to "auto"
-    if (window.blocs.isIE) {
+    if (window.blocs && window.blocs.isIE) {
         if (bsub.hasClass('fill-bloc-bottom-edge')) {
             if (bsub.css('top') === 'initial') {
                 bsub.css('top', 'auto');
