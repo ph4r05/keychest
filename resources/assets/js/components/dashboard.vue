@@ -21,10 +21,11 @@
             <!-- Google Chart - renewal planner historical -->
             <!-- Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
             <!-- Google Chart - Certificate coverage for domain? Downtime graph -->
-            <!-- DNS problem notices -->
+            <!-- DNS problem notices - resolution fails -->
             <!-- DNS changes over time -->
-            <!-- TLS connection fail notices - last attempt -->
+            <!-- TLS connection fail notices - last attempt (connect fail, timeout, handshake) -->
             <!-- TLS certificate expired notices - last attempt -->
+            <!-- TLS certificates trust problems (self signed, is_ca, empty chain, generic, HOSTNAME validation error) -->
             <!-- TLS certificate changes over time on the IP -->
             <!-- connection stats, small inline graphs? like status -->
             <!-- Whois domain expiration notices -->
