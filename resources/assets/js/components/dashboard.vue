@@ -29,6 +29,18 @@
             <!-- connection stats, small inline graphs? like status -->
             <!-- Whois domain expiration notices -->
 
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>
+                </div>
+            </div>
+
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
                 <div class="col-md-12">
@@ -136,6 +148,10 @@
                 loadingState: 0,
                 results: null,
 
+                graphLibLoaded: false,
+                graphsRendered: false,
+                graphDataReady: false,
+
                 crtTlsMonth: null,
                 crtAllMonth: null,
 
@@ -234,6 +250,8 @@
 
             hookup(){
                 setTimeout(this.loadData, 0);
+                google.charts.load('current', {'packages':['bar']});
+                google.charts.setOnLoadCallback(this.onGraphLibLoaded);
             },
 
             errMsg(msg) {
@@ -358,6 +376,57 @@
                 this.$forceUpdate();
                 this.$emit('onProcessed');
                 this.loadingState = 10;
+
+                this.$nextTick(function () {
+                    this.graphDataReady = true;
+                    this.renderCharts();
+                });
+            },
+
+            onGraphLibLoaded(){
+                this.graphLibLoaded = true;
+                if (!this.graphsRendered){
+                    this.$nextTick(function () {
+                        setTimeout(this.renderCharts, 0);
+                    });
+                }
+            },
+
+            renderCharts(){
+                if (!this.graphLibLoaded || !this.graphDataReady){
+                    return;
+                }
+
+                this.graphsRendered = true;
+
+                const rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
+                const rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
+
+                const crtTlsData = google.visualization.arrayToDataTable(rawCrtTlsData);
+                const crtAllData = google.visualization.arrayToDataTable(rawCrtAllData);
+                const baseOptions = {
+                    backgroundColor: '#ecf0f5'
+                };
+
+                const crtTlsOptions = _.extend({
+                    chart: {
+                        title: 'Monthly planner - 12 months',
+                        subtitle: 'TLS certificates for renewal',
+                    }
+                }, baseOptions);
+
+                const crtAllOptions = _.extend({
+                    chart: {
+                        title: 'Monthly planner - 12 months (all)',
+                        subtitle: 'TLS certificates for renewal, including CT certificates',
+                    }
+                }, baseOptions);
+
+
+                const chartTls = new google.charts.Bar(document.getElementById('columnchart_certificates'));
+                chartTls.draw(crtTlsData, google.charts.Bar.convertOptions(crtTlsOptions));
+                const chartAll = new google.charts.Bar(document.getElementById('columnchart_certificates_all'));
+                chartAll.draw(crtAllData, google.charts.Bar.convertOptions(crtAllOptions));
             },
 
             certTypes(certSet){
