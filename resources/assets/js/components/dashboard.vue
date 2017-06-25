@@ -127,12 +127,16 @@
 <script>
     import axios from 'axios';
     import moment from 'moment';
+    import sprintf from 'sprintf-js';
 
     export default {
         data: function() {
             return {
                 loadingState: 0,
                 results: null,
+
+                crtTlsMonth: null,
+                crtAllMonth: null,
 
                 Req: window.Req,
                 Laravel: window.Laravel
@@ -300,6 +304,7 @@
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
                     cert.valid_to_dayfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
+                    cert.valid_to_monthfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.watch_hosts = [];
@@ -343,10 +348,65 @@
                     }};
                 }
 
+                this.crtTlsMonth = this.monthDataGen(_.filter(this.tlsCerts, o => {
+                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
+                this.crtAllMonth = this.monthDataGen(_.filter(this.certs, o => {
+                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
+
                 this.$set(this.results, 'certificates', this.results.certificates);
                 this.$forceUpdate();
                 this.$emit('onProcessed');
                 this.loadingState = 10;
+            },
+
+
+            monthDataGen(certSet){
+                // cert per months, LE, Cloudflare, Others
+                const grp = _.groupBy(certSet, x => {
+                    return x.valid_to_monthfmt;
+                });
+
+                const fillGap = (ret, lastMoment, toMoment) => {
+                    if (_.isUndefined(lastGrp) || lastMoment >= toMoment){
+                        return;
+                    }
+
+                    const terminal = toMoment.format('MM/YY');
+                    const i = moment(lastMoment).add(1, 'month');
+                    for(i; i.format('MM/YY') !== terminal && i < toMoment; i.add(1, 'month')){
+                        ret.push([ i.format('MM/YY'), 0, 0, 0]);
+                    }
+                };
+
+                const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
+                const ret = [];
+                let lastGrp = undefined;
+                for(const idx in sorted){
+                    const grp = sorted[idx];
+                    const crt = grp[0];
+                    const curMoment = moment(crt.valid_to_utc * 1000.0);
+                    const label = curMoment.format('MM/YY');
+
+                    fillGap(ret, lastGrp, curMoment);
+                    const curEntry = [label, 0, 0, 0];
+
+                    for(const crtIdx in grp){
+                        const ccrt = grp[crtIdx];
+                        if (ccrt.is_le){
+                            curEntry[1] += 1
+                        } else if (ccrt.is_cloudflare){
+                            curEntry[2] += 1
+                        } else {
+                            curEntry[3] += 1
+                        }
+                    }
+
+                    ret.push(curEntry);
+                    lastGrp = curMoment;
+                }
+
+                fillGap(ret, lastGrp, moment().add(1, 'year').add(1, 'month'));
+                return ret;
             },
 
             postprocessResults(){
