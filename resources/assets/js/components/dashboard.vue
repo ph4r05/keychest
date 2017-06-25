@@ -50,6 +50,40 @@
                 </div>
             </div>
 
+            <!-- Expiring domains -->
+            <div v-if="showExpiringDomains" class="row">
+                <div class="col-md-12">
+                    <h3>Expiring domains</h3>
+                    <p>Domains with expiration time in 1 year</p>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Deadline</th>
+                            <th>Domain</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 180">
+                            <td v-bind:class="cur_whois.planCss.tbl"> {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }} </td>
+                            <td v-bind:class="cur_whois.planCss.tbl"> {{ cur_whois.domain }} </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <!-- TODO: domains with unknown time - show it here -->
+
+                </div>
+            </div>
+            <div v-if="showDomainsWithUnknownExpiration" class="row">
+                <div class="col-md-12">
+                    <h3>Domains with unknown expiration</h3>
+                    <p>We were unable to detect expiration domain date for the following domains:</p>
+                    <ul class="coma-list">
+                        <li v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days">{{ cur_whois.domain }}</li>
+                    </ul>
+                </div>
+            </div>
+
             <!-- Certificate list -->
             <div class="row">
                 <div class="col-md-12">
@@ -125,10 +159,29 @@
                 return _.filter(this.certs, o => { return o.found_tls_scan; });
             },
 
+            whois(){
+                if (this.results && this.results.whois){
+                    return this.results.whois;
+                }
+                return [];
+            },
+
             showImminentRenewals(){
                 return _.reduce(this.tlsCerts, (acc, cur) => {
                     return acc + (cur.valid_to_days <= 28);
                 }, 0) > 0;
+            },
+
+            showExpiringDomains(){
+                return _.reduce(this.whois, (acc, cur) => {
+                        return acc + (cur.expires_at_days <= 180);
+                    }, 0) > 0;
+            },
+
+            showDomainsWithUnknownExpiration(){
+                return _.reduce(this.whois, (acc, cur) => {
+                        return acc + (!cur.expires_at_days);
+                    }, 0) > 0;
             },
 
             imminentRenewalCerts(){
@@ -150,6 +203,18 @@
                     return x.length;
                 }
                 return 0;
+            },
+
+            extendDateField(obj, key) {
+                if (_.isEmpty(obj[key]) || _.isUndefined(obj[key])){
+                    obj[key+'_utc'] = undefined;
+                    obj[key+'_days'] = undefined;
+                    return;
+                }
+
+                const utc = moment(obj[key]).unix();
+                obj[key+'_utc'] = utc;
+                obj[key+'_days'] = Math.round(10 * (utc - moment().unix()) / 3600.0 / 24.0) / 10;
             },
 
             transition_hook(el){
@@ -175,9 +240,17 @@
                 this.$emit('onError', msg);
             },
 
+            sortBy(x, fld){
+                return _.sortBy(x, [ (o) => { return o[fld]; } ] );
+            },
+
             sortExpiry(x){
                 return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
             },
+
+            //
+            // Data processing
+            //
 
             loadData(){
                 const onFail = (function(){
@@ -240,9 +313,23 @@
                     cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
                     cert.watch_urls = _.uniq(cert.watch_urls.sort());
                     cert.planCss = {tbl: {
-                        'success': cert.valid_to_days >= 14 && cert.valid_to_days <= 28,
-                        'warning': cert.valid_to_days >= 7 && cert.valid_to_days <= 14,
+                        'success': cert.valid_to_days > 14 && cert.valid_to_days <= 28,
+                        'warning': cert.valid_to_days > 7 && cert.valid_to_days <= 14,
                         'warning-hi': cert.valid_to_days <= 7,
+                    }};
+                }
+
+                for(const whois_id in this.results.whois){
+                    const whois = this.results.whois[whois_id];
+                    this.extendDateField(whois, 'expires_at');
+                    this.extendDateField(whois, 'registered_at');
+                    this.extendDateField(whois, 'rec_updated_at');
+                    this.extendDateField(whois, 'last_scan_at');
+                    whois.planCss = {tbl: {
+                        'success': whois.expires_at_days > 3*28 && whois.expires_at_days <= 6*28,
+                        'warning': whois.expires_at_days > 28 && whois.expires_at_days <= 3*28,
+                        'warning-hi': whois.expires_at_days > 14 && whois.expires_at_days <= 28,
+                        'danger': whois.expires_at_days <= 14,
                     }};
                 }
 
@@ -402,6 +489,24 @@
 
     ul.domain-list li {
         list-style-type: none;
+    }
+
+    .coma-list {
+        display: inline;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .coma-list li {
+        display: inline;
+    }
+
+    .coma-list li:after {
+        content: ", ";
+    }
+
+    .coma-list li:last-child:after {
+        content: "";
     }
 
     .scan-results-host {
