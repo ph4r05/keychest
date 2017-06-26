@@ -105,22 +105,24 @@
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
                 <div class="col-md-12">
-                <h3>Imminent Renewals (next 28 days)</h3>
-                <table class="table table-bordered table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Deadline</th>
-                            <th>Certificates</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="grp in imminentRenewalCerts">
-                            <td v-bind:class="grp[0].planCss.tbl">{{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
-                            <td v-bind:class="grp[0].planCss.tbl">{{ grp.length }} </td>
-                        </tr>
-
-                    </tbody>
-                </table>
+                    <h3>Imminent Renewals (next 28 days)</h3>
+                    <canvas id="imminent_renewals_js" style="width: 100%; height: 350px;"></canvas>
+                    <table class="table table-bordered table-striped table-hover" v-if="false">
+                        <thead>
+                            <tr>
+                                <th>Deadline</th>
+                                <th>Certificates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="grp in imminentRenewalCerts">
+                                <td v-bind:class="grp[0].planCss.tbl">
+                                    {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
+                                <td v-bind:class="grp[0].planCss.tbl">
+                                    {{ grp.length }} </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -247,6 +249,7 @@
 
                 Req: window.Req,
                 Laravel: window.Laravel,
+                _: window._,
 
                 chartColors: [
                     '#00c0ef',
@@ -346,10 +349,51 @@
                 return _.filter(this.tls, x => {
                     return x && x.status !== 1;
                 });
+            },
+
+            week4renewals(){
+                const r = _.filter(this.tlsCerts, x => {
+                    return x && x.valid_to_days && x.valid_to_days >= 0 && x.valid_to_days <= 28;
+                });
+                const r2 = _.map(r, x => {
+                    x.week4cat = this.week4grouper(x);
+                    return x;
+                });
+                const grp = _.groupBy(r2, x => {
+                    return x.week4cat;
+                });
+                return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+            },
+
+            week4renewalsCounts(){
+                const r = _.filter(this.tlsCerts, x => {
+                    return x && x.valid_to_days && x.valid_to_days >= 0 && x.valid_to_days <= 28;
+                });
+                const ret = [0, 0, 0, 0];
+                _.forEach(r, x => {
+                    ret[this.week4grouper(x)] += 1;
+                });
+                return ret;
+            },
+
+            showWeek4renewals(){
+                return _.sum(week4renewalsCounts) > 0;
             }
         },
 
         methods: {
+            hookup(){
+                setTimeout(this.loadData, 0);
+                if (this.useGoogleCharts) {
+                    google.charts.load('current', {'packages':['bar']});
+                    google.charts.setOnLoadCallback(this.onGraphLibLoaded);
+                }
+            },
+
+            //
+            // Utility / helper functions / called from template directly
+            //
+
             take(x, len){
                 return _.take(x, len);
             },
@@ -385,14 +429,6 @@
                 this.$emit('onRecompNeeded');
             },
 
-            hookup(){
-                setTimeout(this.loadData, 0);
-                if (this.useGoogleCharts) {
-                    google.charts.load('current', {'packages':['bar']});
-                    google.charts.setOnLoadCallback(this.onGraphLibLoaded);
-                }
-            },
-
             errMsg(msg) {
                 $('#error-text').text(msg);
                 this.formBlock(false);
@@ -410,6 +446,18 @@
 
             sortExpiry(x){
                 return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
+            },
+
+            week4grouper(x){
+                if (x.valid_to_days <= 7){
+                    return 0;
+                } else if (x.valid_to_days <= 14){
+                    return 1;
+                } else if (x.valid_to_days <= 21){
+                    return 2;
+                } else {
+                    return 3;
+                }
             },
 
             //
@@ -545,6 +593,10 @@
                 });
             },
 
+            //
+            // Graphs
+            //
+
             onGraphLibLoaded(){
                 this.graphLibLoaded = true;
                 if (!this.graphsRendered){
@@ -567,116 +619,10 @@
                 }
             },
 
-            graphDataConv(data){
-                // [[dataset names], [label, d1, d2, ...], [label, d1, d2, ...]]
-                // converts to charjs data set format.
-                if (_.isEmpty(data) || _.isEmpty(data[0])){
-                    return {};
-                }
-
-                const ln = data[0].length;
-                const labels = [];
-                const datasets = [];
-                for(let i=0; i<ln-1; i++){
-                    datasets.push({
-                        label: data[0][i+1],
-                        backgroundColor: this.chartColors[i % this.chartColors.length],
-                        data: []
-                    });
-                }
-
-                _.forEach(data, function(value, idx){
-                    if (idx===0){
-                        return;
-                    }
-                    labels.push(value[0]);
-                    for(let i=1; i < ln; i++){
-                        datasets[i-1].data.push(value[i]);
-                    }
-                });
-                return {labels: labels, datasets: datasets};
-            },
-
             renderChartjs(){
-                let rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
-                let rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
-                rawCrtTlsData = this.graphDataConv(rawCrtTlsData);
-                rawCrtAllData = this.graphDataConv(rawCrtAllData);
-
-                const baseOptions = {
-                    type: 'bar',
-                    options: {
-                        scaleBeginAtZero: true,
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scaleShowGridLines: true,
-                        scaleGridLineColor: "rgba(0,0,0,.02)",
-                        scaleGridLineWidth: 1,
-                        scales: {
-                            xAxes: [{
-                                stacked: true,
-                            }],
-                            yAxes: [{
-                                stacked: true
-                            }]
-                        },
-                        tooltips: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                }};
-
-                const graphCrtTlsData = _.extend({data: rawCrtTlsData}, _.cloneDeep(baseOptions));
-                graphCrtTlsData.options.title = {
-                    display: true,
-                    text: 'Monthly planner - 12 months'
-                };
-
-                const graphCrtAllData = _.extend({data: rawCrtAllData}, _.cloneDeep(baseOptions));
-                graphCrtAllData.options.title = {
-                    display: true,
-                    text: 'Monthly planner - 12 months, all certs, CT'
-                };
-
-                // Cert types
-                const graphCertTypes = {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: this.certTypesStats,
-                            backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                            label: 'TLS active'
-                        },
-                            {
-                            data: this.certTypesStatsAll,
-                            backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                            label: 'All TLS + CT'
-                        }],
-                        labels: [
-                            'Let\'s Encrypt',
-                            'Cloudflare',
-                            'Other'
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Certificate types'
-                        },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
-
-                new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
-                new Chart(document.getElementById("columnchart_certificates_all_js"), graphCrtAllData);
-                new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
+                this.plannerGraph();
+                this.certTypesGraph();
+                this.week4renewGraph();
             },
 
             renderGoogleGraphs(){
@@ -708,6 +654,170 @@
                 chartTls.draw(crtTlsData, google.charts.Bar.convertOptions(crtTlsOptions));
                 const chartAll = new google.charts.Bar(document.getElementById('columnchart_certificates_all'));
                 chartAll.draw(crtAllData, google.charts.Bar.convertOptions(crtAllOptions));
+            },
+
+            //
+            // Subgraphs
+            //
+
+            plannerGraph(){
+                let rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
+                let rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
+                rawCrtTlsData = this.graphDataConv(rawCrtTlsData);
+                rawCrtAllData = this.graphDataConv(rawCrtAllData);
+
+                const baseOptions = {
+                    type: 'bar',
+                    options: {
+                        scaleBeginAtZero: true,
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scaleShowGridLines: true,
+                        scaleGridLineColor: "rgba(0,0,0,.02)",
+                        scaleGridLineWidth: 1,
+                        scales: {
+                            xAxes: [{
+                                stacked: true,
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                    }};
+
+                const graphCrtTlsData = _.extend({data: rawCrtTlsData}, _.cloneDeep(baseOptions));
+                graphCrtTlsData.options.title = {
+                    display: true,
+                    text: 'Monthly planner - 12 months'
+                };
+
+                const graphCrtAllData = _.extend({data: rawCrtAllData}, _.cloneDeep(baseOptions));
+                graphCrtAllData.options.title = {
+                    display: true,
+                    text: 'Monthly planner - 12 months, all certs, CT'
+                };
+
+                new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
+                new Chart(document.getElementById("columnchart_certificates_all_js"), graphCrtAllData);
+            },
+
+            certTypesGraph(){
+                const graphCertTypes = {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [
+                            {
+                                data: this.certTypesStats,
+                                backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                                label: 'TLS active'
+                            },
+                            {
+                                data: this.certTypesStatsAll,
+                                backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                                label: 'All TLS + CT'
+                            }],
+                        labels: [
+                            'Let\'s Encrypt',
+                            'Cloudflare',
+                            'Other'
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Certificate types'
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
+                new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
+            },
+
+            week4renewGraph(){
+                // graph config
+                const config = {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: this.week4renewalsCounts,
+                            backgroundColor: [
+                                this.chartColors[0],
+                                this.chartColors[1],
+                                this.chartColors[2],
+                                this.chartColors[3]
+                            ],
+                            label: 'Renewals in 4 weeks'
+                        }],
+                        labels: [
+                            "<= 7 dats",
+                            "7-14 days",
+                            "15-21 days",
+                            "22-28 days"
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Renewals in 4 weeks'
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
+                new Chart(document.getElementById("imminent_renewals_js"), config);
+            },
+
+            //
+            // Common graph data gen
+            //
+
+            graphDataConv(data){
+                // [[dataset names], [label, d1, d2, ...], [label, d1, d2, ...]]
+                // converts to charjs data set format.
+                if (_.isEmpty(data) || _.isEmpty(data[0])){
+                    return {};
+                }
+
+                const ln = data[0].length;
+                const labels = [];
+                const datasets = [];
+                for(let i=0; i<ln-1; i++){
+                    datasets.push({
+                        label: data[0][i+1],
+                        backgroundColor: this.chartColors[i % this.chartColors.length],
+                        data: []
+                    });
+                }
+
+                _.forEach(data, function(value, idx){
+                    if (idx===0){
+                        return;
+                    }
+                    labels.push(value[0]);
+                    for(let i=1; i < ln; i++){
+                        datasets[i-1].data.push(value[i]);
+                    }
+                });
+                return {labels: labels, datasets: datasets};
             },
 
             certTypes(certSet){
@@ -764,6 +874,10 @@
                 fillGap(ret, lastGrp, moment().add(1, 'year').add(1, 'month'));
                 return ret;
             },
+
+            //
+            // Misc
+            //
 
             cleanResults(){
                 this.results = null;
