@@ -195,7 +195,7 @@ new domain (test, dev, production).
 
 ## Troubleshooting
 
-# NPM rebuild fail
+### NPM rebuild fail
 
 ```
 SyntaxError: Unexpected end of JSON input
@@ -208,4 +208,11 @@ SyntaxError: Unexpected end of JSON input
  - The culprit was the `public/mix-manifest.json` was empty somehow, so it threw JSON parsing exception. To fix remove / reupload the file.
  
  
- 
+ ### NPM watching
+
+If problem with watch option on unix system there may be too little watches configured.
+
+```
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
