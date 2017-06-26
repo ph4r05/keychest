@@ -49,6 +49,7 @@
                 </div>
             </div>
 
+            <!-- DNS lookup fails -->
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="col-md-12">
                     <h3>Domain resolution problems</h3>
@@ -114,15 +115,24 @@
 
                 </div>
             </div>
+
+            <!-- Domains without expiration date detected - important, not to mislead it is fine -->
             <div v-if="showDomainsWithUnknownExpiration" class="row">
                 <div class="col-md-12">
                     <h3>Domains with unknown expiration</h3>
                     <p>We were unable to detect expiration domain date for the following domains:</p>
-                    <div class="form-group">
-                        <ul class="coma-list">
-                            <li v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days">{{ cur_whois.domain }}</li>
-                        </ul>
-                    </div>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days" class="warning">
+                            <td>{{ cur_whois.domain }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
