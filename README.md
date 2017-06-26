@@ -208,11 +208,32 @@ SyntaxError: Unexpected end of JSON input
  - The culprit was the `public/mix-manifest.json` was empty somehow, so it threw JSON parsing exception. To fix remove / reupload the file.
  
  
- ### NPM watching
+### NPM watching
 
 If problem with watch option on unix system there may be too little watches configured.
 
 ```
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
+### NPM infinite watching
+
+It may happen `npm run watch` will rebuild the project infinitely many times.
+The problem is described and solved [in this github issue](https://github.com/JeffreyWay/laravel-mix/issues/228#issuecomment-284076792)
+
+Basically the problem is caused by webpack/mix copying all files found
+in CSS to the `public/images` folder. If the file is already present there it causes a conflict,
+file time changes and this triggers a new compilation.
+
+Solution is to place images found in CSSs to `assets/images` folder.
+
+To detect which file is causing a problem is to modify 
+`node_modules/watchpack/lib/DirectoryWatcher.js` and change the watcher 
+callback `DirectoryWatcher.prototype.onChange` so it logs
+the file and the change - simply add some logging:
+    
+```javascript
+console.log('..onChange ' + filePath);
+console.log(stat);
 ```
 
