@@ -38,8 +38,14 @@
         <!-- brief stats -->
         <div class="scan-results" id="scan-results-brief" v-show="resultsLoaded && !showExpertStats">
 
+            <!-- DNS problem: do domain resolved -->
+            <div class="alert alert-warning" v-if="hasDnsProblem && resultsLoaded">
+                <strong>DNS error</strong>: We could not resolve <strong>{{ curJob.scan_host }}</strong> domain.<br/>
+                <span>Please make sure the domain is entered correctly.</span>
+            </div>
+
             <!-- No TLS scan - probably invalid domain -->
-            <div class="alert alert-info" v-if="isTlsScanEmpty && resultsLoaded">
+            <div class="alert alert-info" v-else-if="isTlsScanEmpty && resultsLoaded">
                 No TLS scan was performed
             </div>
 
@@ -325,6 +331,8 @@
 
 <script>
     import axios from 'axios';
+    import moment from 'moment';
+
     export default {
         data: function() {
             return {
@@ -395,8 +403,13 @@
                 }
             },
 
+            hasDnsProblem() {
+                return this.results && (!this.results.dns || !this.results.dns.dns || this.results.dns.dns.length === 0);
+            },
+
             showTrackingButton(){
                 return (this.results && this.addingStatus!==3)
+                    && !this.hasDnsProblem
                     && ((this.results.canAddToList  && this.addingStatus!==1) || !this.hasAccount);
             },
 
@@ -428,6 +441,18 @@
 
             transition_hook(el){
                 this.recomp();
+            },
+
+            extendDateField(obj, key) {
+                if (_.isEmpty(obj[key]) || _.isUndefined(obj[key])){
+                    obj[key+'_utc'] = undefined;
+                    obj[key+'_days'] = undefined;
+                    return;
+                }
+
+                const utc = moment(obj[key]).unix();
+                obj[key+'_utc'] = utc;
+                obj[key+'_days'] = Math.round(10 * (utc - moment().unix()) / 3600.0 / 24.0) / 10;
             },
 
             recomp(){
@@ -566,12 +591,25 @@
             },
 
             processResults() {
+                // Certificates
                 const curTime = new Date().getTime() / 1000.0;
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.matched_name = cert.matched_alt_names && cert.matched_alt_names.length > 0 ? cert.matched_alt_names[0] : cert.cname;
+                }
+
+                // DNS
+                if (this.results.dns){
+                    this.extendDateField(this.results.dns, 'last_scan_at');
+                }
+
+                // Whois
+                if (this.results.whois){
+                    this.extendDateField(this.results.whois, 'expires_at');
+                    this.extendDateField(this.results.whois, 'last_scan_at');
+                    this.extendDateField(this.results.whois, 'rec_updated_at');
                 }
             },
 
