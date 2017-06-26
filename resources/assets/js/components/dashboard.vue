@@ -52,7 +52,7 @@
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="col-md-12">
                     <h3>Domain resolution problems</h3>
-                    <p>The </p>
+                    <p>The following domains could not be resolved. Please check the validity.</p>
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <tr>
