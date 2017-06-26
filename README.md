@@ -237,3 +237,13 @@ console.log('..onChange ' + filePath);
 console.log(stat);
 ```
 
+### NPM build problem
+
+In case of a weird error remove all npm packages and reinstall:
+
+```
+/bin/rm -rf node_modules/
+/bin/rm package-lock.json
+npm install
+```
+
