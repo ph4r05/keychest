@@ -184,31 +184,33 @@
                 <div class="col-md-12">
                     <h3>Certificate list</h3>
                     <p>Active certificates found on servers</p>
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Expiration</th>
-                            <th>Type</th>
-                            <th>Domains</th>
-                        </tr>
-                        </thead>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Expiration</th>
+                                <th>Type</th>
+                                <th>Domains</th>
+                            </tr>
+                            </thead>
 
-                        <tbody>
-                        <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                            <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
-                            <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                            <td v-bind:class="cert.planCss.tbl">{{ cert.type }}</td>
-                            <td v-bind:class="cert.planCss.tbl">
-                                <ul class="domain-list">
-                                    <li v-for="domain in cert.watch_hosts">
-                                        {{ domain }}
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            <tbody>
+                            <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.type }}</td>
+                                <td v-bind:class="cert.planCss.tbl">
+                                    <ul class="domain-list">
+                                        <li v-for="domain in cert.watch_hosts">
+                                            {{ domain }}
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
