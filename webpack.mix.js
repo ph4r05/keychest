@@ -55,6 +55,11 @@ mix.scripts([
 //     mix.version();
 // }
 
-mix.webpackConfig.watchOptions = mix.webpackConfig.watchOptions || {};
-mix.webpackConfig.watchOptions.poll = 500;
-mix.webpackConfig.watchOptions.ignored = '/node_modules/';
+mix.webpackConfig({
+    watchOptions: {
+        aggregateTimeout: 1000,
+        poll: 2000,
+        ignored: '/node_modules/',
+    }
+});
+
