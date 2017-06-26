@@ -184,7 +184,7 @@ function buildUrl(scheme, host, port, defaultScheme='https'){
     }
 
     let ret = scheme + '://' + host;
-    return isEmpty(port) ? ret : ret + ':' + port;
+    return !port ? ret : ret + ':' + port;
 }
 
 /**
