@@ -74,24 +74,31 @@
                 <div class="col-md-12">
                     <h3>Server connection problem</h3>
                     <p>TLS connection could not be made to the following domains.</p>
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>Domain</th>
-                            <th>Problem</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="tls in tlsErrors" class="danger">
-                            <td>{{ tls.urlShort }}</td>
-                            <td>
-                                <span v-if="tls.err_code == 1">TLS handshake error</span>
-                                <span v-if="tls.err_code == 2">Connection error</span>
-                                <span v-if="tls.err_code == 3">Timeout</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Problem</th>
+                                <th>Detected</th>
+                                <th>Last scan</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="tls in tlsErrors" class="danger">
+                                <td>{{ tls.urlShort }}</td>
+                                <td>
+                                    <span v-if="tls.err_code == 1">TLS handshake error</span>
+                                    <span v-if="tls.err_code == 2">Connection error</span>
+                                    <span v-if="tls.err_code == 3">Timeout</span>
+                                </td>
+                                <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                     ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -364,6 +371,10 @@
                 obj[key+'_days'] = Math.round(10 * (utc - moment().unix()) / 3600.0 / 24.0) / 10;
             },
 
+            moment(x){
+                return moment(x);
+            },
+
             transition_hook(el){
                 this.recomp();
             },
@@ -505,6 +516,8 @@
                 for(const tls_id in this.results.tls){
                     const tls = this.results.tls[tls_id];
                     this.extendDateField(tls, 'last_scan_at');
+                    this.extendDateField(tls, 'created_at');
+                    this.extendDateField(tls, 'updated_at');
                     if (this.results.watches && tls.watch_id in this.results.watches){
                         tls.domain = this.results.watches[tls.watch_id].scan_host;
                         tls.urlShort = this.results.watches[tls.watch_id].urlShort;
