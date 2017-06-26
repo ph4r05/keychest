@@ -104,25 +104,29 @@
 
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
-                <div class="col-md-12">
-                    <h3>Imminent Renewals (next 28 days)</h3>
-                    <canvas id="imminent_renewals_js" style="width: 100%; height: 350px;"></canvas>
-                    <table class="table table-bordered table-striped table-hover" v-if="false">
-                        <thead>
+                <h3>Imminent Renewals (next 28 days)</h3>
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
                             <tr>
                                 <th>Deadline</th>
                                 <th>Certificates</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr v-for="grp in imminentRenewalCerts">
                                 <td v-bind:class="grp[0].planCss.tbl">
                                     {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
                                 <td v-bind:class="grp[0].planCss.tbl">
                                     {{ grp.length }} </td>
                             </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="imminent_renewals_js" style="width: 100%; height: 300px;"></canvas>
                 </div>
             </div>
 
@@ -753,15 +757,15 @@
                         datasets: [{
                             data: this.week4renewalsCounts,
                             backgroundColor: [
-                                this.chartColors[0],
+                                this.chartColors[3],
                                 this.chartColors[1],
+                                this.chartColors[0],
                                 this.chartColors[2],
-                                this.chartColors[3]
                             ],
                             label: 'Renewals in 4 weeks'
                         }],
                         labels: [
-                            "<= 7 dats",
+                            "<= 7 days",
                             "7-14 days",
                             "15-21 days",
                             "22-28 days"
@@ -770,12 +774,12 @@
                     options: {
                         responsive: true,
                         legend: {
-                            position: 'top',
+                            position: 'right',
                         },
-                        title: {
-                            display: true,
-                            text: 'Renewals in 4 weeks'
-                        },
+                        // title: {
+                        //     display: true,
+                        //     text: 'Renewals in 4 weeks'
+                        // },
                         animation: {
                             animateScale: true,
                             animateRotate: true
@@ -783,7 +787,9 @@
                     }
                 };
 
-                new Chart(document.getElementById("imminent_renewals_js"), config);
+                setTimeout(() => {
+                    new Chart(document.getElementById("imminent_renewals_js"), config);
+                }, 1000);
             },
 
             //
