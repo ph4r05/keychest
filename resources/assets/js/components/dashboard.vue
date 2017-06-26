@@ -49,6 +49,25 @@
                 </div>
             </div>
 
+            <div v-if="dnsFailedLookups.length > 0" class="row">
+                <div class="col-md-12">
+                    <h3>Domain resolution problems</h3>
+                    <p>The </p>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="dns in dnsFailedLookups" class="danger">
+                            <td>{{ dns.domain }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
                 <div class="col-md-12">
@@ -255,6 +274,20 @@
                     return x.valid_to_dayfmt;
                 });
                 return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+            },
+
+            dns(){
+                if (this.results && this.results.dns){
+                    return this.results.dns;
+                }
+                return [];
+            },
+
+            dnsFailedLookups(){
+                const r = _.filter(this.dns, x => {
+                    return x && x.status !== 1;
+                });
+                return _.sortBy(r, [x => { return x.domain; }]);
             }
         },
 
@@ -409,6 +442,12 @@
                         'warning-hi': whois.expires_at_days > 14 && whois.expires_at_days <= 28,
                         'danger': whois.expires_at_days <= 14,
                     }};
+                }
+
+                for(const dns_id in this.results.dns){
+                    const dns = this.results.dns[dns_id];
+                    dns.domain = this.results.watches && dns.watch_id in this.results.watches ?
+                        this.results.watches[dns.watch_id].scan_host : undefined;
                 }
 
                 this.crtTlsMonth = this.monthDataGen(_.filter(this.tlsCerts, o => {
