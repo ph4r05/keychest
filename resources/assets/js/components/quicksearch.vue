@@ -39,7 +39,7 @@
         <div class="scan-results" id="scan-results-brief" v-show="resultsLoaded && !showExpertStats">
 
             <!-- No TLS scan - probably invalid domain -->
-            <div class="alert alert-info" v-if="isTlsScanEmpty">
+            <div class="alert alert-info" v-if="isTlsScanEmpty && resultsLoaded">
                 No TLS scan was performed
             </div>
 
