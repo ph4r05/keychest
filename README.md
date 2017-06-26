@@ -191,3 +191,21 @@ adminlte-laravel social
 Facebook, Google and Linked in support more callback URIs,
 for Github and Twitter there has to be a separate app for each 
 new domain (test, dev, production).
+
+
+## Troubleshooting
+
+# NPM rebuild fail
+
+```
+SyntaxError: Unexpected end of JSON input
+    at Object.parse (native)
+    at Manifest.read (/var/www/keychest-dev/node_modules/laravel-mix/src/Manifest.js:149:21)
+```
+
+ - The original message is not very helpful in diagnosing the true error. 
+ - It helps to add `console.log()` to the scripts causing exceptions, in this case here `node_modules/laravel-mix/src/Manifest.js:149`
+ - The culprit was the `public/mix-manifest.json` was empty somehow, so it threw JSON parsing exception. To fix remove / reupload the file.
+ 
+ 
+ 
