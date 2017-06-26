@@ -12,6 +12,7 @@ use App\Jobs\ScanHostJob;
 use App\Keychest\Coverage\Interval;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DomainTools;
+use App\Models\BaseDomain;
 use App\Models\Certificate;
 use App\Models\CertificateAltName;
 use App\Models\CrtShQuery;
@@ -221,8 +222,7 @@ class SearchController extends Controller
         $dnsScan = $this->processDnsScan($dnsScan);
 
         // fetch whois scan data
-        $whoisScan = empty($job->whois_check_id) ? null
-            : WhoisResult::query()->where('id', $job->whois_check_id)->first();
+        $whoisScan = $this->loadWhoisScan($job);
         $whoisScan = $this->processWhoisScan($whoisScan);
 
         // downtime computation
@@ -265,6 +265,27 @@ class SearchController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * Loads whois scan from DB
+     * @param $job
+     * @return mixed|null
+     */
+    protected function loadWhoisScan($job){
+        if (empty($job->whois_check_id)){
+            return null;
+        }
+
+        $whoisTable = (new WhoisResult())->getTable();
+        $domainsTable = (new BaseDomain())->getTable();
+
+        $q = WhoisResult::query()
+            ->from($whoisTable . ' AS s')
+            ->select(['s.*', $domainsTable.'.domain_name AS domain'])
+            ->join($domainsTable, $domainsTable.'.id', '=', 's.domain_id')
+            ->where('s.id', $job->whois_check_id);
+        return $q->first();
     }
 
     /**
