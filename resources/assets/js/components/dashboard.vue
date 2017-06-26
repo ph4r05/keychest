@@ -69,6 +69,32 @@
                 </div>
             </div>
 
+            <!-- TLS connection fails -->
+            <div v-if="tlsErrors.length > 0" class="row">
+                <div class="col-md-12">
+                    <h3>Server connection problem</h3>
+                    <p>TLS connection could not be made to the following domains.</p>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Problem</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="tls in tlsErrors" class="danger">
+                            <td>{{ tls.urlShort }}</td>
+                            <td>
+                                <span v-if="tls.err_code == 1">TLS handshake error</span>
+                                <span v-if="tls.err_code == 2">Connection error</span>
+                                <span v-if="tls.err_code == 3">Timeout</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
                 <div class="col-md-12">
@@ -293,11 +319,24 @@
                 return [];
             },
 
+            tls(){
+                if (this.results && this.results.tls){
+                    return this.results.tls;
+                }
+                return [];
+            },
+
             dnsFailedLookups(){
                 const r = _.filter(this.dns, x => {
                     return x && x.status !== 1;
                 });
                 return _.sortBy(r, [x => { return x.domain; }]);
+            },
+
+            tlsErrors(){
+                return _.filter(this.tls, x => {
+                    return x && x.status !== 1;
+                });
             }
         },
 
@@ -404,7 +443,9 @@
                 const curTime = new Date().getTime() / 1000.0;
                 for(const watch_id in this.results.watches){
                     const watch = this.results.watches[watch_id];
-                    watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, watch.scan_port);
+                    const strPort = watch.scan_port || 443;
+                    watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort);
+                    watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
                 }
 
                 for(const certId in this.results.certificates){
@@ -456,8 +497,18 @@
 
                 for(const dns_id in this.results.dns){
                     const dns = this.results.dns[dns_id];
+                    this.extendDateField(dns, 'last_scan_at');
                     dns.domain = this.results.watches && dns.watch_id in this.results.watches ?
                         this.results.watches[dns.watch_id].scan_host : undefined;
+                }
+
+                for(const tls_id in this.results.tls){
+                    const tls = this.results.tls[tls_id];
+                    this.extendDateField(tls, 'last_scan_at');
+                    if (this.results.watches && tls.watch_id in this.results.watches){
+                        tls.domain = this.results.watches[tls.watch_id].scan_host;
+                        tls.urlShort = this.results.watches[tls.watch_id].urlShort;
+                    }
                 }
 
                 this.crtTlsMonth = this.monthDataGen(_.filter(this.tlsCerts, o => {
