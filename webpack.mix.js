@@ -58,7 +58,6 @@ mix.scripts([
 mix.webpackConfig({
     watchOptions: {
         aggregateTimeout: 1000,
-        poll: 2000,
         ignored: '/node_modules/',
     }
 });
