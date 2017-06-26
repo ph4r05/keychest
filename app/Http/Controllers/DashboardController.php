@@ -69,7 +69,6 @@ class DashboardController extends Controller
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->getNewestTlsScans($activeWatchesIds, $dnsScans, $primaryIPs);
         $tlsScans = $this->processTlsScans($q->get());
-        Log::info(var_export($tlsScans->count(), true));
 
         // Latest CRTsh scan
         $crtshScans = $this->getNewestCrtshScans($activeWatchesIds)->get();
@@ -138,6 +137,7 @@ class DashboardController extends Controller
             'wids' => $activeWatchesIds->all(),
             'dns' => $dnsScans,
             'whois' => $whoisScans,
+            'tls' => $tlsScans,
             'primary_ip' => $primaryIPs,
             'tls_cert_map' => $tlsCertMap,
             'crtsh_cert_map' => $crtshCertMap,
