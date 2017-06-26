@@ -145,6 +145,15 @@
                 </div>
             </div>
 
+            <div class="alert" v-if="showWhoisWarning"
+                 v-bind:class="{
+                    'alert-danger': this.results.whois.expires_at_days <= 30,
+                    'alert-warning': this.results.whois.expires_at_days > 30}" >
+                <strong>Warning</strong>: domain <u>{{ results.whois.domain }}</u> expires in
+                {{ Math.floor(results.whois.expires_at_days) }} days.
+                Consider domain renewal. <span v-if="!isMonitored">Start tracking now.</span>
+            </div>
+
             <!-- Downtime -->
             <div class="alert alert-warning" v-if="downtimeWarning && results.downtimeTls.downtime > 60">
                 <p><strong>Warning!</strong>
@@ -417,6 +426,15 @@
                 return !this.tlsScanError && this.tlsScanHostCert && this.tlsScan
                     && this.tlsScanHostCert && this.tlsScanHostCert.is_le
                     && this.tlsScanHostCert.valid_to_days<30.0 && this.tlsScanHostCert.valid_to_days > 0;
+            },
+
+            showWhoisWarning(){
+                return this.results
+                    && !this.hasDnsProblem
+                    && this.results.whois
+                    && this.results.whois.expires_at
+                    && this.results.whois.expires_at_days
+                    && this.results.whois.expires_at_days <= 3*30;
             },
 
             defconStyle(){
