@@ -456,7 +456,7 @@
                 const curTime = new Date().getTime() / 1000.0;
                 for(const watch_id in this.results.watches){
                     const watch = this.results.watches[watch_id];
-                    const strPort = watch.scan_port || 443;
+                    const strPort = parseInt(watch.scan_port) || 443;
                     watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort);
                     watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
                 }
