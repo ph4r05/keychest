@@ -15,9 +15,12 @@ use App\Keychest\Utils\DomainTools;
 use App\Models\Certificate;
 use App\Models\CertificateAltName;
 use App\Models\CrtShQuery;
+use App\Models\DnsResult;
 use App\Models\HandshakeScan;
 use App\Models\ScanJob;
+use App\Models\WhoisResult;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -212,6 +215,16 @@ class SearchController extends Controller
             return $x;
         });
 
+        // fetch dns scan data
+        $dnsScan = empty($job->dns_check_id) ? null
+            : DnsResult::query()->where('id', $job->dns_check_id)->first();
+        $dnsScan = $this->processDnsScan($dnsScan);
+
+        // fetch whois scan data
+        $whoisScan = empty($job->whois_check_id) ? null
+            : WhoisResult::query()->where('id', $job->whois_check_id)->first();
+        $whoisScan = $this->processWhoisScan($whoisScan);
+
         // downtime computation
         $downtimeMatch = $this->computeDowntime($certificates, collect($altNames));
         $downtimeTls = null;
@@ -246,10 +259,51 @@ class SearchController extends Controller
             'downtime' => $downtimeMatch,
             'downtimeTls' => $downtimeTls,
             'canAddToList' => $canAddToList,
-            'isMonitored' => $isMonitored
+            'isMonitored' => $isMonitored,
+            'dns' => $dnsScan,
+            'whois' => $whoisScan
         ];
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * Post processing whois results
+     * @param $whois
+     * @return mixed
+     */
+    protected function processWhoisScan($whois){
+        if (empty($whois)){
+            return $whois;
+        }
+
+        try{
+            $whois->dns = json_decode($whois->dns);
+        } catch (Exception $e){
+        }
+
+        try{
+            $whois->emails = json_decode($whois->emails);
+        } catch (Exception $e){
+        }
+
+        return $whois;
+    }
+
+    /**
+     * Post processing DNS results
+     * @param $dns
+     * @return mixed
+     */
+    protected function processDnsScan($dns){
+        if (empty($dns)){
+            return $dns;
+        }
+        try{
+            $dns->dns = json_decode($dns->dns);
+        } catch (Exception $e){
+        }
+        return $dns;
     }
 
     /**
