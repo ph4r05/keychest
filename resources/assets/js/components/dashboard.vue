@@ -55,6 +55,7 @@
                     <sbox>
                         <template slot="title">Domain resolution problems</template>
                         <p>The following domains could not be resolved. Please check the validity.</p>
+                        <div class="table-responsive table-xfull">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
@@ -67,6 +68,7 @@
                             </tr>
                             </tbody>
                         </table>
+                        </div>
                     </sbox>
                 </div>
             </div>
@@ -78,7 +80,7 @@
                         <template slot="title">Server connection problem</template>
 
                         <p>TLS connection could not be made to the following domains.</p>
-                        <div class="table-responsive">
+                        <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
@@ -113,7 +115,7 @@
                 <sbox>
                     <template slot="title">Imminent Renewals (next 28 days)</template>
                     <div class="col-md-6">
-                        <div class="table-responsive">
+                        <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
@@ -148,6 +150,7 @@
                     <sbox>
                         <template slot="title">Expiring domains</template>
                         <p>Domains with expiration time in 1 year</p>
+                        <div class="table-responsive table-xfull">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
@@ -168,6 +171,7 @@
 
                             </tbody>
                         </table>
+                        </div>
                     </sbox>
                 </div>
             </div>
@@ -178,6 +182,7 @@
                     <sbox>
                         <template slot="title">Domains with unknown expiration</template>
                         <p>We were unable to detect expiration domain date for the following domains:</p>
+                        <div class="table-responsive table-xfull">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
@@ -190,6 +195,7 @@
                             </tr>
                             </tbody>
                         </table>
+                        </div>
                     </sbox>
                 </div>
             </div>
@@ -211,7 +217,8 @@
                 <div class="col-md-12">
                     <sbox>
                         <template slot="title">Certificate issuers</template>
-                        <table class="table table-bordered table-striped table-hover form-group">
+                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
+                        <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
                                 <th>Issuer</th>
@@ -227,6 +234,7 @@
                             </tr>
                             </tbody>
                         </table>
+                        </div>
 
                         <div class="form-group">
                             <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
@@ -241,7 +249,7 @@
                     <sbox>
                         <template slot="title">Certificate list</template>
                         <p>Active certificates found on servers ({{ len(tlsCerts) }})</p>
-                        <div class="table-responsive">
+                        <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
@@ -280,7 +288,7 @@
                     <sbox>
                         <template slot="title">Complete Certificate list</template>
                         <p>All certificates found ({{ len(certs) }})</p>
-                        <div class="table-responsive">
+                        <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
@@ -1257,5 +1265,22 @@
     .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
         opacity: 0
     }
+
+    .box-body > .table-xfull {
+        margin-left: -10px;
+        margin-right: -10px;
+        margin-bottom: -10px;
+    }
+
+    .box-body > .table-xfull > .table {
+        margin-bottom: auto;
+    }
+
+    .box-body > .table-xfull > .table > thead > tr > th,
+    .box-body > .table-xfull > .table > tbody > tr > td
+    {
+        padding-left: 12px;
+    }
+
 </style>
 
