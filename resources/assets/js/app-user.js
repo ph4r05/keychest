@@ -39,6 +39,7 @@ Vue.component('login-form', require('./components/auth/LoginForm.vue'));
 Vue.component('email-reset-password-form', require('./components/auth/EmailResetPasswordForm.vue'));
 Vue.component('reset-password-form', require('./components/auth/ResetPasswordForm.vue'));
 Vue.component('server-tables', require('./components/servers/ServerTables.vue'));
+Vue.component('sbox', require('./components/partials/sbox.vue'));
 Vue.component('dashboard', require('./components/dashboard.vue'));
 
 console.log('Vue.js init');
