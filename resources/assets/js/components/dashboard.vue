@@ -29,6 +29,8 @@
             <!-- TLS certificate changes over time on the IP -->
             <!-- connection stats, small inline graphs? like status -->
             <!-- Whois domain expiration notices -->
+            <!-- CT only certificates to a table + chart -->
+            <!--   how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
 
             <div class="row">
                 <div class="col-md-12">
@@ -185,6 +187,16 @@
                 </div>
             </div>
 
+            <!-- Certificate issuers -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h3>Certificate issuers</h3>
+                        <canvas id="pie_cert_issuers" style="width: 100%; height: 350px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <!-- Certificate list -->
             <div class="row">
                 <div class="col-md-12">
@@ -250,6 +262,7 @@
                 crtAllMonth: null,
                 certTypesStats: null,
                 certTypesStatsAll: null,
+                certIssuerTableData: null,
 
                 Req: window.Req,
                 Laravel: window.Laravel,
@@ -268,7 +281,10 @@
                     '#4bc0c0',
                     '#36a2eb',
                     '#9966ff',
-                    '#c9cbcf'
+                    '#c9cbcf',
+                    '#6655ef',
+                    '#ffde56',
+                    '#c43833',
                 ]
             };
         },
@@ -382,7 +398,15 @@
 
             showWeek4renewals(){
                 return _.sum(week4renewalsCounts) > 0;
-            }
+            },
+
+            tlsCertIssuers(){
+                return this.certIssuersGen(this.tlsCerts);
+            },
+
+            allCertIssuers(){
+                return this.certIssuersGen(this.certs);
+            },
         },
 
         methods: {
@@ -452,6 +476,10 @@
                 return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
             },
 
+            //
+            // Cert processing
+            //
+
             week4grouper(x){
                 if (x.valid_to_days <= 7){
                     return 0;
@@ -462,6 +490,22 @@
                 } else {
                     return 3;
                 }
+            },
+
+            certIssuer(cert){
+                if (cert.is_le){
+                    return 'Let\'s Encrypt';
+                } else if (cert.is_cloudflare){
+                    return 'Cloudflare';
+                }
+
+                const iss = cert.issuer;
+                const ret = iss.match(/organizationName: (.+?)($|,\s[a-zA-Z0-9]+:)/);
+                if (ret && ret[1]){
+                    return ret[1];
+                }
+
+                return 'Other';
             },
 
             //
@@ -627,6 +671,7 @@
                 this.plannerGraph();
                 this.certTypesGraph();
                 this.week4renewGraph();
+                this.certIssuersGraph();
             },
 
             renderGoogleGraphs(){
@@ -792,6 +837,55 @@
                 }, 1000);
             },
 
+            certIssuersGraph(){
+                const tlsIssuerStats = this.groupStats(this.tlsCertIssuers, 'count');
+                const allIssuerStats = this.groupStats(this.allCertIssuers, 'count');
+                this.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
+                this.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
+                this.certIssuerTableData = _.sortBy(
+                    this.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
+                    x => {
+                        return -1 * _.max(_.tail(x));
+                    }
+                );
+
+                const tlsIssuerUnz = _.unzip(tlsIssuerStats);
+                const allIssuerUnz = _.unzip(allIssuerStats);
+                const graphCertTypes = {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [
+                            {
+                                data: tlsIssuerUnz[1],
+                                backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
+                                label: 'TLS active'
+                            },
+                            {
+                                data: allIssuerUnz[1],
+                                backgroundColor: this.takeMod(this.chartColors, allIssuerUnz[0].length),
+                                label: 'All TLS + CT'
+                            }],
+                        labels: allIssuerUnz[0]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Certificate issuers'
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
+                new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
+            },
+
             //
             // Common graph data gen
             //
@@ -878,6 +972,146 @@
                 }
 
                 fillGap(ret, lastGrp, moment().add(1, 'year').add(1, 'month'));
+                return ret;
+            },
+
+            certIssuersGen(certSet){
+                const r2 = _.map(certSet, x => {
+                    x.issuerOrg = this.certIssuer(x);
+                    return x;
+                });
+                const grp = _.groupBy(r2, x => {
+                    return x.issuerOrg;
+                });
+                return grp; //return _.sortBy(grp, [x => {return x[0].issuerOrg; }]);
+            },
+
+            listToSet(lst){
+                const st = {};
+                for(const idx in lst){
+                    st[lst[idx]] = true;
+                }
+                return st;
+            },
+
+            groupStats(grouped, sort){
+                const agg = [];
+                for(const curLabel in grouped){
+                    agg.push([curLabel, grouped[curLabel].length]);  // zip
+                }
+
+                let sorted = agg;
+                if (sort && (sort === 'label' || sort === 1)){
+                    sorted = _.sortBy(sorted, x => { return x[0]; });
+                } else if (sort && (sort === 'count' || sort === 2)){
+                    sorted = _.sortBy(sorted, x => { return x[1]; });
+                }
+
+                return sorted;
+            },
+
+            mergeGroupStatsKeys(groups){
+                // [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
+                // after this function all datasets will have all keys, with defaul value 0 if it was not there before
+                const keys = {};
+                _.forEach(groups, x => {
+                    _.assign(keys, this.listToSet(_.unzip(x)[0]));
+                });
+
+                _.forEach(groups, x => {
+                    const curSet = this.listToSet(_.unzip(x)[0]);
+                    _.forEach(keys, (val, key) => {
+                        if (!(key in curSet)){
+                            x.push([key, 0]);
+                        }
+                    });
+                });
+            },
+
+            mergeGroupStatValues(groups){
+                // [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
+                // returns a new single dataset [[l1, c1, c2], ...]
+
+                // key array
+                const keys = _.reduce(groups, (acc, x)=>{
+                    return _.union(acc, _.unzip(x)[0]);
+                }, []);
+
+                const ret = [];
+                const grpObjs = _.map(groups, _.fromPairs);
+
+                _.forEach(keys, key => {
+                    const cur = [key];
+                    _.forEach(grpObjs, grp => {
+                        cur.push(key in grp ? grp[key] : 0);
+                    });
+                    ret.push(cur);
+                });
+                return ret;
+            },
+
+            mergeGroupStats(groups){
+                // merges multiple datasets with zip-ed group structure, taking maximum count
+                const x = _.reduce(groups, (result, value, key) => {
+                    const cur = _.fromPairs(value);
+                    return _.mergeWith(result, cur, (objValue, srcValue, key, object, source) => {
+                        return _.max([objValue, srcValue]);
+                    });
+                }, {});
+
+                return _.toPairs(x);
+            },
+
+            mergeGroups(groups){
+                // [g1 => [gg1=>[], gg2=>[], ...], g2, ...]
+                // modifies the given groups so they have same labels and fills 0 for missing pieces
+                const allLabels = {};
+                for(const grpid in groups){
+                    const grp = groups[grpid];
+                    for(const grpname in grp){
+                        allLabels[grpname] = true;
+                    }
+                }
+                console.log(allLabels);
+                for(const grpid in groups){
+                    const grp = groups[grpid];
+                    for(const curLabel in allLabels){
+                        if (!(curLabel in grp)){
+                            grp[curLabel] = [];
+                        }
+                    }
+                }
+            },
+
+            mergedGroupStatSort(groups, fields, ordering){
+                // [[[g1,c1], [g2, c2]], ...]
+                // sorts each dataset separately based on the global ordering
+
+                // finds global ordering on the group keys by the count
+                const mixed = this.mergeGroupStats(groups);
+
+                // global ordering on the mixed dataset, get ranking for the keys
+                const ordered = _.orderBy(mixed, fields, ordering);
+
+                // ranking on the keys: key -> ranking
+                const ranking = _.zipObject(
+                    _.unzip(ordered)[0],
+                    _.range(ordered.length));
+
+                // sort by global ranking
+                _.forEach(groups, x => {  // x is the dataset
+                    _.sortBy(x, y => {  // y is [g1, c1]
+                        return ranking[y[0]];
+                    });
+                });
+            },
+
+            takeMod(set, len){
+                const ret = [];
+                const ln = set.length;
+                for(let i = 0; i<len; i++){
+                    ret.push(set[i % ln]);
+                }
                 return ret;
             },
 
