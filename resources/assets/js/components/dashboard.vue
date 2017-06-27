@@ -34,162 +34,175 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <h3>Monthly certificate renew planner</h3>
-                    <div class="form-group">
-                        <!--<div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>-->
-                        <canvas id="columnchart_certificates_js" style="width: 100%; height: 350px;"></canvas>
-                    </div>
-                </div>
-            </div>
+                    <sbox>
+                        <template slot="title">Monthly certificate renew planner</template>
+                            <div class="form-group">
+                                <!--<div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>-->
+                                <canvas id="columnchart_certificates_js" style="width: 100%; height: 350px;"></canvas>
+                            </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <!--<div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>-->
-                        <canvas id="columnchart_certificates_all_js" style="width: 100%; height: 350px;"></canvas>
-                    </div>
+                            <div class="form-group">
+                                <!--<div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>-->
+                                <canvas id="columnchart_certificates_all_js" style="width: 100%; height: 350px;"></canvas>
+                            </div>
+                    </sbox>
                 </div>
             </div>
 
             <!-- DNS lookup fails -->
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="col-md-12">
-                    <h3>Domain resolution problems</h3>
-                    <p>The following domains could not be resolved. Please check the validity.</p>
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>Domain</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="dns in dnsFailedLookups" class="danger">
-                            <td>{{ dns.domain }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <sbox>
+                        <template slot="title">Domain resolution problems</template>
+                        <p>The following domains could not be resolved. Please check the validity.</p>
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Domain</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="dns in dnsFailedLookups" class="danger">
+                                <td>{{ dns.domain }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </sbox>
                 </div>
             </div>
 
             <!-- TLS connection fails -->
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="col-md-12">
-                    <h3>Server connection problem</h3>
-                    <p>TLS connection could not be made to the following domains.</p>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>Domain</th>
-                                <th>Problem</th>
-                                <th>Detected</th>
-                                <th>Last scan</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="tls in tlsErrors" class="danger">
-                                <td>{{ tls.urlShort }}</td>
-                                <td>
-                                    <span v-if="tls.err_code == 1">TLS handshake error</span>
-                                    <span v-if="tls.err_code == 2">Connection error</span>
-                                    <span v-if="tls.err_code == 3">Timeout</span>
-                                </td>
-                                <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
-                                     ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <sbox>
+                        <template slot="title">Server connection problem</template>
+
+                        <p>TLS connection could not be made to the following domains.</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Domain</th>
+                                    <th>Problem</th>
+                                    <th>Detected</th>
+                                    <th>Last scan</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="tls in tlsErrors" class="danger">
+                                    <td>{{ tls.urlShort }}</td>
+                                    <td>
+                                        <span v-if="tls.err_code == 1">TLS handshake error</span>
+                                        <span v-if="tls.err_code == 2">Connection error</span>
+                                        <span v-if="tls.err_code == 3">Timeout</span>
+                                    </td>
+                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                         ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
                 </div>
             </div>
 
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
-                <h3>Imminent Renewals (next 28 days)</h3>
-                <div class="col-md-6">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>Deadline</th>
-                                <th>Relative</th>
-                                <th>Certificates</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="grp in imminentRenewalCerts">
-                                <td v-bind:class="grp[0].planCss.tbl">
-                                    {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
-                                <td v-bind:class="grp[0].planCss.tbl">
-                                    {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
-                                <td v-bind:class="grp[0].planCss.tbl">
-                                    {{ grp.length }} </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                <div class="col-md-12">
+                <sbox>
+                    <template slot="title">Imminent Renewals (next 28 days)</template>
+                    <div class="col-md-6">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Deadline</th>
+                                    <th>Relative</th>
+                                    <th>Certificates</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="grp in imminentRenewalCerts">
+                                    <td v-bind:class="grp[0].planCss.tbl">
+                                        {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
+                                    <td v-bind:class="grp[0].planCss.tbl">
+                                        {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
+                                    <td v-bind:class="grp[0].planCss.tbl">
+                                        {{ grp.length }} </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <canvas id="imminent_renewals_js" style="width: 100%; height: 300px;"></canvas>
+                    <div class="col-md-6">
+                        <canvas id="imminent_renewals_js" style="width: 100%; height: 300px;"></canvas>
+                    </div>
+                </sbox>
                 </div>
             </div>
 
             <!-- Expiring domains -->
             <div v-if="showExpiringDomains" class="row">
                 <div class="col-md-12">
-                    <h3>Expiring domains</h3>
-                    <p>Domains with expiration time in 1 year</p>
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>Deadline</th>
-                            <th>Relative</th>
-                            <th>Domain</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 365">
-                            <td v-bind:class="cur_whois.planCss.tbl">
-                                {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
-                            <td v-bind:class="cur_whois.planCss.tbl">
-                                {{ moment(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
-                            <td v-bind:class="cur_whois.planCss.tbl">
-                                {{ cur_whois.domain }} </td>
-                        </tr>
+                    <sbox>
+                        <template slot="title">Expiring domains</template>
+                        <p>Domains with expiration time in 1 year</p>
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Deadline</th>
+                                <th>Relative</th>
+                                <th>Domain</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 365">
+                                <td v-bind:class="cur_whois.planCss.tbl">
+                                    {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
+                                <td v-bind:class="cur_whois.planCss.tbl">
+                                    {{ moment(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
+                                <td v-bind:class="cur_whois.planCss.tbl">
+                                    {{ cur_whois.domain }} </td>
+                            </tr>
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </sbox>
                 </div>
             </div>
 
             <!-- Domains without expiration date detected - important, not to mislead it is fine -->
             <div v-if="showDomainsWithUnknownExpiration" class="row">
                 <div class="col-md-12">
-                    <h3>Domains with unknown expiration</h3>
-                    <p>We were unable to detect expiration domain date for the following domains:</p>
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>Domain</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days" class="warning">
-                            <td>{{ cur_whois.domain }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <sbox>
+                        <template slot="title">Domains with unknown expiration</template>
+                        <p>We were unable to detect expiration domain date for the following domains:</p>
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Domain</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days" class="warning">
+                                <td>{{ cur_whois.domain }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </sbox>
                 </div>
             </div>
 
             <!-- Certificate types -->
             <div class="row">
                 <div class="col-md-12">
-                    <div class="form-group">
-                        <h3>Certificate types</h3>
-                        <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
-                    </div>
+                    <sbox>
+                        <template slot="title">Certificate types</template>
+                        <div class="form-group">
+                            <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
+                        </div>
+                    </sbox>
                 </div>
             </div>
 
