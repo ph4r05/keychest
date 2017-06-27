@@ -152,8 +152,6 @@
 
                         </tbody>
                     </table>
-                    <!-- TODO: domains with unknown time - show it here -->
-
                 </div>
             </div>
 
@@ -188,11 +186,31 @@
             </div>
 
             <!-- Certificate issuers -->
+            <div class="row" v-if="certIssuerTableData">
+                <div class="col-md-12">
+                    <h3>Certificate issuers</h3>
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Issuer</th>
+                            <th>Active TLS</th>
+                            <th>Certificate Transparency</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="curDat in certIssuerTableData">
+                            <td> {{ curDat[0] }} </td>
+                            <td> {{ curDat[1] }} </td>
+                            <td> {{ curDat[2] }} </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <h3>Certificate issuers</h3>
-                        <canvas id="pie_cert_issuers" style="width: 100%; height: 350px;"></canvas>
+                        <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
                     </div>
                 </div>
             </div>
