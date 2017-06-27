@@ -73,7 +73,7 @@
                     <td> {{ form.textStatus }} </td>
                 </tr>
 
-                <!-- Overal validity status, else-ifs from the most urgent to least -->
+                <!-- Overall validity status, else-ifs from the most urgent to least -->
                 <tr v-bind:class="defconStyle">
                     <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
                         Certificate expired. Your server is down (HSTS is set). Create an account to track or ask for help.</td>
@@ -145,6 +145,7 @@
                 </div>
             </div>
 
+            <!-- Whois - expiration -->
             <div class="alert" v-if="showWhoisWarning"
                  v-bind:class="{
                     'alert-danger': this.results.whois.expires_at_days <= 30,
