@@ -256,8 +256,8 @@
                                     <th>ID</th>
                                     <th>Expiration</th>
                                     <th>Relative</th>
-                                    <th>Issuer</th>
                                     <th>Domains</th>
+                                    <th>Issuer</th>
                                 </tr>
                                 </thead>
 
@@ -266,7 +266,6 @@
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                                     <td v-bind:class="cert.planCss.tbl">{{ moment(cert.valid_to).fromNow() }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
                                     <td v-bind:class="cert.planCss.tbl">
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
@@ -274,6 +273,7 @@
                                             </li>
                                         </ul>
                                     </td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -294,8 +294,8 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Expiration</th>
-                                    <th>Type</th>
                                     <th>Domains</th>
+                                    <th>Issuer</th>
                                 </tr>
                                 </thead>
 
@@ -303,7 +303,6 @@
                                 <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
                                     <td v-bind:class="cert.planCss.tbl">
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
@@ -311,6 +310,7 @@
                                             </li>
                                         </ul>
                                     </td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
                                 </tr>
                                 </tbody>
                             </table>
