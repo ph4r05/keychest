@@ -113,6 +113,7 @@
                             <thead>
                             <tr>
                                 <th>Deadline</th>
+                                <th>Relative</th>
                                 <th>Certificates</th>
                             </tr>
                             </thead>
@@ -120,6 +121,8 @@
                             <tr v-for="grp in imminentRenewalCerts">
                                 <td v-bind:class="grp[0].planCss.tbl">
                                     {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
+                                <td v-bind:class="grp[0].planCss.tbl">
+                                    {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
                                 <td v-bind:class="grp[0].planCss.tbl">
                                     {{ grp.length }} </td>
                             </tr>
@@ -141,13 +144,18 @@
                         <thead>
                         <tr>
                             <th>Deadline</th>
+                            <th>Relative</th>
                             <th>Domain</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 365">
-                            <td v-bind:class="cur_whois.planCss.tbl"> {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }} </td>
-                            <td v-bind:class="cur_whois.planCss.tbl"> {{ cur_whois.domain }} </td>
+                            <td v-bind:class="cur_whois.planCss.tbl">
+                                {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
+                            <td v-bind:class="cur_whois.planCss.tbl">
+                                {{ moment(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
+                            <td v-bind:class="cur_whois.planCss.tbl">
+                                {{ cur_whois.domain }} </td>
                         </tr>
 
                         </tbody>
@@ -219,7 +227,44 @@
             <div class="row">
                 <div class="col-md-12">
                     <h3>Certificate list</h3>
-                    <p>Active certificates found on servers</p>
+                    <p>Active certificates found on servers ({{ len(tlsCerts) }})</p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Expiration</th>
+                                <th>Relative</th>
+                                <th>Issuer</th>
+                                <th>Domains</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                                <td v-bind:class="cert.planCss.tbl">{{ moment(cert.valid_to).fromNow() }}</td>
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
+                                <td v-bind:class="cert.planCss.tbl">
+                                    <ul class="domain-list">
+                                        <li v-for="domain in cert.watch_hosts">
+                                            {{ domain }}
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Certificate list -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Complete Certificate list</h3>
+                    <p>All certificates found ({{ len(certs) }})</p>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
@@ -232,13 +277,13 @@
                             </thead>
 
                             <tbody>
-                            <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
+                            <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
                                 <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
                                 <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.type }}</td>
+                                <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
                                 <td v-bind:class="cert.planCss.tbl">
                                     <ul class="domain-list">
-                                        <li v-for="domain in cert.watch_hosts">
+                                        <li v-for="domain in cert.watch_hosts_ct">
                                             {{ domain }}
                                         </li>
                                     </ul>
@@ -322,18 +367,21 @@
                 if (this.results && this.results.certificates){
                     return this.results.certificates;
                 }
-                return [];
+                return {};
             },
 
             tlsCerts(){
-                return _.filter(this.certs, o => { return o.found_tls_scan; });
+                // return _.filter(this.certs, o => { return o.found_tls_scan; });
+                return _.map(_.uniq(_.values(this.results.tls_cert_map)), x => {
+                    return this.results.certificates[x];
+                });
             },
 
             whois(){
                 if (this.results && this.results.whois){
                     return this.results.whois;
                 }
-                return [];
+                return {};
             },
 
             showImminentRenewals(){
@@ -366,14 +414,14 @@
                 if (this.results && this.results.dns){
                     return this.results.dns;
                 }
-                return [];
+                return {};
             },
 
             tls(){
                 if (this.results && this.results.tls){
                     return this.results.tls;
                 }
-                return [];
+                return {};
             },
 
             dnsFailedLookups(){
@@ -446,7 +494,7 @@
 
             len(x) {
                 if (x){
-                    return x.length;
+                    return _.size(x);
                 }
                 return 0;
             },
@@ -583,16 +631,28 @@
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.watch_hosts = [];
                     cert.watch_urls = [];
-                    for(const ii in cert.tls_watches){
-                        const watch_id = cert.tls_watches[ii];
+                    cert.watch_hosts_ct = [];
+                    cert.watch_urls_ct = [];
+
+                    _.forEach(cert.tls_watches, watch_id => {
                         if (watch_id in this.results.watches){
                             cert.watch_hosts.push(this.results.watches[watch_id].scan_host);
                             cert.watch_urls.push(this.results.watches[watch_id].url);
                         }
-                    }
+                    });
+
+                    _.forEach(_.uniq(_.union(cert.tls_watches, cert.crtsh_watches)), watch_id=>{
+                        if (watch_id in this.results.watches){
+                            cert.watch_hosts_ct.push(this.results.watches[watch_id].scan_host);
+                            cert.watch_urls_ct.push(this.results.watches[watch_id].url);
+                        }
+                    });
 
                     cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
                     cert.watch_urls = _.uniq(cert.watch_urls.sort());
+                    cert.watch_hosts_ct = _.uniq(cert.watch_hosts_ct.sort());
+                    cert.watch_urls_ct = _.uniq(cert.watch_urls_ct.sort());
+
                     cert.planCss = {tbl: {
                         'success': cert.valid_to_days > 14 && cert.valid_to_days <= 28,
                         'warning': cert.valid_to_days > 7 && cert.valid_to_days <= 14,
@@ -606,6 +666,8 @@
                     } else {
                         cert.type = 'Public';
                     }
+
+                    cert.issuerOrg = this.certIssuer(cert);
                 }
 
                 for(const whois_id in this.results.whois){
@@ -994,11 +1056,7 @@
             },
 
             certIssuersGen(certSet){
-                const r2 = _.map(certSet, x => {
-                    x.issuerOrg = this.certIssuer(x);
-                    return x;
-                });
-                const grp = _.groupBy(r2, x => {
+                const grp = _.groupBy(certSet, x => {
                     return x.issuerOrg;
                 });
                 return grp; //return _.sortBy(grp, [x => {return x[0].issuerOrg; }]);
