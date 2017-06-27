@@ -209,102 +209,105 @@
             <!-- Certificate issuers -->
             <div class="row" v-if="certIssuerTableData">
                 <div class="col-md-12">
-                    <h3>Certificate issuers</h3>
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>Issuer</th>
-                            <th>Active TLS</th>
-                            <th>Certificate Transparency</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="curDat in certIssuerTableData">
-                            <td> {{ curDat[0] }} </td>
-                            <td> {{ curDat[1] }} </td>
-                            <td> {{ curDat[2] }} </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
-                    </div>
+                    <sbox>
+                        <template slot="title">Certificate issuers</template>
+                        <table class="table table-bordered table-striped table-hover form-group">
+                            <thead>
+                            <tr>
+                                <th>Issuer</th>
+                                <th>Active TLS</th>
+                                <th>Certificate Transparency</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="curDat in certIssuerTableData">
+                                <td> {{ curDat[0] }} </td>
+                                <td> {{ curDat[1] }} </td>
+                                <td> {{ curDat[2] }} </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="form-group">
+                            <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
+                        </div>
+                    </sbox>
                 </div>
             </div>
 
             <!-- Certificate list -->
             <div class="row">
                 <div class="col-md-12">
-                    <h3>Certificate list</h3>
-                    <p>Active certificates found on servers ({{ len(tlsCerts) }})</p>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Expiration</th>
-                                <th>Relative</th>
-                                <th>Issuer</th>
-                                <th>Domains</th>
-                            </tr>
-                            </thead>
+                    <sbox>
+                        <template slot="title">Certificate list</template>
+                        <p>Active certificates found on servers ({{ len(tlsCerts) }})</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Expiration</th>
+                                    <th>Relative</th>
+                                    <th>Issuer</th>
+                                    <th>Domains</th>
+                                </tr>
+                                </thead>
 
-                            <tbody>
-                            <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                <td v-bind:class="cert.planCss.tbl">{{ moment(cert.valid_to).fromNow() }}</td>
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
-                                <td v-bind:class="cert.planCss.tbl">
-                                    <ul class="domain-list">
-                                        <li v-for="domain in cert.watch_hosts">
-                                            {{ domain }}
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                <tbody>
+                                <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ moment(cert.valid_to).fromNow() }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">
+                                        <ul class="domain-list">
+                                            <li v-for="domain in cert.watch_hosts">
+                                                {{ domain }}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
                 </div>
             </div>
 
             <!-- All Certificate list -->
             <div class="row">
                 <div class="col-md-12">
-                    <h3>Complete Certificate list</h3>
-                    <p>All certificates found ({{ len(certs) }})</p>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Expiration</th>
-                                <th>Type</th>
-                                <th>Domains</th>
-                            </tr>
-                            </thead>
+                    <sbox>
+                        <template slot="title">Complete Certificate list</template>
+                        <p>All certificates found ({{ len(certs) }})</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Expiration</th>
+                                    <th>Type</th>
+                                    <th>Domains</th>
+                                </tr>
+                                </thead>
 
-                            <tbody>
-                            <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
-                                <td v-bind:class="cert.planCss.tbl">
-                                    <ul class="domain-list">
-                                        <li v-for="domain in cert.watch_hosts_ct">
-                                            {{ domain }}
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                <tbody>
+                                <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrg }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">
+                                        <ul class="domain-list">
+                                            <li v-for="domain in cert.watch_hosts_ct">
+                                                {{ domain }}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
                 </div>
             </div>
 
@@ -976,7 +979,9 @@
                     }
                 };
 
-                new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
+                setTimeout(() => {
+                    new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
+                }, 1000);
             },
 
             //
