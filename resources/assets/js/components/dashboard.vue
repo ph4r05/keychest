@@ -29,7 +29,7 @@
             <!-- X DNS problem notices - resolution fails -->
             <!--   DNS changes over time -->
             <!-- X TLS connection fail notices - last attempt (connect fail, timeout, handshake) -->
-            <!--   TLS certificate expired notices - last attempt -->
+            <!-- X TLS certificate expired notices - last attempt -->
             <!--   TLS certificates trust problems (self signed, is_ca, empty chain, generic, HOSTNAME validation error) -->
             <!--   TLS certificate changes over time on the IP -->
             <!--   connection stats, small inline graphs? like status -->
@@ -146,6 +146,84 @@
                                         </ul>
                                     </td>
                                     <td>{{ cert.issuerOrgNorm }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
+                </div>
+            </div>
+
+            <!-- TLS trust errors -->
+            <div v-if="len(tlsInvalidTrust) > 0" class="row">
+                <div class="xcol-md-12">
+                    <sbox>
+                        <template slot="title">Untrusted TLS certificates</template>
+                        <p>TLS certificates with trust problems</p>
+                        <div class="table-responsive table-xfull">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>Detected</th>
+                                    <th>Last scan</th>
+                                    <th>Problems</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
+                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>
+                                        <ul class="domain-list">
+                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed</li>
+                                            <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
+                                            <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Untrusted chain</li>
+                                            <li v-else-if="len(tls.certs_ids) == 0">No certificate </li>
+                                            <li v-else-if="tls.host_cert">Untrusted</li>
+                                            <li v-else="">No host certificate</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
+                </div>
+            </div>
+
+            <!-- TLS hostname errors -->
+            <div v-if="len(tlsInvalidHostname) > 0" class="row">
+                <div class="xcol-md-12">
+                    <sbox>
+                        <template slot="title">Invalid hostname certificates</template>
+                        <p>Presented TLS certificates do not match scanned hostname</p>
+                        <div class="table-responsive table-xfull">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>Detected</th>
+                                    <th>Last scan</th>
+                                    <th>Certificate domains</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
+                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>
+                                        <ul class="coma-list" v-if="tls.host_cert">
+                                            <li v-for="domain in take(tls.host_cert.alt_domains, 10)">
+                                                {{ domain }}
+                                            </li>
+                                        </ul>
+                                        <span v-else="">No domains found</span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -612,6 +690,18 @@
                 });
             },
 
+            tlsInvalidTrust(){
+                return _.filter(this.tls, x => {
+                    return x && x.status === 1 && !x.valid_path;
+                });
+            },
+
+            tlsInvalidHostname(){
+                return _.filter(this.tls, x => {
+                    return x && x.status === 1 && x.valid_path && !x.valid_hostname;
+                });
+            },
+
             week4renewals(){
                 const r = _.filter(this.tlsCerts, x => {
                     return x && x.valid_to_days && x.valid_to_days >= 0 && x.valid_to_days <= 28;
@@ -932,6 +1022,14 @@
                     if (this.results.watches && tls.watch_id in this.results.watches){
                         tls.domain = this.results.watches[tls.watch_id].scan_host;
                         tls.urlShort = this.results.watches[tls.watch_id].urlShort;
+                    }
+
+                    tls.leaf_cert = tls.cert_id_leaf && tls.cert_id_leaf in this.results.certificates ?
+                        this.results.certificates[tls.cert_id_leaf] : undefined;
+                    if (tls.leaf_cert){
+                        tls.host_cert = tls.leaf_cert;
+                    } else if (tls.certs_ids && _.size(tls.certs_ids) === 1){
+                        tls.host_cert = this.results.certificates[tls.certs_ids[0]];
                     }
                 }
 
