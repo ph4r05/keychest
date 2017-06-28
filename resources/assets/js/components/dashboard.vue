@@ -1197,7 +1197,7 @@
             },
 
             mergeGroups(groups, missing){
-                // [g1 => [gg1=>[], gg2=>[], ...], g2, ...]
+                // [g1 => [gg1=>obj, gg2=>obj, ...], g2 => ..., ...]
                 // modifies the given groups so they have same labels and fills missing for missing pieces
                 const keys = {};
                 _.forEach(groups, x => {
@@ -1211,6 +1211,25 @@
                         }
                     }
                 });
+            },
+
+            flipGroups(groups, missing){
+                // transforms [g1 => [gg1=>obj, gg2=>obj, ...], g2 => ..., ...]
+                // to         [gg1=> [g1=>obj, g2=>obj,... ], gg2=> [] ]
+                // returns a new object
+                const keys = {};
+                _.forEach(groups, x => {
+                    _.assign(keys, this.listToSet(_.keys(x)));
+                });
+
+                return _.reduce(keys, (acc, tmp, key) => {
+                    acc[key] =
+                        _.mapValues(groups, (gval, gkey) => {
+                            return key in gval ? gval[key] : (_.isFunction(missing) ? missing(gval, groups) : missing);
+                        });
+
+                    return acc;
+                }, {});
             },
 
             mergedGroupStatSort(groups, fields, ordering){
