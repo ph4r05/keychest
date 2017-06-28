@@ -260,6 +260,55 @@ function neighbourDomainList(domainList){
     return _.sortedUniq(domains.sort());
 }
 
+/**
+ * Compares values to sort them in ascending order.
+ * Borrowed from Lodash internal context - not exported.
+ *
+ * @private
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {number} Returns the sort order indicator for `value`.
+ */
+function compareAscending(value, other) {
+    if (value !== other) {
+        const valIsDefined = value !== undefined,
+            valIsNull = value === null,
+            valIsReflexive = value === value,
+            valIsSymbol = _.isSymbol(value);
+
+        const othIsDefined = other !== undefined,
+            othIsNull = other === null,
+            othIsReflexive = other === other,
+            othIsSymbol = _.isSymbol(other);
+
+        if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
+            (valIsSymbol && othIsDefined && othIsReflexive && !othIsNull && !othIsSymbol) ||
+            (valIsNull && othIsDefined && othIsReflexive) ||
+            (!valIsDefined && othIsReflexive) ||
+            !valIsReflexive) {
+            return 1;
+        }
+        if ((!valIsNull && !valIsSymbol && !othIsSymbol && value < other) ||
+            (othIsSymbol && valIsDefined && valIsReflexive && !valIsNull && !valIsSymbol) ||
+            (othIsNull && valIsDefined && valIsReflexive) ||
+            (!othIsDefined && valIsReflexive) ||
+            !othIsReflexive) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * Converts key function to the compare function
+ * @param keyFnc
+ */
+function keyToCompare(keyFnc){
+    return (a, b) => {
+        return compareAscending(keyFnc(a), keyFnc(b));
+    };
+}
+
 
 // Export
 module.exports = {
@@ -276,7 +325,9 @@ module.exports = {
     buildUrl: buildUrl,
     isWildcard: isWildcard,
     removeWildcard: removeWildcard,
-    neighbourDomainList: neighbourDomainList
+    neighbourDomainList: neighbourDomainList,
+    compareAscending: compareAscending,
+    keyToCompare: keyToCompare
 };
 
 
