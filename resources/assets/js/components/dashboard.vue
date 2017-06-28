@@ -1120,6 +1120,7 @@
             },
 
             groupStats(grouped, sort){
+                // processes groupBy result and returns [[key1, size1], [key2, size2], ...]
                 const agg = [];
                 for(const curLabel in grouped){
                     agg.push([curLabel, grouped[curLabel].length]);  // zip
@@ -1138,19 +1139,7 @@
             mergeGroupStatsKeys(groups){
                 // [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
                 // after this function all datasets will have all keys, with defaul value 0 if it was not there before
-                const keys = {};
-                _.forEach(groups, x => {
-                    _.assign(keys, this.listToSet(_.unzip(x)[0]));
-                });
-
-                _.forEach(groups, x => {
-                    const curSet = this.listToSet(_.unzip(x)[0]);
-                    _.forEach(keys, (val, key) => {
-                        if (!(key in curSet)){
-                            x.push([key, 0]);
-                        }
-                    });
-                });
+                return this.mergeGroupKeys(groups, 0);
             },
 
             mergeGroupStatValues(groups){
@@ -1187,25 +1176,41 @@
                 return _.toPairs(x);
             },
 
-            mergeGroups(groups){
-                // [g1 => [gg1=>[], gg2=>[], ...], g2, ...]
-                // modifies the given groups so they have same labels and fills 0 for missing pieces
-                const allLabels = {};
-                for(const grpid in groups){
-                    const grp = groups[grpid];
-                    for(const grpname in grp){
-                        allLabels[grpname] = true;
-                    }
-                }
+            mergeGroupKeys(groups, missing){
+                // [g1 => [[l1,obj1], [l2,obj2]], ...]
+                // after this function all datasets will have all keys, with given default value if it was not there before
+                const keys = {};
+                _.forEach(groups, x => {
+                    _.assign(keys, this.listToSet(_.unzip(x)[0]));
+                });
 
-                for(const grpid in groups){
-                    const grp = groups[grpid];
-                    for(const curLabel in allLabels){
+                _.forEach(groups, x => {
+                    const curSet = this.listToSet(_.unzip(x)[0]);
+                    _.forEach(keys, (val, key) => {
+                        if (!(key in curSet)){
+                            const curDefault = _.isFunction(missing) ?
+                                missing(key, val, curSet, x) : missing;
+                            x.push([key, curDefault]);
+                        }
+                    });
+                });
+            },
+
+            mergeGroups(groups, missing){
+                // [g1 => [gg1=>[], gg2=>[], ...], g2, ...]
+                // modifies the given groups so they have same labels and fills missing for missing pieces
+                const keys = {};
+                _.forEach(groups, x => {
+                    _.assign(keys, this.listToSet(_.keys(x)));
+                });
+
+                _.forEach(groups, grp => {
+                    for(const curLabel in keys){
                         if (!(curLabel in grp)){
-                            grp[curLabel] = [];
+                            grp[curLabel] = _.isFunction(missing) ? missing(curLabel, grp) : missing;
                         }
                     }
-                }
+                });
             },
 
             mergedGroupStatSort(groups, fields, ordering){
