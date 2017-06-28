@@ -121,6 +121,9 @@
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length > 1">
                     We detected an untrusted certificate chain. Please get in touch, if you want to track your own certificates.
                 </div>
+                <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length === 1">
+                    There is only a leaf certificate in the chain. Probably missing intermediate?
+                </div>
                 <div v-else-if="tlsScanHostCert">
                     We detected an untrusted certificate. Please get in touch, if you want to track your own certificates.
                 </div>
