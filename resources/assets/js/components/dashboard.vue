@@ -16,21 +16,21 @@
         <transition name="fade" v-on:after-leave="transition_hook">
         <div v-if="loadingState == 10">
 
-            <!-- Google Chart - renewal planner -->
-            <!-- Google Chart - renewal planner TLS+CT -->
-            <!-- Google Chart - renewal planner historical -->
-            <!-- Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
-            <!-- Google Chart - Certificate coverage for domain? Downtime graph -->
-            <!-- DNS problem notices - resolution fails -->
-            <!-- DNS changes over time -->
-            <!-- TLS connection fail notices - last attempt (connect fail, timeout, handshake) -->
-            <!-- TLS certificate expired notices - last attempt -->
-            <!-- TLS certificates trust problems (self signed, is_ca, empty chain, generic, HOSTNAME validation error) -->
-            <!-- TLS certificate changes over time on the IP -->
-            <!-- connection stats, small inline graphs? like status -->
-            <!-- Whois domain expiration notices -->
-            <!-- CT only certificates to a table + chart -->
-            <!--   how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
+            <!-- X Google Chart - renewal planner -->
+            <!-- X Google Chart - renewal planner TLS+CT -->
+            <!--   Google Chart - renewal planner historical -->
+            <!--   Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
+            <!--   Google Chart - Certificate coverage for domain? Downtime graph -->
+            <!-- X DNS problem notices - resolution fails -->
+            <!--   DNS changes over time -->
+            <!-- X TLS connection fail notices - last attempt (connect fail, timeout, handshake) -->
+            <!--   TLS certificate expired notices - last attempt -->
+            <!--   TLS certificates trust problems (self signed, is_ca, empty chain, generic, HOSTNAME validation error) -->
+            <!--   TLS certificate changes over time on the IP -->
+            <!--   connection stats, small inline graphs? like status -->
+            <!-- X Whois domain expiration notices -->
+            <!--   CT only certificates to a table + chart -->
+            <!--     how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
 
             <div class="row">
                 <div class="xcol-md-12">
