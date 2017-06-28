@@ -9,6 +9,11 @@
             <span>Loading data, please wait...</span>
         </div>
 
+        <div class="alert alert-info alert-waiting scan-alert"
+             v-else-if="loadingState == 1">
+            <span>Processing data ...</span>
+        </div>
+
         <div class="alert alert-success scan-alert" id="search-success" style="display: none">
             <strong>Success!</strong> Scan finished.
         </div>
@@ -341,6 +346,7 @@
             return {
                 loadingState: 0,
                 results: null,
+                dataProcessStart: null,
                 useGoogleCharts: false,
 
                 graphLibLoaded: false,
@@ -635,7 +641,8 @@
 
             processData(){
                 this.$nextTick(function () {
-                    console.log('process data now...');
+                    console.log('Data loaded');
+                    this.dataProcessStart = moment();
                     this.processResults();
                 });
             },
@@ -746,6 +753,8 @@
                     this.graphDataReady = true;
                     this.graphLibLoaded = !this.useGoogleCharts;
                     this.renderCharts();
+                    const processTime = moment().diff(this.dataProcessStart);
+                    console.log('Processing finished in ' + processTime + ' ms');
                 });
             },
 
