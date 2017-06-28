@@ -637,6 +637,16 @@
                         console.log("Add server failed: " + e);
                         onFail();
                     });
+
+                // cache warmup while loading data
+                this.warmup();
+            },
+
+            warmup(){
+                setTimeout(() => {
+                    Psl.get('test.now.sh');
+                    Psl.get('test.通販');
+                }, 10);
             },
 
             processData(){
@@ -656,6 +666,8 @@
                     watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
                 }
 
+                const fqdnResolver = _.memoize(Psl.get);
+                const wildcardRemover = _.memoize(Req.removeWildcard);
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
                     cert.valid_to_dayfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
@@ -666,6 +678,12 @@
                     cert.watch_urls = [];
                     cert.watch_hosts_ct = [];
                     cert.watch_urls_ct = [];
+                    cert.alt_domains = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_names), x => {
+                        return wildcardRemover(x);
+                    })));
+                    cert.alt_fqdns = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_domains), x => {
+                        return fqdnResolver(x);  // too expensive now. 10 seconds for 150 certs. invoke later
+                    })));
 
                     _.forEach(cert.tls_watches, watch_id => {
                         if (watch_id in this.results.watches){
