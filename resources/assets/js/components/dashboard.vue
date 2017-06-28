@@ -114,6 +114,46 @@
                 </div>
             </div>
 
+            <!-- TLS expired certificates -->
+            <div v-if="len(expiredCertificates) > 0" class="row">
+                <div class="xcol-md-12">
+                    <sbox>
+                        <template slot="title">Expired certificates</template>
+                        <p>TLS expired certificates detected</p>
+                        <div class="table-responsive table-xfull">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Expiration</th>
+                                    <th>Last scan</th>
+                                    <th>Domains</th>
+                                    <th>Issuer</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
+                                    <td>{{ cert.id }}</td>
+                                    <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(cert.last_scan_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>
+                                        <ul class="domain-list">
+                                            <li v-for="domain in cert.watch_hosts">
+                                                {{ domain }}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td>{{ cert.issuerOrgNorm }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
+                </div>
+            </div>
+
             <!-- Imminent renewals -->
             <div v-if="showImminentRenewals" class="row">
                 <div class="xcol-md-12">
@@ -566,6 +606,12 @@
                 });
             },
 
+            expiredCertificates(){
+                return _.filter(this.tlsCerts, x => {
+                    return x.is_expired;
+                });
+            },
+
             week4renewals(){
                 const r = _.filter(this.tlsCerts, x => {
                     return x && x.valid_to_days && x.valid_to_days >= 0 && x.valid_to_days <= 28;
@@ -589,10 +635,6 @@
                     ret[this.week4grouper(x)] += 1;
                 });
                 return ret;
-            },
-
-            showWeek4renewals(){
-                return _.sum(week4renewalsCounts) > 0;
             },
 
             tlsCertIssuers(){
@@ -788,6 +830,10 @@
                 const curTime = new Date().getTime() / 1000.0;
                 for(const watch_id in this.results.watches){
                     const watch = this.results.watches[watch_id];
+                    this.extendDateField(watch, 'last_scan_at');
+                    this.extendDateField(watch, 'created_at');
+                    this.extendDateField(watch, 'updated_at');
+
                     const strPort = parseInt(watch.scan_port) || 443;
                     watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort);
                     watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
@@ -830,6 +876,13 @@
                     cert.watch_urls = _.uniq(cert.watch_urls.sort());
                     cert.watch_hosts_ct = _.uniq(cert.watch_hosts_ct.sort());
                     cert.watch_urls_ct = _.uniq(cert.watch_urls_ct.sort());
+                    cert.last_scan_at_utc = _.reduce(cert.tls_watches, (acc, val) => {
+                        if (!this.results.watches || !(val in this.results.watches)){
+                            return acc;
+                        }
+                        const sc = this.results.watches[val].last_scan_at_utc;
+                        return sc >= acc ? sc : acc;
+                    }, null);
 
                     cert.planCss = {tbl: {
                         'success': cert.valid_to_days > 14 && cert.valid_to_days <= 28,
