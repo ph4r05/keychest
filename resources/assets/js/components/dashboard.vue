@@ -363,7 +363,11 @@
                 <div class="xcol-md-12">
                     <sbox>
                         <template slot="title">Complete Certificate list</template>
-                        <p>All certificates found ({{ len(certs) }})</p>
+                        <div class="form-group">
+                            <p>All certificates found ({{ len(certs) }})</p>
+                            <input type="checkbox" id="chk-include-expired">
+                            <label for="chk-include-expired">Include expired certificates</label>
+                        </div>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -430,6 +434,7 @@
                 certTypesStatsAll: null,
                 certIssuerTableData: null,
                 certDomainsTableData: null,
+                includeExpired: false,
 
                 Req: window.Req,
                 Laravel: window.Laravel,
@@ -469,17 +474,32 @@
                 return !this.Laravel.authGuest;
             },
 
-            certs(){
-                if (this.results && this.results.certificates){
-                    return this.results.certificates;
-                }
-                return {};
+            tlsCertsIdsMap(){
+                return this.listToSet(_.uniq(_.values(this.results.tls_cert_map)));
             },
 
             tlsCerts(){
                 // return _.filter(this.certs, o => { return o.found_tls_scan; });
                 return _.map(_.uniq(_.values(this.results.tls_cert_map)), x => {
                     return this.results.certificates[x];
+                });
+            },
+
+            allCerts(){
+                if (!this.results || !this.results.certificates){
+                    return {};
+                }
+
+                return this.results.certificates;
+            },
+
+            certs(){
+                if (!this.results || !this.results.certificates){
+                    return {};
+                }
+
+                return _.filter(this.results.certificates, x=>{
+                    return this.includeExpired || (x.id in this.tlsCertsIdsMap) || (x.valid_to_days >= -28);
                 });
             },
 
@@ -859,8 +879,19 @@
                     this.graphDataReady = true;
                     this.graphLibLoaded = !this.useGoogleCharts;
                     this.renderCharts();
+                    this.postLoad();
                     const processTime = moment().diff(this.dataProcessStart);
                     console.log('Processing finished in ' + processTime + ' ms');
+                });
+            },
+
+            postLoad(){
+                const chkInclude = $('#chk-include-expired');
+                chkInclude.bootstrapSwitch();
+                chkInclude.on('switchChange.bootstrapSwitch', (evt, state) => {
+                    if (evt.type === 'switchChange'){
+                        this.includeExpired = state;
+                    }
                 });
             },
 
