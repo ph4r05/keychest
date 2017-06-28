@@ -26,7 +26,9 @@ mix.js('resources/assets/js/app.js', 'public/js')
         'public/css/adminlte-app.css',
         'node_modules/icheck/skins/square/blue.css',
         'public/css/toastr.css',
-        'node_modules/sweetalert2/dist/sweetalert2.css'
+        'public/css/bootstrap-switch.css',
+        'node_modules/sweetalert2/dist/sweetalert2.css',
+        'node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css'
     ], 'public/css/all.css')
     .combine([
         'public/css/app-landing.css',

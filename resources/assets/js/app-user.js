@@ -16,6 +16,7 @@ window.toastr = require('toastr');
 window.swal = require('sweetalert2');
 
 require('jquery-ui/ui/effects/effect-shake');
+require('bootstrap-switch');
 
 /**
  * Admin LTE
