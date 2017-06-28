@@ -433,7 +433,6 @@
                 certTypesStats: null,
                 certTypesStatsAll: null,
                 certIssuerTableData: null,
-                certDomainsTableData: null,
                 includeExpired: false,
 
                 Req: window.Req,
@@ -475,12 +474,16 @@
             },
 
             tlsCertsIdsMap(){
+                if (!this.results || !this.results.tls_cert_map){
+                    return {};
+                }
+
                 return this.listToSet(_.uniq(_.values(this.results.tls_cert_map)));
             },
 
             tlsCerts(){
                 // return _.filter(this.certs, o => { return o.found_tls_scan; });
-                return _.map(_.uniq(_.values(this.results.tls_cert_map)), x => {
+                return _.map(_.keys(this.tlsCertsIdsMap), x => {
                     return this.results.certificates[x];
                 });
             },
@@ -599,6 +602,22 @@
             allCertIssuers(){
                 return this.certIssuersGen(this.certs);
             },
+
+            certDomainDataset(){
+                return [
+                    this.certDomainsDataGen(this.tlsCerts),
+                    this.certDomainsDataGen(this.certs),
+                    this.certDomainsDataGen(this.tlsCerts, true),
+                    this.certDomainsDataGen(this.certs, true)];
+            },
+
+            certDomainsTableData(){
+                return _.toPairs(this.flipGroups(this.certDomainDataset, {}));
+            },
+        },
+
+        watch: {
+
         },
 
         methods: {
@@ -1144,13 +1163,7 @@
             },
 
             certDomainsGraph(){
-                const datasets = [
-                    this.certDomainsDataGen(this.tlsCerts),
-                    this.certDomainsDataGen(this.certs),
-                    this.certDomainsDataGen(this.tlsCerts, true),
-                    this.certDomainsDataGen(this.certs, true)];
-
-                const dataGraphs = _.map(datasets, x=>{
+                const dataGraphs = _.map(this.certDomainDataset, x=>{
                     return _.map(x, y => {
                         return [y.key, y.size];
                     });
@@ -1159,8 +1172,6 @@
                 this.mergeGroupStatsKeys(dataGraphs);
                 this.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
                 const unzipped = _.map(dataGraphs, _.unzip);
-
-                this.certDomainsTableData = _.toPairs(this.flipGroups(datasets, {}));
 
                 // Normal domains
                 const graphCertDomains = {
