@@ -217,6 +217,77 @@
                 </div>
             </div>
 
+            <!-- Certificate domains -->
+            <div class="row">
+                <div class="xcol-md-12">
+                    <sbox>
+                        <template slot="title">Certificate domains</template>
+                        <p>Number of domains in certificates</p>
+
+                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th rowspan="2">Domains</th>
+                                    <th colspan="3">TLS</th>
+                                    <th colspan="3">CT</th>
+                                    <th colspan="3">Full domain - TLS</th>
+                                    <th colspan="3">Full domain - CT</th>
+                                </tr>
+                                <tr>
+                                    <th>Certs</th>
+                                    <th>Issuers</th>
+                                    <th>LE</th>
+
+                                    <th>Certs</th>
+                                    <th>Issuers</th>
+                                    <th>LE</th>
+
+                                    <th>Certs</th>
+                                    <th>Issuers</th>
+                                    <th>LE</th>
+
+                                    <th>Certs</th>
+                                    <th>Issuers</th>
+                                    <th>LE</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr v-for="group in certDomainsTableData">
+                                    <td>{{ getCountCategoryLabelTbl(group[0]) }}</td>
+
+                                    <td>{{ tblVal(group[1][0].size) }}</td>
+                                    <td>{{ tblVal(group[1][0].distIssuers) }}</td>
+                                    <td>{{ tblVal(group[1][0].leCnt) }}</td>
+
+                                    <td>{{ tblVal(group[1][1].size) }}</td>
+                                    <td>{{ tblVal(group[1][1].distIssuers) }}</td>
+                                    <td>{{ tblVal(group[1][1].leCnt) }}</td>
+
+                                    <td>{{ tblVal(group[1][2].size) }}</td>
+                                    <td>{{ tblVal(group[1][2].distIssuers) }}</td>
+                                    <td>{{ tblVal(group[1][2].leCnt) }}</td>
+
+                                    <td>{{ tblVal(group[1][3].size) }}</td>
+                                    <td>{{ tblVal(group[1][3].distIssuers) }}</td>
+                                    <td>{{ tblVal(group[1][3].leCnt) }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <canvas id="pie_cert_domains" style="width: 100%; height: 400px;"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas id="pie_cert_domains_tld" style="width: 100%; height: 400px;"></canvas>
+                        </div>
+                    </sbox>
+                </div>
+            </div>
+
             <!-- Certificate issuers -->
             <div class="row" v-if="certIssuerTableData">
                 <div class="xcol-md-12">
@@ -358,6 +429,7 @@
                 certTypesStats: null,
                 certTypesStatsAll: null,
                 certIssuerTableData: null,
+                certDomainsTableData: null,
 
                 Req: window.Req,
                 Laravel: window.Laravel,
@@ -371,7 +443,7 @@
                     '#3c8dbc',
                     '#d2d6de',
                     '#ff6384',
-                    '#ff9f40',
+                    '#ad9e30',
                     '#ffcd56',
                     '#4bc0c0',
                     '#36a2eb',
@@ -380,7 +452,9 @@
                     '#6655ef',
                     '#ffde56',
                     '#c43833',
-                ]
+                ],
+
+                countCategories: [1,2,5,10,25,50,100,250,500,1000]
             };
         },
 
@@ -574,6 +648,20 @@
                 return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
             },
 
+            tblVal(x){
+                return x ? x : '-';
+            },
+
+            getCountCategoryLabelTbl(idx){
+                if (idx >= this.countCategories.length){
+                    return _.last(this.countCategories) + '+';
+                } else if (idx == 0) {
+                    return this.countCategories[0]
+                }
+
+                return this.countCategories[idx-1] + '-' + this.countCategories[idx];
+            },
+
             //
             // Cert processing
             //
@@ -681,7 +769,7 @@
                     cert.alt_domains = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_names), x => {
                         return wildcardRemover(x);
                     })));
-                    cert.alt_fqdns = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_domains), x => {
+                    cert.alt_slds = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_domains), x => {
                         return fqdnResolver(x);  // too expensive now. 10 seconds for 150 certs. invoke later
                     })));
 
@@ -807,6 +895,7 @@
                 this.certTypesGraph();
                 this.week4renewGraph();
                 this.certIssuersGraph();
+                this.certDomainsGraph();
             },
 
             renderGoogleGraphs(){
@@ -1023,9 +1112,122 @@
                 }, 1000);
             },
 
+            certDomainsGraph(){
+                const datasets = [
+                    this.certDomainsDataGen(this.tlsCerts),
+                    this.certDomainsDataGen(this.certs),
+                    this.certDomainsDataGen(this.tlsCerts, true),
+                    this.certDomainsDataGen(this.certs, true)];
+
+                const dataGraphs = _.map(datasets, x=>{
+                    return _.map(x, y => {
+                        return [y.key, y.size];
+                    });
+                });
+
+                this.mergeGroupStatsKeys(dataGraphs);
+                this.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
+                const unzipped = _.map(dataGraphs, _.unzip);
+
+                this.certDomainsTableData = _.toPairs(this.flipGroups(datasets, {}));
+
+                // Normal domains
+                const graphCertDomains = {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [
+                            {
+                                data: unzipped[0][1],
+                                backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
+                                label: 'TLS active'
+                            },
+                            {
+                                data: unzipped[1][1],
+                                backgroundColor: this.takeMod(this.chartColors, unzipped[1][1].length),
+                                label: 'All TLS + CT'
+                            }],
+                        labels: _.map(unzipped[0][0], this.getCountCategoryLabel)
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Certificate domains'
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
+                // TLD domains
+                const graphCertDomainsTld = {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [
+                            {
+                                data: unzipped[2][1],
+                                backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
+                                label: 'TLS active'
+                            },
+                            {
+                                data: unzipped[3][1],
+                                backgroundColor: this.takeMod(this.chartColors, unzipped[3][1].length),
+                                label: 'All TLS + CT'
+                            }],
+                        labels: _.map(unzipped[2][0], this.getCountCategoryLabel)
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Certificate top domains'
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                };
+
+                setTimeout(() => {
+                    new Chart(document.getElementById("pie_cert_domains"), graphCertDomains);
+                    new Chart(document.getElementById("pie_cert_domains_tld"), graphCertDomainsTld);
+                }, 1000);
+
+            },
+
             //
             // Common graph data gen
             //
+
+            getCountCategoryLabel(idx){
+                if (idx >= this.countCategories.length){
+                    return _.last(this.countCategories) + '+';
+                }
+                return this.countCategories[idx];
+            },
+
+            getCountCategory(count){
+                let ret = -1;
+                const ln = this.countCategories.length;
+                for(let idx=0; idx < ln; idx++){
+                    if (count > this.countCategories[idx]){
+                        ret = idx;
+                    } else {
+                        break;
+                    }
+                }
+
+                return ret+1;
+            },
 
             graphDataConv(data){
                 // [[dataset names], [label, d1, d2, ...], [label, d1, d2, ...]]
@@ -1112,11 +1314,39 @@
                 return ret;
             },
 
+            certDomainsDataGen(certSet, tld){
+                const grouped = tld ? this.groupTldDomainsCount(certSet) : this.groupDomainsCount(certSet);
+                return _.mapValues(grouped, (cur, key) => {
+                    const grp = _.castArray(cur);
+                    return {
+                        key: key,
+                        lbl: this.getCountCategoryLabel(key),
+                        size: _.size(grp),
+                        distIssuers: _.size(_.groupBy(grp, x => { return x.issuerOrgNorm; })),
+                        leCnt: _.size(_.filter(grp, x => { return x.is_le; })),
+                        issuerHist: _.countBy(grp, x => { return x.issuerOrgNorm; }),
+                        certs: grp
+                    };
+                });
+            },
+
             certIssuersGen(certSet){
                 const grp = _.groupBy(certSet, x => {
                     return x.issuerOrgNorm;
                 });
                 return grp; //return _.sortBy(grp, [x => {return x[0].issuerOrg; }]);
+            },
+
+            groupDomainsCount(certSet){
+                return _.groupBy(certSet, x=> {
+                    return this.getCountCategory(_.size(x.alt_domains));
+                });
+            },
+
+            groupTldDomainsCount(certSet){
+                return _.groupBy(certSet, x=> {
+                    return this.getCountCategory(_.size(x.alt_slds));
+                });
             },
 
             groupStats(grouped, sort){
