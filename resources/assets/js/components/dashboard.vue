@@ -231,8 +231,8 @@
                                     <th rowspan="2">Domains</th>
                                     <th colspan="3">TLS</th>
                                     <th colspan="3">CT</th>
-                                    <th colspan="3">Full domain - TLS</th>
-                                    <th colspan="3">Full domain - CT</th>
+                                    <th colspan="3">Top domain - TLS</th>
+                                    <th colspan="3">Top domain - CT</th>
                                 </tr>
                                 <tr>
                                     <th>Certs</th>
