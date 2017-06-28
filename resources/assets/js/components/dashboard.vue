@@ -1196,12 +1196,18 @@
                     _.unzip(ordered)[0],
                     _.range(ordered.length));
 
-                // sort by global ranking
-                _.forEach(groups, x => {  // x is the dataset
-                    _.sortBy(x, y => {  // y is [g1, c1]
+                // sort by global ranking, in-place sorting. for
+                _.forEach(groups, (grp, idx) => {  // grp is the dataset
+                    groups[idx].sort(Req.keyToCompare(y => {  // y is [g1, c1]
                         return ranking[y[0]];
-                    });
+                    }));
+
+                    // returns new object - does not touch original ones
+                    // groups[idx] = _.sortBy(grp, y => {  // y is [g1, c1]
+                    //     return ranking[y[0]];
+                    // });
                 });
+                return groups;
             },
 
             //
