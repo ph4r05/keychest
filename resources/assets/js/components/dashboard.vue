@@ -933,6 +933,7 @@
                     cert.valid_to_monthfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
+                    cert.validity_sec = cert.valid_to_utc - cert.valid_from_utc;
                     cert.watch_hosts = [];
                     cert.watch_urls = [];
                     cert.watch_hosts_ct = [];
@@ -1235,17 +1236,19 @@
                 const tlsIssuerUnz = _.unzip(tlsIssuerStats);
                 const allIssuerUnz = _.unzip(allIssuerStats);
                 const graphCertTypes = {
-                    type: 'doughnut',
+                    type: 'horizontalBar',
                     data: {
                         datasets: [
                             {
                                 data: tlsIssuerUnz[1],
-                                backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
+                                backgroundColor: this.chartColors[0],
+                                //backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
                                 label: 'TLS active'
                             },
                             {
                                 data: allIssuerUnz[1],
-                                backgroundColor: this.takeMod(this.chartColors, allIssuerUnz[0].length),
+                                backgroundColor: this.chartColors[2],
+                                //backgroundColor: this.takeMod(this.chartColors, allIssuerUnz[0].length),
                                 label: 'All TLS + CT'
                             }],
                         labels: allIssuerUnz[0]
