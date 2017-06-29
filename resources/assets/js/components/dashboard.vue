@@ -37,6 +37,7 @@
             <!--   CT only certificates to a table + chart -->
             <!--     how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
 
+            <!-- Header -->
             <div class="row">
 
                 <div class="col-lg-3 col-xs-6">
@@ -106,18 +107,19 @@
                 <!-- ./col -->
             </div>
 
+            <!-- Monthly planner -->
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
                         <template slot="title">Monthly certificate renew planner</template>
                             <div class="form-group">
                                 <!--<div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>-->
-                                <canvas id="columnchart_certificates_js" style="width: 100%; height: 350px;"></canvas>
+                                <canvas id="columnchart_certificates_js" style="width: 90%; height: 350px;"></canvas>
                             </div>
 
                             <div class="form-group">
                                 <!--<div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>-->
-                                <canvas id="columnchart_certificates_all_js" style="width: 100%; height: 350px;"></canvas>
+                                <canvas id="columnchart_certificates_all_js" style="width: 90%; height: 350px;"></canvas>
                             </div>
                     </sbox>
                 </div>
@@ -1192,10 +1194,10 @@
             //
 
             plannerGraph(){
-                let rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
-                let rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
-                rawCrtTlsData = this.graphDataConv(rawCrtTlsData);
-                rawCrtAllData = this.graphDataConv(rawCrtAllData);
+                const labels = ['Time', 'Let\'s Encrypt', 'CDN', 'Standard'];
+                const datasets = _.map([this.crtTlsMonth, this.crtAllMonth], x => {
+                    return this.graphDataConv(_.concat([labels], x));
+                });
 
                 const baseOptions = {
                     type: 'bar',
@@ -1220,13 +1222,13 @@
                         },
                     }};
 
-                const graphCrtTlsData = _.extend({data: rawCrtTlsData}, _.cloneDeep(baseOptions));
+                const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
                 graphCrtTlsData.options.title = {
                     display: true,
                     text: 'Monthly planner - 12 months'
                 };
 
-                const graphCrtAllData = _.extend({data: rawCrtAllData}, _.cloneDeep(baseOptions));
+                const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
                 graphCrtAllData.options.title = {
                     display: true,
                     text: 'Monthly planner - 12 months, all certs, CT'
@@ -1242,14 +1244,14 @@
                     data: {
                         datasets: [
                             {
-                                data: this.certTypesStats,
-                                backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                                label: 'TLS active'
-                            },
-                            {
                                 data: this.certTypesStatsAll,
                                 backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
                                 label: 'All TLS + CT'
+                            },
+                            {
+                                data: this.certTypesStats,
+                                backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                                label: 'TLS active'
                             }],
                         labels: [
                             'Let\'s Encrypt',
