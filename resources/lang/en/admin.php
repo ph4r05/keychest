@@ -12,7 +12,7 @@ return [
     'home' => 'Home',
     'dashboard' => 'Dashboard',
     'servers' => 'Servers',
-    'scan' => 'Scan',
+    'scan' => 'Spot check',
     'scan_desc' => 'your hosts',
     'home-page' => 'Intro page',
 
