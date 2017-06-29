@@ -67,7 +67,8 @@
             <table class="table" v-if="showResultsTable">
                 <tbody>
                 <tr v-bind:class="defconStyle">
-                    <th>{{ curJob.scan_host }}{{ curJob.portString }}</th>
+                    <td><strong>{{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                        <span v-if="tlsScanHostCert && tlsScanHostCert.issuerOrgNorm"> (by {{ tlsScanHostCert.issuerOrgNorm }})</span></td>
                     <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days ago</td>
                     <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }} days</td>
                     <td> {{ form.textStatus }} </td>
@@ -734,7 +735,19 @@
                     this.tlsScanHostCert = this.results.certificates[this.tlsScan.certs_ids[0]];
                 }
 
+                if (this.tlsScanHostCert){
+                    this.tlsScanHostCert.issuerOrgNorm = this.certIssuer(this.tlsScanHostCert);
+                }
+
                 this.tlsScan.valid_trusted = this.tlsScan.valid_path && this.tlsScan.valid_hostname;
+            },
+
+            certIssuer(cert){
+                if (!cert || _.isEmpty(cert) || !cert.issuer){
+                    return null;
+                }
+
+                return Req.normalizeIssuer(Req.certIssuer(cert));
             },
 
             processCtScan(){
