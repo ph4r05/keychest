@@ -188,7 +188,7 @@
                 <div class="xcol-md-12">
                     <sbox>
                         <template slot="title">Expired certificates</template>
-                        <p>TLS expired certificates detected</p>
+                        <p>The following servers show downtime due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -227,13 +227,13 @@
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox>
-                        <template slot="title">Untrusted TLS certificates</template>
-                        <p>TLS certificates with trust problems</p>
+                        <template slot="title">Invalid certificates or configuration</template>
+                        <p>Server check showed a security or configuration problem</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>URL</th>
+                                    <th>Service</th>
                                     <th>Detected</th>
                                     <th>Last scan</th>
                                     <th>Problems</th>
@@ -268,13 +268,13 @@
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox>
-                        <template slot="title">Invalid hostname certificates</template>
-                        <p>Presented TLS certificates do not match scanned hostname</p>
+                        <template slot="title">Unused, default, or incorrect certificates</template>
+                        <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>URL</th>
+                                    <th>Service</th>
                                     <th>Detected</th>
                                     <th>Last scan</th>
                                     <th>Certificate domains</th>
@@ -344,8 +344,8 @@
             <div v-if="showExpiringDomains" class="row">
                 <div class="xcol-md-12">
                     <sbox>
-                        <template slot="title">Expiring domains</template>
-                        <p>Domains with expiration time in 1 year</p>
+                        <template slot="title">Domain name renewal deadlines</template>
+                        <p>A list of domain names expiring within a year</p>
                         <div class="table-responsive table-xfull">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
@@ -400,8 +400,11 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
-                        <template slot="title">Certificate types</template>
+                        <template slot="title">Number of certificates per type</template>
                         <div class="form-group">
+                            <p>
+                                The chart shows the number of certificates managed by third-party (CDN), Let’s Encrypt, and Standard (other issuers)
+                            </p>
                             <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
                         </div>
                     </sbox>
@@ -1270,8 +1273,8 @@
                             }],
                         labels: [
                             'Let\'s Encrypt',
-                            'Cloudflare',
-                            'Other'
+                            'CDN',
+                            'Paid'
                         ]
                     },
                     options: {
