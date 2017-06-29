@@ -541,7 +541,6 @@
                 loadingState: 0,
                 results: null,
                 dataProcessStart: null,
-                useGoogleCharts: false,
 
                 graphLibLoaded: false,
                 graphsRendered: false,
@@ -756,10 +755,6 @@
         methods: {
             hookup(){
                 setTimeout(this.loadData, 0);
-                if (this.useGoogleCharts) {
-                    google.charts.load('current', {'packages':['bar']});
-                    google.charts.setOnLoadCallback(this.onGraphLibLoaded);
-                }
             },
 
             //
@@ -1048,7 +1043,7 @@
 
                 this.$nextTick(function () {
                     this.graphDataReady = true;
-                    this.graphLibLoaded = !this.useGoogleCharts;
+                    this.graphLibLoaded = true;
                     this.renderCharts();
                     this.postLoad();
                     const processTime = moment().diff(this.dataProcessStart);
@@ -1085,11 +1080,7 @@
                 }
 
                 this.graphsRendered = true;
-                if (this.useGoogleCharts) {
-                    this.renderGoogleGraphs();
-                } else {
-                    this.renderChartjs();
-                }
+                this.renderChartjs();
             },
 
             renderChartjs(){
@@ -1098,37 +1089,6 @@
                 this.week4renewGraph();
                 this.certIssuersGraph();
                 this.certDomainsGraph();
-            },
-
-            renderGoogleGraphs(){
-                const rawCrtTlsData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtTlsMonth);
-                const rawCrtAllData = _.concat([['Time', 'Let\'s Encrypt', 'Cloudflare', 'Other']], this.crtAllMonth);
-
-                const crtTlsData = google.visualization.arrayToDataTable(rawCrtTlsData);
-                const crtAllData = google.visualization.arrayToDataTable(rawCrtAllData);
-                const baseOptions = {
-                    backgroundColor: '#ecf0f5'
-                };
-
-                const crtTlsOptions = _.extend({
-                    chart: {
-                        title: 'Monthly planner - 12 months',
-                        subtitle: 'TLS certificates for renewal',
-                    }
-                }, baseOptions);
-
-                const crtAllOptions = _.extend({
-                    chart: {
-                        title: 'Monthly planner - 12 months (all)',
-                        subtitle: 'TLS certificates for renewal, including CT certificates',
-                    }
-                }, baseOptions);
-
-
-                const chartTls = new google.charts.Bar(document.getElementById('columnchart_certificates'));
-                chartTls.draw(crtTlsData, google.charts.Bar.convertOptions(crtTlsOptions));
-                const chartAll = new google.charts.Bar(document.getElementById('columnchart_certificates_all'));
-                chartAll.draw(crtAllData, google.charts.Bar.convertOptions(crtAllOptions));
             },
 
             //
