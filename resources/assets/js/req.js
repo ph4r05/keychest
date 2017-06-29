@@ -422,6 +422,10 @@ function takeMod(set, len){
  * @param str
  */
 function normalizeIssuer(str){
+    if (isEmpty(str)){
+        return null;
+    }
+
     let n = capitalizeFirstWord(str);
     n = _.replace(n, /[iI]nc$/, 'Inc.');
     n = _.replace(n, /([a-zA-Z0-9]) Inc\.$/, (m, p1) => {
@@ -443,7 +447,7 @@ function certIssuer(cert) {
     }
 
     const iss = cert.issuer;
-    const ret = iss.match(/organizationName: (.+?)($|,\s[a-zA-Z0-9]+:)/);
+    const ret = iss ? iss.match(/organizationName: (.+?)($|,\s[a-zA-Z0-9]+:)/) : null;
     if (ret && ret[1]) {
         return ret[1];
     }
