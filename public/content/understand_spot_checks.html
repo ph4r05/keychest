@@ -13,7 +13,7 @@
 	<script src="./js/jquery-2.1.0.min.js"></script>
 	<script src="./js/bootstrap.min.js"></script>
 	<script src="./js/blocs.min.js"></script>
-    <title>KeyChest - interesting content to read</title>
+    <title>understand_spot_checks</title>
 
     
 <!-- Google Analytics -->
@@ -52,61 +52,59 @@
 </div>
 <!-- bloc-0 END -->
 
-<!-- bloc-1 -->
-<div class="bloc bgc-white tc-onyx" id="bloc-1">
+<!-- bloc-5 -->
+<div class="bloc bgc-white tc-onyx" id="bloc-5">
 	<div class="container bloc-sm">
 		<div class="row">
 			<div class="col-sm-12">
-				<h1 class="mg-md text-center tc-rich-electric-blue">
-					KeyChest
+				<h1 class="mg-md  tc-rich-electric-blue">
+					Understand spot checks
 				</h1>
-				<h3 class="mg-md text-center tc-onyx">
-					Track your certificates and plan their renewals for 100% HTTPS uptime
-				</h3>
-				<p>
-					This is a small documentation page, which provides information that you may find interesting if you use, manage, or audit your certificates.&nbsp;
+				<p class=" mg-lg">
+					We have implemented spot checks so that they return as little information as necessary. The main point was simplicity. If there is a problem that needs to be fixed, you will see it. If you get everything right, you will get thumbs up. <br> <br>When you start using it, however, you may wonder why you are shown certain information. This page explains what we mean, when we show you certain information to re-assure you about the results of your tests.
 				</p>
+				<h2 class="mg-md  tc-rich-electric-blue">
+					Which server you test
+				</h2>
+				<p>
+					KeyChest checks servers we resolve using the domain name you give us. If the domain name leads to, e.g., a web-server, which then redirects your browser, we will ignore this redirection. <br> <br>The initial scanning will be done against the “primary” server, if we detect a re-direction, you will see a text allowing you to do a one-click scan of another server, the target of the redirection.
+				</p>
+				<h2 class="mg-md  tc-rich-electric-blue">
+					Time validity messages
+				</h2>
+				<p>
+					We show four different messages according to how much time is left till the certificate expires.<br>
+				</p>
+				<ul class="list-unstyled">
+					<li>
+						<p>
+							OK - there is more than 28 days left till the certificate expiration date;
+						</p>
+					</li>
+					<li>
+						<p>
+							PLAN - if the time left is between 2 and 28 days;
+						</p>
+					</li>
+					<li>
+						<p>
+							WARNING - if there&rsquo;s less than 48 hours left before your server becomes unavailable;
+						</p>
+					</li>
+					<li>
+						<p>
+							ERROR - your server is not available to your customers and clients as the certificate has expired.
+						</p>
+					</li>
+				</ul>
+				<h2 class="mg-md tc-rich-electric-blue">
+					…. more content coming within days as we finalize KeyCest reporting
+				</h2>
 			</div>
 		</div>
 	</div>
 </div>
-<!-- bloc-1 END -->
-
-<!-- bloc-2 -->
-<div class="bloc tc-onyx bgc-white l-bloc" id="bloc-2">
-	<div class="container bloc-sm">
-		<div class="row">
-			<div class="col-sm-4">
-				<a href="keychest_spot_check.html"><img src="img/worldAtHand_EB.png" class="img-responsive" /></a>
-				<h3 class="mg-md tc-rich-electric-blue text-center">
-					<a class="ltc-rich-electric-blue" href="keychest_spot_check.html">Keychest spot check</a><br>
-				</h3>
-				<p>
-					Learn more about what our spot check is for and how to use it.
-				</p>
-			</div>
-			<div class="col-sm-4">
-				<a href="letsencrypt_numbers_to_know.html"><img src="img/secure_gateway_370x290.jpg" class="img-responsive" /></a>
-				<h3 class="mg-md tc-rich-electric-blue text-center">
-					<a class="ltc-rich-electric-blue" href="letsencrypt_numbers_to_know.html">Let&rsquo;s Encrypt in numbers</a><br>
-				</h3>
-				<p>
-					We have compiled all the information we could find so you can decide if Let&rsquo;s Encrypt certificates are for you.
-				</p>
-			</div>
-			<div class="col-sm-4">
-				<a href="understand_spot_checks.html"><img src="img/blue_lock_370x290.png" class="img-responsive" /></a>
-				<h3 class="mg-md tc-rich-electric-blue text-center">
-					<a class="ltc-rich-electric-blue" href="understand_spot_checks.html">Understand spot check results</a><br>
-				</h3>
-				<p>
-					A detailed explanation of the results of our KeyChest spot checks.
-				</p>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- bloc-2 END -->
+<!-- bloc-5 END -->
 
 <!-- ScrollToTop Button -->
 <a class="bloc-button btn btn-d scrollToTop" onclick="scrollToTarget('1')"><span class="fa fa-chevron-up"></span></a>
