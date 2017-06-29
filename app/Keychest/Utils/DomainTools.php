@@ -142,4 +142,17 @@ class DomainTools {
     public static function replaceHttp($url){
         return str_replace('http://', 'https://', $url);
     }
+
+    /**
+     * Strips wildcard domain
+     * @param $url
+     * @return mixed
+     */
+    public static function stripWildcard($url){
+        $url = str_replace('*.', '', $url);
+        $url = str_replace('%.', '', $url);
+        $url = str_replace('*', '', $url);
+        $url = str_replace('%', '', $url);
+        return $url;
+    }
 }

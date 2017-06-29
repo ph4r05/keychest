@@ -94,6 +94,7 @@ class ServersController extends Controller
     {
         $server = strtolower(trim(Input::get('server')));
         $server = DomainTools::replaceHttp($server);
+        $server = DomainTools::stripWildcard($server);
         $parsed = parse_url($server);
         if (empty($parsed) || strpos($server, '.') === false){
             return response()->json(['status' => 'fail'], 422);
