@@ -13,6 +13,7 @@
 
 Route::get('/', 'SearchController@show')->name('/');
 Route::post('/', 'SearchController@search');
+Route::post('/intro', 'SearchController@search')->name('intro');
 Route::post('feedback', 'SearchController@voteFeedback')->name('feedback');
 Route::post('rfeedback', 'SearchController@restSubmitFeedback')->name('rfeedback');
 

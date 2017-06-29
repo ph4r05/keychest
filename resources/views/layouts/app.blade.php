@@ -71,7 +71,7 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Beta link -->
-                        <li><a href="{{ route('/') }}">Early BETA</a></li>
+                        <li><a href="">BETA</a></li>
 
                         <!-- component navigation -->
                         @yield('content-nav')
