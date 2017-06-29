@@ -309,8 +309,151 @@ function keyToCompare(keyFnc){
     };
 }
 
+/**
+ * Converts list of keys to the object with keys
+ * [a,b,c] -> {a: true, b: true, c: true}
+ * @param lst
+ * @returns {{}}
+ */
+function listToSet(lst){
+    const st = {};
+    for(const idx in lst){
+        st[lst[idx]] = true;
+    }
+    return st;
+}
 
+/**
+ * Normalizes a field in the collection col to the common most frequent value
+ * collapsing function removes character defined by [^a-zA-Z0-9], then normalizes the groups.
+ * adds a new field with the normalized value
+ * @param col
+ * @param field
+ * @param options
+ * @returns {Array}
+ */
+function normalizeValue(col, field, options){
+    options = options || {};
+
+    const newField = _.head(_.compact([
+        _.isString(options) ? options : null,
+        _.isObjectLike(options) && _.has(options, 'newField') ? options['newField'] : null,
+        _.isString(field) ? (field + '_new') : field
+    ]));
+
+    const normalizer = _.isObjectLike(options) && _.has(options, 'normalizer') && _.isFunction(options['normalizer']) ?
+        options['normalizer'] : capitalizeFirstWord;
+
+    const vals = _.map(col, field);
+
+    // group by normalized stripped form of the field
+    const grps = _.groupBy(vals, x=>{
+        return _.lowerCase(_.replace(x, /[^a-zA-Z0-9]/g, ''));
+    });
+
+    // find the representative in the group - group by on subgroups, most frequent subgroup wins
+    const subg = _.mapValues(grps, x => {
+        return _.groupBy(x);
+    });
+
+    // map back all variants of the field to the normalized key - used for normalization
+    const normMap = {};
+    _.forEach(subg, (val, key) => {
+        _.forEach(_.keys(val), x => {
+            normMap[x] = key;
+        })
+    });
+
+    // mapped -> representant
+    const repr = _.mapValues(subg, x => {
+        if (_.size(x) === 1){
+            return _.keys(x)[0];
+        }
+        return _.reduce(x, (acc, val, key) => {
+            return _.size(x[key]) > _.size(x[acc]) ? key : acc;
+        });
+    });
+
+    // a bit of polishing of the representants
+    const frep = _.mapValues(repr, normalizer);
+
+    // normalization step -> add a new field
+    return _.map(col, x => {
+        const curField = _.isFunction(field) ? field(x) : x[field];
+        x[newField] = frep[normMap[curField]];
+        return x;
+    });
+}
+
+/**
+ * Capitalizes first word if is all in the same case
+ * TERENA -> Terena
+ * terena -> Terena
+ * cloudFlare -> cloudFlare
+ * @param str
+ * @returns {string}
+ */
+function capitalizeFirstWord(str){
+    const r = _.replace(str, /^[A-Z]+\b/, _.capitalize);
+    return _.replace(r, /^[a-z]+\b/, _.capitalize);
+}
+
+/**
+ * Take from the list of the given length modulo - cyclic take.
+ * @param set
+ * @param len
+ * @returns {Array}
+ */
+function takeMod(set, len){
+    const ret = [];
+    const ln = set.length;
+    for(let i = 0; i<len; i++){
+        ret.push(set[i % ln]);
+    }
+    return ret;
+}
+
+//
+// Certificate functions
+//
+
+/**
+ * Normalizes certificate issuer
+ * @param str
+ */
+function normalizeIssuer(str){
+    let n = capitalizeFirstWord(str);
+    n = _.replace(n, /[iI]nc$/, 'Inc.');
+    n = _.replace(n, /([a-zA-Z0-9]) Inc\.$/, (m, p1) => {
+        return p1 + ', Inc.';
+    });
+    return n;
+}
+
+/**
+ * Extracts certificate issuer
+ * @param cert
+ * @returns {*}
+ */
+function certIssuer(cert) {
+    if (cert.is_le) {
+        return 'Let\'s Encrypt';
+    } else if (cert.is_cloudflare) {
+        return 'Cloudflare';
+    }
+
+    const iss = cert.issuer;
+    const ret = iss.match(/organizationName: (.+?)($|,\s[a-zA-Z0-9]+:)/);
+    if (ret && ret[1]) {
+        return ret[1];
+    }
+
+    return 'Other';
+}
+
+//
 // Export
+//
 module.exports = {
     bodyProgress: bodyProgress,
     findGetParameter: findGetParameter,
@@ -327,7 +470,13 @@ module.exports = {
     removeWildcard: removeWildcard,
     neighbourDomainList: neighbourDomainList,
     compareAscending: compareAscending,
-    keyToCompare: keyToCompare
+    keyToCompare: keyToCompare,
+    normalizeValue: normalizeValue,
+    capitalizeFirstWord: capitalizeFirstWord,
+    takeMod: takeMod,
+
+    certIssuer: certIssuer,
+    normalizeIssuer: normalizeIssuer
 };
 
 

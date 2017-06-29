@@ -964,19 +964,7 @@
             },
 
             certIssuer(cert){
-                if (cert.is_le){
-                    return 'Let\'s Encrypt';
-                } else if (cert.is_cloudflare){
-                    return 'Cloudflare';
-                }
-
-                const iss = cert.issuer;
-                const ret = iss.match(/organizationName: (.+?)($|,\s[a-zA-Z0-9]+:)/);
-                if (ret && ret[1]){
-                    return ret[1];
-                }
-
-                return 'Other';
+                return Req.certIssuer(cert);
             },
 
             //
@@ -1109,7 +1097,10 @@
                     cert.issuerOrg = this.certIssuer(cert);
                 }
 
-                this.normalizeValue(this.results.certificates, 'issuerOrg', 'issuerOrgNorm');
+                Req.normalizeValue(this.results.certificates, 'issuerOrg', {
+                    newField: 'issuerOrgNorm',
+                    normalizer: Req.normalizeIssuer
+                });
 
                 for(const whois_id in this.results.whois){
                     const whois = this.results.whois[whois_id];
@@ -1813,57 +1804,6 @@
                     st[lst[idx]] = true;
                 }
                 return st;
-            },
-
-            normalizeValue(col, field, newField){
-                // normalizes a field in the collection col to the common most frequent value
-                // collapsing function removes character defined by [^a-zA-Z0-9], then normalizes the groups.
-                // adds a new field with the normalized value
-                newField = newField || (_.isString(field) ? (field + '_new') : field);
-                const vals = _.map(col, field);
-
-                // group by normalized stripped form of the field
-                const grps = _.groupBy(vals, x=>{
-                    return _.lowerCase(_.replace(x, /[^a-zA-Z0-9]/g, ''));
-                });
-
-                // find the representative in the group - group by on subgroups, most frequent subgroup wins
-                const subg = _.mapValues(grps, x => {
-                    return _.groupBy(x);
-                });
-
-                // map back all variants of the field to the normalized key - used for normalization
-                const normMap = {};
-                _.forEach(subg, (val, key) => {
-                    _.forEach(_.keys(val), x => {
-                        normMap[x] = key;
-                    })
-                });
-
-                // mapped -> representant
-                const repr = _.mapValues(subg, x => {
-                    if (_.size(x) === 1){
-                        return _.keys(x)[0];
-                    }
-                    return _.reduce(x, (acc, val, key) => {
-                        return _.size(x[key]) > _.size(x[acc]) ? key : acc;
-                    });
-                });
-
-                // a bit of polishing of the representants
-                const frep = _.mapValues(repr, this.capitalizeFirstWord);
-                
-                // normalization step -> add a new field
-                return _.map(col, x => {
-                    const curField = _.isFunction(field) ? field(x) : x[field];
-                    x[newField] = frep[normMap[curField]];
-                    return x;
-                });
-            },
-
-            capitalizeFirstWord(str){
-                const r = _.replace(str, /^[A-Z]+\b/, _.capitalize);
-                return _.replace(r, /^[a-z]+\b/, _.capitalize);
             },
 
             takeMod(set, len){
