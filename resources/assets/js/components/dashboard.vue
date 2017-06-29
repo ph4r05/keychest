@@ -290,9 +290,7 @@
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <td>
                                         <ul class="coma-list" v-if="tls.host_cert">
-                                            <li v-for="domain in take(tls.host_cert.alt_domains, 10)">
-                                                {{ domain }}
-                                            </li>
+                                            <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
                                         </ul>
                                         <span v-else="">No domains found</span>
                                     </td>
