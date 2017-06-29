@@ -944,7 +944,6 @@
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
                     cert.valid_to_dayfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
-                    cert.valid_to_monthfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.validity_sec = cert.valid_to_utc - cert.valid_from_utc;
@@ -1441,10 +1440,45 @@
                 return certTypes;
             },
 
+            extrapolatePlannerCerts(certSet){
+                // Adds certificates to the planner multiple times for planner if validity len < 12M
+                const valid12m = 3600 * 24 * 365;
+                const filtered = _.filter(certSet, x => {
+                    return x.validity_sec < valid12m;
+                });
+
+                if (_.size(filtered) === 0){
+                    return certSet;
+                }
+
+                // Has to clone, we dont want to add extrapolated certificates to other graphs
+                const newSet = _.clone(_.castArray(certSet));
+                const threshold = moment().add(1, 'year').add(1, 'month').unix();
+
+                // Add each cert
+                _.forEach(filtered, cert => {
+                    let lastCert = cert;
+                    while(lastCert.valid_to_utc + lastCert.validity_sec < threshold){
+                        // create just a lightweight shim, later for full clone do: _.cloneDeep(lastCert);
+                        const cloned = { is_clone: true };
+                        cloned.is_le = lastCert.is_le;
+                        cloned.is_cloudflare = lastCert.is_cloudflare;
+                        cloned.validity_sec = lastCert.validity_sec;
+                        cloned.valid_to_utc = lastCert.valid_to_utc + lastCert.validity_sec;
+                        cloned.valid_from_utc = lastCert.valid_to_utc;
+                        newSet.push(cloned);
+                        lastCert = cloned;
+                    }
+                });
+
+                return newSet;
+            },
+
             monthDataGen(certSet){
                 // cert per months, LE, Cloudflare, Others
-                const grp = _.groupBy(certSet, x => {
-                    return x.valid_to_monthfmt;
+                const newSet = this.extrapolatePlannerCerts(certSet);
+                const grp = _.groupBy(newSet, x => {
+                    return moment(x.valid_to_utc * 1000.0).format('YYYY-MM');
                 });
 
                 const fillGap = (ret, lastMoment, toMoment) => {
