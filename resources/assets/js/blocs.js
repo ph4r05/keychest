@@ -76,7 +76,7 @@ function subHeightChildren(x){
     if (!x){
         return 0;
     }
-    let subHeight = 0;
+    var subHeight = 0;
     x.children().each(function(xx){
         subHeight += $(this).outerHeight();
     });
