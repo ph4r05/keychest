@@ -15,6 +15,7 @@ return [
     'scan' => 'Spot check',
     'scan_desc' => 'your hosts',
     'home-page' => 'Intro page',
+    'content' => 'Stories',
 
     'servers_desc' => ' list for regular scanning'
 

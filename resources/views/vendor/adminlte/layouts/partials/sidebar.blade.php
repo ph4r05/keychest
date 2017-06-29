@@ -45,9 +45,13 @@
                 <a href="{{ url('home/servers') }}"><i class='fa fa-server'></i> <span>{{ trans('admin.servers') }}</span></a>
             </li>
 
-            <li class="{{ Request::path() ==  '/' ? 'active' : ''  }}">
-                <a href="{{ url('/') }}"><i class='fa fa-home'></i> <span>{{ trans('admin.home-page') }}</span></a>
+            <li class="{{ Request::path() ==  '/content' ? 'active' : ''  }}">
+                <a href="{{ url('/content') }}"><i class='fa fa-book'></i> <span>{{ trans('admin.content') }}</span></a>
             </li>
+
+            {{--<li class="{{ Request::path() ==  '/intro' ? 'active' : ''  }}">--}}
+                {{--<a href="{{ url('/intro') }}"><i class='fa fa-home'></i> <span>{{ trans('admin.home-page') }}</span></a>--}}
+            {{--</li>--}}
 
             {{--<li class="treeview">--}}
                 {{--<a href="#"><i class='fa fa-link'></i> <span>{{ trans('adminlte_lang::message.multilevel') }}</span> <i class="fa fa-angle-left pull-right"></i></a>--}}

@@ -76,6 +76,8 @@
                         <!-- component navigation -->
                         @yield('content-nav')
 
+                        <li><a href="{{ url('/content') }}">Stories</a></li>
+
                         <!-- Authentication Links -->
                         @if (Auth::guest())
                             <li><a href="{{ route('register') }}">My dashboard</a></li>
