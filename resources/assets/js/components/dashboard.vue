@@ -506,10 +506,10 @@
 
 
                         <div class="col-md-6">
-                            <canvas id="pie_cert_domains" style="width: 100%; height: 400px;"></canvas>
+                            <canvas id="pie_cert_domains" style="height: 400px;"></canvas>
                         </div>
                         <div class="col-md-6">
-                            <canvas id="pie_cert_domains_tld" style="width: 100%; height: 400px;"></canvas>
+                            <canvas id="pie_cert_domains_tld" style=" height: 400px;"></canvas>
                         </div>
                     </sbox>
                 </div>
@@ -628,7 +628,6 @@
                 certIssuerTableData: null,
                 includeExpired: false,
 
-                Req: window.Req,
                 Laravel: window.Laravel,
                 _: window._,
 
@@ -1266,12 +1265,12 @@
                             {
                                 data: this.certTypesStatsAll,
                                 backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                                label: 'All TLS + CT'
+                                label: 'All issued certificates (CT)'
                             },
                             {
                                 data: this.certTypesStats,
                                 backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                                label: 'TLS active'
+                                label: 'Active servers'
                             }],
                         labels: [
                             'Let\'s Encrypt',
@@ -1363,13 +1362,13 @@
                                 data: tlsIssuerUnz[1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
-                                label: 'TLS active'
+                                label: 'Active servers'
                             },
                             {
                                 data: allIssuerUnz[1],
                                 backgroundColor: this.chartColors[2],
                                 //backgroundColor: this.takeMod(this.chartColors, allIssuerUnz[0].length),
-                                label: 'All TLS + CT'
+                                label: 'All issued certificates (CT)'
                             }],
                         labels: allIssuerUnz[0]
                     },
