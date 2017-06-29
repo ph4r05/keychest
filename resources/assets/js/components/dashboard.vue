@@ -317,7 +317,7 @@
                                 <tr>
                                     <th>Deadline</th>
                                     <th>Relative</th>
-                                    <th>Certificates</th>
+                                    <th>Domains</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -327,7 +327,11 @@
                                     <td v-bind:class="grp[0].planCss.tbl">
                                         {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
                                     <td v-bind:class="grp[0].planCss.tbl">
-                                        {{ grp.length }} </td>
+                                        <ul class="coma-list" v-if="len(getCertHostPorts(grp)) > 0">
+                                            <li v-for="domain in getCertHostPorts(grp)">{{ domain }}</li>
+                                        </ul>
+                                        <span v-else="">No domains found</span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -937,6 +941,12 @@
                 return this.countCategories[idx-1] + '-' + this.countCategories[idx];
             },
 
+            getCertHostPorts(certSet){
+                return _.sortedUniq(_.sortBy(_.reduce(_.castArray(certSet), (acc, x) => {
+                    return _.concat(acc, x.watch_hostports);
+                }, [])));
+            },
+
             //
             // Cert processing
             //
@@ -1031,6 +1041,7 @@
                     const strPort = parseInt(watch.scan_port) || 443;
                     watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort);
                     watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
+                    watch.hostport = watch.scan_host + (strPort === 443 ? '' : ':' + strPort);
                 }
 
                 const fqdnResolver = _.memoize(Psl.get);
@@ -1042,6 +1053,7 @@
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.validity_sec = cert.valid_to_utc - cert.valid_from_utc;
                     cert.watch_hosts = [];
+                    cert.watch_hostports = [];
                     cert.watch_urls = [];
                     cert.watch_hosts_ct = [];
                     cert.watch_urls_ct = [];
@@ -1054,6 +1066,7 @@
 
                     _.forEach(cert.tls_watches, watch_id => {
                         if (watch_id in this.results.watches){
+                            cert.watch_hostports.push(this.results.watches[watch_id].hostport);
                             cert.watch_hosts.push(this.results.watches[watch_id].scan_host);
                             cert.watch_urls.push(this.results.watches[watch_id].url);
                         }
@@ -1066,6 +1079,7 @@
                         }
                     });
 
+                    cert.watch_hostports = _.uniq(cert.watch_hostports.sort());
                     cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
                     cert.watch_urls = _.uniq(cert.watch_urls.sort());
                     cert.watch_hosts_ct = _.uniq(cert.watch_hosts_ct.sort());
