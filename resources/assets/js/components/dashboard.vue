@@ -411,6 +411,37 @@
                 </div>
             </div>
 
+            <!-- Certificate issuers -->
+            <div class="row" v-if="certIssuerTableData">
+                <div class="xcol-md-12">
+                    <sbox>
+                        <template slot="title">Certificate issuers</template>
+                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Issuer</th>
+                                <th>Active TLS</th>
+                                <th>Certificate Transparency</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="curDat in certIssuerTableData">
+                                <td> {{ curDat[0] }} </td>
+                                <td> {{ curDat[1] }} </td>
+                                <td> {{ curDat[2] }} </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <div class="form-group">
+                            <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
+                        </div>
+                    </sbox>
+                </div>
+            </div>
+
             <!-- Certificate domains -->
             <div class="row">
                 <div class="xcol-md-12">
@@ -477,37 +508,6 @@
                         </div>
                         <div class="col-md-6">
                             <canvas id="pie_cert_domains_tld" style="width: 100%; height: 400px;"></canvas>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- Certificate issuers -->
-            <div class="row" v-if="certIssuerTableData">
-                <div class="xcol-md-12">
-                    <sbox>
-                        <template slot="title">Certificate issuers</template>
-                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>Issuer</th>
-                                <th>Active TLS</th>
-                                <th>Certificate Transparency</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="curDat in certIssuerTableData">
-                                <td> {{ curDat[0] }} </td>
-                                <td> {{ curDat[1] }} </td>
-                                <td> {{ curDat[2] }} </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </div>
-
-                        <div class="form-group">
-                            <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
                         </div>
                     </sbox>
                 </div>
