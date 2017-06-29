@@ -1061,18 +1061,15 @@
                 });
             },
 
+            cleanResults(){
+                this.results = null;
+                this.loadingState = 0;
+                this.$emit('onReset');
+            },
+
             //
             // Graphs
             //
-
-            onGraphLibLoaded(){
-                this.graphLibLoaded = true;
-                if (!this.graphsRendered){
-                    this.$nextTick(function () {
-                        setTimeout(this.renderCharts, 0);
-                    });
-                }
-            },
 
             renderCharts(){
                 if (!this.graphLibLoaded || !this.graphDataReady){
@@ -1716,17 +1713,6 @@
                 }
                 return ret;
             },
-
-            //
-            // Misc
-            //
-
-            cleanResults(){
-                this.results = null;
-                this.loadingState = 0;
-                this.$emit('onReset');
-            },
-
 
         }
     }
