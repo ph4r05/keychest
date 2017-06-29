@@ -91,7 +91,7 @@ class DashboardController extends Controller
         }));
         $crtshCertIds = $crtshScans->reduce(function($carry, $item){
             return $carry->union(collect($item->certs_ids));
-        }, collect())->unique()->sort()->reverse()->take(100);
+        }, collect())->unique()->sort()->reverse()->take(300);
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
         $cert2watchTls = DataTools::invertMap($tlsCertMap);
