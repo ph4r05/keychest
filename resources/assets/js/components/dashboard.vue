@@ -111,15 +111,13 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
-                        <template slot="title">Monthly certificate renew planner</template>
+                        <template slot="title">Annual certificate renewal schedule</template>
                             <div class="form-group">
-                                <!--<div id="columnchart_certificates" style="width: 100%; height: 350px;"></div>-->
-                                <canvas id="columnchart_certificates_js" style="width: 90%; height: 350px;"></canvas>
+                                <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
                             </div>
 
                             <div class="form-group">
-                                <!--<div id="columnchart_certificates_all" style="width: 100%; height: 350px;"></div>-->
-                                <canvas id="columnchart_certificates_all_js" style="width: 90%; height: 350px;"></canvas>
+                                <canvas id="columnchart_certificates_all_js" style="width:100%; height: 350px"></canvas>
                             </div>
                     </sbox>
                 </div>
@@ -1206,7 +1204,7 @@
             //
 
             plannerGraph(){
-                const labels = ['Time', 'Let\'s Encrypt', 'CDN', 'Standard'];
+                const labels = ['Time', 'Let\'s Encrypt', 'CDN/ISP', 'Paid'];
                 const datasets = _.map([this.crtTlsMonth, this.crtAllMonth], x => {
                     return this.graphDataConv(_.concat([labels], x));
                 });
@@ -1225,12 +1223,17 @@
                                 stacked: true,
                             }],
                             yAxes: [{
-                                stacked: true
+                                stacked: true,
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: (value, index, values) => {
+                                        return _.floor(value) == value ? value : null;
+                                    }
+                                }
                             }]
                         },
-                        tooltips: {
-                            mode: 'index',
-                            intersect: false
+                        tooltips:{
+                            mode: 'index'
                         },
                     }};
 
@@ -1243,7 +1246,7 @@
                 const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
                 graphCrtAllData.options.title = {
                     display: true,
-                    text: 'Monthly planner - 12 months, all certs, CT'
+                    text: 'Monthly planner - 12 months, active + hidden'
                 };
 
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
