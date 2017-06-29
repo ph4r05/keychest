@@ -65,12 +65,15 @@
         },
         methods: {
             showModal(){
+                ga('send', 'event', 'servers', 'add-modal');
                 $('#create-item').modal();
                 setTimeout(()=>{
                     $('#server-add-title').focus();
                 }, 500);
             },
             createItem() {
+                ga('send', 'event', 'servers', 'add-server');
+
                 // Minor domain validation.
                 if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1){
                     $('#add-server-wrapper').effect( "shake" );
