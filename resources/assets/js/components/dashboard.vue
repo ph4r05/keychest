@@ -1909,9 +1909,5 @@
         padding-left: 12px;
     }
 
-    .small-box {
-        font-weight: 400;
-    }
-
 </style>
 
