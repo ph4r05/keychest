@@ -527,6 +527,7 @@
                 $('#search-error').show();
                 this.recomp();
                 this.$emit('onError', msg);
+                ga('send', 'event', 'spot-check', 'error');
             },
 
             searchStarted(data) {
@@ -544,6 +545,7 @@
                 // UUID provided from the GET parameter:
                 this.curUuid = uuid;
                 this.searchStarted();
+                ga('send', 'event', 'spot-check', 'uuid-provided');
                 setTimeout(this.pollFinish, 10);
             },
 
@@ -820,6 +822,7 @@
                     return;
                 }
 
+                ga('send', 'event', 'spot-check', 'check-submit');
                 this.cleanResults();
                 this.searchStarted({'host': targetUri});
                 this.curUrl = targetUri;
@@ -854,6 +857,7 @@
 
             startTracking(){
                 const server2monitor = this.curUrl;
+                ga('send', 'event', 'spot-check', 'start-tracking');
 
                 // Minor domain validation.
                 if (_.isEmpty(server2monitor) || server2monitor.split('.').length <= 1){
