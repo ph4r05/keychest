@@ -38,6 +38,75 @@
             <!--     how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
 
             <div class="row">
+
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts }}</h3>
+
+                            <p>Active / Hidden keys</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-heartbeat"></i>
+                        </div>
+                        <a href="#certs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{{ numWatches }}</h3>
+
+                            <p>Servers</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-server"></i> <!--fa-sitemap-->
+                        </div>
+                        <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow">
+                        <div class="inner">
+                            <h3>{{ numExpiresSoon }}</h3>
+
+                            <p>Expires soon</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-bell"></i>
+                        </div>
+                        <a href="#renewals" class="small-box-footer" v-if="numExpiresSoon > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        <a href="#" class="small-box-footer" v-else="">No action needed</a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-red">
+                        <div class="inner">
+                            <h3>{{ numExpiresNow }}</h3>
+
+                            <p>Expires now</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-exclamation-circle"></i>
+                        </div>
+                        <a href="#renewals" class="small-box-footer" v-if="numExpiresNow > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        <a href="#" class="small-box-footer" v-else="">No action needed</a>
+                    </div>
+                </div>
+                <!-- ./col -->
+            </div>
+
+            <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
                         <template slot="title">Monthly certificate renew planner</template>
@@ -234,6 +303,7 @@
             </div>
 
             <!-- Imminent renewals -->
+            <a name="renewals"></a>
             <div v-if="showImminentRenewals" class="row">
                 <div class="xcol-md-12">
                 <sbox>
@@ -439,6 +509,7 @@
             </div>
 
             <!-- Certificate list -->
+            <a name="certs"></a>
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
@@ -478,6 +549,7 @@
             </div>
 
             <!-- All Certificate list -->
+            <a name="allCerts"></a>
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
@@ -625,6 +697,26 @@
                     return this.results.whois;
                 }
                 return {};
+            },
+
+            numHiddenCerts(){
+                return _.size(this.certs) - _.size(this.tlsCerts);
+            },
+
+            numExpiresSoon(){
+                return _.sumBy(this.tlsCerts, cur => {
+                    return cur.valid_to_days <= 28;
+                });
+            },
+
+            numExpiresNow(){
+                return _.sumBy(this.tlsCerts, cur => {
+                    return cur.valid_to_days <= 7;
+                });
+            },
+
+            numWatches(){
+                return this.results ? _.size(this.results.watches) : 0;
             },
 
             showImminentRenewals(){
@@ -1815,6 +1907,10 @@
     .box-body > .table-xfull > .table > tbody > tr > td
     {
         padding-left: 12px;
+    }
+
+    .small-box {
+        font-weight: 400;
     }
 
 </style>
