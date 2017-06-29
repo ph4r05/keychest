@@ -1,21 +1,23 @@
 <template>
     <div class="dashboard-wrapper">
-        <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
-            <strong>Error!</strong> <span id="error-text"></span>
-        </div>
+        <div class="row">
+            <div class="alert alert-danger scan-alert" id="search-error" style="display: none">
+                <strong>Error!</strong> <span id="error-text"></span>
+            </div>
 
-        <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-             v-if="loadingState == 0">
-            <span>Loading data, please wait...</span>
-        </div>
+            <div class="alert alert-info alert-waiting scan-alert" id="search-info"
+                 v-if="loadingState == 0">
+                <span>Loading data, please wait...</span>
+            </div>
 
-        <div class="alert alert-info alert-waiting scan-alert"
-             v-else-if="loadingState == 1">
-            <span>Processing data ...</span>
-        </div>
+            <div class="alert alert-info alert-waiting scan-alert"
+                 v-else-if="loadingState == 1">
+                <span>Processing data ...</span>
+            </div>
 
-        <div class="alert alert-success scan-alert" id="search-success" style="display: none">
-            <strong>Success!</strong> Scan finished.
+            <div class="alert alert-success scan-alert" id="search-success" style="display: none">
+                <strong>Success!</strong> Scan finished.
+            </div>
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
@@ -37,7 +39,7 @@
             <!--   CT only certificates to a table + chart -->
             <!--     how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
 
-            <!-- Header -->
+            <!-- Header info widgets -->
             <div class="row">
 
                 <div class="col-lg-3 col-xs-6">
@@ -107,10 +109,20 @@
                 <!-- ./col -->
             </div>
 
+            <!-- Section heading -->
+            <div class="row">
+                <div class="info-box">
+                    <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
+                    <div class="info-box-content info-box-label">
+                        Key Management Report
+                    </div>
+                </div>
+            </div>
+
             <!-- Monthly planner -->
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-success">
                         <template slot="title">Annual certificate renewal schedule</template>
                             <div class="form-group">
                                 <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
@@ -123,10 +135,26 @@
                 </div>
             </div>
 
+            <!-- Section heading -->
+            <div class="row" v-if="
+                    dnsFailedLookups.length > 0 ||
+                    tlsErrors.length > 0 ||
+                    len(expiredCertificates) > 0 ||
+                    len(tlsInvalidTrust) > 0 ||
+                    len(tlsInvalidHostname) > 0
+                ">
+                <div class="info-box">
+                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation-circle"></i></span>
+                    <div class="info-box-content info-box-label">
+                        Incidents
+                    </div>
+                </div>
+            </div>
+
             <!-- DNS lookup fails -->
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-danger">
                         <template slot="title">Domain resolution problems</template>
                         <p>The following domains could not be resolved. Please check the validity.</p>
                         <div class="table-responsive table-xfull">
@@ -150,7 +178,7 @@
             <!-- TLS connection fails -->
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-danger">
                         <template slot="title">Server connection problem</template>
 
                         <p>TLS connection could not be made to the following domains.</p>
@@ -186,7 +214,7 @@
             <!-- TLS expired certificates -->
             <div v-if="len(expiredCertificates) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-danger">
                         <template slot="title">Expired certificates</template>
                         <p>The following servers show downtime due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
@@ -226,7 +254,7 @@
             <!-- TLS trust errors -->
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-danger">
                         <template slot="title">Invalid certificates or configuration</template>
                         <p>Server check showed a security or configuration problem</p>
                         <div class="table-responsive table-xfull">
@@ -267,7 +295,7 @@
             <!-- TLS hostname errors -->
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-danger">
                         <template slot="title">Unused, default, or incorrect certificates</template>
                         <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
@@ -300,11 +328,21 @@
                 </div>
             </div>
 
+            <!-- Section heading -->
+            <div class="row">
+                <div class="info-box">
+                    <span class="info-box-icon bg-green"><i class="fa fa-calendar-check-o"></i></span>
+                    <div class="info-box-content info-box-label">
+                        Planning
+                    </div>
+                </div>
+            </div>
+
             <!-- Imminent renewals -->
             <a name="renewals"></a>
             <div v-if="showImminentRenewals" class="row">
                 <div class="xcol-md-12">
-                <sbox>
+                <sbox cssBox="box-success">
                     <template slot="title">Imminent Renewals (next 28 days)</template>
                     <div class="col-md-6">
                         <div class="table-responsive table-xfull">
@@ -343,7 +381,7 @@
             <!-- Expiring domains -->
             <div v-if="showExpiringDomains" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-success">
                         <template slot="title">Domain name renewal deadlines</template>
                         <p>A list of domain names expiring within a year</p>
                         <div class="table-responsive table-xfull">
@@ -375,7 +413,7 @@
             <!-- Domains without expiration date detected - important, not to mislead it is fine -->
             <div v-if="showDomainsWithUnknownExpiration" class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-warning">
                         <template slot="title">Domains with unknown expiration</template>
                         <p>We were unable to detect expiration domain date for the following domains:</p>
                         <div class="table-responsive table-xfull">
@@ -399,7 +437,7 @@
             <!-- Certificate types -->
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-success">
                         <template slot="title">Number of certificates per type</template>
                         <div class="form-group">
                             <p>
@@ -414,7 +452,7 @@
             <!-- Certificate issuers -->
             <div class="row" v-if="certIssuerTableData">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-success">
                         <template slot="title">Certificate issuers</template>
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                         <table class="table table-bordered table-striped table-hover">
@@ -442,10 +480,20 @@
                 </div>
             </div>
 
+            <!-- Section heading -->
+            <div class="row">
+                <div class="info-box">
+                    <span class="info-box-icon bg-blue"><i class="fa fa-info-circle"></i></span>
+                    <div class="info-box-content info-box-label">
+                        Informational
+                    </div>
+                </div>
+            </div>
+
             <!-- Certificate domains -->
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-primary">
                         <template slot="title">Number of services in SAN certificates</template>
                         <p>Certificates can be used for multiple services (domain names).
                             The table shows how many certificates contain a certain number of services.
@@ -519,7 +567,7 @@
             <a name="certs"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-primary">
                         <template slot="title">Certificate list</template>
                         <p>All certificates on active (accessible) services ({{ len(tlsCerts) }})</p>
                         <div class="table-responsive table-xfull">
@@ -559,7 +607,7 @@
             <a name="allCerts"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox>
+                    <sbox cssBox="box-primary">
                         <template slot="title">Complete Certificate list</template>
                         <div class="form-group">
                             <p>All certificates in Certificate Transparency public logs ({{ len(certs) }})</p>
@@ -598,7 +646,6 @@
                     </sbox>
                 </div>
             </div>
-
 
         </div>
         </transition>
@@ -1083,7 +1130,8 @@
                     cert.planCss = {tbl: {
                         'success': cert.valid_to_days > 14 && cert.valid_to_days <= 28,
                         'warning': cert.valid_to_days > 7 && cert.valid_to_days <= 14,
-                        'warning-hi': cert.valid_to_days <= 7,
+                        'warning-hi': cert.valid_to_days > 0  && cert.valid_to_days <= 7,
+                        'danger': cert.valid_to_days <= 0,
                     }};
 
                     if (cert.is_le) {
@@ -1868,6 +1916,14 @@
     .box-body > .table-xfull > .table > tbody > tr > td
     {
         padding-left: 12px;
+    }
+
+    .info-box-label {
+        line-height: 80px;
+        padding-left: 50px;
+        font-size: 20px;
+        font-weight: 400;
+        color: #444;
     }
 
 </style>
