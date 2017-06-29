@@ -421,8 +421,8 @@
                             <thead>
                             <tr>
                                 <th>Issuer</th>
-                                <th>Active TLS</th>
-                                <th>Certificate Transparency</th>
+                                <th>Active servers</th>
+                                <th>All issued certificates (CT)</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -446,18 +446,20 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox>
-                        <template slot="title">Certificate domains</template>
-                        <p>Number of domains in certificates</p>
+                        <template slot="title">Number of services in SAN certificates</template>
+                        <p>Certificates can be used for multiple services (domain names).
+                            The table shows how many certificates contain a certain number of services.
+                            SLD – second-level domain names.</p>
 
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2">Domains</th>
-                                    <th colspan="3">TLS</th>
-                                    <th colspan="3">CT</th>
-                                    <th colspan="3">Registered domain - TLS</th>
-                                    <th colspan="3">Registered domain - CT</th>
+                                    <th rowspan="2">Services</th>
+                                    <th colspan="3">Active services</th>
+                                    <th colspan="3">Global logs</th>
+                                    <th colspan="3">Active SLDs</th>
+                                    <th colspan="3">SLDs in global logs</th>
                                 </tr>
                                 <tr>
                                     <th>Certs</th>
@@ -519,7 +521,7 @@
                 <div class="xcol-md-12">
                     <sbox>
                         <template slot="title">Certificate list</template>
-                        <p>Active certificates found on servers ({{ len(tlsCerts) }})</p>
+                        <p>All certificates on active (accessible) services ({{ len(tlsCerts) }})</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -560,7 +562,7 @@
                     <sbox>
                         <template slot="title">Complete Certificate list</template>
                         <div class="form-group">
-                            <p>All certificates found ({{ len(certs) }})</p>
+                            <p>All certificates in Certificate Transparency public logs ({{ len(certs) }})</p>
                             <input type="checkbox" id="chk-include-expired">
                             <label for="chk-include-expired">Include expired certificates</label>
                         </div>
@@ -1243,13 +1245,13 @@
                 const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
                 graphCrtTlsData.options.title = {
                     display: true,
-                    text: 'Monthly planner - 12 months'
+                    text: 'Certificates detected on servers'
                 };
 
                 const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
                 graphCrtAllData.options.title = {
                     display: true,
-                    text: 'Monthly planner - 12 months, active + hidden'
+                    text: 'Certificates registered in global logs'
                 };
 
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
@@ -1412,13 +1414,13 @@
                                 data: unzipped[0][1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
-                                label: 'TLS active'
+                                label: 'Active servers'
                             },
                             {
                                 data: unzipped[1][1],
                                 backgroundColor: this.chartColors[2],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[1][1].length),
-                                label: 'All TLS + CT'
+                                label: 'All issued certificates (CT)'
                             }],
                         labels: _.map(unzipped[0][0], this.getCountCategoryLabel)
                     },
@@ -1447,13 +1449,13 @@
                                 data: unzipped[2][1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
-                                label: 'TLS active'
+                                label: 'Active servers'
                             },
                             {
                                 data: unzipped[3][1],
                                 backgroundColor: this.chartColors[2],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[3][1].length),
-                                label: 'All TLS + CT'
+                                label: 'All issued certificates (CT)'
                             }],
                         labels: _.map(unzipped[2][0], this.getCountCategoryLabel)
                     },
@@ -1464,7 +1466,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Certificate registered domains'
+                            text: 'Registered domains'
                         },
                         animation: {
                             animateScale: true,
