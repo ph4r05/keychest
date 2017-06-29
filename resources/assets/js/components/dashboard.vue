@@ -422,8 +422,8 @@
                                     <th rowspan="2">Domains</th>
                                     <th colspan="3">TLS</th>
                                     <th colspan="3">CT</th>
-                                    <th colspan="3">Top domain - TLS</th>
-                                    <th colspan="3">Top domain - CT</th>
+                                    <th colspan="3">Registered domain - TLS</th>
+                                    <th colspan="3">Registered domain - CT</th>
                                 </tr>
                                 <tr>
                                     <th>Certs</th>
@@ -1426,7 +1426,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Certificate domains'
+                            text: 'Tracking targets (servers, sub-domains)'
                         },
                         animation: {
                             animateScale: true,
@@ -1461,7 +1461,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Certificate top domains'
+                            text: 'Certificate registered domains'
                         },
                         animation: {
                             animateScale: true,
