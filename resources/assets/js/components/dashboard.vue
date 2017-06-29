@@ -1412,6 +1412,7 @@
                         labels: allIssuerUnz[0]
                     },
                     options: {
+                        scaleBeginAtZero: true,
                         responsive: true,
                         legend: {
                             position: 'top',
@@ -1463,6 +1464,7 @@
                         labels: _.map(unzipped[0][0], this.getCountCategoryLabel)
                     },
                     options: {
+                        scaleBeginAtZero: true,
                         responsive: true,
                         legend: {
                             position: 'top',
@@ -1498,6 +1500,7 @@
                         labels: _.map(unzipped[2][0], this.getCountCategoryLabel)
                     },
                     options: {
+                        scaleBeginAtZero: true,
                         responsive: true,
                         legend: {
                             position: 'top',
