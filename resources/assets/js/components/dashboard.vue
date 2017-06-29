@@ -1284,17 +1284,19 @@
 
                 // Normal domains
                 const graphCertDomains = {
-                    type: 'doughnut',
+                    type: 'bar',
                     data: {
                         datasets: [
                             {
                                 data: unzipped[0][1],
-                                backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
+                                backgroundColor: this.chartColors[0],
+                                //backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
                                 label: 'TLS active'
                             },
                             {
                                 data: unzipped[1][1],
-                                backgroundColor: this.takeMod(this.chartColors, unzipped[1][1].length),
+                                backgroundColor: this.chartColors[2],
+                                //backgroundColor: this.takeMod(this.chartColors, unzipped[1][1].length),
                                 label: 'All TLS + CT'
                             }],
                         labels: _.map(unzipped[0][0], this.getCountCategoryLabel)
@@ -1317,17 +1319,19 @@
 
                 // TLD domains
                 const graphCertDomainsTld = {
-                    type: 'doughnut',
+                    type: 'bar',
                     data: {
                         datasets: [
                             {
                                 data: unzipped[2][1],
-                                backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
+                                backgroundColor: this.chartColors[0],
+                                //backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
                                 label: 'TLS active'
                             },
                             {
                                 data: unzipped[3][1],
-                                backgroundColor: this.takeMod(this.chartColors, unzipped[3][1].length),
+                                backgroundColor: this.chartColors[2],
+                                //backgroundColor: this.takeMod(this.chartColors, unzipped[3][1].length),
                                 label: 'All TLS + CT'
                             }],
                         labels: _.map(unzipped[2][0], this.getCountCategoryLabel)
