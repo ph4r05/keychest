@@ -1,5 +1,5 @@
 <template>
-    <div class="box">
+    <div class="box" v-bind:class="cssBox">
         <div class="box-header with-border">
             <h3 class="box-title"><slot name="title"></slot></h3>
 
@@ -26,6 +26,10 @@
                 required: false,
                 default: false,
             },
+
+            cssBox: {
+                required: false
+            }
         },
 
         data: function() {
