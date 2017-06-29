@@ -546,10 +546,6 @@
                 graphsRendered: false,
                 graphDataReady: false,
 
-                crtTlsMonth: null,
-                crtAllMonth: null,
-                certTypesStats: null,
-                certTypesStatsAll: null,
                 certIssuerTableData: null,
                 includeExpired: false,
 
@@ -655,6 +651,24 @@
                     return x.valid_to_dayfmt;
                 });
                 return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+            },
+
+            crtTlsMonth(){
+                return this.monthDataGen(_.filter(this.tlsCerts, o => {
+                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
+            },
+
+            crtAllMonth() {
+                return this.monthDataGen(_.filter(this.certs, o => {
+                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }))
+            },
+
+            certTypesStats(){
+                return this.certTypes(this.tlsCerts);
+            },
+
+            certTypesStatsAll(){
+                return this.certTypes(this.certs);
             },
 
             dns(){
@@ -1029,13 +1043,6 @@
                         tls.host_cert = this.results.certificates[tls.certs_ids[0]];
                     }
                 }
-
-                this.crtTlsMonth = this.monthDataGen(_.filter(this.tlsCerts, o => {
-                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
-                this.crtAllMonth = this.monthDataGen(_.filter(this.certs, o => {
-                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
-                this.certTypesStats = this.certTypes(this.tlsCerts);
-                this.certTypesStatsAll = this.certTypes(this.certs);
 
                 this.$set(this.results, 'certificates', this.results.certificates);
                 this.$forceUpdate();
