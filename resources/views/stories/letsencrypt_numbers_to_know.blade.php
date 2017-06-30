@@ -91,6 +91,29 @@
 						<br><i>Note 3: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br>
 						A side-effect of that is, however, you will have to be careful and plan well when you get to a threshold of about 240 certificates, as renewals may easily eat out the whole quota for each week. See examples below. </i><br>
 					</p>
+
+					<h3 class="mg-md  tc-rich-electric-blue">
+						Max registrations per end-point (IPv4, IPv6)
+					</h3>
+					<p class=" mg-lg">
+					Let's Encrypt limits the number of registrations (i.e., creation of account keys) per end point. The values are:
+					</p>
+					<ul>
+						<li>
+							<p>
+								IPv4 - exact IP address - 10 registrations per 3 hours; and
+							</p>
+						</li>
+						<li>
+							<p>
+								IPv6 - /48 range and is 500 per 3 hours.
+							</p>
+						</li>
+					</ul>
+					<p class=" mg-lg">
+						<i>Note: these limits are the same for production as well as staging environment.</i>
+					</p>
+
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Staging environment
 					</h3>
