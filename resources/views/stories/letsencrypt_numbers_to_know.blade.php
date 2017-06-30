@@ -86,8 +86,9 @@
 					</h3>
 					<p class=" mg-lg">
 						If you start building a bigger network infrastructure and assign servers a public name within your company domain (e.g., enigmabridge.com), you should be aware that you can't get more than 20 certificates per week per registered domain.<br><br>If you think about a cloud service with subdomains per customer, this may be a serious problem. LE offers an opportunity to request an increase of this limit but they don't guarantee positive response or any response at all. Here's&nbsp;<a class="ltc-rich-electric-blue" href="https://docs.google.com/forms/d/e/1FAIpQLSfg56b_wLmUN7n-WWhbwReE11YoHXs_fpJyZcEjDaR69Q-kJQ/viewform?c=0&amp;w=1" target="_blank">the address of the Rate Limiting form</a>, you want to try it.<br><br>Renewals, i.e., repeated certification requests, which contain exactly the same set of domains are not counted into this limit, even if the existing certificate already expired.<br><br>
-						<i>Note 1: We are not sure if there is a limitation on how long the existing certificate can be expired for a relevant request being counted as a renewal.</i><br>
-						<br><i>Note 2: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br>
+						<i>Note 1: Staging/test environment has the limit of 30,000 certificates per domain per week.</i>
+						<br><i>Note 2: We are not sure if there is a limitation on how long the existing certificate can be expired for a relevant request being counted as a renewal.</i>
+						<br><i>Note 3: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br>
 						A side-effect of that is, however, you will have to be careful and plan well when you get to a threshold of about 240 certificates, as renewals may easily eat out the whole quota for each week. See examples below. </i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
@@ -127,6 +128,9 @@
 							</p>
 						</li>
 					</ul>
+					<p class="mg-md">
+						<i>Note: the staging/test environment has a limit of 50,000 renewals per account per week. (The number is correct, it is not clear, whether it is per account.) </i>
+					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Adding a domain name to an existing certificate
 					</h3>
@@ -177,6 +181,8 @@
 					<p class="mg-lg ">
 						If your automation doesn't work, or you fail to validate domain ownership (e.g., adding files in your web root folder, or amending your DNS records), there is a limit of 5 failed validations per domain per hour.<br><br>
 						Please note there is also a limit on pending validations - see below in "Velocity limits 2".
+
+						<br><br><i>Note: The staging/test environment has a limit of 60 failed validations per hour per account.</i>
 					</p>
 					<h3 class="mg-md tc-rich-electric-blue">
 						Completing certification request
