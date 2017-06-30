@@ -111,7 +111,8 @@
 						</li>
 					</ul>
 					<p class=" mg-lg">
-						<i>Note: these limits are the same for production as well as staging environment.</i>
+						<i>Note 1: these limits are the same for production as well as staging environment.</i><br><br>
+						<i>Note 2: re-use of an account key - the key created during registration is not allowed. Each account needs its own key. </i>
 					</p>
 
 					<h3 class="mg-md  tc-rich-electric-blue">
