@@ -102,7 +102,7 @@
 						Floating window for limits
 					</h3>
 					<p class=" mg-lg">
-						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (There are any limits in the staging environment, but there are fewer of them and values are higher. We haven't hit any yet.)</i><br>
+						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (<a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/staging-environment/">There are any limits in the staging environment</a>, but limiting values are much higher. We haven't hit any yet.)</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Does revocation of a certificate reset limit counters?
@@ -218,7 +218,9 @@
 						Velocity limits 2
 					</h3>
 					<p class="mg-lg ">
-						When you start using LE clients, they will create an LE account for your endpoint. This client account is used to authorize your requests. Usually, you will have one account per server, but you can share the account across your servers.<br><br>If you provide hosting, you may want to create an account per each user, and all that on a dedicated server (a server with one IP address). There is a limit of 500 new accounts per IP address.<br><br>If you make a mistake somewhere, typically when changing clients, and you don't complete certificate issuance, it is possible that LE servers will keep "pending authorizations". There is a limit of 300 pending authorizations per account. If you need to clear them quicker, please follow&nbsp;<a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/clear-pending-authorizations/22157/2" target="_blank">instructions here if you get into this situation</a>. <br> <br>Sliding window of 7 days applies here as well.<br><br><i>These limits are again applied only in the Production environment!</i><br>
+						When you start using LE clients, they will create an LE account for your endpoint. This client account is used to authorize your requests. Usually, you will have one account per server, but you can share the account across your servers.<br><br>If you provide hosting, you may want to create an account per each user, and all that on a dedicated server (a server with one IP address). However, <a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/integration-guide/">Let's Encrypt Integration Guide</a> recommends using a single account for all customers.<br>
+						There is a limit of 500 new accounts per IP address.<br><br>If you make a mistake somewhere, typically when changing clients, and you don't complete certificate issuance, it is possible that LE servers will keep "pending authorizations". There is a limit of 300 pending authorizations per account. If you need to clear them quicker, please follow&nbsp;<a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/clear-pending-authorizations/22157/2" target="_blank">instructions here if you get into this situation</a>. <br> <br>
+						Sliding window of 7 days applies here as well.<br><br><i>These limits are again applied only in the Production environment!</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Validity of authorizations
