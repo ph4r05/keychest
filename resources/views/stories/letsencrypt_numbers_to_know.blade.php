@@ -29,13 +29,13 @@
 						Restrictions on certificate use
 					</h3>
 					<p class=" mg-lg">
-						Use of certificates is limited by their <strong>profile</strong>. LE offers just one certificate profile and there is no flexibility in this. The main goal is to automate certificate issuance and this is an acceptable restriction. Certificates limit the use to digital signatures and "key encipherment". From our point of view, they can be used only for:<br>1. server authentication; and<br>2. client authentication.<br><br>The good news is, you can use it for any of your internet servers - web, email, SSH, web apps, and so on.<br>
+						Use of certificates is limited by their <strong>profile</strong>. LE offers just one certificate profile and there is no flexibility in this. The main goal is to automate certificate issuance and this is an acceptable restriction. Certificates limit the use for digital signatures and "key encipherment". From our point of view, they can be used only for:<br>1. server authentication; and<br>2. client authentication.<br><br>The good news is, you can use it for any of your internet servers - web, email, SSH, web apps, and so on.<br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Time validity
 					</h3>
 					<p class=" mg-lg">
-						This is a property people talk about a lot. Certificates are valid for 90 days exactly. Exact means that if you get your certificate at 8:31am, it will expire 90 days later at 7:31am (certificates are backdated by 1 hour so that servers/computers with a slightly out-of-sync clock can validate them immediately).<br><br>LE says the main reason is to encourage automation on our side. I'm not sure it quite works yet, but we are trying to chip in with some services here.<br>
+						This is a property people talk about a lot. Certificates are valid for 90 days exactly. Exact means that if you get your certificate at 8:31am, it will expire 90 days later at 7:31am (certificates are backdated by 1 hour, so that servers/computers with a slightly out-of-sync clock can validate them immediately).<br><br>LE says the main reason is to encourage automation on our side. I'm not sure it quite works yet, but we are trying to chip in with some services here.<br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Multi-domain aka SAN Certificates
@@ -44,7 +44,7 @@
 						You can request a certificate, which will contain up to 100 domain names. The domain names map directly into names of servers, as sub-domain wildcards are not allowed.<br><br>
 
 						The limit here is 100 domain names per certificate. Technically, it is implemented as one main “subject" distinguished name and 100 alternative names, which include the one in the subject DN.
-						<br><br><i>Note: The subject distinguished name (DN) only contains a common name (CN), which is the domain name.</i><br>
+						<br><br><i>Note: The subject distinguished name (DN) only contains a common name (CN), which is your domain name, e.g. "www.keychest.net".</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						No wildcard certificates<br>
@@ -85,16 +85,17 @@
 						Max certificate requests
 					</h3>
 					<p class=" mg-lg">
-						If you start building a bigger network infrastructure and assign servers a public name within your company domain (e.g., enigmabridge.com), you should be aware that you can't get more than 20 certificates per week per registered domain.<br><br>If you think about a cloud service with subdomains per customer, this may be a serious problem. LE offers an opportunity to request an increase of this limit but they don't guarantee positive response or any response at all. Here's&nbsp;<a class="ltc-rich-electric-blue" href="https://docs.google.com/forms/d/e/1FAIpQLSfg56b_wLmUN7n-WWhbwReE11YoHXs_fpJyZcEjDaR69Q-kJQ/viewform?c=0&amp;w=1" target="_blank">the address of the Rate Limiting form</a>, you want to try it.<br><br>Renewals, i.e., repeated certification requests, which contain exactly the same set of domains are not counted into this limit, even if the existing certificate already expired.<br><br><i>Note: We are not sure if there is a limitation on how long the existing certificate can be expired for a relevant request being counted as a renewal.</i><br>
-						<br><br><i>Note: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br><br>
+						If you start building a bigger network infrastructure and assign servers a public name within your company domain (e.g., enigmabridge.com), you should be aware that you can't get more than 20 certificates per week per registered domain.<br><br>If you think about a cloud service with subdomains per customer, this may be a serious problem. LE offers an opportunity to request an increase of this limit but they don't guarantee positive response or any response at all. Here's&nbsp;<a class="ltc-rich-electric-blue" href="https://docs.google.com/forms/d/e/1FAIpQLSfg56b_wLmUN7n-WWhbwReE11YoHXs_fpJyZcEjDaR69Q-kJQ/viewform?c=0&amp;w=1" target="_blank">the address of the Rate Limiting form</a>, you want to try it.<br><br>Renewals, i.e., repeated certification requests, which contain exactly the same set of domains are not counted into this limit, even if the existing certificate already expired.<br><br>
+						<i>Note 1: We are not sure if there is a limitation on how long the existing certificate can be expired for a relevant request being counted as a renewal.</i><br>
+						<br><i>Note 2: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br>
 						A side-effect of that is, however, you will have to be careful and plan well when you get to a threshold of about 240 certificates, as renewals may easily eat out the whole quota for each week. See examples below. </i><br>
-
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Staging environment
 					</h3>
 					<p class=" mg-lg">
-						Do use "--dry-run" or an available alternative when you test your integration. Certificate issuance works exactly the same except for the certificate being only for testing, i.e., not trusted.<br><br>If you don't do that, you will run out of your weekly quota of certificates very quickly. It's not the end of all day, you just have to wait a week to request a new production LE certificate. Meantime, you can still test with the LE staging environment.<br><br>*When testing, use "--dry-run" or an equivalent to avoid quota-based restrictions.*<br>
+						Do use "--dry-run" or an available alternative when you test your integration. Certificate issuance works exactly the same except for the certificate being only for testing, i.e., not trusted.<br><br>If you don't do that, you will run out of your weekly quota of certificates very quickly. It's not the end of all day, you just have to wait a week to request a new production LE certificate. Meantime, you can still test with the LE staging environment.<br><br>
+						<b>When testing, use "--dry-run" or an equivalent to avoid quota-based restrictions.</b><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Floating window for limits
@@ -140,18 +141,17 @@
 						<b>Example 1</b><br><br>
 						Let's say that you have been doing some testing and requested 5 certificates for "www.keychest.net" in one day (you reached the domain renewal limit).<br><br>
 						You know these were the only requests in the last 7 days (the limiting time window).<br><br>
-						If you now decide to add this domain name to another certificate you already have on your server (e.g., containing "mx.keychest.net", and "ssh.keychest.net"). <br><br>
-						A request for a new certificate with all three domains will be accepted, as it is not a renewal but a new certificate request.<br>
+						If you now decide to add this domain name to another certificate you already have on your server (e.g., containing "mx.keychest.net", and "ssh.keychest.net"). A request for a new certificate with all three domains will be accepted, as it is not a renewal but a new certificate request.<br>
 					</p>
 					<p class="mg-lg ">
 						<b>Example 2</b><br><br>
 						Let's say that you have been doing some testing and requested 5 certificates for "www.keychest.net" in one day (you reached the domain renewal limit).<br><br>
 						You have also requested 15 other certificates, which in effect used up all your certificate allowance for the 7 days' time window, as renewals <b>do count</b> into that limit.<br><br>
-						The same request as in Example 1 will be rejected. The reason is you reached the weekly limit for new certificates.<br>
+						The same request as in Example 1 will now be rejected. The reason being you reached the weekly limit for new certificates.<br>
 					</p>
 					<p class="mg-lg ">
 						<b>Example 3</b><br><br>
-						You have used up all your certificate allowance for the 7 days' time window. Also, you have only did 4 renewals of the "www.keychest.net" certificate, so you're allowed to do 1 more renewal.<br><br>
+						You have used up all your certificate allowance for the 7 days' time window. Also, you have only done 4 renewals of the "www.keychest.net" certificate, so you're allowed to do 1 more renewal.<br><br>
 						The same request as in Example 2 will be rejected. The reason is you reached the weekly limit for new certificates and as the list of domains is different, it is a request for a new certificate.<br>
 					</p>
 					<p class="mg-lg ">
@@ -164,11 +164,11 @@
 						<b>Example 5</b><br><br>
 						You haven't done any certification requests in the last 7 days and you need to do 10 renewals and get 15 new certificates.<br><br>
 						You start with new certificates and get all 15 of them.<br><br>
-						You can now proceed with all 5 renewals, as they are counted towards the certificate limit, but not restricted by it.
+						You can now proceed with all 5 renewals, as they count towards the certificate limit, but not restricted by it.
 					</p>
 					<p class="mg-lg ">
 						<b>Example 6</b><br><br>
-						You have a lot of certificates and have been randomly adding them as need so you have to do 20 renewals over any 7 day window.<br><br>
+						You have a lot of certificates and have been randomly adding them as needed so you have to do 20 renewals over any 7 day window.<br><br>
 						If you need even more certificates, you will eventually have to plan in weekly schedules. First, you will request new certificates you know you need in the next 7 days. Then you renew all that is needed as quickly as possible afterwards. You can then request new certificates 7 days later.
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
