@@ -37,6 +37,20 @@ Route::get('privacy-policy', function () {
     return view('policy');
 });
 
+// stories
+Route::get('content', function () {
+    return view('stories');
+});
+Route::get('content/keychest_spot_check', function () {
+    return view('stories.keychest_spot_check');
+});
+Route::get('content/letsencrypt_numbers_to_know', function () {
+    return view('stories.letsencrypt_numbers_to_know');
+});
+Route::get('content/understand_spot_checks', function () {
+    return view('stories.understand_spot_checks');
+});
+
 // Registered user space
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('home/servers', 'ServersController@index')->name('servers');
