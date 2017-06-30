@@ -37,7 +37,7 @@ Route::get('privacy-policy', function () {
     return view('policy');
 });
 
-// stories
+// Stories
 Route::get('content', function () {
     return view('stories');
 });
@@ -49,6 +49,17 @@ Route::get('content/letsencrypt_numbers_to_know', function () {
 });
 Route::get('content/understand_spot_checks', function () {
     return view('stories.understand_spot_checks');
+});
+
+// Redirects
+Route::get('content/keychest_spot_check.html', function(){
+    return Redirect::to('content/keychest_spot_check', 301);
+});
+Route::get('content/letsencrypt_numbers_to_know.html', function(){
+    return Redirect::to('content/letsencrypt_numbers_to_know', 301);
+});
+Route::get('content/understand_spot_checks.html', function(){
+    return Redirect::to('content/understand_spot_checks', 301);
 });
 
 // Registered user space
