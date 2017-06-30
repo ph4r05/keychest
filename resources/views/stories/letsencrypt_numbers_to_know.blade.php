@@ -14,11 +14,14 @@
 						Let&rsquo;s Encrypt Numbers to Know
 					</h1>
 					<p class=" mg-lg">
-						<a class="ltc-rich-electric-blue" href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>&nbsp;is now the largest certificate provider for publicly facing internet servers. It does not issue the most secure certificates (i.e., EV, or extended validation certificates), but its certificates provide a very good level of security for most of us.<br><br>When we started using Let's Encrypt (LE), we slowly learnt about various limitations imposed on users. There is not any single place where you can find all important information in one place so here's the first attempt. We will amend it as we learn more directly, or from your feedback.<br>
+						<a class="ltc-rich-electric-blue" href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>&nbsp;is now the largest certificate provider for internet facing servers (combining a Frost&amp;Sullivan report on SSL/TLS certificates from 2016 and actual data from Let's Encrypt, LE currently issues around 80% of all browser-trusted certificates). It does not issue the "most secure" certificates (i.e., EV, or extended validation certificates, which require manual validation of the address and legal status of the web service owner), but its certificates provide a very good level of security for most of us.<br><br>When we started using Let's Encrypt (LE), we slowly learnt about various limitations imposed on users. There is not any single place where you can find all important information in one place so here's the first attempt. We will amend it as we learn more directly, or from your feedback.<br>
 					</p>
 					<div class="divider-h">
 						<span class="divider"></span>
 					</div>
+					<p class="mg-lg">
+						Update 30 June: a big thank you to <a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/u/schoen/summary" target="_blank">schoen</a> for his <a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/lets-encrypt-in-numbers-limits-restrictions-features/37113/2" target="_blank">feedback</a>, which has been now included in the text.
+					</p>
 					<h2 class="mg-md  tc-rich-electric-blue">
 						Business restrictions
 					</h2>
@@ -32,34 +35,22 @@
 						Time validity
 					</h3>
 					<p class=" mg-lg">
-						This is a property people talk about a lot. Certificates are valid for 90 days exactly. Exact means that if you get your certificate at 8:31am, it will expire 90 days later at 8:31am.<br><br>LE says the main reason is to encourage automation on our side. I'm not sure it quite works yet, but we are trying to chip in with some services here.<br>
+						This is a property people talk about a lot. Certificates are valid for 90 days exactly. Exact means that if you get your certificate at 8:31am, it will expire 90 days later at 7:31am (certificates are backdated by 1 hour so that servers/computers with a slightly out-of-sync clock can validate them immediately).<br><br>LE says the main reason is to encourage automation on our side. I'm not sure it quite works yet, but we are trying to chip in with some services here.<br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Multi-domain aka SAN Certificates
 					</h3>
 					<p class=" mg-sm">
-						You can request a certificate, which will contain up to 100 domain names. These are basically server names, unless you are happy to:<br>
-					</p>
-					<ul>
-						<li>
-							<p>
-								copy your private key across servers; and
-							</p>
-						</li>
-						<li>
-							<p>
-								implement DNS load-balancing / load-distribution.
-							</p>
-						</li>
-					</ul>
-					<p class=" mg-lg">
-						The limit here is 100 domain names per certificate. Technically, it is implemented as one main “subject" name and 99 alternative names.
+						You can request a certificate, which will contain up to 100 domain names. The domain names map directly into names of servers, as sub-domain wildcards are not allowed.<br><br>
+
+						The limit here is 100 domain names per certificate. Technically, it is implemented as one main “subject" distinguished name and 100 alternative names, which include the one in the subject DN.
+						<br><br><i>Note: The subject distinguished name (DN) only contains a common name (CN), which is the domain name.</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						No wildcard certificates<br>
 					</h3>
 					<p class=" mg-lg">
-						Wildcard and DV (domain validation) certificates are not available. This relates to similar restrictions on EV (extended validation) certificates.<br>
+						Wildcard certificates are not available. Similarly, EV (extended validation) certificates are not available, as their issuance can't be automated.<br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Supported algorithms
@@ -70,7 +61,7 @@
 					<ul>
 						<li>
 							<p>
-								RSA keys, with lengths from 2048b to 4096b;
+								RSA keys, with lengths 2048b, 3076b, or 4096b;
 							</p>
 						</li>
 						<li>
@@ -94,7 +85,10 @@
 						Max certificate requests
 					</h3>
 					<p class=" mg-lg">
-						If you start building a bigger network infrastructure and assign servers a public name within your company domain (e.g., enigmabridge.com), you should be aware that you can't get more than 20 certificates per week per registered domain.<br><br>If you think about a cloud service with subdomains per customer, this may be a serious problem. LE offers an opportunity to request an increase of this limit but they don't guarantee positive response or any response at all. Here's&nbsp;<a class="ltc-rich-electric-blue" href="https://docs.google.com/forms/d/e/1FAIpQLSfg56b_wLmUN7n-WWhbwReE11YoHXs_fpJyZcEjDaR69Q-kJQ/viewform?c=0&amp;w=1" target="_blank">the address of the Rate Limiting form</a>, you want to try it.<br><br>Renewals, i.e., repeated certification requests, which contain exactly the same set of domains are not counted into this limit, even if the existing certificate already expired.<br><br><i>Note: We are not sure if there is a limitation on how long the existing certificate has been expired.</i><br>
+						If you start building a bigger network infrastructure and assign servers a public name within your company domain (e.g., enigmabridge.com), you should be aware that you can't get more than 20 certificates per week per registered domain.<br><br>If you think about a cloud service with subdomains per customer, this may be a serious problem. LE offers an opportunity to request an increase of this limit but they don't guarantee positive response or any response at all. Here's&nbsp;<a class="ltc-rich-electric-blue" href="https://docs.google.com/forms/d/e/1FAIpQLSfg56b_wLmUN7n-WWhbwReE11YoHXs_fpJyZcEjDaR69Q-kJQ/viewform?c=0&amp;w=1" target="_blank">the address of the Rate Limiting form</a>, you want to try it.<br><br>Renewals, i.e., repeated certification requests, which contain exactly the same set of domains are not counted into this limit, even if the existing certificate already expired.<br><br><i>Note: We are not sure if there is a limitation on how long the existing certificate can be expired for a relevant request being counted as a renewal.</i><br>
+						<br><br><i>Note: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br><br>
+						A side-effect of that is, however, you will have to be careful and plan well when you get to a threshold of about 240 certificates, as renewals may easily eat out the whole quota for each week. See examples below. </i><br>
+
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Staging environment
@@ -106,7 +100,7 @@
 						Floating window for limits
 					</h3>
 					<p class=" mg-lg">
-						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (I don't know if there are any limits in the staging environment, but we haven't hit any yet.)</i><br>
+						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (There are any limits in the staging environment, but there are fewer of them and values are higher. We haven't hit any yet.)</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Does revocation of a certificate reset limit counters?
@@ -118,7 +112,7 @@
 						Maximum number of renewals
 					</h3>
 					<p class=" mg-sm">
-						There is a limit on the maximum number of certificate renewals. This is currently 5 per week. A request for a certificate is counted as a renewal, if it contains exactly the same set of domain names. Mind the following two friendly rules:<br>
+						There is a limit on the maximum number of certificate renewals. This is currently 5 per week per certificate. A request for a certificate is counted as a renewal, if it contains exactly the same set of domain names. Mind the following two friendly rules:<br>
 					</p>
 					<ul>
 						<li>
@@ -141,20 +135,54 @@
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Combination of renewals and new certificate requests
 					</h3>
+					<p class="mg-lg">As there are two separate rules limiting the number of requests, be aware that if you reach any of them, the request will be rejected.</p>
 					<p class="mg-lg ">
-						As there are two separate rules limiting the number of requests, be aware that if you reach any of them, the request will be rejected.<br><br>Let's say that you have been doing some testing and requested 5 certificates for "www.keychest.net" in one day (you reached the domain renewal limit) and you know these were the only request in the last 7 days. A few hours later you realize that it would be much better to add this domain name to another certificate you already have on your server (e.g., containing "mx.keychest.net", and "ssh.keychet.net"). If you now request a new certificate with all three domains (in my example here), the request will be rejected. The reason is the limit per domain renewals for "www.keychest.net".<br>
+						<b>Example 1</b><br><br>
+						Let's say that you have been doing some testing and requested 5 certificates for "www.keychest.net" in one day (you reached the domain renewal limit).<br><br>
+						You know these were the only requests in the last 7 days (the limiting time window).<br><br>
+						If you now decide to add this domain name to another certificate you already have on your server (e.g., containing "mx.keychest.net", and "ssh.keychest.net"). <br><br>
+						A request for a new certificate with all three domains will be accepted, as it is not a renewal but a new certificate request.<br>
+					</p>
+					<p class="mg-lg ">
+						<b>Example 2</b><br><br>
+						Let's say that you have been doing some testing and requested 5 certificates for "www.keychest.net" in one day (you reached the domain renewal limit).<br><br>
+						You have also requested 15 other certificates, which in effect used up all your certificate allowance for the 7 days' time window, as renewals <b>do count</b> into that limit.<br><br>
+						The same request as in Example 1 will be rejected. The reason is you reached the weekly limit for new certificates.<br>
+					</p>
+					<p class="mg-lg ">
+						<b>Example 3</b><br><br>
+						You have used up all your certificate allowance for the 7 days' time window. Also, you have only did 4 renewals of the "www.keychest.net" certificate, so you're allowed to do 1 more renewal.<br><br>
+						The same request as in Example 2 will be rejected. The reason is you reached the weekly limit for new certificates and as the list of domains is different, it is a request for a new certificate.<br>
+					</p>
+					<p class="mg-lg ">
+						<b>Example 4</b><br><br>
+						You haven't done any certification requests in the last 7 days and you need to do 10 renewals and get 15 new certificates.<br><br>
+						You start with 10 renewals of your existing certificates.<br><br>
+						If you now request 15 new certificates, you can only get 10 of them. The remaining 5 will have to wait for seven days.
+					</p>
+					<p class="mg-lg ">
+						<b>Example 5</b><br><br>
+						You haven't done any certification requests in the last 7 days and you need to do 10 renewals and get 15 new certificates.<br><br>
+						You start with new certificates and get all 15 of them.<br><br>
+						You can now proceed with all 5 renewals, as they are counted towards the certificate limit, but not restricted by it.
+					</p>
+					<p class="mg-lg ">
+						<b>Example 6</b><br><br>
+						You have a lot of certificates and have been randomly adding them as need so you have to do 20 renewals over any 7 day window.<br><br>
+						If you need even more certificates, you will eventually have to plan in weekly schedules. First, you will request new certificates you know you need in the next 7 days. Then you renew all that is needed as quickly as possible afterwards. You can then request new certificates 7 days later.
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Limit on failed authorization
 					</h3>
 					<p class="mg-lg ">
-						If your automation doesn't work, or you fail to validate domain ownership (e.g., adding files in your web root folder, or amending your DNS records), there is a limit of 5 failed validations per domain per hour.<br>
+						If your automation doesn't work, or you fail to validate domain ownership (e.g., adding files in your web root folder, or amending your DNS records), there is a limit of 5 failed validations per domain per hour.<br><br>
+						Please note there is also a limit on pending validations - see below in "Velocity limits 2".
 					</p>
 					<h3 class="mg-md tc-rich-electric-blue">
 						Completing certification request
 					</h3>
 					<p>
-						LE certificate issuance consists of 3 steps and they have to be completed within 7 days. <br> <br>The steps are: <br>1. authorization request; <br>2. providing a proof of domain ownership; and <br>3. certificate issuance. <br> <br>LE servers will create a unique secret, which you receive securely. You have to use it to prove that you control the domain name, for which you requested the certificate. Once you&rsquo;ve done that, you can proceed with step 3 above. <br> <br>All three steps can be done in one go and completed within seconds. However, step 2 may require manual steps, e.g., to change domain name service (DNS) records. That&rsquo;s why LE implemented two different time limits: <br>
+						LE certificate issuance consists of 3 steps and they have to be completed within 7 days, although clients usually do them all within a few seconds when fully automated. <br> <br>The steps are: <br>1. authorization request; <br>2. providing a proof of domain ownership; and <br>3. certificate issuance. <br> <br>LE servers will create a unique random value (a secret or token), which you receive securely. You have to use it to prove that you control the domain name, for which you requested the certificate. Once you&rsquo;ve done that, you can proceed with step 3 above. <br> <br>All three steps can be done in one go and completed within seconds. However, step 2 may require manual steps, e.g., to change domain name service (DNS) records. That&rsquo;s why LE implemented two different time limits: <br>
 					</p>
 					<ul>
 						<li>
@@ -184,7 +212,7 @@
 						Velocity limits 2
 					</h3>
 					<p class="mg-lg ">
-						When you start using LE clients, they will create an LE account for your endpoint. This client account is used to authorize your requests. Usually, you will have one account per server, but you can share the account across your servers.<br><br>If you provide hosting, you may need to create an account per each user, and all that on a dedicated server (a server with one IP address). There is a limit of 500 new accounts per IP address.<br><br>If you make a mistake somewhere, typically when changing clients, and you don't complete certificate issuance, it is possible that LE servers will keep "pending authorizations". There is a limit of 300 pending authorizations per account. If you need to clear them quicker, please follow&nbsp;<a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/clear-pending-authorizations/22157/2" target="_blank">instructions here if you get into this situation</a>. <br> <br>Sliding window of 7 days applies here as well.<br><br><i>These limits are again applied only in the Production environment!</i><br>
+						When you start using LE clients, they will create an LE account for your endpoint. This client account is used to authorize your requests. Usually, you will have one account per server, but you can share the account across your servers.<br><br>If you provide hosting, you may want to create an account per each user, and all that on a dedicated server (a server with one IP address). There is a limit of 500 new accounts per IP address.<br><br>If you make a mistake somewhere, typically when changing clients, and you don't complete certificate issuance, it is possible that LE servers will keep "pending authorizations". There is a limit of 300 pending authorizations per account. If you need to clear them quicker, please follow&nbsp;<a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/clear-pending-authorizations/22157/2" target="_blank">instructions here if you get into this situation</a>. <br> <br>Sliding window of 7 days applies here as well.<br><br><i>These limits are again applied only in the Production environment!</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Validity of authorizations
@@ -195,7 +223,7 @@
 					<ul>
 						<li>
 							<p>
-								spin a temporary web server - you have to stop any other web server, which is using port 443; or
+								spin a temporary web server - you have to stop any other web server, which is using port 443 (check your LE client and the web server if this can be done without stopping the web server; e.g., certbot with "--apache" or "--nginx" may work) or
 							</p>
 						</li>
 						<li>
@@ -242,6 +270,7 @@
 						</li>
 					</ul>
 					<p class=" mg-lg">
+						<i>Note: when you successfully request a certificate with a changed list of domain names, you will keep receiving reminders as you got a new certificate, instead of a renewal of as the original one.</i><br><br>
 						The actual time varies and can be a day or even two days later.<br><br>These email reminders are sent to the email address you enter when you create your account key - this is usually the first certification request on a given server. The email is stored with your letsencrypt account configuration. You can also set an arbitrary email address with each request, if your Let's Encrypt client supports it.<br><br>Bear in mind that if you unsubscribe from these notifications, you can't re-subscribe. It may also happen that these emails end up in your spam / junk mail box.<br><br>Try our&nbsp;<a class="ltc-rich-electric-blue" href="https://keychest.net">free KeyChest service</a>&nbsp;to get weekly emails with all expiration dates in one place.<br>
 					</p>
 					<h3 class="mg-md tc-rich-electric-blue">
