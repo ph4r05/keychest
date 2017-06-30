@@ -22,27 +22,27 @@
 
             <div class="row">
                 <div class="col-sm-4">
-                    <a href="keychest_spot_check"><img src="/images/worldAtHand_EB.png" class="img-responsive" /></a>
+                    <a href="/content/keychest_spot_check"><img src="/images/worldAtHand_EB.png" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
-                        <a class="ltc-rich-electric-blue" href="keychest_spot_check">Keychest spot check</a><br>
+                        <a class="ltc-rich-electric-blue" href="/content/keychest_spot_check">Keychest spot check</a><br>
                     </h3>
                     <p>
                         Learn more about what our spot check is for and how to use it.
                     </p>
                 </div>
                 <div class="col-sm-4">
-                    <a href="letsencrypt_numbers_to_know"><img src="/images/secure_gateway_370x290.jpg" class="img-responsive" /></a>
+                    <a href="/content/letsencrypt_numbers_to_know"><img src="/images/secure_gateway_370x290.jpg" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
-                        <a class="ltc-rich-electric-blue" href="letsencrypt_numbers_to_know">Let&rsquo;s Encrypt in numbers</a><br>
+                        <a class="ltc-rich-electric-blue" href="/content/letsencrypt_numbers_to_know">Let&rsquo;s Encrypt in numbers</a><br>
                     </h3>
                     <p>
                         We have compiled all the information we could find so you can decide if Let&rsquo;s Encrypt certificates are for you.
                     </p>
                 </div>
                 <div class="col-sm-4">
-                    <a href="understand_spot_checks"><img src="/images/blue_lock_370x290.png" class="img-responsive" /></a>
+                    <a href="/content/understand_spot_checks"><img src="/images/blue_lock_370x290.png" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
-                        <a class="ltc-rich-electric-blue" href="understand_spot_checks">Understand spot check results</a><br>
+                        <a class="ltc-rich-electric-blue" href="/content/understand_spot_checks">Understand spot check results</a><br>
                     </h3>
                     <p>
                         A detailed explanation of the results of our KeyChest spot checks.
