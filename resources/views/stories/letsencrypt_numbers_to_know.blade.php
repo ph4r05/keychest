@@ -198,7 +198,7 @@
 						</li>
 						<li>
 							<p>
-								60 days (currently) - to use a valid authorization to get a new certificate.
+								30 days (currently) - to use a valid authorization to get a new certificate.
 							</p>
 						</li>
 					</ul>
@@ -227,7 +227,7 @@
 						Validity of authorizations
 					</h3>
 					<p class=" mg-sm">
-						Here it gets very technical, but also interesting. There is a separate validity time limit for authorizations, which is currently 60 days. What it means is that if you request a certificate renewal, your client will not have to request new authorization for 60 days. It means that you need to:<br>
+						Here it gets very technical, but also interesting. There is a separate validity time limit for authorizations, which is currently 30 days (as of 30 June 2017). What it means is that if you request a certificate renewal, your client will not have to request new authorization for 30 days. It means that you need to:<br>
 					</p>
 					<ul>
 						<li>
@@ -247,7 +247,7 @@
 						</li>
 					</ul>
 					<p class="mg-lg ">
-						Only once every 60 days. This authorization is per account and per domain name. If you have "ssh.enigmabrige.com" and "mx.enigmabridge.com" pointing to the same server, but each name has its own certificate, you will need 2 authorizations.<br><br>For an authorization to live for 60 days, you have to successfully verify it within 7 days. Otherwise, it may stay in the "pending" state and will be removed after 7 days. This limit is particular important if you use DNS verification, as this is a limit in which you need to amend your DNS records.<br>
+						Only once every 30 days. This authorization is per account and per domain name. If you have "ssh.enigmabrige.com" and "mx.enigmabridge.com" pointing to the same server, but each name has its own certificate, you will need 2 authorizations.<br><br>For an authorization to live for 30 days, you have to successfully verify it within 7 days. Otherwise, it may stay in the "pending" state and will be removed after 7 days. This limit is particular important if you use DNS verification, as this is a limit in which you need to amend your DNS records.<br>
 					</p>
 					<div class="divider-h">
 						<span class="divider"></span>
