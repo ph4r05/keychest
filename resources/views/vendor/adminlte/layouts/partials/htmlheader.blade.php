@@ -2,6 +2,8 @@
     <meta charset="UTF-8">
     <title> Keychest - @yield('htmlheader_title', 'Profile') </title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
