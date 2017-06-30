@@ -95,7 +95,7 @@
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Max registrations per end-point (IPv4, IPv6)
 					</h3>
-					<p class=" mg-lg">
+					<p class=" mg-sm">
 					Let's Encrypt limits the number of registrations (i.e., creation of account keys) per end point. The values are:
 					</p>
 					<ul>
