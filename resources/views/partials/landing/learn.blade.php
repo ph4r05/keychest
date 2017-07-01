@@ -21,6 +21,7 @@
                 </p>
                 </div>
                 <div class="col-sm-6">
+                   <img src="/images/keychest_dashboard.png" class="img-responsive mg-lg img-frame" />
                 </div></div>
 
                 <div class="row equal">
