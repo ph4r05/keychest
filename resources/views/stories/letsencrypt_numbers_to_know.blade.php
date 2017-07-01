@@ -91,6 +91,30 @@
 						<br><i>Note 3: It gets a bit complicated when you request new certificates as well as renew existing one - not sure if this is definitive but here we go. Renewals (see below) count to the weekly limit, but they are not limited by it. Basically, you can always renew your existing certificates.<br>
 						A side-effect of that is, however, you will have to be careful and plan well when you get to a threshold of about 240 certificates, as renewals may easily eat out the whole quota for each week. See examples below. </i><br>
 					</p>
+
+					<h3 class="mg-md  tc-rich-electric-blue">
+						Max registrations per end-point (IPv4, IPv6)
+					</h3>
+					<p class=" mg-sm">
+					Let's Encrypt limits the number of registrations (i.e., creation of account keys) per end point. The values are:
+					</p>
+					<ul>
+						<li>
+							<p>
+								IPv4 - exact IP address - 10 registrations per 3 hours; and
+							</p>
+						</li>
+						<li>
+							<p>
+								IPv6 - /48 range and is 500 per 3 hours.
+							</p>
+						</li>
+					</ul>
+					<p class=" mg-lg">
+						<i>Note 1: these limits are the same for production as well as staging environment.</i><br><br>
+						<i>Note 2: re-use of an account key - the key created during registration is not allowed. Each account needs its own key. </i>
+					</p>
+
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Staging environment
 					</h3>
@@ -102,7 +126,7 @@
 						Floating window for limits
 					</h3>
 					<p class=" mg-lg">
-						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (There are any limits in the staging environment, but there are fewer of them and values are higher. We haven't hit any yet.)</i><br>
+						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (<a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/staging-environment/">There are any limits in the staging environment</a>, but limiting values are much higher. We haven't hit any yet.)</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Does revocation of a certificate reset limit counters?
@@ -198,7 +222,7 @@
 						</li>
 						<li>
 							<p>
-								60 days (currently) - to use a valid authorization to get a new certificate.
+								30 days (currently) - to use a valid authorization to get a new certificate.
 							</p>
 						</li>
 					</ul>
@@ -218,13 +242,16 @@
 						Velocity limits 2
 					</h3>
 					<p class="mg-lg ">
-						When you start using LE clients, they will create an LE account for your endpoint. This client account is used to authorize your requests. Usually, you will have one account per server, but you can share the account across your servers.<br><br>If you provide hosting, you may want to create an account per each user, and all that on a dedicated server (a server with one IP address). There is a limit of 500 new accounts per IP address.<br><br>If you make a mistake somewhere, typically when changing clients, and you don't complete certificate issuance, it is possible that LE servers will keep "pending authorizations". There is a limit of 300 pending authorizations per account. If you need to clear them quicker, please follow&nbsp;<a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/clear-pending-authorizations/22157/2" target="_blank">instructions here if you get into this situation</a>. <br> <br>Sliding window of 7 days applies here as well.<br><br><i>These limits are again applied only in the Production environment!</i><br>
+						When you start using LE clients, they will create an LE account for your endpoint. This client account is used to authorize your requests. Usually, you will have one account per server, but you can share the account across your servers.<br><br>If you provide hosting, you may want to create an account per each user, and all that on a dedicated server (a server with one IP address).
+						There is a limit of 500 new accounts per IP address. <a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/integration-guide/">Let's Encrypt Integration Guide</a> also recommends using a single account for all customers.<br>
+						<br><br>If you make a mistake somewhere, typically when changing clients, and you don't complete certificate issuance, it is possible that LE servers will keep "pending authorizations". There is a limit of 300 pending authorizations per account. If you need to clear them quicker, please follow&nbsp;<a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/clear-pending-authorizations/22157/2" target="_blank">instructions here if you get into this situation</a>. <br> <br>
+						Sliding window of 7 days applies here as well.<br><br><i>These limits are again applied only in the Production environment!</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Validity of authorizations
 					</h3>
 					<p class=" mg-sm">
-						Here it gets very technical, but also interesting. There is a separate validity time limit for authorizations, which is currently 60 days. What it means is that if you request a certificate renewal, your client will not have to request new authorization for 60 days. It means that you need to:<br>
+						Here it gets very technical, but also interesting. There is a separate validity time limit for authorizations, which is currently 30 days (as of 30 June 2017). What it means is that if you request a certificate renewal, your client will not have to request new authorization for 30 days. It means that you need to:<br>
 					</p>
 					<ul>
 						<li>
@@ -244,7 +271,7 @@
 						</li>
 					</ul>
 					<p class="mg-lg ">
-						Only once every 60 days. This authorization is per account and per domain name. If you have "ssh.enigmabrige.com" and "mx.enigmabridge.com" pointing to the same server, but each name has its own certificate, you will need 2 authorizations.<br><br>For an authorization to live for 60 days, you have to successfully verify it within 7 days. Otherwise, it may stay in the "pending" state and will be removed after 7 days. This limit is particular important if you use DNS verification, as this is a limit in which you need to amend your DNS records.<br>
+						Only once every 30 days. This authorization is per account and per domain name. If you have "ssh.enigmabrige.com" and "mx.enigmabridge.com" pointing to the same server, but each name has its own certificate, you will need 2 authorizations.<br><br>For an authorization to live for 30 days, you have to successfully verify it within 7 days. Otherwise, it may stay in the "pending" state and will be removed after 7 days. This limit is particular important if you use DNS verification, as this is a limit in which you need to amend your DNS records.<br>
 					</p>
 					<div class="divider-h">
 						<span class="divider"></span>
