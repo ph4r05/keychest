@@ -15,7 +15,7 @@
                         Track and plan for 100% HTTPS uptime
                     </h3>
                     <p class="text-center">
-                        This is a small documentation page, which provides information that you may find interesting if you use, manage, or audit your certificates.&nbsp;
+                        We have created a few stories with information about using, managing, and auditing your certificates.&nbsp;
                     </p>
                 </div>
             </div>

@@ -5,6 +5,8 @@
                 <h1 class="mg-md tc-rich-electric-blue">
                     Welcome to KeyChest
                 </h1>
+                <div class="row equal">
+                  <div class="col-sm-6">
                 <p>
                     KeyChest is the tool you need to stay on top of all your certificates and to keep your boss happy.
                     You can use KeyChest to plan your renewals, get your weekly inventory summary and present your cert
@@ -17,6 +19,9 @@
                     <br> <br>When you create an account, you can quickly populate your dashboard
                     using domain names with wildcards to search for server and print the first set of KPIs within minutes.<br> <br>&nbsp;
                 </p>
+                </div>
+                <div class="col-sm-6">
+                </div></div>
 
                 <div class="row equal">
                     <div class="col-sm-6">
