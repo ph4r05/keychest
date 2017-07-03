@@ -753,19 +753,19 @@
             },
 
             numHiddenCerts(){
-                return _.size(this.certs) - _.size(this.tlsCerts);
+                return Number(_.size(this.certs) - _.size(this.tlsCerts));
             },
 
             numExpiresSoon(){
-                return _.sumBy(this.tlsCerts, cur => {
+                return Number(_.sumBy(this.tlsCerts, cur => {
                     return cur.valid_to_days <= 28;
-                });
+                }));
             },
 
             numExpiresNow(){
-                return _.sumBy(this.tlsCerts, cur => {
+                return Number(_.sumBy(this.tlsCerts, cur => {
                     return cur.valid_to_days <= 7;
-                });
+                }));
             },
 
             numWatches(){
