@@ -1337,6 +1337,10 @@
             },
 
             week4renewGraph(){
+                if (!this.showImminentRenewals){
+                    return;
+                }
+
                 // graph config
                 const config = {
                     type: 'doughnut',
