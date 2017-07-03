@@ -72,7 +72,11 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Beta link -->
-                        <li><a href="">BETA</a></li>
+                        @if (Auth::guest())
+                            <li><a href="{{ route('register') }}">BETA</a></li>
+                        @else
+                            <li><a href="{{ route('home') }}">BETA</a></li>
+                        @endif
 
                         <!-- component navigation -->
                         @yield('content-nav')
