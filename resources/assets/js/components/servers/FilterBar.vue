@@ -2,9 +2,10 @@
     <div class="filter-bar">
       <form class="form-inline">
         <div class="form-group">
-          <label>Search for:</label>
+          <label for="server-search-inp">Search for:</label>
           <input type="text" v-model="filterText" class="form-control input-sm"
-                 @keyup.enter="doFilter" placeholder="server name">
+                 @keyup.enter="doFilter" placeholder="server name" id="server-search-inp">
+
           <button class="btn btn-sm btn-primary" @click.prevent="doFilter">Go</button>
           <button class="btn btn-sm" @click.prevent="resetFilter">Reset</button>
         </div>
@@ -31,8 +32,17 @@
   }
 </script>
 <style>
-.filter-bar {
-  padding: 10px;
-  float: left;
+
+@media (min-width: 768px) {
+    .filter-bar {
+        margin-bottom: 10px;
+    }
 }
+
+@media (max-width: 768px) {
+    .filter-bar .form-inline .form-group input[type=text] {
+        margin-bottom: 5px;
+    }
+}
+
 </style>

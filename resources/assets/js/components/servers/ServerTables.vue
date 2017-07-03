@@ -7,8 +7,15 @@
     </div>
 
     <div v-show="loadingState != 0">
-      <filter-bar></filter-bar>
-      <add-server></add-server>
+      <div class="row">
+        <div class="col-md-8">
+          <filter-bar></filter-bar>
+        </div>
+        <div class="col-md-4">
+          <add-server></add-server>
+        </div>
+      </div>
+
       <edit-server></edit-server>
 
       <div class="table-responsive" v-bind:class="{'loading' : loadingState==2}">

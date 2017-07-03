@@ -1,8 +1,8 @@
 <template>
-    <div class="crease-server">
+    <div class="create-server">
     <div class="create-server-bar">
-        <div class="pull-right">
-            <button type="button" class="btn btn-sm btn-success" v-on:click.prevent="showModal()">
+        <div class="pull-right-nope form-group">
+            <button type="button" class="btn btn-sm btn-success btn-block" v-on:click.prevent="showModal()">
                 Add Server
             </button>
         </div>
@@ -129,7 +129,6 @@
 </script>
 <style>
     .create-server-bar {
-        padding-top: 10px;
         padding-bottom: 10px;
         min-height: 50px;
     }
