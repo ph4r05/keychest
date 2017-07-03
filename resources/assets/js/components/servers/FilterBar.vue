@@ -6,7 +6,7 @@
           <input type="text" v-model="filterText" class="form-control input-sm"
                  @keyup.enter="doFilter" placeholder="server name" id="server-search-inp">
 
-          <button class="btn btn-sm btn-primary" @click.prevent="doFilter">Go</button>
+          <button class="btn btn-sm btn-primary" @click.prevent="doFilter">Filter</button>
           <button class="btn btn-sm" @click.prevent="resetFilter">Reset</button>
         </div>
       </form>
