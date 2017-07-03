@@ -247,3 +247,7 @@ In case of a weird error remove all npm packages and reinstall:
 npm install
 ```
 
+### IPv6-only hosts
+
+Keychest scanner supports IPv6 only hosts, try scanning `www.v6.facebook.com`
+
