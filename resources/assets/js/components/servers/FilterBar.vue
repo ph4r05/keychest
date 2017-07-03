@@ -2,7 +2,7 @@
     <div class="filter-bar">
       <form class="form-inline">
         <div class="form-group">
-          <label for="server-search-inp">Search for:</label>
+          <label for="server-search-inp">Filter results:</label>
           <input type="text" v-model="filterText" class="form-control input-sm"
                  @keyup.enter="doFilter" placeholder="server name" id="server-search-inp">
 
