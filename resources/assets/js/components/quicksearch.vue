@@ -8,7 +8,7 @@
             <form role="form" id="search-form" @submit.prevent="submitForm()">
                 <div class="input-group" id="scan-wrapper">
                     <input type="text" class="form-control input"
-                           placeholder="Type your domain name, e.g., enigmabridge.com"
+                           placeholder="Server name with optional port, e.g., keychest.com or keychest.com:465"
                            name="scan-target" id="scan-target">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="submit">
