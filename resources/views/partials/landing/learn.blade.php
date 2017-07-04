@@ -77,7 +77,7 @@
                         <div class="panel">
                             <div class="panel-heading">
                                 <h3 class="mg-clear tc-rich-electric-blue">
-                                    Accounts (still subject to changes)
+                                    Dashboard (subject to change)
                                 </h3>
                             </div>
                             <div class="panel-body">
