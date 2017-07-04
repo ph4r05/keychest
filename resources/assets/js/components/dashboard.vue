@@ -129,7 +129,7 @@
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content info-box-label">
-                        Key Management Report
+                        Key Management Report - {{Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60)}}
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success">
-                        <template slot="title">Annual certificate renewal schedule</template>
+                        <template slot="title">Yearly renewal calendar</template>
                             <div class="form-group">
                                 <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
                             </div>
@@ -194,17 +194,17 @@
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Server connection problem</template>
+                        <template slot="title">Unreachable servers</template>
 
-                        <p>TLS connection could not be made to the following domains.</p>
+                        <p>We failed to connect to one or more servers using TLS protocol.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Domain</th>
+                                    <th>Server name</th>
                                     <th>Problem</th>
-                                    <th>Detected</th>
-                                    <th>Last scan</th>
+                                    <th>Time of first failure</th>
+                                    <th>Last test</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -212,13 +212,14 @@
                                     <td>{{ tls.urlShort }}</td>
                                     <td>
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
-                                        <span v-if="tls.err_code == 2">Connection error</span>
-                                        <span v-if="tls.err_code == 3">Timeout</span>
-                                        <span v-if="tls.err_code == 4">Domain lookup error</span>
+                                        <span v-else-if="tls.err_code == 2">No server detected</span>
+                                        <span v-else-if="tls.err_code == 3">Timeout</span>
+                                        <span v-else-if="tls.err_code == 4">Domain lookup error</span>
+                                        <span v-else="">TLS not present</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
                                          ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0 ).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -231,22 +232,21 @@
             <div v-if="len(expiredCertificates) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Expired certificates</template>
-                        <p>The following servers show downtime due to expired certificates.</p>
+                        <template slot="title">Servers with expired certificates</template>
+                        <p>Users can't connect to following servers due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
+                                    <th>Date of expiration</th>
+                                    <th>Last test</th>
+                                    <th>Server names</th>
                                     <th>ID</th>
-                                    <th>Expiration</th>
-                                    <th>Last scan</th>
-                                    <th>Domains</th>
-                                    <th>Issuer</th>
+                                    <th>Certificate issuers</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
-                                    <td>{{ cert.id }}</td>
                                     <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
                                         ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}
@@ -258,6 +258,7 @@
                                             </li>
                                         </ul>
                                     </td>
+                                    <td>{{ cert.id }}</td>
                                     <td>{{ cert.issuerOrgNorm }}</td>
                                 </tr>
                                 </tbody>
@@ -271,16 +272,16 @@
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Invalid certificates or configuration</template>
-                        <p>Server check showed a security or configuration problem</p>
+                        <template slot="title">Servers with configuration errors</template>
+                        <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Service</th>
-                                    <th>Detected</th>
-                                    <th>Last scan</th>
-                                    <th>Problems</th>
+                                    <th>Server name</th>
+                                    <th>Time of detection</th>
+                                    <th>Last test</th>
+                                    <th>Issue</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -291,12 +292,12 @@
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <td>
                                         <ul class="domain-list">
-                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed</li>
+                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
                                             <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
                                             <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
-                                            <li v-else-if="len(tls.certs_ids) === 1">Validation failed - No intermediates</li>
-                                            <li v-else-if="len(tls.certs_ids) === 0">No certificates </li>
-                                            <li v-else-if="tls.host_cert">Untrusted</li>
+                                            <li v-else-if="len(tls.certs_ids) === 1">Validation failed - incomplete chain</li>
+                                            <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
+                                            <li v-else-if="tls.host_cert">Untrusted certificate</li>
                                             <li v-else="">No host certificate</li>
                                         </ul>
                                     </td>
@@ -410,7 +411,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 365">
+                            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 90">
                                 <td v-bind:class="cur_whois.planCss.tbl">
                                     {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
@@ -450,6 +451,16 @@
                 </div>
             </div>
 
+            <!-- Section heading -->
+            <div class="row">
+                <div class="info-box">
+                    <span class="info-box-icon bg-blue"><i class="fa fa-info-circle"></i></span>
+                    <div class="info-box-content info-box-label">
+                        Informational
+                    </div>
+                </div>
+            </div>
+
             <!-- Certificate types -->
             <div class="row">
                 <div class="xcol-md-12">
@@ -457,7 +468,7 @@
                         <template slot="title">Number of certificates per type</template>
                         <div class="form-group">
                             <p>
-                                The chart shows the number of certificates managed by third-party (CDN), Let’s Encrypt, and Standard (other issuers)
+                                The chart shows the number of certificates managed by third-party (CDN or ISP), Let’s Encrypt, and long validity certificates.
                             </p>
                             <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
                         </div>
@@ -475,7 +486,7 @@
                             <thead>
                             <tr>
                                 <th>Issuer</th>
-                                <th>Active servers</th>
+                                <th>Watched servers</th>
                                 <th>All issued certificates (CT)</th>
                             </tr>
                             </thead>
@@ -496,33 +507,24 @@
                 </div>
             </div>
 
-            <!-- Section heading -->
-            <div class="row">
-                <div class="info-box">
-                    <span class="info-box-icon bg-blue"><i class="fa fa-info-circle"></i></span>
-                    <div class="info-box-content info-box-label">
-                        Informational
-                    </div>
-                </div>
-            </div>
 
             <!-- Certificate domains -->
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary">
-                        <template slot="title">Number of services in SAN certificates</template>
-                        <p>Certificates can be used for multiple services (domain names).
-                            The table shows how many certificates contain a certain number of services.
+                        <template slot="title">Number of server names in SAN certificates</template>
+                        <p>Certificates can be used for multiple servers (domain names).
+                            The table shows how many certificates contain a certain number of server names.
                             SLD – second-level domain names.</p>
 
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2">Services</th>
-                                    <th colspan="3">Active services</th>
+                                    <th rowspan="2">Servers</th>
+                                    <th colspan="3">Watched servers</th>
                                     <th colspan="3">Global logs</th>
-                                    <th colspan="3">Active SLDs</th>
+                                    <th colspan="3">Watched SLDs</th>
                                     <th colspan="3">SLDs in global logs</th>
                                 </tr>
                                 <tr>
@@ -585,7 +587,7 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary">
                         <template slot="title">Certificate list</template>
-                        <p>All certificates on active (accessible) services ({{ len(tlsCerts) }})</p>
+                        <p>All certificates on watched servers ({{ len(tlsCerts) }})</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -593,7 +595,7 @@
                                     <th>ID</th>
                                     <th>Expiration</th>
                                     <th>Relative</th>
-                                    <th>Domains</th>
+                                    <th>Server names</th>
                                     <th>Issuer</th>
                                 </tr>
                                 </thead>
@@ -796,7 +798,7 @@
 
             showExpiringDomains(){
                 return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (cur.expires_at_days <= 365);
+                        return acc + (cur.expires_at_days <= 90);
                     }, 0) > 0;
             },
 
@@ -1263,7 +1265,7 @@
             //
 
             plannerGraph(){
-                const labels = ['Time', 'Let\'s Encrypt', 'CDN/ISP', 'Paid'];
+                const labels = ['Time', 'Let\'s Encrypt', 'Managed by CDN/ISP', 'Long validity'];
                 const datasets = _.map([this.crtTlsMonth, this.crtAllMonth], x => {
                     return this.graphDataConv(_.concat([labels], x));
                 });
@@ -1299,13 +1301,13 @@
                 const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
                 graphCrtTlsData.options.title = {
                     display: true,
-                    text: 'Certificates detected on servers'
+                    text: 'Certificates on watched servers'
                 };
 
                 const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
                 graphCrtAllData.options.title = {
                     display: true,
-                    text: 'Certificates registered in global logs'
+                    text: 'All issued certificates (CT)'
                 };
 
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
@@ -1325,12 +1327,12 @@
                             {
                                 data: this.certTypesStats,
                                 backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                                label: 'Active servers'
+                                label: 'Certificates on watched servers'
                             }],
                         labels: [
                             'Let\'s Encrypt',
-                            'CDN',
-                            'Paid'
+                            'Managed by CDN/ISP',
+                            'Long validity'
                         ]
                     },
                     options: {
@@ -1421,7 +1423,7 @@
                                 data: tlsIssuerUnz[1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
-                                label: 'Active servers'
+                                label: 'Watched servers'
                             },
                             {
                                 data: allIssuerUnz[1],
@@ -1473,7 +1475,7 @@
                                 data: unzipped[0][1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
-                                label: 'Active servers'
+                                label: 'Watched servers'
                             },
                             {
                                 data: unzipped[1][1],
@@ -1491,7 +1493,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Tracking targets (servers, sub-domains)'
+                            text: 'All watched domains (server names)'
                         },
                         animation: {
                             animateScale: true,
@@ -1509,7 +1511,7 @@
                                 data: unzipped[2][1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
-                                label: 'Active servers'
+                                label: 'Watched servers'
                             },
                             {
                                 data: unzipped[3][1],
@@ -1527,7 +1529,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Registered domains'
+                            text: 'Registered domains (SLD)'
                         },
                         animation: {
                             animateScale: true,
