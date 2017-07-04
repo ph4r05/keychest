@@ -467,7 +467,7 @@
                         <template slot="title">Number of certificates per type</template>
                         <div class="form-group">
                             <p>
-                                The chart shows the number of certificates managed by third-party (CDN), Let’s Encrypt, and Standard (other issuers)
+                                The chart shows the number of certificates managed by third-party (CDN or ISP), Let’s Encrypt, and long validity certificates.
                             </p>
                             <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
                         </div>
@@ -485,7 +485,7 @@
                             <thead>
                             <tr>
                                 <th>Issuer</th>
-                                <th>Active servers</th>
+                                <th>Watched servers</th>
                                 <th>All issued certificates (CT)</th>
                             </tr>
                             </thead>
@@ -506,15 +506,6 @@
                 </div>
             </div>
 
-            <!-- Section heading -->
-            <div class="row">
-                <div class="info-box">
-                    <span class="info-box-icon bg-blue"><i class="fa fa-info-circle"></i></span>
-                    <div class="info-box-content info-box-label">
-                        Informational
-                    </div>
-                </div>
-            </div>
 
             <!-- Certificate domains -->
             <div class="row">
