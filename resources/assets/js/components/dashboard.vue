@@ -201,10 +201,10 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Domain</th>
+                                    <th>Server name</th>
                                     <th>Problem</th>
-                                    <th>Detected</th>
-                                    <th>Last scan</th>
+                                    <th>Time of first failure</th>
+                                    <th>Last test</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -212,8 +212,9 @@
                                     <td>{{ tls.urlShort }}</td>
                                     <td>
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
-                                        <span v-if="tls.err_code == 2">Connection error</span>
-                                        <span v-if="tls.err_code == 3">Timeout</span>
+                                        <span v-else-if="tls.err_code == 2">No server detected</span>
+                                        <span v-else-if="tls.err_code == 3">Timeout</span>
+                                        <span v-else="">TLS not present</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
                                          ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
