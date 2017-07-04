@@ -410,7 +410,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 365">
+                            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 90">
                                 <td v-bind:class="cur_whois.planCss.tbl">
                                     {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
@@ -447,6 +447,16 @@
                         </table>
                         </div>
                     </sbox>
+                </div>
+            </div>
+
+            <!-- Section heading -->
+            <div class="row">
+                <div class="info-box">
+                    <span class="info-box-icon bg-blue"><i class="fa fa-info-circle"></i></span>
+                    <div class="info-box-content info-box-label">
+                        Informational
+                    </div>
                 </div>
             </div>
 
