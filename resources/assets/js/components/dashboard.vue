@@ -91,10 +91,10 @@
                         <a v-else-if="(numExpiresSoon+numExpiresNow) == 0"
                            target="_blank"
                            href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=holiday"
-                           class="small-box-footer" v-else="">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
+                           class="small-box-footer">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
                         <a v-else=""
                            href="#"
-                           class="small-box-footer" v-else="">A break after this week</a>
+                           class="small-box-footer">A break after this week</a>
                     </div>
                 </div>
                 <!-- ./col -->
@@ -117,7 +117,7 @@
                         <a href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=short+breaks"
                            v-else-if="numExpiresSoon>0"
                            target="_blank"
-                           class="small-box-footer" v-else="">Take a short break <i class="fa fa-arrow-circle-right"></i></a>
+                           class="small-box-footer">Take a short break <i class="fa fa-arrow-circle-right"></i></a>
                         <a href="#" class="small-box-footer" v-else="">This looks good</a>
                     </div>
                 </div>
@@ -129,7 +129,8 @@
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content info-box-label">
-                        Key Management Report - {{Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60)}}
+                        Key Management Report - {{ Date() }}
+                        <!-- TODO: fix: Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60) -->
                     </div>
                 </div>
             </div>
@@ -214,6 +215,7 @@
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
                                         <span v-else-if="tls.err_code == 2">No server detected</span>
                                         <span v-else-if="tls.err_code == 3">Timeout</span>
+                                        <span v-else-if="tls.err_code == 4">Domain lookup error</span>
                                         <span v-else="">TLS not present</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
@@ -1629,7 +1631,7 @@
 
                 // Has to clone, we dont want to add extrapolated certificates to other graphs
                 const newSet = _.clone(_.castArray(certSet));
-                const threshold = moment().add(1, 'year').add(1, 'month').unix();
+                const threshold = moment().add(1, 'year').unix();
 
                 // Add each cert
                 _.forEach(filtered, cert => {
@@ -1658,7 +1660,7 @@
                 });
 
                 const fillGap = (ret, lastMoment, toMoment) => {
-                    if (_.isUndefined(lastGrp) || lastMoment >= toMoment){
+                    if (_.isUndefined(lastMoment) || lastMoment >= toMoment){
                         return;
                     }
 
@@ -1671,7 +1673,7 @@
 
                 const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
                 const ret = [];
-                let lastGrp = undefined;
+                let lastGrp = moment().subtract(1, 'month');
                 for(const idx in sorted){
                     const grp = sorted[idx];
                     const crt = grp[0];
