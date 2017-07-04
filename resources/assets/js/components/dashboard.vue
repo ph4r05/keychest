@@ -214,6 +214,7 @@
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
                                         <span v-if="tls.err_code == 2">Connection error</span>
                                         <span v-if="tls.err_code == 3">Timeout</span>
+                                        <span v-if="tls.err_code == 4">Domain lookup error</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
                                          ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
