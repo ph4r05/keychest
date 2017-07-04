@@ -46,9 +46,9 @@
                     <!-- small box -->
                     <div class="small-box bg-aqua">
                         <div class="inner">
-                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts }}</h3>
+                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts+len(tlsCerts) }}</h3>
 
-                            <p>Active / Hidden keys</p>
+                            <p>Active / All certificates</p>
                         </div>
                         <div class="icon">
                             <i class="fa fa-heartbeat"></i>
@@ -64,7 +64,7 @@
                         <div class="inner">
                             <h3>{{ numWatches }}</h3>
 
-                            <p>Servers</p>
+                            <p>Watched servers</p>
                         </div>
                         <div class="icon">
                             <i class="fa fa-server"></i> <!--fa-sitemap-->
@@ -79,14 +79,22 @@
                     <div class="small-box bg-yellow">
                         <div class="inner">
                             <h3>{{ numExpiresSoon }}</h3>
-
-                            <p>Expires soon</p>
+                            <p v-if="numExpiresSoon < 1">Certificates expire soon</p>
+                            <p v-else-if="numExpiresSoon < 2">Certificate expires soon</p>
+                            <p v-else="">Certificates expire soon</p>
                         </div>
                         <div class="icon">
                             <i class="fa fa-bell"></i>
                         </div>
-                        <a href="#renewals" class="small-box-footer" v-if="numExpiresSoon > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
-                        <a href="#" class="small-box-footer" v-else="">No action needed</a>
+                        <a href="#renewals"
+                           class="small-box-footer" v-if="numExpiresSoon > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        <a v-else-if="(numExpiresSoon+numExpiresNow) == 0"
+                           target="_blank"
+                           href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=holiday"
+                           class="small-box-footer" v-else="">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
+                        <a v-else=""
+                           href="#"
+                           class="small-box-footer" v-else="">A break after this week</a>
                     </div>
                 </div>
                 <!-- ./col -->
@@ -97,13 +105,20 @@
                         <div class="inner">
                             <h3>{{ numExpiresNow }}</h3>
 
-                            <p>Expires now</p>
+                            <p v-if="numExpiresNow < 1">Certificates expire now</p>
+                            <p v-else-if="numExpiresNow < 2">Certificate expires now</p>
+                            <p v-else="">Certificates expire now</p>
                         </div>
                         <div class="icon">
                             <i class="fa fa-exclamation-circle"></i>
                         </div>
-                        <a href="#renewals" class="small-box-footer" v-if="numExpiresNow > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
-                        <a href="#" class="small-box-footer" v-else="">No action needed</a>
+                        <a href="#renewals" class="small-box-footer"
+                           v-if="numExpiresNow > 0">Find details <i class="fa fa-arrow-circle-right"></i></a>
+                        <a href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=short+breaks"
+                           v-else-if="numExpiresSoon>0"
+                           target="_blank"
+                           class="small-box-footer" v-else="">Take a short break <i class="fa fa-arrow-circle-right"></i></a>
+                        <a href="#" class="small-box-footer" v-else="">This looks good</a>
                     </div>
                 </div>
                 <!-- ./col -->
@@ -764,7 +779,7 @@
 
             numExpiresNow(){
                 return Number(_.sumBy(this.tlsCerts, cur => {
-                    return cur.valid_to_days <= 7;
+                    return cur.valid_to_days <= 8;
                 }));
             },
 
