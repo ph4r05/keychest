@@ -49,6 +49,10 @@
                 <a href="{{ url('/content') }}"><i class='fa fa-book'></i> <span>{{ trans('admin.content') }}</span></a>
             </li>
 
+            <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
+                <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
+            </li>
+
             {{--<li class="{{ Request::path() ==  '/intro' ? 'active' : ''  }}">--}}
                 {{--<a href="{{ url('/intro') }}"><i class='fa fa-home'></i> <span>{{ trans('admin.home-page') }}</span></a>--}}
             {{--</li>--}}
