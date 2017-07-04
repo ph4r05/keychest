@@ -126,7 +126,7 @@
 						Floating window for limits
 					</h3>
 					<p class=" mg-lg">
-						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (<a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/staging-environment/">There are any limits in the staging environment</a>, but limiting values are much higher. We haven't hit any yet.)</i><br>
+						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 168 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 168 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (<a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/staging-environment/">There are any limits in the staging environment</a>, but limiting values are much higher. We haven't hit any yet.)</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Does revocation of a certificate reset limit counters?
