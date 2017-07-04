@@ -42,6 +42,7 @@
             <!-- Header info widgets -->
             <div class="row">
 
+                <!-- HEADLINE: certificates expire now -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
                     <div class="small-box bg-aqua">
@@ -74,6 +75,7 @@
                 </div>
                 <!-- ./col -->
 
+                <!-- HEADLINE: certificates expire soon -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
                     <div class="small-box bg-yellow">
@@ -99,6 +101,7 @@
                 </div>
                 <!-- ./col -->
 
+                <!-- HEADLINE: no of servers -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
                     <div class="small-box bg-red">
@@ -452,7 +455,7 @@
                 </div>
             </div>
 
-            <!-- Section heading -->
+            <!-- Section heading - INFORMATIONAL -->
             <div class="row">
                 <div class="info-box">
                     <span class="info-box-icon bg-blue"><i class="fa fa-info-circle"></i></span>
