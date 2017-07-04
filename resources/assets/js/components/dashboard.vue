@@ -138,7 +138,7 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success">
-                        <template slot="title">Annual certificate renewal schedule</template>
+                        <template slot="title">Yearly renewal calendar</template>
                             <div class="form-group">
                                 <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
                             </div>
@@ -194,9 +194,9 @@
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Server connection problem</template>
+                        <template slot="title">Unreachable servers</template>
 
-                        <p>TLS connection could not be made to the following domains.</p>
+                        <p>We failed to connect to one or more servers using TLS protocol.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
