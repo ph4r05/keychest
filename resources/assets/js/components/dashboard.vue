@@ -511,19 +511,19 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary">
-                        <template slot="title">Number of services in SAN certificates</template>
-                        <p>Certificates can be used for multiple services (domain names).
-                            The table shows how many certificates contain a certain number of services.
+                        <template slot="title">Number of server names in SAN certificates</template>
+                        <p>Certificates can be used for multiple servers (domain names).
+                            The table shows how many certificates contain a certain number of server names.
                             SLD – second-level domain names.</p>
 
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2">Services</th>
-                                    <th colspan="3">Active services</th>
+                                    <th rowspan="2">Servers</th>
+                                    <th colspan="3">Watched servers</th>
                                     <th colspan="3">Global logs</th>
-                                    <th colspan="3">Active SLDs</th>
+                                    <th colspan="3">Watched SLDs</th>
                                     <th colspan="3">SLDs in global logs</th>
                                 </tr>
                                 <tr>
@@ -586,7 +586,7 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary">
                         <template slot="title">Certificate list</template>
-                        <p>All certificates on active (accessible) services ({{ len(tlsCerts) }})</p>
+                        <p>All certificates on watched servers ({{ len(tlsCerts) }})</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -594,7 +594,7 @@
                                     <th>ID</th>
                                     <th>Expiration</th>
                                     <th>Relative</th>
-                                    <th>Domains</th>
+                                    <th>Server names</th>
                                     <th>Issuer</th>
                                 </tr>
                                 </thead>
@@ -1264,7 +1264,7 @@
             //
 
             plannerGraph(){
-                const labels = ['Time', 'Let\'s Encrypt', 'CDN/ISP', 'Paid'];
+                const labels = ['Time', 'Let\'s Encrypt', 'Managed by CDN/ISP', 'Long validity'];
                 const datasets = _.map([this.crtTlsMonth, this.crtAllMonth], x => {
                     return this.graphDataConv(_.concat([labels], x));
                 });
@@ -1300,13 +1300,13 @@
                 const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
                 graphCrtTlsData.options.title = {
                     display: true,
-                    text: 'Certificates detected on servers'
+                    text: 'Certificates on watched servers'
                 };
 
                 const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
                 graphCrtAllData.options.title = {
                     display: true,
-                    text: 'Certificates registered in global logs'
+                    text: 'All issued certificates (CT)'
                 };
 
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
@@ -1326,12 +1326,12 @@
                             {
                                 data: this.certTypesStats,
                                 backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
-                                label: 'Active servers'
+                                label: 'Certificates on watched servers'
                             }],
                         labels: [
                             'Let\'s Encrypt',
-                            'CDN',
-                            'Paid'
+                            'Managed by CDN/ISP',
+                            'Long validity'
                         ]
                     },
                     options: {
@@ -1422,7 +1422,7 @@
                                 data: tlsIssuerUnz[1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
-                                label: 'Active servers'
+                                label: 'Watched servers'
                             },
                             {
                                 data: allIssuerUnz[1],
@@ -1474,7 +1474,7 @@
                                 data: unzipped[0][1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
-                                label: 'Active servers'
+                                label: 'Watched servers'
                             },
                             {
                                 data: unzipped[1][1],
@@ -1492,7 +1492,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Tracking targets (servers, sub-domains)'
+                            text: 'All watched domains (server names)'
                         },
                         animation: {
                             animateScale: true,
@@ -1510,7 +1510,7 @@
                                 data: unzipped[2][1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
-                                label: 'Active servers'
+                                label: 'Watched servers'
                             },
                             {
                                 data: unzipped[3][1],
@@ -1528,7 +1528,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Registered domains'
+                            text: 'Registered domains (SLD)'
                         },
                         animation: {
                             animateScale: true,
