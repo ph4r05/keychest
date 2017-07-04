@@ -231,22 +231,21 @@
             <div v-if="len(expiredCertificates) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Expired certificates</template>
-                        <p>The following servers show downtime due to expired certificates.</p>
+                        <template slot="title">Servers with expired certificates</template>
+                        <p>Users can't connect to following servers due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
+                                    <th>Date of expiration</th>
+                                    <th>Last test</th>
+                                    <th>Server names</th>
                                     <th>ID</th>
-                                    <th>Expiration</th>
-                                    <th>Last scan</th>
-                                    <th>Domains</th>
-                                    <th>Issuer</th>
+                                    <th>Certificate issuers</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
-                                    <td>{{ cert.id }}</td>
                                     <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
                                         ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}
