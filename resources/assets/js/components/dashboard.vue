@@ -91,10 +91,10 @@
                         <a v-else-if="(numExpiresSoon+numExpiresNow) == 0"
                            target="_blank"
                            href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=holiday"
-                           class="small-box-footer" v-else="">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
+                           class="small-box-footer">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
                         <a v-else=""
                            href="#"
-                           class="small-box-footer" v-else="">A break after this week</a>
+                           class="small-box-footer">A break after this week</a>
                     </div>
                 </div>
                 <!-- ./col -->
@@ -117,7 +117,7 @@
                         <a href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=short+breaks"
                            v-else-if="numExpiresSoon>0"
                            target="_blank"
-                           class="small-box-footer" v-else="">Take a short break <i class="fa fa-arrow-circle-right"></i></a>
+                           class="small-box-footer">Take a short break <i class="fa fa-arrow-circle-right"></i></a>
                         <a href="#" class="small-box-footer" v-else="">This looks good</a>
                     </div>
                 </div>
