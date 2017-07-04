@@ -1612,7 +1612,7 @@
 
                 // Has to clone, we dont want to add extrapolated certificates to other graphs
                 const newSet = _.clone(_.castArray(certSet));
-                const threshold = moment().add(1, 'year').add(1, 'month').unix();
+                const threshold = moment().add(1, 'year').unix();
 
                 // Add each cert
                 _.forEach(filtered, cert => {
@@ -1641,7 +1641,7 @@
                 });
 
                 const fillGap = (ret, lastMoment, toMoment) => {
-                    if (_.isUndefined(lastGrp) || lastMoment >= toMoment){
+                    if (_.isUndefined(lastMoment) || lastMoment >= toMoment){
                         return;
                     }
 
@@ -1654,7 +1654,7 @@
 
                 const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
                 const ret = [];
-                let lastGrp = undefined;
+                let lastGrp = moment().subtract(1, 'month');
                 for(const idx in sorted){
                     const grp = sorted[idx];
                     const crt = grp[0];
