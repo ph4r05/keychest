@@ -129,7 +129,8 @@
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content info-box-label">
-                        Key Management Report - {{Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60)}}
+                        Key Management Report - {{ Date() }}
+                        <!-- TODO: fix: Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60) -->
                     </div>
                 </div>
             </div>
