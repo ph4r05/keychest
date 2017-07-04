@@ -271,16 +271,16 @@
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Invalid certificates or configuration</template>
-                        <p>Server check showed a security or configuration problem</p>
+                        <template slot="title">Servers with configuration errors</template>
+                        <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Service</th>
-                                    <th>Detected</th>
-                                    <th>Last scan</th>
-                                    <th>Problems</th>
+                                    <th>Server name</th>
+                                    <th>Time of detection</th>
+                                    <th>Last test</th>
+                                    <th>Issue</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -291,12 +291,12 @@
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <td>
                                         <ul class="domain-list">
-                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed</li>
+                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
                                             <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
                                             <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
-                                            <li v-else-if="len(tls.certs_ids) === 1">Validation failed - No intermediates</li>
-                                            <li v-else-if="len(tls.certs_ids) === 0">No certificates </li>
-                                            <li v-else-if="tls.host_cert">Untrusted</li>
+                                            <li v-else-if="len(tls.certs_ids) === 1">Validation failed - incomplete chain</li>
+                                            <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
+                                            <li v-else-if="tls.host_cert">Untrusted certificate</li>
                                             <li v-else="">No host certificate</li>
                                         </ul>
                                     </td>
