@@ -218,7 +218,7 @@
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
                                          ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0 ).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -797,7 +797,7 @@
 
             showExpiringDomains(){
                 return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (cur.expires_at_days <= 365);
+                        return acc + (cur.expires_at_days <= 90);
                     }, 0) > 0;
             },
 
