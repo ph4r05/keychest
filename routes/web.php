@@ -75,6 +75,10 @@ Route::get('home/scan', 'SearchController@showHome')->name('home/scan')->middlew
 Route::get('home/dashboard/data', 'DashboardController@loadActiveCerts')
     ->name('dashboard/data')->middleware('auth');
 
+Route::get('home/user-guide', function () {
+    return view('userguide');
+})->name('user-guide');
+
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
 
