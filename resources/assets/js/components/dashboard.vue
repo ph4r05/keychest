@@ -45,65 +45,6 @@
                 <!-- HEADLINE: certificates expire now -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts+len(tlsCerts) }}</h3>
-
-                            <p>Active / All certificates</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-heartbeat"></i>
-                        </div>
-                        <a href="#certs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-green">
-                        <div class="inner">
-                            <h3>{{ numWatches }}</h3>
-
-                            <p>Watched servers</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-server"></i> <!--fa-sitemap-->
-                        </div>
-                        <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-
-                <!-- HEADLINE: certificates expire soon -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-yellow">
-                        <div class="inner">
-                            <h3>{{ numExpiresSoon }}</h3>
-                            <p v-if="numExpiresSoon < 1">Certificates expire soon</p>
-                            <p v-else-if="numExpiresSoon < 2">Certificate expires soon</p>
-                            <p v-else="">Certificates expire soon</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-bell"></i>
-                        </div>
-                        <a href="#renewals"
-                           class="small-box-footer" v-if="numExpiresSoon > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
-                        <a v-else-if="(numExpiresSoon+numExpiresNow) == 0"
-                           target="_blank"
-                           href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=holiday"
-                           class="small-box-footer">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
-                        <a v-else=""
-                           href="#"
-                           class="small-box-footer">A break after this week</a>
-                    </div>
-                </div>
-                <!-- ./col -->
-
-                <!-- HEADLINE: no of servers -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
                     <div class="small-box bg-red">
                         <div class="inner">
                             <h3>{{ numExpiresNow }}</h3>
@@ -125,6 +66,67 @@
                     </div>
                 </div>
                 <!-- ./col -->
+
+                <!-- HEADLINE: certificates expire soon -->
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow">
+                        <div class="inner">
+                            <h3>{{ numExpiresSoon - numExpiresNow }}</h3>
+                            <p v-if="(numExpiresSoon - numExpiresNow) < 1">Certificates expire soon</p>
+                            <p v-else-if="(numExpiresSoon - numExpiresNow) < 2">Certificate expires soon</p>
+                            <p v-else="">Certificates expire soon</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-bell"></i>
+                        </div>
+                        <a href="#renewals"
+                           class="small-box-footer" v-if="numExpiresSoon > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
+                        <a v-else-if="(numExpiresSoon) == 0"
+                           target="_blank"
+                           href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=holiday"
+                           class="small-box-footer">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
+                        <a v-else=""
+                           href="#"
+                           class="small-box-footer">A break after this week</a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
+                <!-- HEADLINE: no of servers -->
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{{ numWatches }}</h3>
+
+                            <p>Watched servers</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-server"></i> <!--fa-sitemap-->
+                        </div>
+                        <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
+                <!-- HEADLINE: certificate inventory -->
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts+len(tlsCerts) }}</h3>
+
+                            <p>Active / All certificates</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-heartbeat"></i>
+                        </div>
+                        <a href="#certs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
             </div>
 
             <!-- Section heading -->
