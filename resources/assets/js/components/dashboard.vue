@@ -176,13 +176,14 @@
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Domain resolution problems</template>
-                        <p>The following domains could not be resolved. Please check the validity.</p>
+                        <template slot="title">DNS configuration issues</template>
+                        <p>Please check if the following domain names are correct. You may also need to verify
+                            your DNS configuration at your DNS registrar and at your DNS servers.</p>
                         <div class="table-responsive table-xfull">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
-                                <th>Domain</th>
+                                    <th>Domain name</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -208,9 +209,9 @@
                                 <thead>
                                 <tr>
                                     <th>Server name</th>
-                                    <th>Problem</th>
-                                    <th>Time of first failure</th>
-                                    <th>Last test</th>
+                                    <th>Cause</th>
+                                    <th>Time of detection</th>
+                                    <th>Last failure</th>
                                 </tr>
                                 </thead>
                                 <tbody>
