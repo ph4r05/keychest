@@ -96,12 +96,23 @@
                 <!-- HEADLINE: no of servers -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-green">
+                    <div class="small-box bg-green" v-if="1==1">
                         <div class="inner">
                             <h3>{{ numWatches }}</h3>
-
                             <p>Watched servers</p>
                         </div>
+                        <div class="icon">
+                            <i class="fa fa-server"></i> <!--fa-sitemap-->
+                        </div>
+                        <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+
+                    <div class="small-box bg-red" v-else="">
+                        <div class="inner">
+                            <h3>X of {{ numWatches }}</h3>
+                            <p>Watched servers DOWN</p>
+                        </div>
+
                         <div class="icon">
                             <i class="fa fa-server"></i> <!--fa-sitemap-->
                         </div>
