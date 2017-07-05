@@ -180,18 +180,18 @@
                         <p>Please check if the following domain names are correct. You may also need to verify
                             your DNS configuration at your DNS registrar and at your DNS servers.</p>
                         <div class="table-responsive table-xfull">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
                                     <th>Domain name</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="dns in dnsFailedLookups" class="danger">
-                                <td>{{ dns.domain }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="dns in dnsFailedLookups" class="danger">
+                                    <td>{{ dns.domain }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </sbox>
                 </div>
@@ -235,46 +235,6 @@
                 </div>
             </div>
 
-            <!-- TLS expired certificates -->
-            <div v-if="len(expiredCertificates) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger">
-                        <template slot="title">Servers with expired certificates</template>
-                        <p>Users can't connect to following servers due to expired certificates.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Date of expiration</th>
-                                    <th>Last test</th>
-                                    <th>Server names</th>
-                                    <th>ID</th>
-                                    <th>Certificate issuers</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
-                                    <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(cert.last_scan_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>
-                                        <ul class="domain-list">
-                                            <li v-for="domain in cert.watch_hosts">
-                                                {{ domain }}
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td>{{ cert.id }}</td>
-                                    <td>{{ cert.issuerOrgNorm }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
             <!-- TLS trust errors -->
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
@@ -286,17 +246,14 @@
                                 <thead>
                                 <tr>
                                     <th>Server name</th>
+                                    <th>Cause</th>
                                     <th>Time of detection</th>
-                                    <th>Last test</th>
-                                    <th>Issue</th>
+                                    <th>Last failure</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
                                     <td>{{ tls.urlShort }}</td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <td>
                                         <ul class="domain-list">
                                             <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
@@ -308,6 +265,9 @@
                                             <li v-else="">No host certificate</li>
                                         </ul>
                                     </td>
+                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -326,24 +286,24 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Service</th>
-                                    <th>Detected</th>
-                                    <th>Last scan</th>
-                                    <th>Certificate domains</th>
+                                    <th>Server name</th>
+                                    <th>Name(s) in certificate</th>
+                                    <th>Time of detection</th>
+                                    <th>Last failure</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
                                     <td>{{ tls.urlShort }}</td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <td>
                                         <ul class="coma-list" v-if="tls.host_cert">
                                             <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
                                         </ul>
                                         <span v-else="">No domains found</span>
                                     </td>
+                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -352,7 +312,48 @@
                 </div>
             </div>
 
-            <!-- Section heading -->
+            <!-- TLS expired certificates -->
+            <div v-if="len(expiredCertificates) > 0" class="row">
+                <div class="xcol-md-12">
+                    <sbox cssBox="box-danger">
+                        <template slot="title">Servers with expired certificates</template>
+                        <p>Clients can't connect to following servers due to expired certificates.</p>
+                        <div class="table-responsive table-xfull">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Server name</th>
+                                    <th>Certificate issuers</th>
+                                    <th>Expiration date</th>
+                                    <th>Last failure</th>
+                                    <!--                                    <th>ID</th> -->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
+                                    <td>
+                                        <ul class="domain-list">
+                                            <li v-for="domain in cert.watch_hosts">
+                                                {{ domain }}
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td>{{ cert.issuerOrgNorm }}</td>
+                                    <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}
+                                        ({{ moment(cert.last_scan_at_utc * 1000.0).fromNow() }})</td>
+                                    <!--                                    <td>{{ cert.id }}</td>-->
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </sbox>
+                </div>
+            </div>
+
+
+            <!-- Section heading - PLANNING -->
             <div class="row">
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-calendar-check-o"></i></span>
@@ -367,23 +368,23 @@
             <div v-if="showImminentRenewals" class="row">
                 <div class="xcol-md-12">
                 <sbox cssBox="box-success">
-                    <template slot="title">Imminent Renewals (next 28 days)</template>
+                    <template slot="title">Renewals due in next 28 days</template>
                     <div class="col-md-6">
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Deadline</th>
-                                    <th>Relative</th>
-                                    <th>Domains</th>
+                                    <th colspan="2">Prevent downtime, renew by</th>
+                                    <th>Server names</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr v-for="grp in imminentRenewalCerts">
-                                    <td v-bind:class="grp[0].planCss.tbl">
-                                        {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}</td>
-                                    <td v-bind:class="grp[0].planCss.tbl">
-                                        {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
+                                    <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-if="moment(grp[0].valid_to_utc * 1000.0)<new Date()">
+                                        SERVER DOWN since {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
+                                    <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-else="">
+                                        {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}
+                                        ({{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }}) </td>
                                     <td v-bind:class="grp[0].planCss.tbl">
                                         <ul class="coma-list" v-if="len(getCertHostPorts(grp)) > 0">
                                             <li v-for="domain in getCertHostPorts(grp)">{{ domain }}</li>
@@ -406,25 +407,25 @@
             <div v-if="showExpiringDomains" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success">
-                        <template slot="title">Domain name renewal deadlines</template>
-                        <p>A list of domain names expiring within a year</p>
+                        <template slot="title">Domain name expiration dates</template>
+                        <p>The following domain names' registration expires within 90 days.</p>
                         <div class="table-responsive table-xfull">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
-                                <th>Deadline</th>
-                                <th>Relative</th>
-                                <th>Domain</th>
+                                <th>Domain name</th>
+                                <th>You have to renew</th>
+                                <th>Expiration date</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 90">
                                 <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
+                                    {{ cur_whois.domain }} </td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
                                     {{ moment(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ cur_whois.domain }} </td>
+                                    {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
                             </tr>
 
                             </tbody>
@@ -472,10 +473,12 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success">
-                        <template slot="title">Number of certificates per type</template>
+                        <template slot="title">Certificate overview</template>
                         <div class="form-group">
                             <p>
-                                The chart shows the number of certificates managed by third-party (CDN or ISP), Let’s Encrypt, and long validity certificates.
+                                Certificates in your inventory can be managed by third-party (CDN or ISP). You are
+                                responsible for renewing certificate issued by Let’s Encrypt (short validity
+                                certificates) and by other authorities (long validity certificates).
                             </p>
                             <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
                         </div>
@@ -487,12 +490,12 @@
             <div class="row" v-if="certIssuerTableData">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success">
-                        <template slot="title">Certificate issuers</template>
+                        <template slot="title">Number of certificates per issuer</template>
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
-                                <th>Issuer</th>
+                                <th>Provider</th>
                                 <th>Watched servers</th>
                                 <th>All issued certificates (CT)</th>
                             </tr>
@@ -1430,13 +1433,13 @@
                                 data: tlsIssuerUnz[1],
                                 backgroundColor: this.chartColors[0],
                                 //backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
-                                label: 'Watched servers'
+                                label: 'Detected on servers'
                             },
                             {
                                 data: allIssuerUnz[1],
                                 backgroundColor: this.chartColors[2],
                                 //backgroundColor: this.takeMod(this.chartColors, allIssuerUnz[0].length),
-                                label: 'All issued certificates (CT)'
+                                label: 'From CT logs only'
                             }],
                         labels: allIssuerUnz[0]
                     },
