@@ -1579,7 +1579,7 @@
 
                 setTimeout(() => {
                     new Chart(document.getElementById("pie_cert_domains"), graphCertDomains);
-                    new Chart(document.getElementById("pie_cert_domains_tld"), graphCertDomainsTld);
+                    // new Chart(document.getElementById("pie_cert_domains_tld"), graphCertDomainsTld);
                 }, 1000);
 
             },
