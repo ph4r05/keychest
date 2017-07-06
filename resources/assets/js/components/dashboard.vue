@@ -534,35 +534,36 @@
                     <sbox cssBox="box-primary">
                         <template slot="title">Number of server names in SAN certificates</template>
                         <p>Certificates can be used for multiple servers (domain names).
-                            The table shows how many certificates contain a certain number of server names.
-                            SLD – second-level domain names.</p>
+                            The table shows how many servers can use a certain certificate.
+                            This information has an impact on the cost of certificats, if there issuance
+                            is not free.</p>
 
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2">Servers</th>
-                                    <th colspan="3">Watched servers</th>
-                                    <th colspan="3">Global logs</th>
-                                    <th colspan="3">Watched SLDs</th>
-                                    <th colspan="3">SLDs in global logs</th>
+                                    <th rowspan="2">Number of servers</th>
+                                    <th colspan="3">Certificates on watched servers</th>
+                                    <th colspan="3">All issued certificates (CT)</th>
+<!--                                    <th colspan="3">Watched SLDs</th>
+                                    <th colspan="3">SLDs in global logs</th> -->
                                 </tr>
                                 <tr>
-                                    <th>Certs</th>
+                                    <th>Let's Encrypt</th>
+                                    <th>Other certificates</th>
+                                    <th>Number of issuers</th>
+
+                                    <th>Let's Encrypt</th>
+                                    <th>Other certificates</th>
+                                    <th><i>Number of issuers</i></th>
+
+<!--                                    <th>Certs</th>
                                     <th>Issuers</th>
                                     <th>LE</th>
 
                                     <th>Certs</th>
                                     <th>Issuers</th>
-                                    <th>LE</th>
-
-                                    <th>Certs</th>
-                                    <th>Issuers</th>
-                                    <th>LE</th>
-
-                                    <th>Certs</th>
-                                    <th>Issuers</th>
-                                    <th>LE</th>
+                                    <th>LE</th>-->
                                 </tr>
                                 </thead>
 
@@ -570,33 +571,35 @@
                                 <tr v-for="group in certDomainsTableData">
                                     <td>{{ getCountCategoryLabelTbl(group[0]) }}</td>
 
-                                    <td>{{ tblVal(group[1][0].size) }}</td>
+                                    <td><b>{{ tblVal(group[1][0].leCnt) }}</b></td>
+                                    <td v-if="isNaN(tblVal(group[1][0].leCnt))"><b>{{ tblVal(group[1][0].size) }}</b></td>
+                                    <td v-else=""><b>{{ tblVal(group[1][0].size) - tblVal(group[1][0].leCnt) }}</b></td>
                                     <td>{{ tblVal(group[1][0].distIssuers) }}</td>
-                                    <td>{{ tblVal(group[1][0].leCnt) }}</td>
 
-                                    <td>{{ tblVal(group[1][1].size) }}</td>
+                                    <td><b>{{ tblVal(group[1][1].leCnt) }}</b></td>
+                                    <td v-if="isNaN(tblVal(group[1][1].leCnt))"><b>{{ tblVal(group[1][1].size) }}</b></td>
+                                    <td v-else=""><b>{{ tblVal(group[1][1].size) - tblVal(group[1][1].leCnt) }}</b></td>
                                     <td>{{ tblVal(group[1][1].distIssuers) }}</td>
-                                    <td>{{ tblVal(group[1][1].leCnt) }}</td>
 
-                                    <td>{{ tblVal(group[1][2].size) }}</td>
+<!--                                    <td>{{ tblVal(group[1][2].size) }}</td>
                                     <td>{{ tblVal(group[1][2].distIssuers) }}</td>
                                     <td>{{ tblVal(group[1][2].leCnt) }}</td>
 
                                     <td>{{ tblVal(group[1][3].size) }}</td>
                                     <td>{{ tblVal(group[1][3].distIssuers) }}</td>
-                                    <td>{{ tblVal(group[1][3].leCnt) }}</td>
+                                    <td>{{ tblVal(group[1][3].leCnt) }}</td>-->
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
 
 
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <canvas id="pie_cert_domains" style="height: 400px;"></canvas>
                         </div>
-                        <div class="col-md-6">
+<!--                        <div class="col-md-6">
                             <canvas id="pie_cert_domains_tld" style=" height: 400px;"></canvas>
-                        </div>
+                        </div> -->
                     </sbox>
                 </div>
             </div>
