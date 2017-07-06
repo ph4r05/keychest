@@ -1019,11 +1019,11 @@
             getCountCategoryLabelTbl(idx){
                 if (idx >= this.countCategories.length){
                     return _.last(this.countCategories) + '+';
-                } else if (idx == 0) {
-                    return this.countCategories[0]
+                } else if ((idx == 0) || (this.countCategories[idx]-this.countCategories[idx-1]<2)) {
+                    return this.countCategories[idx]
                 }
 
-                return this.countCategories[idx-1] + '-' + this.countCategories[idx];
+                return (this.countCategories[idx-1] + 1) + '-' + this.countCategories[idx];
             },
 
             getCertHostPorts(certSet){
