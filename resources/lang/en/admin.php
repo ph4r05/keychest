@@ -13,7 +13,7 @@ return [
     'dashboard' => 'Dashboard',
     'servers' => 'Servers',
     'scan' => 'Spot check',
-    'scan_desc' => 'your hosts',
+    'scan_desc' => '',
     'home-page' => 'Intro page',
     'content' => 'Stories',
     'userguide' => 'User guide',
