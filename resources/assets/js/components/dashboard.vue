@@ -662,9 +662,9 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary">
-                        <template slot="title">Complete Certificate list</template>
+                        <template slot="title">All certificates of your servers</template>
                         <div class="form-group">
-                            <p>All certificates in Certificate Transparency public logs ({{ len(certs) }})</p>
+                            <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
                             <input type="checkbox" id="chk-include-expired">
                             <label for="chk-include-expired">Include expired certificates</label>
                         </div>
@@ -672,19 +672,17 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Expiration</th>
-                                    <th>Relative</th>
-                                    <th>Domains</th>
+<!--                                    <th>ID</th>-->
+                                    <th>Domain name(s)</th>
                                     <th>Issuer</th>
+                                    <th colspan="2">Certificate expiration date</th>
+<!--                                    <th>Relative</th>-->
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ moment(cert.valid_to).fromNow() }}</td>
+<!--                                    <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
@@ -693,6 +691,11 @@
                                         </ul>
                                     </td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                                    <td v-bind:class="cert.planCss.tbl"
+                                        v-if="moment(cert.valid_to)<new Date()">EXPIRED {{ moment(cert.valid_to).fromNow() }}</td>
+                                    <td v-bind:class="cert.planCss.tbl"
+                                        v-else="">{{ moment(cert.valid_to).fromNow() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
