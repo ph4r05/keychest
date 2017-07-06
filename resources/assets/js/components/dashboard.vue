@@ -610,25 +610,28 @@
             <div class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary">
-                        <template slot="title">Certificate list</template>
-                        <p>All certificates on watched servers ({{ len(tlsCerts) }})</p>
+                        <template slot="title">Certificates under your management</template>
+                        <div class="form-group">
+                        <p>This is a list of all certificates that you control and are responsible for renewals.
+                            You can choose to see only certificates correctly installed on your server,
+                            or all certificates issued to your servers.</p>
+                        <input type="checkbox" id="chk-include-notverified" disabled="true">
+                        <label for="chk-include-notverified">Include certificates not verified from your servers</label>
+                        </div>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Expiration</th>
-                                    <th>Relative</th>
+<!--                                    <th>ID</th> -->
                                     <th>Server names</th>
                                     <th>Issuer</th>
+                                    <th colspan="2">Renew / plan renewal</th>
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ moment(cert.valid_to).fromNow() }}</td>
+<!--                                <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td> -->
                                     <td v-bind:class="cert.planCss.tbl">
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
@@ -637,6 +640,15 @@
                                         </ul>
                                     </td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
+                                    <td v-bind:class="cert.planCss.tbl"
+                                        v-if="(moment(cert.valid_to)<new Date())&&(len(cert.watch_hosts)<2)">
+                                        SERVER DOWN since {{ moment(cert.valid_to).fromNow() }}</td>
+                                    <td v-bind:class="cert.planCss.tbl"
+                                        v-else-if="(moment(cert.valid_to)<new Date())&&(len(cert.watch_hosts)>1)">
+                                        SERVERS DOWN since {{ moment(cert.valid_to).fromNow() }}</td>
+                                    <td v-bind:class="cert.planCss.tbl"
+                                        v-else="">{{ moment(cert.valid_to).fromNow() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
