@@ -104,6 +104,7 @@
                         <div class="icon">
                             <i class="fa fa-server"></i> <!--fa-sitemap-->
                         </div>
+                        <!--suppress HtmlUnknownTarget -->
                         <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                     </div>
 
@@ -116,6 +117,7 @@
                         <div class="icon">
                             <i class="fa fa-server"></i> <!--fa-sitemap-->
                         </div>
+                        <!--suppress HtmlUnknownTarget -->
                         <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
