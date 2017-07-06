@@ -352,8 +352,7 @@
                                     <td>{{ cert.issuerOrgNorm }}</td>
                                     <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
                                         ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(cert.last_scan_at_utc * 1000.0).fromNow() }})</td>
+                                    <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <!--                                    <td>{{ cert.id }}</td>-->
                                 </tr>
                                 </tbody>
