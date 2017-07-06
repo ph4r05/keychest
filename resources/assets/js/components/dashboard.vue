@@ -379,12 +379,13 @@
                 <div class="xcol-md-12">
                 <sbox cssBox="box-success">
                     <template slot="title">Renewals due in next 28 days</template>
+                    <p>Watch carefully dates in the following table to prevent downtime on your servers. </p>
                     <div class="col-md-6">
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th colspan="2">Prevent downtime, renew by</th>
+                                    <th colspan="2">Renew before</th>
                                     <th>Server names</th>
                                 </tr>
                                 </thead>
