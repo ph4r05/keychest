@@ -337,7 +337,7 @@
                                     <th>Certificate issuers</th>
                                     <th>Expiration date</th>
                                     <th>Last failure</th>
-                                    <!--                                    <th>ID</th> -->
+                                    <!--<th>ID</th> -->
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -353,7 +353,7 @@
                                     <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
                                         ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
-                                    <!--                                    <td>{{ cert.id }}</td>-->
+                                    <!--<td>{{ cert.id }}</td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -546,8 +546,8 @@
                                     <th rowspan="2" colspan="1">No of server names<br/> in certificates</th>
                                     <th colspan="3">Certificates on watched servers</th>
                                     <th colspan="3">All issued certificates (CT)</th>
-<!--                                    <th colspan="3">Watched SLDs</th>
-                                    <th colspan="3">SLDs in global logs</th> -->
+                                    <!--<th colspan="3">Watched SLDs</th>-->
+                                    <!--<th colspan="3">SLDs in global logs</th> -->
                                 </tr>
                                 <tr>
                                     <th>Let's Encrypt</th>
@@ -558,13 +558,13 @@
                                     <th>Other certificates</th>
                                     <th><i>Number of issuers</i></th>
 
-<!--                                    <th>Certs</th>
-                                    <th>Issuers</th>
-                                    <th>LE</th>
+                                    <!--<th>Certs</th>-->
+                                    <!--<th>Issuers</th>-->
+                                    <!--<th>LE</th>-->
 
-                                    <th>Certs</th>
-                                    <th>Issuers</th>
-                                    <th>LE</th>-->
+                                    <!--<th>Certs</th>-->
+                                    <!--<th>Issuers</th>-->
+                                    <!--<th>LE</th>-->
                                 </tr>
                                 </thead>
 
@@ -582,13 +582,13 @@
                                     <td v-else="">{{ tblVal(group[1][1].size) - tblVal(group[1][1].leCnt) }}</td>
                                     <td><i>{{ tblVal(group[1][1].distIssuers) }}</i></td>
 
-<!--                                    <td>{{ tblVal(group[1][2].size) }}</td>
-                                    <td>{{ tblVal(group[1][2].distIssuers) }}</td>
-                                    <td>{{ tblVal(group[1][2].leCnt) }}</td>
+                                    <!--<td>{{ tblVal(group[1][2].size) }}</td>-->
+                                    <!--<td>{{ tblVal(group[1][2].distIssuers) }}</td>-->
+                                    <!--<td>{{ tblVal(group[1][2].leCnt) }}</td>-->
 
-                                    <td>{{ tblVal(group[1][3].size) }}</td>
-                                    <td>{{ tblVal(group[1][3].distIssuers) }}</td>
-                                    <td>{{ tblVal(group[1][3].leCnt) }}</td>-->
+                                    <!--<td>{{ tblVal(group[1][3].size) }}</td>-->
+                                    <!--<td>{{ tblVal(group[1][3].distIssuers) }}</td>-->
+                                    <!--<td>{{ tblVal(group[1][3].leCnt) }}</td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -598,9 +598,9 @@
                         <div class="col-md-12">
                             <canvas id="pie_cert_domains" style="height: 400px;"></canvas>
                         </div>
-<!--                        <div class="col-md-6">
-                            <canvas id="pie_cert_domains_tld" style=" height: 400px;"></canvas>
-                        </div> -->
+                        <!--<div class="col-md-6">-->
+                            <!--<canvas id="pie_cert_domains_tld" style=" height: 400px;"></canvas>-->
+                        <!--</div>-->
                     </sbox>
                 </div>
             </div>
@@ -622,7 +622,7 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-<!--                                    <th>ID</th> -->
+                                    <!--<th>ID</th>-->
                                     <th>Server names</th>
                                     <th>Issuer</th>
                                     <th colspan="2">Renew / plan renewal</th>
@@ -631,7 +631,7 @@
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-<!--                                <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td> -->
+                                    <!--<td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
@@ -672,17 +672,17 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-<!--                                    <th>ID</th>-->
+                                    <!--<th>ID</th>-->
                                     <th>Domain name(s)</th>
                                     <th>Issuer</th>
                                     <th colspan="2">Certificate expiration date</th>
-<!--                                    <th>Relative</th>-->
+                                    <!--<th>Relative</th>-->
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
-<!--                                    <td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
+                                    <!--<td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
