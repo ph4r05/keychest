@@ -543,7 +543,7 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2" colspan="1">No of server names<br/> in certificates</th>
+                                    <th rowspan="2">No of server names<br/> in certificates</th>
                                     <th colspan="3">Certificates on watched servers</th>
                                     <th colspan="3">All issued certificates (CT)</th>
                                     <!--<th colspan="3">Watched SLDs</th>-->
