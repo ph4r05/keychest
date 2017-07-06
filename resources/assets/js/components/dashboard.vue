@@ -543,7 +543,7 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <th rowspan="2">Number of servers</th>
+                                    <th rowspan="2" colspan="1">No of server names<br/> in certificates</th>
                                     <th colspan="3">Certificates on watched servers</th>
                                     <th colspan="3">All issued certificates (CT)</th>
 <!--                                    <th colspan="3">Watched SLDs</th>
@@ -552,7 +552,7 @@
                                 <tr>
                                     <th>Let's Encrypt</th>
                                     <th>Other certificates</th>
-                                    <th>Number of issuers</th>
+                                    <th><i>Number of issuers</i></th>
 
                                     <th>Let's Encrypt</th>
                                     <th>Other certificates</th>
@@ -572,15 +572,15 @@
                                 <tr v-for="group in certDomainsTableData">
                                     <td>{{ getCountCategoryLabelTbl(group[0]) }}</td>
 
-                                    <td><b>{{ tblVal(group[1][0].leCnt) }}</b></td>
-                                    <td v-if="isNaN(tblVal(group[1][0].leCnt))"><b>{{ tblVal(group[1][0].size) }}</b></td>
-                                    <td v-else=""><b>{{ tblVal(group[1][0].size) - tblVal(group[1][0].leCnt) }}</b></td>
-                                    <td>{{ tblVal(group[1][0].distIssuers) }}</td>
+                                    <td>{{ tblVal(group[1][0].leCnt) }}</td>
+                                    <td v-if="isNaN(tblVal(group[1][0].leCnt))">{{ tblVal(group[1][0].size) }}</td>
+                                    <td v-else="">{{ tblVal(group[1][0].size) - tblVal(group[1][0].leCnt) }}</td>
+                                    <td><i>{{ tblVal(group[1][0].distIssuers) }}</i></td>
 
-                                    <td><b>{{ tblVal(group[1][1].leCnt) }}</b></td>
-                                    <td v-if="isNaN(tblVal(group[1][1].leCnt))"><b>{{ tblVal(group[1][1].size) }}</b></td>
-                                    <td v-else=""><b>{{ tblVal(group[1][1].size) - tblVal(group[1][1].leCnt) }}</b></td>
-                                    <td>{{ tblVal(group[1][1].distIssuers) }}</td>
+                                    <td>{{ tblVal(group[1][1].leCnt) }}</td>
+                                    <td v-if="isNaN(tblVal(group[1][1].leCnt))">{{ tblVal(group[1][1].size) }}</td>
+                                    <td v-else="">{{ tblVal(group[1][1].size) - tblVal(group[1][1].leCnt) }}</td>
+                                    <td><i>{{ tblVal(group[1][1].distIssuers) }}</i></td>
 
 <!--                                    <td>{{ tblVal(group[1][2].size) }}</td>
                                     <td>{{ tblVal(group[1][2].distIssuers) }}</td>
