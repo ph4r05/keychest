@@ -615,7 +615,7 @@
                         <p>This is a list of all certificates that you control and are responsible for renewals.
                             You can choose to see only certificates correctly installed on your server,
                             or all certificates issued to your servers.</p>
-                        <input type="checkbox" id="chk-include-notverified" disabled="true">
+                        <input type="checkbox" id="chk-include-notverified" disabled="disabled">
                         <label for="chk-include-notverified">Include certificates not verified from your servers</label>
                         </div>
                         <div class="table-responsive table-xfull">
@@ -1270,6 +1270,8 @@
                         this.includeExpired = state;
                     }
                 });
+
+                $('#chk-include-notverified').bootstrapSwitch();
             },
 
             cleanResults(){
