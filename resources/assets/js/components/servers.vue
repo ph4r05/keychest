@@ -4,7 +4,7 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Servers</a></li>
                 <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Auto Sub-domains</a></li>
-                <li class="pull-right"><a href="#" class="text-muted" v-on:click="refresh"><i class="fa fa-refresh"></i></a></li>
+                <li class="pull-right"><a href="#" class="text-muted" title="Refresh" v-on:click="refresh"><i class="fa fa-refresh"></i></a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
