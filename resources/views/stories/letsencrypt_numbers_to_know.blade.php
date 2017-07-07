@@ -17,7 +17,7 @@
 						<a class="ltc-rich-electric-blue" href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>&nbsp;is now the largest certificate provider for internet facing servers (combining a Frost&amp;Sullivan report on SSL/TLS certificates from 2016 and actual data from Let's Encrypt, LE currently issues around 80% of all browser-trusted certificates). It does not issue the "most secure" certificates (i.e., EV, or extended validation certificates, which require manual validation of the address and legal status of the web service owner), but its certificates provide a very good level of security for most of us.<br><br>When we started using Let's Encrypt (LE), we slowly learnt about various limitations imposed on users. There is not any single place where you can find all important information in one place so here's the first attempt. We will amend it as we learn more directly, or from your feedback.<br>
 					</p>
 					<p>
-						Start monitoring your SSL certificates with KeyChest.net - <a class="ltc-rich-electric-blue" href="https://letsencrypt.org" target="_blank">a free certificate dashboard and spot checker</a> (or click "My Dashboard" above).
+						<i>Start monitoring your SSL certificates with KeyChest.net - <a class="ltc-rich-electric-blue" href="https://keychest.net" target="_blank">a free certificate dashboard and spot checker</a> (or click "My Dashboard" above).</i></p>
 					</p>
 					<div class="divider-h">
 						<span class="divider"></span>
