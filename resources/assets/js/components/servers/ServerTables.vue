@@ -7,6 +7,8 @@
     </div>
 
     <div v-show="loadingState != 0">
+      <h3>Monitored servers</h3>
+
       <div class="row">
         <div class="col-md-8">
           <filter-bar></filter-bar>
