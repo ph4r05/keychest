@@ -190,11 +190,9 @@ export default {
             if (this.loadingState != 0){
                 this.loadingState = 2;
             }
-            console.log('loading');
         },
         onLoaded(){
             this.loadingState = 1;
-            console.log('loaded');
         },
         onDeleteServer(data){
             swal({
@@ -277,6 +275,9 @@ export default {
         'on-delete-server'(data) {
             this.onDeleteServer(data);
         },
+        'on-manual-refresh'(){
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
+        }
     }
 }
 </script>

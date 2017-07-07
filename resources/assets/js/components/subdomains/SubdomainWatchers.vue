@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div class="alert alert-info alert-waiting scan-alert" id="search-info"
              v-if="loadingState == 0">
             <span>Loading data, please wait...</span>
@@ -282,6 +281,9 @@
             'on-delete-sub-watch'(data) {
                 this.onDeleteServer(data);
             },
+            'on-manual-refresh'(){
+                Vue.nextTick(() => this.$refs.vuetable.refresh());
+            }
         }
     }
 </script>

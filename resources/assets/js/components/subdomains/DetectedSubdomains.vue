@@ -1,12 +1,6 @@
 <template>
     <div>
-
-        <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-             v-if="loadingState == 0">
-            <span>Loading data, please wait...</span>
-        </div>
-
-        <div v-show="loadingState != 0">
+        <div>
             <div class="row">
                 <div class="col-md-8">
                     <filter-bar
@@ -18,7 +12,8 @@
             </div>
 
             <!--/home/subs/res-->
-            <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
+            <div class="table-responsive table-xfull"
+                 v-bind:class="{'loading' : tblLoadingState==2 || loadingState==0}">
                 <vuetable ref="vuetable"
                           api-url=""
                           :apiMode="false"
@@ -214,7 +209,6 @@
             },
 
             loadData(){
-                console.log('loading subs...');
                 const onFail = (function(){
                     this.loadingState = -1;
                     toastr.error('Error while loading, please, try again later', 'Error');
@@ -372,17 +366,20 @@
         },
         events: {
             'on-server-added' (data) {
-                Vue.nextTick(() => this.needRefresh);
+                Vue.nextTick(() => this.needRefresh());
             },
             'on-server-updated'(data) {
-                Vue.nextTick(() => this.needRefresh);
+                Vue.nextTick(() => this.needRefresh());
             },
             'on-delete-server'(data) {
-                Vue.nextTick(() => this.needRefresh);
+                Vue.nextTick(() => this.needRefresh());
             },
             'on-server-deleted'(data) {
-                Vue.nextTick(() => this.needRefresh);
+                Vue.nextTick(() => this.needRefresh());
             },
+            'on-manual-refresh'(){
+                Vue.nextTick(() => this.needRefresh());
+            }
         }
     }
 </script>
