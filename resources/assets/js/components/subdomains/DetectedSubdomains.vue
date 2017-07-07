@@ -157,8 +157,6 @@
                 return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
             },
             onPaginationData (paginationData) {
-                console.log('pagination data:');
-                console.log(paginationData);
                 this.$refs.pagination.setPaginationData(paginationData);
                 this.$refs.paginationInfo.setPaginationData(paginationData);
             },
@@ -172,15 +170,12 @@
                 if (this.tblLoadingState !== 0){
                     this.tblLoadingState = 2;
                 }
-                console.log('subs det loading');
             },
             onLoaded(){
                 this.tblLoadingState = 1;
-                console.log('subs det loaded');
             },
 
             renderPagination(h) {
-                console.log('pagpag');
                 return h(
                     'div',
                     { class: {'vuetable-pagination': true} },
@@ -227,14 +222,13 @@
                         }
                     })
                     .catch(e => {
-                        console.log("Add server failed: " + e);
+                        console.log("Loading det sub failed: " + e);
                         onFail();
                     });
             },
 
             processData(){
                 this.$nextTick(function () {
-                    console.log('Detected Subs Data loaded');
                     this.dataProcessStart = moment();
                     this.processResults();
                 });
@@ -252,7 +246,7 @@
                     this.postLoad();
                     const processTime = moment().diff(this.dataProcessStart);
                     this.$refs.vuetable.refresh();
-                    console.log('Processing finished in ' + processTime + ' ms');
+                    console.log('Subs det Processing finished in ' + processTime + ' ms');
                 });
             },
 
@@ -271,16 +265,28 @@
             //
 
             dataManager(sort, pagination){
-                console.log('datamgr');
-                console.log(sort);
-                console.log(pagination);
+                let showData = this.processedData;
 
-                const dat = {
-                    data:this.processedData
-                };
+                // filtering
+                if (this.moreParams && this.moreParams.filter){
+                    showData = _.filter(showData, (item) => {
+                        return item.name.search(this.moreParams.filter) >= 0;
+                    });
+                }
 
-                const ret = _.extend(dat, pagination);
-                console.log(ret);
+                // sorting - vuetable sort to orderBy
+                const ordering = Req.vueSortToOrderBy(sort);
+                showData = _.orderBy(showData, ordering[0], ordering[1]);
+
+                // pagination
+                pagination.total = _.size(showData);
+                showData = _.chunk(showData, pagination.per_page)[pagination.current_page - 1];
+
+                pagination.last_page = Math.ceil(pagination.total / pagination.per_page);
+                pagination.to = _.min([pagination.from + pagination.per_page - 1, pagination.total]);
+
+                //noinspection UnnecessaryLocalVariableJS
+                const ret = _.extend({data: showData}, pagination);
                 return ret;
             },
 
@@ -294,14 +300,6 @@
                 this.moreParams = {};
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
             },
-            getSortParam: function(sortOrder) {
-                console.log('sortParam');
-                console.log(sortOrder);
-                return null;
-//                return sortOrder.map(function(sort) {
-//                    return (sort.direction === 'desc' ? '+' : '') + sort.field
-//                }).join(',')
-            }
         },
         events: {
             'on-server-added' (data) {
@@ -316,7 +314,7 @@
         }
     }
 </script>
-<style>
+<style scoped>
     .pagination {
         margin: 0;
         float: right;
