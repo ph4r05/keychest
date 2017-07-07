@@ -15,6 +15,13 @@
 
 <script>
   export default {
+    props: {
+      globalEvt: {
+          type: Boolean,
+          required: false,
+          default: true
+      }
+    },
     data () {
       return {
         filterText: ''
@@ -22,11 +29,19 @@
     },
     methods: {
       doFilter () {
-        this.$events.fire('filter-set', this.filterText);
+        if(this.globalEvt) {
+          this.$events.fire('filter-set', this.filterText); // global event bus: vue-evt
+        } else {
+          this.$emit('filter-set', this.filterText);
+        }
       },
       resetFilter () {
         this.filterText = '';
-        this.$events.fire('filter-reset');
+        if(this.globalEvt) {
+          this.$events.fire('filter-reset');  // global event bus: vue-evt
+        } else {
+          this.$emit('filter-reset');
+        }
       }
     }
   }
