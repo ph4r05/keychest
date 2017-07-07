@@ -40,4 +40,17 @@ class DataTools {
         });
         return $inverted;
     }
+
+    /**
+     * In-place union to dst
+     * @param Collection $dst
+     * @param Collection $src
+     * @return Collection
+     */
+    public static function addAll($dst, $src){
+        $src->each(function ($item, $key) use ($dst) {
+            $dst->push($item);
+        });
+        return $dst;
+    }
 }
