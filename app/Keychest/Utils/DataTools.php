@@ -53,4 +53,25 @@ class DataTools {
         });
         return $dst;
     }
+
+    /**
+     * Processes sort string produced by Vue table, returns parsed result for query.
+     * @param $sort
+     * @return Collection
+     */
+    public static function vueSortToDb($sort){
+        if (empty(trim($sort))){
+            return collect();
+        }
+
+        $sorts = collect(explode(',', $sort));
+        return $sorts->map(function($item, $key){
+            $asc = true;
+            if (strpos($item, '|') !== false){
+                list($item, $ordtxt) = explode('|', $item, 2);
+                $asc = $ordtxt == 'asc';
+            }
+            return [$item, $asc];
+        })->values();
+    }
 }
