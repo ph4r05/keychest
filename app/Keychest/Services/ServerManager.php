@@ -56,6 +56,23 @@ class ServerManager {
     }
 
     /**
+     * Returns query for loading users hosts.
+     * @param $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getUserHostsQuery($userId){
+        $watchTbl = (new WatchTarget())->getTable();
+        $watchAssocTbl = (new WatchAssoc())->getTable();
+
+        $query = WatchAssoc::query()
+            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
+            ->select($watchTbl.'.*', $watchAssocTbl.'.*')
+            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->whereNull($watchAssocTbl.'.deleted_at');
+        return $query;
+    }
+
+    /**
      * Returns all host associations for the given user
      * @param $userId
      * @param Collection $hosts collection of host ids to restrict
