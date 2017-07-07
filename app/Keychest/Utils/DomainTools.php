@@ -130,7 +130,7 @@ class DomainTools {
         $parsed = parse_url($url);
         $scheme = isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https';
         $host = isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : self::removeUrlPath($url);
-        $port = isset($parsed['port']) && !empty($parsed['port']) ? $parsed['port'] : 443;
+        $port = isset($parsed['port']) && !empty($parsed['port']) ? intval($parsed['port']) : 443;
         return self::assembleUrl($scheme, $host, $port);
     }
 
