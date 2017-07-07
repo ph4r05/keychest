@@ -110,7 +110,7 @@
         events: {
             'on-edit-sub-watch'(data) {
                 this.serverItem = data;
-                this.serverItem.server = window.Req.buildUrl(data.scan_scheme, data.scan_host, data.scan_port);
+                this.serverItem.server = window.Req.buildUrl('https', data.scan_host, undefined);
                 $("#update-item-sub").modal('show');
                 setTimeout(()=>{
                     $("#upd-server-name-sub").focus();

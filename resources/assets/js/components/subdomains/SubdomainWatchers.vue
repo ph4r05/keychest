@@ -36,7 +36,16 @@
                           @vuetable:pagination-data="onPaginationData"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
-                ></vuetable>
+                >
+                    <template slot="actions" scope="props">
+                        <div class="custom-actions">
+                            <button class="btn btn-sm btn-primary"
+                                    @click="editItemAction('edit-item', props.rowData, props.rowIndex)"><i class="glyphicon glyphicon-pencil"></i></button>
+                            <button class="btn btn-sm btn-danger"
+                                    @click="deleteItemAction('delete-item', props.rowData, props.rowIndex)"><i class="glyphicon glyphicon-trash"></i></button>
+                        </div>
+                    </template>
+                </vuetable>
             </div>
 
             <div class="vuetable-pagination">
@@ -64,13 +73,11 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-    import CustomActions from './watch/CustomActions';
     import FilterBar from '../servers/FilterBar';
     import AddSubWatch from './watch/AddSubWatch.vue';
     import EditSubWatch from './watch/EditSubWatch.vue';
 
     Vue.use(VueEvents);
-    Vue.component('custom-actions', CustomActions);
     Vue.component('filter-bar', FilterBar);
     Vue.component('add-sub-watch', AddSubWatch);
     Vue.component('edit-sub-watch', EditSubWatch);
@@ -122,7 +129,7 @@
                         callback: 'formatDate|DD-MM-YYYY HH:mm'
                     },
                     {
-                        name: '__component:custom-actions',
+                        name: '__slot:actions',
                         title: 'Actions',
                         titleClass: 'text-center',
                         dataClass: 'text-center'
@@ -182,11 +189,9 @@
                 if (this.loadingState != 0){
                     this.loadingState = 2;
                 }
-                console.log('loading');
             },
             onLoaded(){
                 this.loadingState = 1;
-                console.log('loaded');
             },
             onDeleteServer(data){
                 swal({
@@ -214,7 +219,7 @@
                 }).bind(this);
 
                 this.moreParams.deleteState = 2;
-                axios.post('/home/servers/del', data)
+                axios.post('/home/subs/del', data)
                     .then(response => {
                         if (!response || !response.data || response.data['status'] !== 'success'){
                             onFail();
@@ -247,6 +252,14 @@
                         })
                     ]
                 )
+            },
+            deleteItemAction (action, data, index) {
+                this.$emit('onDeleteSubWatch', data);
+                this.$events.fire('on-delete-sub-watch', data);
+            },
+            editItemAction (action, data, index) {
+                this.$emit('onEditSubWatch', data);
+                this.$events.fire('on-edit-sub-watch', data);
             },
             onFilterSet(filterText){
                 this.moreParams = {
