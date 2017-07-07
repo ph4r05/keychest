@@ -96,7 +96,7 @@
 					</p>
 
 					<h3 class="mg-md  tc-rich-electric-blue">
-						Support of IPv6 and rejections of IPv4 requests
+						Preference of IPv6 (and failures of misconfigured clients)
 					</h3>
 <p class="mg-md">
 	At the end of May 2017, Let's Encrypt changed the handling of
