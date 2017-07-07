@@ -96,6 +96,33 @@
 					</p>
 
 					<h3 class="mg-md  tc-rich-electric-blue">
+						Support of IPv6 and rejections of IPv4 requests
+					</h3>
+<p class="mg-md">
+	At the end of May 2017, Let's Encrypt changed the handling of
+	IPv4 and IPv6 - IPv6 became the preferred protocol. This change has been causing sudden malfunctions of clients as
+	domain validation started failing if there was a problem with IPv6 configuration.
+</p>
+					<p class="mg-md">
+						Previously, Let's Encrypt preferred IPv4, which is still the protocol you are likely
+						to configure and test your web browser with first. You may need to update network configuration on
+						your servers so that IPv6 requests reach your server and the web server recognizes
+						IPv6 addresses as belonging to existing (virtual) hosts.
+					</p>
+
+					<p class="mg-md">
+						Some users of Let's Encrypt, however, were caught by surprise, as  IPv6 issues were
+						not due to their servers' configuration, but errors in network traffic routing
+						provided by their internet provider.
+					</p>
+
+					<p class="mg-md">
+						You can use <a class="ltc-rich-electric-blue" href="http://ipv6-test.com/">this online service to test your server</a>.
+						More details  <a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/preferring-ipv6-for-challenge-validation-of-dual-homed-hosts/34774">
+							here (Let's Encrypt community)</a>.
+					</p>
+
+					<h3 class="mg-md  tc-rich-electric-blue">
 						Max registrations per end-point (IPv4, IPv6)
 					</h3>
 					<p class=" mg-sm">
