@@ -141,6 +141,7 @@
                     },
                 },
                 sortOrder: [
+                    {field: 'used', sortField: 'used', direction: 'asc'},
                     {field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
                 ],
                 moreParams: {},
