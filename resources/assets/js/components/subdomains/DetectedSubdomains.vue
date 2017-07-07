@@ -34,7 +34,20 @@
                           @vuetable:pagination-data="onPaginationData"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
-                ></vuetable>
+                >
+                    <template slot="used" scope="props">
+                        <span class="label label-primary" v-if="props.rowData.used">Monitored</span>
+                        <span class="label label-warning" v-else="">Not monitored</span>
+                    </template>
+                    <template slot="actions" scope="props">
+                        <button type="button" class="btn btn-block btn-success"
+                                v-if="!props.rowData.used" v-on:click="addToMonitoring(props.rowData)"
+                        >Add to monitoring</button>
+                        <button type="button" class="btn btn-block disabled" disabled="disabled" v-else=""
+                        >Monitoring</button>
+
+                    </template>
+                </vuetable>
             </div>
 
             <div class="vuetable-pagination">
@@ -97,10 +110,11 @@
                         title: 'Host',
                     },
                     {
-                        name: '__component:custom-actions',
+                        name: '__slot:actions',
                         title: 'Actions',
                         titleClass: 'text-center',
-                        dataClass: 'text-center'
+                        dataClass: 'text-center',
+                        sortField: 'used',
                     }
                 ],
                 css: {
@@ -199,6 +213,7 @@
             },
 
             loadData(){
+                console.log('loading subs...');
                 const onFail = (function(){
                     this.loadingState = -1;
                     toastr.error('Error while loading, please, try again later', 'Error');
@@ -261,8 +276,61 @@
             },
 
             //
+            // Adding
+            //
+            addToMonitoring(rowData) {
+                ga('send', 'event', 'subdomains', 'add-monitor');
+                const newItem = {'server': rowData.name};
+
+                // TODO: refactor to use common code with AddServer.vue
+                const onFail = (function(){
+                    Req.bodyProgress(false);
+                    toastr.error('Error while adding the server, please, try again later', 'Error');
+                }).bind(this);
+
+                const onDuplicate = (function(){
+                    Req.bodyProgress(false);
+                    toastr.error('This host is already being monitored.', 'Already present');
+                }).bind(this);
+
+                const onSuccess = (function(data){
+                    rowData.used = true;
+                    Req.bodyProgress(false);
+                    this.$emit('onServerAdded', data);
+                    this.$events.fire('on-server-added', data);
+                    toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
+                }).bind(this);
+
+                Req.bodyProgress(true);
+                axios.post('/home/servers/add', newItem)
+                    .then(response => {
+                        if (!response || !response.data) {
+                            onFail();
+                        } else if (response.data['status'] === 'already-present'){
+                            onDuplicate();
+                        } else if (response.data['status'] === 'success') {
+                            onSuccess(response.data);
+                        } else {
+                            onFail();
+                        }
+                    })
+                    .catch(e => {
+                        if (e && e.response && e.response.status === 410){
+                            onDuplicate();
+                        } else {
+                            console.log("Add server failed: " + e);
+                            onFail();
+                        }
+                    });
+            },
+
+            //
             // Data table filter & sorting
             //
+
+            needRefresh(){
+                setTimeout(this.loadData, 0);
+            },
 
             dataManager(sort, pagination){
                 let showData = this.processedData;
@@ -303,13 +371,16 @@
         },
         events: {
             'on-server-added' (data) {
-                Vue.nextTick(() => this.$refs.vuetable.refresh());
+                Vue.nextTick(() => this.needRefresh);
             },
             'on-server-updated'(data) {
-                Vue.nextTick(() => this.$refs.vuetable.refresh());
+                Vue.nextTick(() => this.needRefresh);
             },
             'on-delete-server'(data) {
-                this.onDeleteServer(data);
+                Vue.nextTick(() => this.needRefresh);
+            },
+            'on-server-deleted'(data) {
+                Vue.nextTick(() => this.needRefresh);
             },
         }
     }
