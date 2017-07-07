@@ -113,7 +113,9 @@ class SubdomainsController extends Controller
             return $val;
         });
 
-        $allHosts = $allHosts->unique();
+        $allHosts = $allHosts->unique()->reject(function($value, $key){
+            return DomainTools::isWildcard($value);
+        })->values();
 
         // load all existing hosts
         $allUserHosts = $this->serverManager->getUserHostsQuery($userId)->get();

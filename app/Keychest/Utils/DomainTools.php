@@ -155,4 +155,13 @@ class DomainTools {
         $url = str_replace('%', '', $url);
         return $url;
     }
+
+    /**
+     * Returns true if domain is wildcard
+     * @param $url
+     * @return bool
+     */
+    public static function isWildcard($url){
+        return strpos($url, '*.') === 0 || strpos($url, '%.') === 0;
+    }
 }
