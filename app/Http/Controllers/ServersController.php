@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Keychest\Services\ServerManager;
+use App\Keychest\Utils\DataTools;
+use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
@@ -57,12 +59,7 @@ class ServersController extends Controller
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
         $per_page = intval(trim(Input::get('per_page')));
-        $asc = true;
-
-        if (strpos($sort, '|') !== false){
-            list($sort, $ordtxt) = explode('|', $sort, 2);
-            $asc = $ordtxt == 'asc';
-        }
+        $sort_parsed = DataTools::vueSortToDb($sort);
 
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
@@ -77,9 +74,13 @@ class ServersController extends Controller
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
         }
 
-        if (!empty($sort)){
-            $query = $query->orderBy($sort, $asc ? 'asc' : 'desc');
-        }
+        // sorting
+        $sort_parsed->transform(function($item, $key) use ($watchAssocTbl){
+            return (!in_array($item[0], ['created_at', 'updated_at'])) ?
+                $item : [$watchAssocTbl.'.'.$item[0], $item[1]];
+        });
+
+        $query = DbTools::sortQuery($query, $sort_parsed);
 
         $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
         return response()->json($ret, 200);
