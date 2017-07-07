@@ -144,10 +144,9 @@ class SubdomainsController extends Controller
     public function add()
     {
         $server = strtolower(trim(Input::get('server')));
-        $server = DomainTools::replaceHttp($server);
-        $server = DomainTools::stripWildcard($server);
+        $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
-        if (empty($parsed) || strpos($server, '.') === false){
+        if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return response()->json(['status' => 'fail'], 422);
         }
 
@@ -229,10 +228,10 @@ class SubdomainsController extends Controller
     public function update(){
         $id = intval(Input::get('id'));
         $server = strtolower(trim(Input::get('server')));
-        $server = DomainTools::replaceHttp($server);
+        $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
 
-        if (empty($id) || empty($parsed) || strpos($server, '.') === false){
+        if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return response()->json(['status' => 'invalid-domain'], 422);
         }
 
@@ -300,6 +299,7 @@ class SubdomainsController extends Controller
      */
     public function canAdd(){
         $server = strtolower(trim(Input::get('server')));
+        $server = DomainTools::normalizeUserDomainInput($server);
         $canAdd = $this->manager->canAdd($server, Auth::user());
         if ($canAdd == -1){
             return response()->json(['status' => 'fail'], 422);

@@ -86,10 +86,6 @@ class ServersController extends Controller
         return response()->json($ret, 200);
     }
 
-    // TODO: unified domain name normalization - add, update, canAdd
-    // TODO: unified domain name filter - add, update, canAdd
-    // TODO: add scheme filter, supported for now only: http, https, smtps, imaps, pops, xmpp - add regex on that
-
     /**
      * Adds a new server
      *
@@ -98,10 +94,9 @@ class ServersController extends Controller
     public function add()
     {
         $server = strtolower(trim(Input::get('server')));
-        $server = DomainTools::replaceHttp($server);
-        $server = DomainTools::stripWildcard($server);
+        $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
-        if (empty($parsed) || strpos($server, '.') === false){
+        if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return response()->json(['status' => 'fail'], 422);
         }
 
@@ -183,10 +178,10 @@ class ServersController extends Controller
     public function update(){
         $id = intval(Input::get('id'));
         $server = strtolower(trim(Input::get('server')));
-        $server = DomainTools::replaceHttp($server);
+        $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
 
-        if (empty($id) || empty($parsed) || strpos($server, '.') === false){
+        if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return response()->json(['status' => 'invalid-domain'], 422);
         }
 
@@ -254,8 +249,7 @@ class ServersController extends Controller
      */
     public function canAddHost(){
         $server = strtolower(trim(Input::get('server')));
-        $server = DomainTools::replaceHttp($server);
-        $server = DomainTools::stripWildcard($server);
+        $server = DomainTools::normalizeUserDomainInput($server);
         $canAdd = $this->serverManager->canAddHost($server, Auth::user());
         if ($canAdd == -1){
             return response()->json(['status' => 'fail'], 422);

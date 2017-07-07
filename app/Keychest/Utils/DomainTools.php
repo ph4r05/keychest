@@ -164,4 +164,93 @@ class DomainTools {
     public static function isWildcard($url){
         return strpos($url, '*.') === 0 || strpos($url, '%.') === 0;
     }
+
+    /**
+     * Tries to normalize hostname given as user input
+     * @param $inp
+     * @param bool $forceScheme
+     * @return string
+     */
+    public static function normalizeUserDomainInput($inp, $forceScheme=true){
+        $inp = trim($inp);
+        $inp = DomainTools::replaceHttp($inp);
+        $inp = DomainTools::stripWildcard($inp);
+        if (strpos($inp, '://') === false){
+            $inp = 'https://' . $inp;
+        }
+
+        $parsed = parse_url($inp);
+        $scheme = isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https';
+        if ($forceScheme && !in_array($scheme, ['https'])){
+            $scheme = 'https';
+        }
+
+        $host = isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : self::removeUrlPath($inp);
+        $port = isset($parsed['port']) && !empty($parsed['port']) ? intval($parsed['port']) : 443;
+        return self::assembleUrl($scheme, $host, $port);
+    }
+
+    /**
+     * Returns true if the domain name is well formed
+     * @param $domain_name
+     * @return bool
+     */
+    public static function isValidDomainName($domain_name)
+    {
+        return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name) //valid chars check
+            && preg_match("/^.{1,253}$/", $domain_name) //overall length check
+            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name)   ); //length of each label
+    }
+
+    /**
+     * Test IPv6 for validity
+     * @param $inp
+     * @return bool
+     */
+    public static function isIpv6Valid($inp){
+        return filter_var($inp, FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE) !== false;
+    }
+
+    /**
+     * Tests IPv4 for validity
+     */
+    public static function isIpv4Valid($inp){
+        return filter_var($inp, FILTER_VALIDATE_IP,
+                FILTER_FLAG_IPV4 | FILTER_FLAG_NO_RES_RANGE) !== false;
+    }
+
+    /**
+     * Tests IP for validity
+     * @param $inp
+     * @return bool
+     */
+    public static function isIpValid($inp){
+        return filter_var($inp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) !== false;
+    }
+
+    /**
+     * Tests parsed hostname for validity
+     * @param $parsed
+     * @return bool
+     */
+    public static function isValidParsedUrlHostname($parsed){
+        if (empty($parsed) || !isset($parsed['host']) || empty($parsed['host'])){
+            return false;
+        }
+
+        $host = $parsed['host'];
+        if (self::isValidDomainName($host) || self::isIpv4Valid($host)){
+            return true;
+        }
+
+        $matches = null;
+        if (preg_match('/^\\[(.+)\\]$/', $host, $matches)){
+            if (self::isIpv6Valid($matches[1])){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -46,7 +46,7 @@ class SubdomainManager {
      */
     public function canAdd($server, $curUser=null){
         $parsed = parse_url($server);
-        if (empty($parsed) || strpos($server, '.') === false){
+        if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return -1;
         }
 
