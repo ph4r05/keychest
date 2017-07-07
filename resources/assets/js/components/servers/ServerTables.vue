@@ -18,7 +18,7 @@
 
       <edit-server></edit-server>
 
-      <div class="table-responsive" v-bind:class="{'loading' : loadingState==2}">
+      <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
       <vuetable ref="vuetable"
         api-url="/home/servers/get"
         :fields="fields"
@@ -324,6 +324,20 @@ i.sort-icon {
 .loading .vuetable {
 
 }
+.vuetable-pagination{
+  min-height: 40px;
+}
 
+.table-xfull {
+  margin-left: -10px;
+  margin-right: -10px;
+  width: auto;
+}
+
+.table-xfull > .table > thead > tr > th,
+.table-xfull > .table > tbody > tr > td
+{
+  padding-left: 12px;
+}
 
 </style>
