@@ -70,6 +70,7 @@ Route::post('home/servers/add', 'ServersController@add')->name('servers/add');
 Route::post('home/servers/del', 'ServersController@del')->name('servers/del');
 Route::post('home/servers/update', 'ServersController@update')->name('servers/update');
 Route::post('home/servers/canAdd', 'ServersController@canAddHost')->name('servers/canAdd');
+Route::post('home/servers/import', 'ServersController@importServers')->name('servers/import');
 Route::get('home/scan', 'SearchController@showHome')->name('home/scan')->middleware('auth');
 
 Route::get('home/dashboard/data', 'DashboardController@loadActiveCerts')

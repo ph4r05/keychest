@@ -95,12 +95,34 @@ class ServersController extends Controller
     {
         $server = strtolower(trim(Input::get('server')));
         $server = DomainTools::normalizeUserDomainInput($server);
+
+        $ret = $this->addServer($server);
+        if (is_numeric($ret)){
+            if ($ret === -1){
+                return response()->json(['status' => 'fail'], 422);
+            } elseif ($ret === -2){
+                return response()->json(['status' => 'already-present'], 410);
+            } else {
+                return response()->json(['status' => 'unknown-fail'], 500);
+            }
+        } else {
+            return response()->json(['status' => 'success', 'server' => $ret], 200);
+        }
+    }
+
+    /**
+     * Helper server add function.
+     * Used for individual addition and import.
+     * @param $server
+     * @return array|int
+     */
+    protected function addServer($server)
+    {
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
-            return response()->json(['status' => 'fail'], 422);
+            return -1;
         }
 
-        // DB Job data
         $curUser = Auth::user();
         $userId = $curUser->getAuthIdentifier();
         $newServerDb = [
@@ -119,7 +141,7 @@ class ServersController extends Controller
         $userHosts = $this->serverManager->filterHostsWithAssoc($hosts, $hostAssoc);
 
         if ($this->serverManager->allHostsEnabled($userHosts)){
-            return response()->json(['status' => 'already-present'], 410);
+            return -2;
         }
 
         // Empty hosts - create new bare record
@@ -144,8 +166,7 @@ class ServersController extends Controller
             $assoc->save();
             $newServerDb['assoc'] = $assoc;
         }
-
-        return response()->json(['status' => 'success', 'server' => $newServerDb], 200);
+        return $newServerDb;
     }
 
     /**
@@ -260,5 +281,56 @@ class ServersController extends Controller
         } else {
             return response()->json(['status' => 'unrecognized-error', 'code' => $canAdd], 500);
         }
+    }
+
+    /**
+     * Imports list of servers.
+     */
+    public function importServers(){
+        $servers = strtolower(trim(Input::get('data')));
+        $servers = collect(explode("\n", $servers));
+        $servers = $servers->reject(function($value, $key){
+            return empty(trim($value));
+        })->values()->take(1000)->unique()->values()->take(100);
+
+        // Domain name sanitizing
+        $servers->transform(function($value, $key){
+            return DomainTools::normalizeUserDomainInput($value);
+        });
+
+        // Kick out invalid ones
+        $validServers = $servers->reject(function($value, $key){
+            $parsed = parse_url($value);
+            return (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed));
+        })->values();
+
+        $num_added = 0;
+        $num_present = 0;
+        $num_failed = 0;
+        foreach ($validServers->all() as $cur){
+            $ret = $this->addServer($cur);
+
+            if (is_numeric($ret)){
+                if ($ret === -1){
+                    $num_failed += 1;
+                } elseif ($ret === -2){
+                    $num_present += 1;
+                } else {
+                    $num_failed += 1;
+                }
+            } else {
+                $num_added += 1;
+            }
+        }
+
+        $outTransformed = $validServers->values()->implode("\n");
+        return response()->json([
+            'status' => 'success',
+            'transformed' => $outTransformed,
+            'num_added' => $num_added,
+            'num_present' => $num_present,
+            'num_failed' => $num_failed,
+            'num_skipped' => $servers->count() - $validServers->count()
+        ], 200);
     }
 }
