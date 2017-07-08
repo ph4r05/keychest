@@ -2,11 +2,11 @@
     <div class="filter-bar">
       <form class="form-inline">
         <div class="form-group">
-          <label for="server-search-inp">Filter results:</label>
+          <label for="server-search-inp" >&nbsp</label>
           <input type="text" v-model="filterText" class="form-control input-sm"
-                 @keyup.enter="doFilter" placeholder="server name" id="server-search-inp">
+                 @keyup.enter="doFilter" placeholder="filter string" id="server-search-inp">
 
-          <button class="btn btn-sm btn-primary" @click.prevent="doFilter">Filter</button>
+          <button class="btn btn-sm btn-primary" @click.prevent="doFilter">Set filter</button>
           <button class="btn btn-sm" @click.prevent="resetFilter">Reset</button>
         </div>
       </form>
