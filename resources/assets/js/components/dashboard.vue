@@ -554,11 +554,11 @@
                                 <tr>
                                     <th>Let's Encrypt</th>
                                     <th>Other certificates</th>
-                                    <th><i>Number of issuers</i></th>
+                                    <th><i>Number of all issuers</i></th>
 
                                     <th>Let's Encrypt</th>
                                     <th>Other certificates</th>
-                                    <th><i>Number of issuers</i></th>
+                                    <th><i>Number of all issuers</i></th>
 
                                     <!--<th>Certs</th>-->
                                     <!--<th>Issuers</th>-->
