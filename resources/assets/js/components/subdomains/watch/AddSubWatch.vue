@@ -3,7 +3,7 @@
     <div class="create-server-bar">
         <div class="pull-right-nope form-group">
             <button type="button" class="btn btn-sm btn-success btn-block" v-on:click.prevent="showModal()">
-                Add host
+                Add responsive domain
             </button>
         </div>
     </div>

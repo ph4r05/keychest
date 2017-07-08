@@ -1,6 +1,6 @@
 <template>
     <div class="server-import">
-        <h3>Monitored Server Import</h3>
+        <h3>Bulk import of servers for watching</h3>
 
         <sbox cssBox="box-success" :remove="true" v-if="importState === 1">
             <template slot="title">Import Successful</template>
@@ -27,10 +27,13 @@
         </sbox>
 
         <div class="form-group">
-            <p>Bulk import servers to monitoring. Enter line separated server names / URLs below.</p>
-            <textarea class="form-control" rows="10" placeholder="Line separated server names"
+            <p>This tab allows bulk import of domain names, servers, for monitoring.
+                Paste a list of your servers into the text field below.</p>
+            <p>Format: one server per line, you can specify a port for each server using the
+            format: "domain_name:port", e.g., <i>keychest.net:11100</i>.</p>
+            <textarea class="form-control" rows="10" placeholder="a server per line, up to 100 lines"
                       v-model="inputData"></textarea>
-            <small>Max 100 records per one import</small>
+            <small>Max 100 lines per import</small>
         </div>
 
         <div class="form-group">
