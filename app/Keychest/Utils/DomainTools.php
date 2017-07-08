@@ -240,15 +240,24 @@ class DomainTools {
         }
 
         $host = $parsed['host'];
-        if (self::isValidDomainName($host) || self::isIpv4Valid($host)){
-            return true;
-        }
 
         $matches = null;
         if (preg_match('/^\\[(.+)\\]$/', $host, $matches)){
             if (self::isIpv6Valid($matches[1])){
                 return true;
             }
+        }
+
+        if (self::isIpv4Valid($host)){
+            return true;
+        }
+
+        if (strpos($host, '.') === false){
+            return false;
+        }
+
+        if (self::isValidDomainName($host)){
+            return true;
         }
 
         return false;
