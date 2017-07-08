@@ -7,15 +7,15 @@
 
         <div v-show="loadingState != 0">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-7 ">
+                    <add-sub-watch></add-sub-watch>
+                </div>
+                <div class="col-md-5">
                     <filter-bar
                             :globalEvt="false"
                             v-on:filter-set="onFilterSet"
                             v-on:filter-reset="onFilterReset"
                     ></filter-bar>
-                </div>
-                <div class="col-md-3 col-md-push-1">
-                    <add-sub-watch></add-sub-watch>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@
                     {
                         name: 'scan_host',
                         sortField: 'scan_host',
-                        title: 'Host',
+                        title: 'Base domain',
                     },
                     {
                         name: 'created_at',

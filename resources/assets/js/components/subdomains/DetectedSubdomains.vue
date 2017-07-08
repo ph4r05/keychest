@@ -2,7 +2,7 @@
     <div>
         <div>
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-5 col-md-offset-7">
                     <filter-bar
                             :globalEvt="false"
                             v-on:filter-set="onFilterSet"
@@ -102,7 +102,7 @@
                     {
                         name: 'name',
                         sortField: 'name',
-                        title: 'Host',
+                        title: 'Domain name',
                     },
                     {
                         name: '__slot:actions',

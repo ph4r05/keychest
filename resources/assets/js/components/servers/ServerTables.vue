@@ -10,11 +10,11 @@
       <h3>Monitored Servers</h3>
 
       <div class="row">
-        <div class="col-md-8">
-          <filter-bar></filter-bar>
-        </div>
-        <div class="col-md-3 col-md-push-1">
+        <div class="col-md-7">
           <add-server></add-server>
+        </div>
+        <div class="col-md-5">
+          <filter-bar></filter-bar>
         </div>
       </div>
 
@@ -95,7 +95,7 @@ export default {
                 {
                     name: 'scan_host',
                     sortField: 'scan_host',
-                    title: 'Host',
+                    title: 'Domain name',
                 },
                 {
                     name: 'scan_port',
