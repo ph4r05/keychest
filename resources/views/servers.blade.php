@@ -14,12 +14,6 @@
 
 @section('main-content')
     <div class="servers-wrapper container-fluid spark-screen">
-        <div class="row">
-            <div class="servers-tab col-md-12 ">
-
-                <server-tables></server-tables>
-
-            </div>
-        </div>
+        <servers></servers>
     </div>
 @endsection

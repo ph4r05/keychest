@@ -9,6 +9,8 @@
 namespace App\Keychest\Services;
 
 use App\Keychest\Utils\DomainTools;
+use App\Models\SubdomainWatchAssoc;
+use App\Models\SubdomainWatchTarget;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use App\User;
@@ -17,7 +19,7 @@ use Illuminate\Contracts\Auth\Factory as FactoryContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-class ServerManager {
+class SubdomainManager {
 
     /**
      * The application instance.
@@ -42,7 +44,7 @@ class ServerManager {
      * @param User|null $curUser
      * @return int
      */
-    public function canAddHost($server, $curUser=null){
+    public function canAdd($server, $curUser=null){
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return -1;
@@ -56,30 +58,13 @@ class ServerManager {
     }
 
     /**
-     * Returns query for loading users hosts.
-     * @param $userId
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getUserHostsQuery($userId){
-        $watchTbl = (new WatchTarget())->getTable();
-        $watchAssocTbl = (new WatchAssoc())->getTable();
-
-        $query = WatchAssoc::query()
-            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->select($watchTbl.'.*', $watchAssocTbl.'.*')
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
-            ->whereNull($watchAssocTbl.'.deleted_at');
-        return $query;
-    }
-
-    /**
      * Returns all host associations for the given user
      * @param $userId
      * @param Collection $hosts collection of host ids to restrict
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getHostAssociations($userId, $hosts=null){
-        $query = WatchAssoc::query()->where('user_id', $userId);
+        $query = SubdomainWatchAssoc::query()->where('user_id', $userId);
         if (!empty($hosts) && $hosts->isNotEmpty()){
             $query->whereIn('watch_id', $hosts);
         }
@@ -95,7 +80,7 @@ class ServerManager {
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getHostsBy($criteria=null, $userId=null, $assoc=null){
-        $query = WatchTarget::query();
+        $query = SubdomainWatchTarget::query();
 
         if (!empty($criteria)) {
             foreach ($criteria as $key => $val) {
@@ -187,25 +172,8 @@ class ServerManager {
      */
     public function buildCriteria($parsed, $server=null){
         return [
-            'scan_scheme' => isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https',
             'scan_host' => isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : DomainTools::removeUrlPath($server),
-            'scan_port' => isset($parsed['port']) && !empty($parsed['port']) ? $parsed['port'] : 443,
         ];
-    }
-
-    /**
-     * Replaces http/80 with https/443 as it makes no sense to scan 80 for tls.
-     * @param $criteria
-     * @return mixed
-     */
-    public function replaceHttp($criteria){
-        $scheme = $criteria['scan_scheme'];
-        $port = $criteria['scan_port'];
-        if ($scheme == 'http' || $port === 80){
-            $criteria['scan_scheme'] = 'https';
-            $criteria['scan_port'] = 443;
-        }
-        return $criteria;
     }
 
 }

@@ -7,4 +7,8 @@
 
     <!-- Default to the left -->
     <strong>Copyright &copy; 2017 <a href="http://enigmabridge.com">enigmabridge.com</a>.</strong>
+
+    <div class="ph4-modal">
+        <div class="ph4-modal-wrap"></div>
+    </div>
 </footer>

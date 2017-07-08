@@ -455,6 +455,18 @@ function certIssuer(cert) {
     return 'Other';
 }
 
+/**
+ * Converts Vue sort order definition to the order by
+ * @param sortObj
+ * @returns {[*,*]}
+ */
+function vueSortToOrderBy(sortObj){
+    return [
+        _.map(sortObj, x=>{ return x.sortField; }),
+        _.map(sortObj, x=>{ return x.direction; })
+    ]
+}
+
 //
 // Export
 //
@@ -480,7 +492,8 @@ module.exports = {
     takeMod: takeMod,
 
     certIssuer: certIssuer,
-    normalizeIssuer: normalizeIssuer
+    normalizeIssuer: normalizeIssuer,
+    vueSortToOrderBy: vueSortToOrderBy
 };
 
 
