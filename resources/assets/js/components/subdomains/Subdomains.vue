@@ -1,9 +1,9 @@
 <template>
     <div class="subdomains-wrapper">
-        <h3>Domain names being watched</h3>
+        <h3>Domains for automated server discovery</h3>
         <subdomain-watchers></subdomain-watchers>
 
-        <h3>Detected sub domains</h3>
+        <h3>Discovered servers </h3>
         <subdomain-detected></subdomain-detected>
     </div>
 </template>
