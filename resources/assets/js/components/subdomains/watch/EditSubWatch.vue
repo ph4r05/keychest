@@ -21,6 +21,11 @@
                                 <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                             </div>
 
+                            <div class="form-group">
+                                <input type="checkbox" id="sub-auto-add-edit">
+                                <label for="sub-auto-add-edit">Automatically add found names to the monitoring</label>
+                            </div>
+
                             <div class="alert alert-info scan-alert" v-show="sentState == 2">
                                 <span>Sending...</span>
                             </div>
@@ -56,7 +61,15 @@
                 sentState: 0,
             }
         },
+        mounted(){
+            this.$nextTick(function () {
+                this.hookup();
+            })
+        },
         methods: {
+            hookup(){
+                $('#sub-auto-add-edit').bootstrapSwitch();
+            },
             createItem() {
                 // Minor domain validation.
                 if (_.isEmpty(this.serverItem.server) || this.serverItem.server.split('.').length <= 1){
@@ -64,6 +77,8 @@
                     toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
                     return;
                 }
+
+                this.serverItem.autoFill = !!($('#sub-auto-add-edit').bootstrapSwitch('state'));
 
                 const onFail = (function(){
                     this.sentState = -1;
@@ -111,6 +126,8 @@
             'on-edit-sub-watch'(data) {
                 this.serverItem = data;
                 this.serverItem.server = window.Req.buildUrl('https', data.scan_host, undefined);
+                this.serverItem.autoFill = !!data.auto_fill_watches;
+                $('#sub-auto-add-edit').bootstrapSwitch('state', this.serverItem.autoFill);
                 $("#update-item-sub").modal('show');
                 setTimeout(()=>{
                     $("#upd-server-name-sub").focus();

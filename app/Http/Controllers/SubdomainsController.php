@@ -144,6 +144,7 @@ class SubdomainsController extends Controller
     public function add()
     {
         $server = strtolower(trim(Input::get('server')));
+        $autoFill = boolval(trim(Input::get('autoFill')));
         $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
@@ -183,6 +184,7 @@ class SubdomainsController extends Controller
             $assocInfo = [
                 'user_id' => $userId,
                 'watch_id' => $hostRecord->id,
+                'auto_fill_watches' => $autoFill
             ];
 
             $assocDb = SubdomainWatchAssoc::create($assocInfo);
@@ -227,6 +229,7 @@ class SubdomainsController extends Controller
      */
     public function update(){
         $id = intval(Input::get('id'));
+        $autoFill = boolval(trim(Input::get('autoFill')));
         $server = strtolower(trim(Input::get('server')));
         $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
@@ -247,6 +250,12 @@ class SubdomainsController extends Controller
         $oldUrl = DomainTools::assembleUrl('https', $curHost->scan_host, 443);
         $newUrl = DomainTools::normalizeUrl($server);
         if ($oldUrl == $newUrl){
+            if ($curAssoc->auto_fill_watches != $autoFill) {
+                $curAssoc->updated_at = Carbon::now();
+                $curAssoc->auto_fill_watches = $autoFill;
+                $curAssoc->save();
+                return response()->json(['status' => 'success', 'message' => 'updated'], 200);
+            }
             return response()->json(['status' => 'success', 'message' => 'nothing-changed'], 200);
         }
 
@@ -272,6 +281,7 @@ class SubdomainsController extends Controller
             $assoc = $hostNewAssoc->first();
             $assoc->deleted_at = null;
             $assoc->updated_at = Carbon::now();
+            $assoc->auto_fill_watches = $autoFill;
             $assoc->save();
 
         } else {
@@ -285,7 +295,8 @@ class SubdomainsController extends Controller
             $assocInfo = [
                 'user_id' => $userId,
                 'watch_id' => $newHost->id,
-                'created_at' => Carbon::now()
+                'created_at' => Carbon::now(),
+                'auto_fill_watches' => $autoFill
             ];
 
             $assocDb = SubdomainWatchAssoc::create($assocInfo);

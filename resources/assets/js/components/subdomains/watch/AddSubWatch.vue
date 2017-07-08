@@ -28,6 +28,11 @@
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                         </div>
 
+                        <div class="form-group">
+                            <input type="checkbox" id="sub-auto-add">
+                            <label for="sub-auto-add">Automatically add found names to the monitoring</label>
+                        </div>
+
                         <div class="alert alert-info scan-alert" v-show="sentState == 2">
                             <span id="info-text">Sending...</span>
                         </div>
@@ -63,7 +68,15 @@
                 sentState: 0,
             }
         },
+        mounted(){
+            this.$nextTick(function () {
+                this.hookup();
+            })
+        },
         methods: {
+            hookup(){
+                $('#sub-auto-add').bootstrapSwitch('state', true);
+            },
             showModal(){
                 ga('send', 'event', 'subdomains', 'add-modal');
                 $('#create-item-sub').modal();
@@ -81,6 +94,7 @@
                     return;
                 }
 
+                this.newItem.autoFill = !!($('#sub-auto-add').bootstrapSwitch('state'));
                 const onFail = (function(){
                     this.sentState = -1;
                     $('#add-server-wrapper-sub').effect( "shake" );
