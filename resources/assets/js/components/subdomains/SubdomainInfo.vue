@@ -3,7 +3,7 @@
     <help-modal id="subdomainsInfoModal" title="Automatic server discovery">
         <p>
             Automatic server monitoring
-            If you enable the "Watch Now" feature, KeyChest will automatically add all new servers
+            If you enable the Watch Now&trade; feature, KeyChest will automatically add all new servers
             to monitoring. They will appear in the dashboard with test results on port 443 (HTTPS).
         </p>
         <p>

@@ -23,7 +23,7 @@
 
                             <div class="form-group">
                                 <input type="checkbox" id="sub-auto-add-edit">
-                                <label for="sub-auto-add-edit">&nbsp;Watch Now - automatic monitoring of new servers</label>
+                                <label for="sub-auto-add-edit">&nbsp;Watch Now&trade; - automatic monitoring of new servers</label>
                             </div>
 
                             <div class="alert alert-info scan-alert" v-show="sentState == 2">
