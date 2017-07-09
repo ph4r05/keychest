@@ -12,7 +12,7 @@ works.
 We had a pretty firm idea about main features to make it a real helping tool, rather than just yet
     another management system we have to think about all the time (did we add all servers, does data
     collection work, etc.). The best monitoring system is useless, if you forget to register your
-servers with it. So KeyChest will automatically find all new servers from "Responsive Domains" the moment
+servers with it. So KeyChest will automatically find all new servers from "Active Domains" the moment
     you prime them with their first certificate. It will keep monitoring servers to detect any downtimes
     and it will only bother you if there is a problem.
 </p>
@@ -38,14 +38,14 @@ servers with it. So KeyChest will automatically find all new servers from "Respo
 </ul>
 
 Initially, we thought that Spot checks would be used first - to help you with configuration - and Dashboard
-will take over with its continuous monitoring. The flow changes when you use "Responsive Domains".
+will take over with its continuous monitoring. The flow changes when you use "Active Domains".
 
 If you want to monitor, you need to import some data into a monitoring system first. There are three options
 to add new servers into KeyChest and some more options, if you deploy it on-premise:
 
     <ul>
         <li>Serve name - you simply enter a server name you want to start watching.</li>
-        <li>Responsive domain - you add a domain, for which you want to watch all the subdomains.</li>
+        <li>Active domain - you add a domain, for which you want to watch all the subdomains.</li>
         <li>Bulk import - you can paste a list of domain names - one per line, to speed up initial import.</li>
     </ul>
 
