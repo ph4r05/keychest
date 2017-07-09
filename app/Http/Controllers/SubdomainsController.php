@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Jobs\AutoAddSubsJob;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
 use App\Keychest\Utils\DataTools;
@@ -144,6 +145,7 @@ class SubdomainsController extends Controller
     public function add()
     {
         $server = strtolower(trim(Input::get('server')));
+        $autoFill = boolval(trim(Input::get('autoFill')));
         $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
@@ -179,20 +181,27 @@ class SubdomainsController extends Controller
         }
 
         // Association not present -> create a new one
+        $assoc = null;
         if ($userHosts->isEmpty()) {
             $assocInfo = [
                 'user_id' => $userId,
                 'watch_id' => $hostRecord->id,
+                'auto_fill_watches' => $autoFill
             ];
 
-            $assocDb = SubdomainWatchAssoc::create($assocInfo);
-            $newServerDb['assoc'] = $assocDb;
+            $assoc = SubdomainWatchAssoc::create($assocInfo);
+            $newServerDb['assoc'] = $assoc;
 
         } else {
             $assoc = $hostAssoc->first();
             $assoc->deleted_at = null;
+            $assoc->auto_fill_watches = $autoFill;
             $assoc->save();
             $newServerDb['assoc'] = $assoc;
+        }
+
+        if ($autoFill){
+            $this->autoAddCheck($assoc->id);
         }
 
         return response()->json(['status' => 'success', 'server' => $newServerDb], 200);
@@ -227,6 +236,7 @@ class SubdomainsController extends Controller
      */
     public function update(){
         $id = intval(Input::get('id'));
+        $autoFill = boolval(trim(Input::get('autoFill')));
         $server = strtolower(trim(Input::get('server')));
         $server = DomainTools::normalizeUserDomainInput($server);
         $parsed = parse_url($server);
@@ -247,6 +257,17 @@ class SubdomainsController extends Controller
         $oldUrl = DomainTools::assembleUrl('https', $curHost->scan_host, 443);
         $newUrl = DomainTools::normalizeUrl($server);
         if ($oldUrl == $newUrl){
+            if ($curAssoc->auto_fill_watches != $autoFill) {
+                $curAssoc->updated_at = Carbon::now();
+                $curAssoc->auto_fill_watches = $autoFill;
+                $curAssoc->save();
+
+                if ($autoFill){
+                    $this->autoAddCheck($curAssoc->id);
+                }
+
+                return response()->json(['status' => 'success', 'message' => 'updated'], 200);
+            }
             return response()->json(['status' => 'success', 'message' => 'nothing-changed'], 200);
         }
 
@@ -267,11 +288,13 @@ class SubdomainsController extends Controller
         $curAssoc->save();
 
         // Is there some association with the new url already present but disabled? Enable it then
+        $assoc = null;
         $newHost = $newHosts->first();
         if (!empty($newHost) && $userNewHosts->isNotEmpty()){
             $assoc = $hostNewAssoc->first();
             $assoc->deleted_at = null;
             $assoc->updated_at = Carbon::now();
+            $assoc->auto_fill_watches = $autoFill;
             $assoc->save();
 
         } else {
@@ -285,10 +308,15 @@ class SubdomainsController extends Controller
             $assocInfo = [
                 'user_id' => $userId,
                 'watch_id' => $newHost->id,
-                'created_at' => Carbon::now()
+                'created_at' => Carbon::now(),
+                'auto_fill_watches' => $autoFill
             ];
 
-            $assocDb = SubdomainWatchAssoc::create($assocInfo);
+            $assoc = SubdomainWatchAssoc::create($assocInfo);
+        }
+
+        if ($autoFill){
+            $this->autoAddCheck($assoc->id);
         }
 
         return response()->json(['status' => 'success'], 200);
@@ -310,5 +338,14 @@ class SubdomainsController extends Controller
         } else {
             return response()->json(['status' => 'unrecognized-error', 'code' => $canAdd], 500);
         }
+    }
+
+    /**
+     * Submits job to check for auto-add once user changes this setting.
+     */
+    protected function autoAddCheck($assocId){
+        // Queue entry to the scanner queue
+        $jobData = ['id' => $assocId];
+        dispatch((new AutoAddSubsJob($jobData))->onQueue('scanner'));
     }
 }

@@ -11,7 +11,6 @@
                 </div>
             </div>
 
-            <!--/home/subs/res-->
             <div class="table-responsive table-xfull"
                  v-bind:class="{'loading' : tblLoadingState==2 || loadingState==0}">
                 <vuetable ref="vuetable"
@@ -338,15 +337,10 @@
                 }
 
                 // sorting - vuetable sort to orderBy
-                const ordering = Req.vueSortToOrderBy(sort);
-                showData = _.orderBy(showData, ordering[0], ordering[1]);
+                showData = Req.vueOrderBy(showData, sort);
 
                 // pagination
-                pagination.total = _.size(showData);
-                showData = _.chunk(showData, pagination.per_page)[pagination.current_page - 1];
-
-                pagination.last_page = Math.ceil(pagination.total / pagination.per_page);
-                pagination.to = _.min([pagination.from + pagination.per_page - 1, pagination.total]);
+                [showData, pagination] = Req.vuePagination(showData, pagination);
 
                 //noinspection UnnecessaryLocalVariableJS
                 const ret = _.extend({data: showData}, pagination);

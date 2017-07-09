@@ -44,6 +44,10 @@
                                     @click="deleteItemAction('delete-item', props.rowData, props.rowIndex)"><i class="glyphicon glyphicon-trash"></i></button>
                         </div>
                     </template>
+                    <template slot="autoadd" scope="props">
+                        <span class="label label-success" v-if="props.rowData.auto_fill_watches">On</span>
+                        <span class="label label-default" v-else="">Off</span>
+                    </template>
                 </vuetable>
             </div>
 
@@ -102,6 +106,11 @@
                         name: 'scan_host',
                         sortField: 'scan_host',
                         title: 'Base domain',
+                    },
+                    {
+                        name: '__slot:autoadd',
+                        sortField: 'auto_fill_watches',
+                        title: 'Auto-add',
                     },
                     {
                         name: 'created_at',

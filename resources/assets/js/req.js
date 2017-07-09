@@ -467,6 +467,34 @@ function vueSortToOrderBy(sortObj){
     ]
 }
 
+/**
+ * Sorts given data according to the vuetable sort string specification.
+ * Used with custom vuetable data manager.
+ * @param data
+ * @param sort
+ * @returns {Array}
+ */
+function vueOrderBy(data, sort){
+    const ordering = Req.vueSortToOrderBy(sort);
+    return _.orderBy(data, ordering[0], ordering[1]);
+}
+
+/**
+ * Paginate data for vuetable according to the pagination info, updates pagination itself.
+ * Used with custom vuetable data manager.
+ * @param data
+ * @param pagination
+ * @returns {[*,*]}
+ */
+function vuePagination(data, pagination){
+    pagination.total = _.size(data);
+    data = _.chunk(data, pagination.per_page)[pagination.current_page - 1];
+
+    pagination.last_page = Math.ceil(pagination.total / pagination.per_page);
+    pagination.to = _.min([pagination.from + pagination.per_page - 1, pagination.total]);
+    return [data, pagination];
+}
+
 //
 // Export
 //
@@ -493,7 +521,9 @@ module.exports = {
 
     certIssuer: certIssuer,
     normalizeIssuer: normalizeIssuer,
-    vueSortToOrderBy: vueSortToOrderBy
+    vueSortToOrderBy: vueSortToOrderBy,
+    vueOrderBy: vueOrderBy,
+    vuePagination: vuePagination
 };
 
 
