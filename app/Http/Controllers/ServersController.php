@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
+use App\Models\DnsResult;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
@@ -14,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 
@@ -29,12 +32,20 @@ class ServersController extends Controller
     protected $serverManager;
 
     /**
+     * Scan manager
+     * @var ScanManager
+     */
+    protected $scanManager;
+
+    /**
      * Create a new controller instance.
      * @param ServerManager $serverManager
+     * @param ScanManager $scanManager
      */
-    public function __construct(ServerManager $serverManager)
+    public function __construct(ServerManager $serverManager, ScanManager $scanManager)
     {
         $this->serverManager = $serverManager;
+        $this->scanManager = $scanManager;
         $this->middleware('auth');
     }
 
@@ -63,10 +74,20 @@ class ServersController extends Controller
 
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
+        $dnsTable = (new DnsResult())->getTable();
 
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->select($watchTbl.'.*', $watchAssocTbl.'.*')
+            ->leftJoin($dnsTable, $dnsTable.'.id', '=', $watchTbl.'.last_dns_scan_id')
+            ->select(
+                $watchTbl.'.*',
+                $watchAssocTbl.'.*',
+                $dnsTable.'.status AS dns_status',
+                $dnsTable.'.num_res AS dns_num_res',
+                DB::raw('(CASE WHEN '.$dnsTable.'.status IS NULL 
+                        OR '.$dnsTable.'.status!=1 
+                        OR '.$dnsTable.'.num_res=0 THEN 1 ELSE 0 END) AS dns_error')
+            )
             ->where($watchAssocTbl.'.user_id', '=', $userId)
             ->whereNull($watchAssocTbl.'.deleted_at');
 
@@ -82,7 +103,7 @@ class ServersController extends Controller
 
         $query = DbTools::sortQuery($query, $sort_parsed);
 
-        $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
+        $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100); // type: \Illuminate\Pagination\LengthAwarePaginator
         return response()->json($ret, 200);
     }
 
