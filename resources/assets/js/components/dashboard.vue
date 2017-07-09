@@ -272,7 +272,7 @@
                                             <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
                                             <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
                                             <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
-                                            <li v-else-if="len(tls.certs_ids) === 1">Validation failed - incomplete chain</li>
+                                            <li v-else-if="len(tls.certs_ids) === 1">Incomplete trust chain</li>
                                             <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
                                             <li v-else-if="tls.host_cert">Untrusted certificate</li>
                                             <li v-else="">No host certificate</li>
