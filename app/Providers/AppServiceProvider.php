@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
 use Illuminate\Support\Facades\Schema;
@@ -37,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(SubdomainManager::class, function($app){
             return new SubdomainManager($app);
+        });
+        $this->app->bind(ScanManager::class, function($app){
+            return new ScanManager($app);
         });
     }
 }
