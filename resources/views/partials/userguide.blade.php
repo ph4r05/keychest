@@ -177,14 +177,21 @@ may have missed.
 
 <h3 class="mg-md">Enterprise Features</h3>
 
+<p><i>We expect launch of the enterprise version in August.</i></p>
+
 <p>
-    We have started building a set of enterprise features, if you want to manage certificates of a
-    large company or a corporation. The main difference from the free version is organization and user
-    management. User management is defined in two levels:
+    We have started building a set of enterprise features, for users who want to manage
+    certificates in a large company or a corporation. The main differences from the free
+    version is organization/user management, and monitoring of internal networks.
+</p>
+<p>
+    User and organization management provides separation of servers and certificates relevant
+    to a particular department. The management structure is defined at two levels of granularity:
 </p>
 <ul>
-    <li>departments - organizational units within a company; and</li>
-    <li>users - users within a department.</li>
+    <li>departments - organizational units within a company, which are responsible for particular
+        networks or servers; and</li>
+    <li>users - users responsible for relevant infrastructure operations within their department.</li>
 </ul>
 <p>
     The second feature of the enterprise version is monitoring of internal network servers. This is
