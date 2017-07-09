@@ -9,6 +9,7 @@
 @endsection
 
 @section('contentheader_description')
+	{{ trans('admin.dashboard_desc') }}
 @endsection
 
 @section('main-content')
