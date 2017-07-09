@@ -1,6 +1,11 @@
 <template>
     <div class="subdomains-wrapper">
-        <h3>Domains for automated server discovery</h3>
+        <!-- Subdomain help modals -->
+        <subdomain-info></subdomain-info>
+
+        <h3>Domains for automated server discovery
+            <span class="helpsub" data-toggle="modal" data-target="#subdomainsInfoModal">
+                <sup><i class="fa fa-question-circle"></i></sup></span></h3>
         <subdomain-watchers></subdomain-watchers>
 
         <h3>Discovered servers </h3>
@@ -14,12 +19,14 @@
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
+    import SubdomainInfo from './SubdomainInfo.vue';
     import SubdomainWatchers from './SubdomainWatchers.vue';
     import SubdomainDetected from './DetectedSubdomains.vue';
 
     Vue.use(VueEvents);
     Vue.component('subdomain-watchers', SubdomainWatchers);
     Vue.component('subdomain-detected', SubdomainDetected);
+    Vue.component('subdomain-info', SubdomainInfo);
 
     export default {
         data: function() {

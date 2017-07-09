@@ -11,7 +11,6 @@
                 </div>
             </div>
 
-            <!--/home/subs/res-->
             <div class="table-responsive table-xfull"
                  v-bind:class="{'loading' : tblLoadingState==2 || loadingState==0}">
                 <vuetable ref="vuetable"
