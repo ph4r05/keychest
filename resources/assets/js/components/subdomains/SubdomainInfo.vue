@@ -1,15 +1,18 @@
 <template>
     <!-- Subdomain watch modal info -->
-    <help-modal id="subdomainsInfoModal" title="Domains for automated server discovery">
+    <help-modal id="subdomainsInfoModal" title="Automatic server discovery">
         <p>
-            Domains in this list are periodically scanned for sub-domains.
-            If auto-add feature is enabled newly detected sub-domains are automatically added to the
-            monitoring server list.
+            Automatic server monitoring
+            If you enable the "Watch Now" feature, KeyChest will automatically add all new servers
+            to monitoring. They will appear in the dashboard with test results on port 443 (HTTPS).
         </p>
-
         <p>
-            Technical note: Certificate Transparency logs scanning is used for detection.
+            Note: Detection of servers in active domains happens:
         </p>
+        <ul>
+            <li>immediately after you add a new active domain, unless it is already in the KeyChest database; and</li>
+            <li>subsequently in regular intervals, as defined in the User Guide (up to 48 hours).</li>
+        </ul>
     </help-modal>
 </template>
 

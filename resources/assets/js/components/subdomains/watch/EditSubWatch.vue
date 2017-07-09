@@ -23,7 +23,7 @@
 
                             <div class="form-group">
                                 <input type="checkbox" id="sub-auto-add-edit">
-                                <label for="sub-auto-add-edit">Automatically add found names to the monitoring</label>
+                                <label for="sub-auto-add-edit">&nbsp;Watch Now - automatic monitoring of new servers</label>
                             </div>
 
                             <div class="alert alert-info scan-alert" v-show="sentState == 2">
@@ -33,7 +33,9 @@
                             <transition name="fade">
                                 <div class="alert alert-danger alert-dismissable" v-if="sentState == -1">
                                     <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                    <strong>Bugger,</strong> something broke down. Please try again or report this issue.
+                                    <strong>Bugger,</strong> something broke down. Please report this issue at
+                                    <a href="mailto:support@enigmabridge.com?Subject=KeyChest%20error" target="_top">
+                                        support@enigmabridge.com</a>.
                                 </div>
                             </transition>
 

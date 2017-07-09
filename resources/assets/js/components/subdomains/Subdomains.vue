@@ -3,10 +3,10 @@
         <!-- Subdomain help modals -->
         <subdomain-info></subdomain-info>
 
-        <h3>Domains for automated server discovery <help-trigger id="subdomainsInfoModal"></help-trigger></h3>
+        <h3>Domains for automatic server discovery <help-trigger id="subdomainsInfoModal"></help-trigger></h3>
         <subdomain-watchers></subdomain-watchers>
 
-        <h3>Discovered servers </h3>
+        <h3>Servers and their monitoring status</h3>
         <subdomain-detected></subdomain-detected>
     </div>
 </template>
