@@ -125,5 +125,7 @@
     <script src="{{ mix('/js/app.js') }}"></script>
     <script src="{{ asset('/js/misc.js') }}"></script>
 
+    {!! survivor() !!}
+
 </body>
 </html>

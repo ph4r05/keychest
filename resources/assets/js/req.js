@@ -88,6 +88,41 @@ function getJobResult(uuid, onLoaded, onFail){
 }
 
 /**
+ * Starts keepalive mechanism to keep session alive & detect failure of CSRF token before user does.
+ * @param options
+ * @param onFail
+ */
+function pingKeepAlive(options, onFail){
+    const onSuccess = (data) => {
+        // TODO: reschedule
+    };
+
+    const onIfail = (response, e) => {
+        if (e){
+            onFail(e);
+        }
+    };
+
+    axios.post('/ping', {'ping': true})
+        .then(response => {
+            if (!response || !response.data) {
+                onFail(response); // no data -> wrong
+            } else if (response.data['status'] === 'success') {
+                onSuccess(response.data);
+            } else {
+                onIfail(response);
+            }
+        })
+        .catch(e => {
+            if (e && e.response && e.response.status >= 500){
+                onIfail(undefined, e);  // CSRF / server error
+            } else {
+
+            }
+        });
+}
+
+/**
  * Default value
  * @param val
  * @param def

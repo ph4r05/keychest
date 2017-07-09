@@ -180,6 +180,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         GrahamCampbell\Markdown\MarkdownServiceProvider::class,
+        Influendo\LaravelSurvivor\SurvivorServiceProvider::class,
 
         /*
          * Application Service Providers...
