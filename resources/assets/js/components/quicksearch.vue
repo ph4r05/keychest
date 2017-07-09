@@ -185,7 +185,8 @@
 
             <!-- Neighbours -->
             <div class="alert alert-info" v-if="tlsScanHostCert && !errHostname && neighbourhood.length > 2">
-                <p>Here are domains from your neighborhood:</p>
+                <p>The server has a multi-name (SAN) certificate. It means that the same private key
+                    is shared by all of the following servers:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">
                         <span v-if="!Req.isWildcard(domain)"><a v-bind:href="'?url=' + encodeURI(domain)">{{ domain }}</a></span
