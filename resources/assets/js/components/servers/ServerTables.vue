@@ -35,7 +35,12 @@
         @vuetable:pagination-data="onPaginationData"
         @vuetable:loaded="onLoaded"
         @vuetable:loading="onLoading"
-      ></vuetable>
+      >
+        <template slot="errors" scope="props">
+          <span class="label label-success" v-if="!props.rowData.dns_error">OK</span>
+          <span class="label label-danger" v-else="">DNS</span>
+        </template>
+      </vuetable>
       </div>
 
       <div class="vuetable-pagination">
@@ -125,6 +130,13 @@ export default {
                     titleClass: 'text-center',
                     dataClass: 'text-center',
                     callback: 'formatDate|DD-MM-YYYY'
+                },
+                {
+                    name: '__slot:errors',
+                    title: 'Errors',
+                    sortField: 'dns_error',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center',
                 },
                 {
                     name: 'last_scan_at',
