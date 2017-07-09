@@ -15,7 +15,24 @@
 @section('main-content')
     <help-modal id="scanHelpModal" title="Spot check">
         <p>
-            TODO: spot check
+            Spot check is a powerful tool for quick assessment of SSL/TLS configuration of your servers.
+            It resolves the DNS name you provide and runs a series of checks against that IP address -
+            no automatic redirect, but it shows a redirect, if detected, so you can quickly run another
+            check against the detected server.
+        </p>
+        <p>
+            The list of spot check tests:
+            <ul>
+            <li>certificate expiration - how many days till the certificate expires;</li>
+            <li>downtime - downtime during last 2 years; CT logs data amended with server checks if this data is available;</li>
+            <li>chain trust - whether the server provides a complete chain of certificates needed
+                for validation;</li>
+            <li>certificate issuer - it shows the name of the certificate issuer (if set);</li>
+            <li>list of neighbors - the list of all names in the certificate;</li>
+            <li>hostname match - whether the name(s) in the certificate contain the server's name;</li>
+            <li>SSL detection - if your server uses insecure version SSL2 or SSL3, it will be flagged;</li>
+            <li>HSTS - if the HSTS (HTTP Strict Server Security) is enabled.</li>
+        </ul>
         </p>
     </help-modal>
 
