@@ -5,7 +5,7 @@
 @endsection
 
 @section('contentheader_title')
-    {{ trans('admin.scan') }}
+    {{ trans('admin.scan') }} <help-trigger id="scanHelpModal"></help-trigger>
 @endsection
 
 @section('contentheader_description')
@@ -13,6 +13,12 @@
 @endsection
 
 @section('main-content')
+    <help-modal id="scanHelpModal" title="Spot check">
+        <p>
+            TODO: spot check
+        </p>
+    </help-modal>
+
     <div class="servers-wrapper container-fluid spark-screen">
         <div class="row">
             <div class="servers-tab col-md-12 ">
