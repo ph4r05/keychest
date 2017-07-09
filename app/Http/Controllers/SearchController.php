@@ -132,6 +132,18 @@ class SearchController extends Controller
     }
 
     /**
+     * Simple check for session keep alive & CSRF validity check.
+     * Improves user UX when using  loaded page after some time.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function restPing()
+    {
+        return response()->json([
+            'status' => 'success'
+        ], 200);
+    }
+
+    /**
      * Returns current job state
      */
     public function restGetJobState()

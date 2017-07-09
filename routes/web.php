@@ -14,6 +14,8 @@
 Route::get('/', 'SearchController@show')->name('/');
 Route::post('/', 'SearchController@search');
 Route::post('/intro', 'SearchController@search')->name('intro');
+Route::get('ping', 'SearchController@restPing')->name('ping');
+Route::post('ping', 'SearchController@restPing')->name('pping');
 Route::post('feedback', 'SearchController@voteFeedback')->name('feedback');
 Route::post('rfeedback', 'SearchController@restSubmitFeedback')->name('rfeedback');
 
