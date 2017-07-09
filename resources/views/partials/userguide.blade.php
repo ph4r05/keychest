@@ -10,37 +10,39 @@
     We had a pretty good idea about the main features to make KeyChest a real helping tool, rather than just yet
     another management system we have to think about all the time (did we add all servers, does data
     collection work, etc.). The best monitoring system is useless, if you forget to register your
-    servers with it. So KeyChest will automatically find all new servers from "Active Domains" the moment
+    servers with it. So KeyChest will automatically find all new servers from <i>Active Domains</i> the moment
     you prime them with their first certificate. It will keep monitoring servers to detect any downtimes
     and it will only bother you if there is a problem.
 </p>
 
 <h3 class="mg-md">New server - recommended approach</h3>
 <p>
-    Setting up a new server is usually fun - so long as there aren't too many of them. We recommend
-    the following approach with a clear "hand-over" from "setting up" to "operations".
+    Setting up a new server is usually a fun - so long as there aren't too many of them. Still, it's
+    good to choose and follow the same procedure to get it done without wasting our time. We
+    recommend the following approach with a clear handover from <i>setting up</i> (project)
+    to <i>keep it running</i> (operations).
 </p>
 <p><b>Option 1</b></p>
 
 <ul>
-    <ol>Setup / amend configuration of your server.</ol>
-    <ol>Use our <a href="/home/scan">Spot Check</a> to verify that your configuration is
-        correct and repeat step 1 as necessary. </ol>
-    <ol>(Optional, but useful) Use <a href="https://www.ssllabs.com/ssltest/" target="_blank"> SSLLabs</a> to
-        get detailed information about cryptographic security and adjust your configuration.</ol>
-    <ol><a href="/home/servers">Start tracking</a> the server by adding here to your list of servers.</ol>
-    <ol>All is good, the configuration process is completed.</ol>
-    <ol>Check regular server status updates from KeyChest to detect renewal failures or to plan
-    manual renewals as appropriate.</ol>
+    <li>1. Setup / amend the configuration of your server.</li>
+    <li>2. Use our <a href="/home/scan">Spot Check</a> to verify that your configuration is
+        correct and repeat step 1 as necessary. </li>
+    <li>3. (Optional, but useful) Use <a href="https://www.ssllabs.com/ssltest/" target="_blank"> SSLLabs</a> to
+        get detailed information about cryptographic security and adjust your configuration.</li>
+    <li>4. <a href="/home/servers">Start tracking</a> the server by adding here to your list of servers.</li>
+    <li>5. All is good, the configuration process is completed. Let's handover to "ops".</li>
+    <li>6. Check regular server status updates from KeyChest to detect renewal failures or to plan
+    manual renewals as appropriate.</li>
 </ul>
 
 <p><b>Option 2 - Watch Now&trade;</b></p>
 <ul>
-    <ol>Use <a href="/home/servers">Active Domains</a> to add your registered domain or sub-domain
-    for automatic server discovery. Switch on the Watch Now&trade; option.</ol>
-    <ol>When you/someone creates a certificate for a new server, KeyChest will start monitoring it.</ol>
-    <ol>If the next status update shows configuration problems with the server, use
-        <a href="/home/scan">Spot Check</a> to quickly check your corrections.</ol>
+    <li>1. Use <a href="/home/servers">Active Domains</a> to add your registered domain or sub-domain
+    for automatic server discovery. Switch on the Watch Now&trade; option.</li>
+    <li>2. When you/someone creates a certificate for a new server, KeyChest will start monitoring it.</li>
+    <li>3. If the next status update shows configuration problems with the server, use
+        <a href="/home/scan">Spot Check</a> to quickly check your corrections.</li>
 </ul>
 
 
@@ -48,27 +50,27 @@
 <h3 class="mg-md">How to use KeyChest</h3>
 
 <p>
-    KeyChest gives you a quick information when you are setting up a new server and it continuously monitors
-    your certificates and servers. It is not intended for thorough security audits as each would take several
-    minutes to complete and you really want to run those only when the basics are right (server is running,
-    firewall open, TLS setup, certificate installed, etc.). KeyChest helps to quickly complete and verify the
-    initial configuration.
+    KeyChest gives you a quick information when you are setting up a new server and it
+    continuously monitors your certificates and servers. It is not intended for thorough
+    security audits as there are already good free tools for that. Also, each thorough
+    security audit takes several minutes to complete and you really want to run
+    those only when the basics are right (server is running, firewall open, TLS setup,
+    certificate installed, etc.). KeyChest helps to quickly complete and verify this initial
+    configuration.
 </p>
 
 <p>
     KeyChest consists of two main tools:
 <ul>
-    <li>Spot check - a quick check of a particular server with instant results. A typical use-case for spot check
-        is setup of a new server, or to check the correct setup after configuration changes.
+    <li>Spot check - a quick check of a particular server with instant results. A typical
+        use-case for spot check is setup of a new server, or to check the correct setup after
+        configuration changes.
     </li>
-    <li>Dashboard - this tool provides a concise but easy to understand overview of the status of all "watched"
-        servers or internet domains.
+    <li>Dashboard - this tool provides a concise but easy to understand overview of the status
+        of all watched servers or internet domains.
     </li>
 </ul>
 
-Initially, we thought that the Spot Check would be used first - to help you with configuration - and Dashboard
-will take over with its continuous monitoring. The flow will change, however, when you use Active Domains with
-the Watch Now&trade; feature.
 
 If you want to monitor, you need to import some data into a monitoring system first. There are three options
 to add new servers into KeyChest and some more options, if you deploy it on-premise:
@@ -79,8 +81,19 @@ to add new servers into KeyChest and some more options, if you deploy it on-prem
     <li>Bulk import - you can paste a list of domain names - one per line, to speed up initial import.</li>
 </ul>
 
+
 On-premise deployments and our enterprise version can also scan ranges of private IP addresses with standalone agents.
 </p>
+
+<h3 class="mg-md">Watch Now&trade;</h3>
+
+Watch Now&trade; is a feature you can switch on when you set new Active Domains. It really makes
+KeyChest a powerful monitoring system, which thinks for you. You don't have to think about
+monitoring when you set up a new server. The Watch Now&trade; feature will detect the new server is
+using a certificate and it will start watching it automatically.
+
+That means it will appear in the next status update and it will show any configuration problem you
+may have missed.
 
 
 <h3 class="mg-md">Technical specification</h3>
