@@ -15,8 +15,10 @@
 @section('main-content')
     <help-modal id="scanHelpModal" title="Spot check">
         <p>
-            Spot check is a powerful tool for quick assessment of SSL/TLS configuration of your servers.
-            It resolves the DNS name you provide and runs a series of checks against that IP address -
+            Spot check is a powerful tool for quick assessment of the SSL/TLS configuration of your servers.
+        </p>
+        <p>
+            It resolves the DNS name you provide and runs a series of tests against that IP address -
             no automatic redirect, but it shows a redirect, if detected, so you can quickly run another
             check against the detected server.
         </p>
