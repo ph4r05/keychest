@@ -105,7 +105,7 @@
                     {
                         name: 'scan_host',
                         sortField: 'scan_host',
-                        title: 'Base domain',
+                        title: 'Active domain',
                     },
                     {
                         name: '__slot:autoadd',
