@@ -98,11 +98,52 @@ may have missed.
 
 <h3 class="mg-md">Technical specification</h3>
 <ul>
-    <li>Maximum number of monitored servers - UNLIMITED</li>
-    <li>Maximum number of Active Domains - UNLIMITED</li>
+    <li>Maximum number of monitored servers - UNLIMITED.</li>
+    <li>Maximum number of Active Domains - UNLIMITED.</li>
     <li>User identification - via email address, regardless of the login/registration method.</li>
-    <li>Organization</li>
-    <li></li>
+    <li>Organization - not available.</li>
+    <li>User / role definitions - not available.</li>
+    <li>User identification - by email; you can use any login method and so long as it provides the same
+        email address you will access your account.</li>
+    <li>Watch Now&trade; interval - 48 hours.</li>
+    <li>Server check interval - 2 hours.</li>
+    <li>DNS check interval - 10 minutes.</li>
+    <li>whois check interval - 48 hours.</li>
+    <li>Server new certificate detection interval - 2 hours.</li>
+</ul>
+
+<h3 class="mg-md">Server configuration errors</h3>
+
+<p>
+    The list of possible error causes shown in the section <i>Servers with configuration errors</i> includes:
+</p>
+<ul>
+    <li>Self-signed certificate - the certificate provided by the server is self-signed; this
+    can be due to a path to a default certificate still present in the server configuration;</li>
+    <li>CA certificate - the server's certificate has a "CA flag" set; this means the related
+        key can sign other certificates. This is forbidden.</li>
+    <li>Validation failed - there was an unspecified error when we tried to validate the server's
+    certificate.</li>
+    <li>Incomplete trust chain - there is a certificate missing in the trust chain provided by
+    the server. Check that the certificate "bundle"/intermediate certificates are correctly defined.</li>
+    <li>No certificate - the server didn't provide any certificate.</li>
+    <li>Untrusted certificate - the certificate is not trusted. You may be using your own internal
+    CA.</li>
+</ul>
+
+<h3 class="mg-md">TLS errors in Spot Check</h3>
+
+<p>
+    The list of possible error causes shown by <i>Spot Check</i> includes:
+</p>
+<ul>
+    <li>TLS handshake error - check your TLS configuration, this error may indicate use of
+    insecure versions SSL3 or SSL2. The same error can be caused by StartTLS, which we do
+    not support yet;</li>
+    <li>Connection error - we couldn't connect to the server, check that the port is correct and/or
+    the server is running; and</li>
+    <li>Timeout - there was no response to TLS requests; check whether the port is open in your
+    firewall(s).</li>
 </ul>
 
 
