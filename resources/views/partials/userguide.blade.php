@@ -24,7 +24,7 @@
 </p>
 <p><b>Option 1</b></p>
 
-<ul>
+<ul style="list-style: none">
     <li>1. Setup / amend the configuration of your server.</li>
     <li>2. Use our <a href="/home/scan">Spot Check</a> to verify that your configuration is
         correct and repeat step 1 as necessary. </li>
@@ -37,7 +37,8 @@
 </ul>
 
 <p><b>Option 2 - Watch Now&trade;</b></p>
-<ul>
+
+<ul style="list-style: none">
     <li>1. Use <a href="/home/servers">Active Domains</a> to add your registered domain or sub-domain
     for automatic server discovery. Switch on the Watch Now&trade; option.</li>
     <li>2. When you/someone creates a certificate for a new server, KeyChest will start monitoring it.</li>
