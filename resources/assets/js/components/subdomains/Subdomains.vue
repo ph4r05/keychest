@@ -3,9 +3,7 @@
         <!-- Subdomain help modals -->
         <subdomain-info></subdomain-info>
 
-        <h3>Domains for automated server discovery
-            <span class="helpsub" data-toggle="modal" data-target="#subdomainsInfoModal">
-                <sup><i class="fa fa-question-circle"></i></sup></span></h3>
+        <h3>Domains for automated server discovery <help-trigger id="subdomainsInfoModal"></help-trigger></h3>
         <subdomain-watchers></subdomain-watchers>
 
         <h3>Discovered servers </h3>

@@ -7,7 +7,8 @@
     </div>
 
     <div v-show="loadingState != 0">
-      <h3>Monitored Servers</h3>
+      <h3>Monitored Servers <help-trigger id="serversInfoModal"></help-trigger></h3>
+      <server-info></server-info>
 
       <div class="row">
         <div class="col-md-7">
@@ -67,6 +68,7 @@ import DetailRow from './DetailRow';
 import FilterBar from './FilterBar';
 import AddServer from './AddServer.vue';
 import EditServer from './EditServer.vue';
+import ServerInfo from './ServerInfo.vue';
 
 Vue.use(VueEvents);
 Vue.component('custom-actions', CustomActions);
@@ -74,6 +76,7 @@ Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
 Vue.component('edit-server', EditServer);
+Vue.component('server-info', ServerInfo);
 
 export default {
     components: {
