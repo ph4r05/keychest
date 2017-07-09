@@ -135,7 +135,7 @@ class ScanManager {
     public function getNewestTlsScans($watches, $dnsScans, $primaryIPs){
         $table = (new HandshakeScan())->getTable();
 
-        $qq = DnsResult::query()
+        $qq = HandshakeScan::query()
             ->select(['x.watch_id', 'x.ip_scanned'])
             ->selectRaw('MAX(x.last_scan_at) AS last_scan')
             ->from($table . ' AS x')
@@ -155,7 +155,7 @@ class ScanManager {
         $qq = $qq->groupBy('x.watch_id', 'x.ip_scanned');
         $qqSql = $qq->toSql();
 
-        $q = DnsResult::query()
+        $q = HandshakeScan::query()
             ->from($table . ' AS s')
             ->join(
                 DB::raw('(' . $qqSql. ') AS ss'),
