@@ -11,24 +11,24 @@ namespace App\Models;
 use App\Keychest\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
-class DnsResult extends Model
+class DnsEntry extends Model
 {
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'scan_dns';
+    protected $table = 'scan_dns_entry';
 
     /**
-     * Get the watch_id record for this result
+     * Get the scan_id record for this result
      */
-    public function watch_target()
+    public function dnsScan()
     {
-        return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
+        return $this->belongsTo('App\Model\DnsResult', 'scan_id');
     }
 
     public function getDates()
     {
-        return array('created_at', 'updated_at', 'last_scan_at');
+        return array();
     }
 }

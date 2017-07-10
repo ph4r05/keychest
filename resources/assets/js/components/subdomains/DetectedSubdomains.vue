@@ -34,10 +34,10 @@
                         <span class="label label-warning" v-else="">Not monitored</span>
                     </template>
                     <template slot="actions" scope="props">
-                        <button type="button" class="btn btn-block btn-success"
+                        <button type="button" class="btn btn-subdom btn-success"
                                 v-if="!props.rowData.used" v-on:click="addToMonitoring(props.rowData)"
                         >Add to monitoring</button>
-                        <button type="button" class="btn btn-block disabled" disabled="disabled" v-else=""
+                        <button type="button" class="btn btn-subdom disabled" disabled="disabled" v-else=""
                         >Monitoring</button>
 
                     </template>
@@ -113,7 +113,7 @@
                 ],
                 css: {
                     table: {
-                        tableClass: 'table table-bordered table-striped table-hover',
+                        tableClass: 'table table-sub-list table-bordered table-striped table-hover',
                         ascendingIcon: 'glyphicon glyphicon-chevron-up',
                         descendingIcon: 'glyphicon glyphicon-chevron-down'
                     },
@@ -287,6 +287,12 @@
                     toastr.error('This host is already being monitored.', 'Already present');
                 }).bind(this);
 
+                const onTooMany = (function(data){
+                    Req.bodyProgress(false);
+                    toastr.error('We are sorry but you just reached maximum number of '
+                        + data['max_limit'] + ' monitored servers.', 'Too many servers');
+                }).bind(this);
+
                 const onSuccess = (function(data){
                     rowData.used = true;
                     Req.bodyProgress(false);
@@ -302,6 +308,8 @@
                             onFail();
                         } else if (response.data['status'] === 'already-present'){
                             onDuplicate();
+                        } else if (response.data['status'] === 'too-many'){
+                            onTooMany(response.data);
                         } else if (response.data['status'] === 'success') {
                             onSuccess(response.data);
                         } else {
@@ -311,6 +319,8 @@
                     .catch(e => {
                         if (e && e.response && e.response.status === 410){
                             onDuplicate();
+                        } else if (e && e.response && e.response.status === 429){
+                            onTooMany(e.response.data);
                         } else {
                             console.log("Add server failed: " + e);
                             onFail();
@@ -377,7 +387,7 @@
         }
     }
 </script>
-<style scoped>
+<style>
     .pagination {
         margin: 0;
         float: right;
@@ -435,6 +445,24 @@
     .table-xfull > .table > tbody > tr > td
     {
         padding-left: 12px;
+    }
+
+    @media (max-width: 1023px) {
+        .btn.btn-subdom {
+            min-width: 140px;
+        }
+        .table.vuetable.table-sub-list .vuetable-th-slot-actions{
+            width: 145px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .btn.btn-subdom {
+            min-width: 240px;
+        }
+        .table.vuetable.table-sub-list .vuetable-th-slot-actions{
+            width: 245px;
+        }
     }
 
 </style>

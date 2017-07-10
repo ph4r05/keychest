@@ -3,17 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
+use App\Models\DnsEntry;
+use App\Models\DnsResult;
+use App\Models\HandshakeScan;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 
@@ -29,12 +35,20 @@ class ServersController extends Controller
     protected $serverManager;
 
     /**
+     * Scan manager
+     * @var ScanManager
+     */
+    protected $scanManager;
+
+    /**
      * Create a new controller instance.
      * @param ServerManager $serverManager
+     * @param ScanManager $scanManager
      */
-    public function __construct(ServerManager $serverManager)
+    public function __construct(ServerManager $serverManager, ScanManager $scanManager)
     {
         $this->serverManager = $serverManager;
+        $this->scanManager = $scanManager;
         $this->middleware('auth');
     }
 
@@ -64,9 +78,7 @@ class ServersController extends Controller
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
 
-        $query = WatchAssoc::query()
-            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->select($watchTbl.'.*', $watchAssocTbl.'.*')
+        $query = $this->serverManager->loadServerList()
             ->where($watchAssocTbl.'.user_id', '=', $userId)
             ->whereNull($watchAssocTbl.'.deleted_at');
 
@@ -82,7 +94,7 @@ class ServersController extends Controller
 
         $query = DbTools::sortQuery($query, $sort_parsed);
 
-        $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
+        $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100); // type: \Illuminate\Pagination\LengthAwarePaginator
         return response()->json($ret, 200);
     }
 
@@ -96,12 +108,20 @@ class ServersController extends Controller
         $server = strtolower(trim(Input::get('server')));
         $server = DomainTools::normalizeUserDomainInput($server);
 
+        $maxHosts = config('keychest.max_servers');
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        if ($numHosts >= $maxHosts){
+            return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
+        }
+
         $ret = $this->addServer($server);
         if (is_numeric($ret)){
             if ($ret === -1){
                 return response()->json(['status' => 'fail'], 422);
             } elseif ($ret === -2){
                 return response()->json(['status' => 'already-present'], 410);
+            } elseif ($ret === -3){
+                return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
             } else {
                 return response()->json(['status' => 'unknown-fail'], 500);
             }
@@ -304,12 +324,21 @@ class ServersController extends Controller
             return (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed));
         })->values();
 
+        $maxHosts = config('keychest.max_servers');
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
         $num_added = 0;
         $num_present = 0;
         $num_failed = 0;
-        foreach ($validServers->all() as $cur){
-            $ret = $this->addServer($cur);
+        $num_total = $numHosts;
+        $hitMaxLimit = false;
 
+        foreach ($validServers->all() as $cur){
+            if ($num_total >= $maxHosts){
+                $hitMaxLimit = true;
+                break;
+            }
+
+            $ret = $this->addServer($cur);
             if (is_numeric($ret)){
                 if ($ret === -1){
                     $num_failed += 1;
@@ -320,6 +349,7 @@ class ServersController extends Controller
                 }
             } else {
                 $num_added += 1;
+                $num_total += 1;
             }
         }
 
@@ -327,10 +357,14 @@ class ServersController extends Controller
         return response()->json([
             'status' => 'success',
             'transformed' => $outTransformed,
+            'num_hosts' => $numHosts,
             'num_added' => $num_added,
             'num_present' => $num_present,
             'num_failed' => $num_failed,
-            'num_skipped' => $servers->count() - $validServers->count()
+            'num_skipped' => $servers->count() - $validServers->count(),
+            'num_total' => $num_total,
+            'hit_max_limit' => $hitMaxLimit,
+            'max_limit' => $maxHosts
         ], 200);
     }
 }

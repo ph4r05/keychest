@@ -35,7 +35,13 @@
         @vuetable:pagination-data="onPaginationData"
         @vuetable:loaded="onLoaded"
         @vuetable:loading="onLoading"
-      ></vuetable>
+      >
+        <template slot="errors" scope="props">
+          <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
+          <span class="label label-danger" v-if="props.rowData.tls_errors > 0">TLS</span>
+          <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">OK</span>
+        </template>
+      </vuetable>
       </div>
 
       <div class="vuetable-pagination">
@@ -125,6 +131,13 @@ export default {
                     titleClass: 'text-center',
                     dataClass: 'text-center',
                     callback: 'formatDate|DD-MM-YYYY'
+                },
+                {
+                    name: '__slot:errors',
+                    title: 'Errors',
+                    sortField: 'dns_error',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center',
                 },
                 {
                     name: 'last_scan_at',
@@ -238,6 +251,15 @@ export default {
                     onFail();
                 });
 
+        },
+
+        getSortParam(sortOrder) {
+            return _.join(_.map(sortOrder, x => {
+                if (x.sortField === 'dns_error'){
+                    return 'dns_error' + '|' + x.direction + ',' + 'tls_errors' + '|' + x.direction;
+                }
+                return x.sortField + '|' + x.direction;
+            }), ',');
         },
 
         renderPagination(h) {
