@@ -235,7 +235,7 @@
                                         <span v-else-if="tls.err_code == 2">No server detected</span>
                                         <span v-else-if="tls.err_code == 3">Timeout</span>
                                         <span v-else-if="tls.err_code == 4">Domain lookup error</span>
-                                        <span v-else="">TLS not present</span>
+                                        <span v-else="">TLS/SSL not present</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
                                          ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
