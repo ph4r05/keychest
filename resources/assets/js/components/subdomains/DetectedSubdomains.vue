@@ -34,10 +34,10 @@
                         <span class="label label-warning" v-else="">Not monitored</span>
                     </template>
                     <template slot="actions" scope="props">
-                        <button type="button" class="btn btn-block btn-success"
+                        <button type="button" class="btn btn-subdom btn-success"
                                 v-if="!props.rowData.used" v-on:click="addToMonitoring(props.rowData)"
                         >Add to monitoring</button>
-                        <button type="button" class="btn btn-block disabled" disabled="disabled" v-else=""
+                        <button type="button" class="btn btn-subdom disabled" disabled="disabled" v-else=""
                         >Monitoring</button>
 
                     </template>
@@ -377,7 +377,7 @@
         }
     }
 </script>
-<style scoped>
+<style>
     .pagination {
         margin: 0;
         float: right;
@@ -435,6 +435,24 @@
     .table-xfull > .table > tbody > tr > td
     {
         padding-left: 12px;
+    }
+
+    @media (max-width: 1023px) {
+        .btn.btn-subdom {
+            min-width: 140px;
+        }
+        .table.vuetable .vuetable-th-slot-actions{
+            width: 145px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .btn.btn-subdom {
+            min-width: 240px;
+        }
+        .table.vuetable .vuetable-th-slot-actions{
+            width: 245px;
+        }
     }
 
 </style>
