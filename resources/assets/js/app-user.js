@@ -43,7 +43,12 @@ Vue.component('email-reset-password-form', require('./components/auth/EmailReset
 Vue.component('reset-password-form', require('./components/auth/ResetPasswordForm.vue'));
 Vue.component('server-tables', require('./components/servers/ServerTables.vue'));
 Vue.component('sbox', require('./components/partials/sbox.vue'));
+Vue.component('help-modal', require('./components/partials/HelpModal.vue'));
+Vue.component('help-trigger', require('./components/partials/HelpTrigger.vue'));
 Vue.component('dashboard', require('./components/dashboard.vue'));
+Vue.component('subdomains', require('./components/subdomains/Subdomains.vue'));
+Vue.component('servers', require('./components/servers.vue'));
+Vue.component('servers-import', require('./components/servers-import/server-import.vue'));
 
 console.log('Vue.js init');
 const app = new Vue({

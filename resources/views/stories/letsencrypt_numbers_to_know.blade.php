@@ -16,6 +16,9 @@
 					<p class=" mg-lg">
 						<a class="ltc-rich-electric-blue" href="https://letsencrypt.org" target="_blank">Let's Encrypt</a>&nbsp;is now the largest certificate provider for internet facing servers (combining a Frost&amp;Sullivan report on SSL/TLS certificates from 2016 and actual data from Let's Encrypt, LE currently issues around 80% of all browser-trusted certificates). It does not issue the "most secure" certificates (i.e., EV, or extended validation certificates, which require manual validation of the address and legal status of the web service owner), but its certificates provide a very good level of security for most of us.<br><br>When we started using Let's Encrypt (LE), we slowly learnt about various limitations imposed on users. There is not any single place where you can find all important information in one place so here's the first attempt. We will amend it as we learn more directly, or from your feedback.<br>
 					</p>
+					<p>
+						<i>Start monitoring your SSL certificates with KeyChest.net - <a class="ltc-rich-electric-blue" href="https://keychest.net" target="_blank">a free certificate dashboard and spot checker</a> (or click <a class="ltc-rich-electric-blue" href="https://keychest.net/register">"My Dashboard"</a> above).</i></p>
+					</p>
 					<div class="divider-h">
 						<span class="divider"></span>
 					</div>
@@ -93,6 +96,33 @@
 					</p>
 
 					<h3 class="mg-md  tc-rich-electric-blue">
+						Preference of IPv6 (and failures of misconfigured clients)
+					</h3>
+<p class="mg-md">
+	At the end of May 2017, Let's Encrypt changed the handling of
+	IPv4 and IPv6 - IPv6 became the preferred protocol. This change has been causing sudden malfunctions of clients as
+	domain validation started failing if there was a problem with IPv6 configuration.
+</p>
+					<p class="mg-md">
+						Previously, Let's Encrypt preferred IPv4, which is still the protocol you are likely
+						to configure and test your web browser with first. You may need to update network configuration on
+						your servers so that IPv6 requests reach your server and the web server recognizes
+						IPv6 addresses as belonging to existing (virtual) hosts.
+					</p>
+
+					<p class="mg-md">
+						Some users of Let's Encrypt, however, were caught by surprise, as  IPv6 issues were
+						not due to their servers' configuration, but errors in network traffic routing
+						provided by their internet provider.
+					</p>
+
+					<p class="mg-md">
+						You can use <a class="ltc-rich-electric-blue" href="http://ipv6-test.com/">this online service to test your server</a>.
+						More details  <a class="ltc-rich-electric-blue" href="https://community.letsencrypt.org/t/preferring-ipv6-for-challenge-validation-of-dual-homed-hosts/34774">
+							here (Let's Encrypt community)</a>.
+					</p>
+
+					<h3 class="mg-md  tc-rich-electric-blue">
 						Max registrations per end-point (IPv4, IPv6)
 					</h3>
 					<p class=" mg-sm">
@@ -126,7 +156,7 @@
 						Floating window for limits
 					</h3>
 					<p class=" mg-lg">
-						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 144 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 144 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (<a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/staging-environment/">There are any limits in the staging environment</a>, but limiting values are much higher. We haven't hit any yet.)</i><br>
+						LE enforces several "velocity" limits, i.e., how many requests you can submit to its certification authority. These are currently based on a floating window of 7 days, i.e., 168 hours. Your "allowance" is recomputed at the time of each new certification request using logs of the last 168 hours.<br><br><i>All limits are only enforced in the production environment. The staging environment is open for your testing. (<a class="ltc-rich-electric-blue" href="https://letsencrypt.org/docs/staging-environment/">There are any limits in the staging environment</a>, but limiting values are much higher. We haven't hit any yet.)</i><br>
 					</p>
 					<h3 class="mg-md  tc-rich-electric-blue">
 						Does revocation of a certificate reset limit counters?

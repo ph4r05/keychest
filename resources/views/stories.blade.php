@@ -24,7 +24,7 @@
                 <div class="col-sm-4">
                     <a href="/content/keychest_spot_check"><img src="/images/worldAtHand_EB.png" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
-                        <a class="ltc-rich-electric-blue" href="/content/keychest_spot_check">Keychest spot check</a><br>
+                        <a class="ltc-rich-electric-blue" href="/content/keychest_spot_check">KeyChest spot check</a><br>
                     </h3>
                     <p>
                         Learn more about what our spot check is for and how to use it.

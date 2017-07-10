@@ -1,8 +1,8 @@
 {
     "name": "enigmabridge/keychest",
-    "description": "The Keychest certificate scanner.",
+    "description": "The KeyChest certificate scanner.",
     "keywords": ["certificate", "scanner"],
-    "license": "MIT",
+    "license": "AGPLv3",
     "type": "project",
     "require": {
         "php": ">=5.6.4|~7.0",
@@ -15,6 +15,7 @@
         "barryvdh/laravel-ide-helper": "^2.3",
         "creativeorange/gravatar": "~1.0",
         "graham-campbell/markdown": "^7.1",
+        "influendo/laravel-survivor": "^1.0",
         "laracasts/utilities": "~2.0",
         "laravel/browser-kit-testing": "^1.0.2",
         "laravel/dusk": "^1.0",
@@ -23,6 +24,7 @@
         "laravelcollective/html": "^5.4",
         "league/flysystem": "^1.0",
         "predis/predis": "v1.1.1",
+        "true/punycode": "~2.0",
         "webpatser/laravel-uuid": "^2.0"
     },
     "require-dev": {

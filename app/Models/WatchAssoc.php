@@ -15,6 +15,6 @@ class WatchAssoc extends Model
 
     public function getDates()
     {
-        return array('created_at', 'updated_at', 'deleted_at');
+        return array('created_at', 'updated_at', 'deleted_at', 'disabled_at', 'auto_scan_added_at');
     }
 }

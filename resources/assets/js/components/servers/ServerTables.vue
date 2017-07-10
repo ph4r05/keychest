@@ -7,18 +7,21 @@
     </div>
 
     <div v-show="loadingState != 0">
+      <h3>Monitored Servers <help-trigger id="serversInfoModal"></help-trigger></h3>
+      <server-info></server-info>
+
       <div class="row">
-        <div class="col-md-8">
-          <filter-bar></filter-bar>
-        </div>
-        <div class="col-md-3 col-md-push-1">
+        <div class="col-md-7">
           <add-server></add-server>
+        </div>
+        <div class="col-md-5">
+          <filter-bar></filter-bar>
         </div>
       </div>
 
       <edit-server></edit-server>
 
-      <div class="table-responsive" v-bind:class="{'loading' : loadingState==2}">
+      <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
       <vuetable ref="vuetable"
         api-url="/home/servers/get"
         :fields="fields"
@@ -32,7 +35,13 @@
         @vuetable:pagination-data="onPaginationData"
         @vuetable:loaded="onLoaded"
         @vuetable:loading="onLoading"
-      ></vuetable>
+      >
+        <template slot="errors" scope="props">
+          <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
+          <span class="label label-danger" v-if="props.rowData.tls_errors > 0">TLS</span>
+          <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">OK</span>
+        </template>
+      </vuetable>
       </div>
 
       <div class="vuetable-pagination">
@@ -65,6 +74,7 @@ import DetailRow from './DetailRow';
 import FilterBar from './FilterBar';
 import AddServer from './AddServer.vue';
 import EditServer from './EditServer.vue';
+import ServerInfo from './ServerInfo.vue';
 
 Vue.use(VueEvents);
 Vue.component('custom-actions', CustomActions);
@@ -72,6 +82,7 @@ Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
 Vue.component('edit-server', EditServer);
+Vue.component('server-info', ServerInfo);
 
 export default {
     components: {
@@ -93,7 +104,7 @@ export default {
                 {
                     name: 'scan_host',
                     sortField: 'scan_host',
-                    title: 'Host',
+                    title: 'Domain name',
                 },
                 {
                     name: 'scan_port',
@@ -120,6 +131,13 @@ export default {
                     titleClass: 'text-center',
                     dataClass: 'text-center',
                     callback: 'formatDate|DD-MM-YYYY'
+                },
+                {
+                    name: '__slot:errors',
+                    title: 'Errors',
+                    sortField: 'dns_error',
+                    titleClass: 'text-center',
+                    dataClass: 'text-center',
                 },
                 {
                     name: 'last_scan_at',
@@ -190,11 +208,9 @@ export default {
             if (this.loadingState != 0){
                 this.loadingState = 2;
             }
-            console.log('loading');
         },
         onLoaded(){
             this.loadingState = 1;
-            console.log('loaded');
         },
         onDeleteServer(data){
             swal({
@@ -237,6 +253,15 @@ export default {
 
         },
 
+        getSortParam(sortOrder) {
+            return _.join(_.map(sortOrder, x => {
+                if (x.sortField === 'dns_error'){
+                    return 'dns_error' + '|' + x.direction + ',' + 'tls_errors' + '|' + x.direction;
+                }
+                return x.sortField + '|' + x.direction;
+            }), ',');
+        },
+
         renderPagination(h) {
             console.log('pagpag');
             return h(
@@ -277,6 +302,9 @@ export default {
         'on-delete-server'(data) {
             this.onDeleteServer(data);
         },
+        'on-manual-refresh'(){
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
+        }
     }
 }
 </script>
@@ -324,6 +352,20 @@ i.sort-icon {
 .loading .vuetable {
 
 }
+.vuetable-pagination{
+  min-height: 40px;
+}
 
+.table-xfull {
+  margin-left: -10px;
+  margin-right: -10px;
+  width: auto;
+}
+
+.table-xfull > .table > thead > tr > th,
+.table-xfull > .table > tbody > tr > td
+{
+  padding-left: 12px;
+}
 
 </style>

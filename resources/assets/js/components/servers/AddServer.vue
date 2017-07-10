@@ -93,6 +93,13 @@
                     toastr.error('This host is already being monitored.', 'Already present');
                 }).bind(this);
 
+                const onTooMany = (function(data){
+                    this.sentState = 0;
+                    $('#add-server-wrapper').effect( "shake" );
+                    toastr.error('We are sorry but you just reached maximum number of '
+                        + data['max_limit'] + ' monitored servers.', 'Too many servers');
+                }).bind(this);
+
                 const onSuccess = (function(data){
                     this.sentState = 1;
                     this.newItem = {'server':''};
@@ -109,6 +116,8 @@
                             onFail();
                         } else if (response.data['status'] === 'already-present'){
                             onDuplicate();
+                        } else if (response.data['status'] === 'too-many'){
+                            onTooMany(response.data);
                         } else if (response.data['status'] === 'success') {
                             onSuccess(response.data);
                         } else {
@@ -118,6 +127,8 @@
                     .catch(e => {
                         if (e && e.response && e.response.status === 410){
                             onDuplicate();
+                        } else if (e && e.response && e.response.status === 429){
+                            onTooMany(e.response.data);
                         } else {
                             console.log("Add server failed: " + e);
                             onFail();

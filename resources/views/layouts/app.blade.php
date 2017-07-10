@@ -71,12 +71,6 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
-                        <!-- Beta link -->
-                        @if (Auth::guest())
-                            <li><a href="{{ route('register') }}">BETA</a></li>
-                        @else
-                            <li><a href="{{ route('home') }}">BETA</a></li>
-                        @endif
 
                         <!-- component navigation -->
                         @yield('content-nav')
@@ -85,17 +79,21 @@
 
                         <!-- Authentication Links -->
                         @if (Auth::guest())
-                            <li><a href="{{ route('register') }}">My dashboard</a></li>
+                            <li><a href="{{ route('register') }}"><b>My dashboard</b></a></li>
                         @else
-                            <li><a href="{{ route('home') }}">My dashboard</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    <b>{{ Auth::user()->name }}</b> <span class="caret"></span>
                                 </a>
 
-                                <ul class="dropdown-menu" role="menu">
+                                <ul class="dropdown-menu tc-rich-electric-blue" role="menu">
+                                    <li><a
+                                                class="tc-rich-electric-blue"
+                                                href="{{ route('home') }}">My dashboard</a></li>
                                     <li>
-                                        <a href="{{ route('logout') }}"
+                                        <a
+                                                class="tc-rich-electric-blue"
+                                                href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             Logout
@@ -126,6 +124,8 @@
     <script src="{{ mix('/js/vendor.js') }}"></script>
     <script src="{{ mix('/js/app.js') }}"></script>
     <script src="{{ asset('/js/misc.js') }}"></script>
+
+    {!! survivor() !!}
 
 </body>
 </html>

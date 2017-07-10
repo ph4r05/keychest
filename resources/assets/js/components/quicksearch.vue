@@ -8,7 +8,7 @@
             <form role="form" id="search-form" @submit.prevent="submitForm()">
                 <div class="input-group" id="scan-wrapper">
                     <input type="text" class="form-control input"
-                           placeholder="Type your domain name, e.g., enigmabridge.com"
+                           placeholder="Server name with optional port, e.g., keychest.com or keychest.com:465"
                            name="scan-target" id="scan-target">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="submit">
@@ -25,12 +25,12 @@
         </div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-            <span v-if="jobSubmittedNow">Waiting for scan to finish...</span>
-            <span v-else="">Loading scan results...</span>
+            <span v-if="jobSubmittedNow">Waiting for spot check to finish ...</span>
+            <span v-else="">Loading test results ...</span>
         </div>
 
         <div class="alert alert-success scan-alert" id="search-success" style="display: none">
-            <strong>Success!</strong> Scan finished.
+            <strong>Success!</strong> Spot check finished.
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
@@ -40,23 +40,26 @@
 
             <!-- DNS problem: do domain resolved -->
             <div class="alert alert-warning" v-if="hasDnsProblem && resultsLoaded">
-                <strong>DNS error</strong>: We could not resolve <strong>{{ curJob.scan_host }}</strong> domain.<br/>
-                <span>Please make sure the domain is entered correctly.</span>
+                <strong>DNS error</strong>: We could not resolve the <strong>{{ curJob.scan_host }}</strong> domain.<br/>
+                <span>Please make sure the server name is correct.</span>
             </div>
 
             <!-- No TLS scan - probably invalid domain -->
             <div class="alert alert-info" v-else-if="isTlsScanEmpty && resultsLoaded">
-                No TLS scan was performed
+                No TLS scan was performed.
             </div>
 
             <!-- TLS Error: problem with the scan -->
             <div class="alert alert-warning" v-else-if="tlsScanError">
-                <strong>TLS Error</strong>: Could not scan <strong>{{ curJob.scan_host }}</strong> on port {{ curJob.port }}
-                <span v-if="tlsScan && tlsScan.err_code == 1"> ( TLS handshake error )</span>
-                <span v-if="tlsScan && tlsScan.err_code == 2"> ( connection error )</span>
-                <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>
-                <div v-if="didYouMeanUrl">Did you mean
-                    <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
+                <strong>TLS Error</strong>: tests of <strong>{{ curJob.scan_host }}</strong> on port
+                <strong>{{ curJob.port }}</strong> failed due to:
+                <span v-if="tlsScan && tlsScan.err_code == 1"> TLS handshake Error</span>
+                <span v-if="tlsScan && tlsScan.err_code == 2"> Connection Error</span>
+                <span v-if="tlsScan && tlsScan.err_code == 3"> Timeout</span>
+                <span v-if="tlsScan && tlsScan.err_code == 4"> Domain lookup error</span>
+                <span v-if="tlsScan && tlsScan.err_code == 5"> No TLS/SSL server found</span>
+                <div v-if="didYouMeanUrl">Is the server name
+                    <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> and the port number correct?</div>
             </div>
 
             <!-- Label for loaded test (performed previously) -->
@@ -77,17 +80,23 @@
                 <!-- Overall validity status, else-ifs from the most urgent to least -->
                 <tr v-bind:class="defconStyle">
                     <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
-                        Certificate expired. Your server is down (HSTS is set). Create an account to track or ask for help.</td>
+                        Certificate expired. Your server is down and HSTS prevents all connections. Start tracking to see
+                        changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
-                        Certificate expired. Your server shows as "Not Secure". Create an account to track or ask for help.</td>
+                        Certificate expired. Web browsers will show a warning page that the server is not secure and
+                        potentially dangerous. Start tracking to see changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<2">
-                        The validity is less than 2 days. Renew now to avoid downtime! Create an account to track or ask for help.</td>
+                        Certificate expires in less than 2 days. Renew it now to avoid downtime! Start tracking to see
+                        changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
-                        The validity is less than 28 days. Plan renewal now! Create an account or ask for help.</td>
+                        Certificate expires in less than 28 days. Plan renewal now! Start tracking to see
+                        changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
-                        There is nothing to do. Well done! Our compliments for using HSTS. <span v-if="!isMonitored">Start tracking to avoid unavailability.</span></td>
+                        All looks good, well done! Our compliments for using HSTS. <span v-if="!isMonitored">Start
+                        tracking to avoid downtimes.</span></td>
                     <td colspan="3" v-else>
-                        There is nothing to do. Well done! <span v-if="!isMonitored">Start tracking to stay on top of your certs.</span></td>
+                        All looks good, well done! <span v-if="!isMonitored">Start tracking to stay on top of your
+                        certificates.</span></td>
                 </tr>
 
                 </tbody>
@@ -114,33 +123,41 @@
             <!-- Cert not trusted -->
             <div class="alert alert-danger" v-if="errTrusted">
                 <div v-if="tlsScanHostCert && tlsScanHostCert.is_self_signed">
-                    We detected an untrusted self-signed certificate. Please get in touch, if you want to track your own certificates.
+                    The server sent a self-signed certificate. Check its configuration, re-test, and start tracking
+                    changes. Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScanHostCert.is_ca">
-                    We detected an untrusted certificate. Please get in touch, if you want to track your own certificates.
+                    The server's certificate has a CA flag and can be used only for issuing other certificates, not
+                    for server authentication. Check the server's configuration, re-test, and start tracking changes.
+                    Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length > 1">
-                    We detected an untrusted certificate chain. Please get in touch, if you want to track your own certificates.
+                    We couldn't verify the certificate chain sent by the server. Check the server's configuration, re-test, and start
+                    tracking changes. Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length === 1">
-                    There is only a leaf certificate in the chain. Probably missing intermediate?
+                    The server sent only its own certificate, a certificate of the issuing CA is missing (aka bundle).
+                    Check the server's configuration, re-test, and start tracking changes. Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert">
-                    We detected an untrusted certificate. Please get in touch, if you want to track your own certificates.
+                    We couldn't verify the server as it didn't send any certificates. Check its configuration, re-test,
+                    and start tracking changes. Get in touch for help.
                 </div>
                 <div v-else="">
-                    <strong>Error: </strong>The certificate is not trusted. <span
-                            v-if="tlsScan.certs_ids.length === 0">No certificate was found.</span><span
-                            v-else-if="!tlsScanHostCert">Host certificate could not be detected.</span><span
-                            v-else-if="tlsScan.certs_ids.length === 1 && tlsScanLeafCert">There is only a leaf certificate in the chain (probably missing intermediate?).</span><!--
+                    <strong>Error: </strong>Server is not trusted as <span
+                            v-if="tlsScan.certs_ids.length === 0">it sent no certificate.</span><span
+                            v-else-if="!tlsScanHostCert">we couldn't create secure connection (TLS handshake).</span><span
+                            v-else-if="tlsScan.certs_ids.length === 1 && tlsScanLeafCert">it sent only its own certificate.
+                    A certificate of the issuing CA is missing (aka bundle).</span><!--
                     -->
                 </div>
             </div>
 
             <!-- Hostname mismatch -->
             <div class="alert alert-danger" v-if="errHostname">
-                <p><strong>Error: </strong>The certificate is valid but the domain does not match.</p>
-                <div v-if="neighbourhood.length > 0"> Certificate domains:
+                <p><strong>Error: </strong>The server sent a certificate, which doesn't contain the server's name. It may
+                be flagged as an attack.</p>
+                <div v-if="neighbourhood.length > 0"> Domain names in the certificate are:
                     <ul class="domain-neighbours">
                         <li v-for="domain in neighbourhood">
                             <a v-bind:href="'?url=' + encodeURI(Req.removeWildcard(domain))">{{ domain }}</a>
@@ -163,7 +180,7 @@
             <div class="alert alert-warning" v-if="downtimeWarning && results.downtimeTls.downtime > 60">
                 <p><strong>Warning!</strong>
                     We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
-                    uptime. You were "not secure" for {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
+                    uptime. You were "not secure" for at least {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
                     hours<span v-if="results.downtimeTls.downtime > 3600*24*3">
                          ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }} days)</span>.
                     <span v-if="!isMonitored">Start tracking now.</span>
@@ -173,19 +190,19 @@
             <!-- LE validity < 30 days (disabled temporarily) -->
             <div class="alert alert-warning" v-if="false && showLeWarning">
                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
-                    the validity is less than 30 days.</p>
-
-                <p>In the correct setting this should not happen. Feel free to contact us for help.</p>
+                    the validity is less than 30 days.In the correct setting this should not happen.
+                    Feel free to contact us for help.</p>
             </div>
 
             <!-- Redirect - scan that too? -->
             <div class="alert alert-info" v-if="!tlsScanError && didYouMeanUrl">
-                Do you also want to check redirected domain <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?
+                We detected a redirection. Click to check destination server <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a>.
             </div>
 
             <!-- Neighbours -->
             <div class="alert alert-info" v-if="tlsScanHostCert && !errHostname && neighbourhood.length > 2">
-                <p>Here are domains from your neighborhood:</p>
+                <p>The server sent a multi-name (SAN) certificate. It means that all of the following servers are
+                    allowed to use the same private key:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">
                         <span v-if="!Req.isWildcard(domain)"><a v-bind:href="'?url=' + encodeURI(domain)">{{ domain }}</a></span
@@ -205,14 +222,17 @@
 
             <div class="tls-results" id="tls-results">
                 <div class="alert alert-info" v-if="isTlsScanEmpty">
-                    No TLS scan was performed
+                    No certificate tests were completed
                 </div>
 
                 <div class="alert alert-warning" v-else-if="tlsScanError">
-                    <strong>TLS Error</strong>: Could not scan <strong>{{ curJob.scan_host }}</strong> on port {{ curJob.port }}
-                    <span v-if="tlsScan && tlsScan.err_code == 1"> ( TLS handshake error )</span>
-                    <span v-if="tlsScan && tlsScan.err_code == 2"> ( connection error )</span>
-                    <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>
+                    <strong>TLS Error</strong>: Certificate tests <strong>{{ curJob.scan_host }}</strong> on port
+                    {{ curJob.port }} failed due to
+                    <span v-if="tlsScan && tlsScan.err_code == 1"> TLS Handshake Error</span>
+                    <span v-if="tlsScan && tlsScan.err_code == 2"> Connection Error</span>
+                    <span v-if="tlsScan && tlsScan.err_code == 3"> Timeout</span>
+                    <span v-if="tlsScan && tlsScan.err_code == 4"> Domain lookup error</span>
+                    <span v-if="tlsScan && tlsScan.err_code == 5"> No TLS/SSL server found</span>
                     <div v-if="didYouMeanUrl">Did you mean
                         <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
                 </div>
@@ -237,12 +257,12 @@
                     </table>
 
                     <div class="alert alert-danger" v-if="!tlsScan.valid_trusted && !tlsScan.valid_path">
-                        <p><strong>Error: </strong>The certificate is not valid</p>
+                        <p><strong>Error: </strong>The certificate is not valid.</p>
                     </div>
 
                     <div class="alert alert-danger" v-if="!tlsScan.valid_trusted && tlsScan.valid_path
                     && !tlsScan.valid_hostname">
-                        <p><strong>Error: </strong>The certificate is valid but the domain does not match</p>
+                        <p><strong>Error: </strong>Server name is not in the server's certificate.</p>
                     </div>
 
                     <div class="alert alert-warning" v-if="tlsScanHostCert && tlsScanHostCert.is_le
@@ -257,28 +277,28 @@
                     <table class="table" v-if="tlsScanHostCert !== null">
                         <tbody>
                         <tr>
-                            <th scope="row">Certificates in the chain</th>
+                            <th scope="row">The number of certificates in the trust chain is</th>
                             <td>{{ len(tlsScan.certs_ids) }}</td>
                         </tr>
                         <tr v-if="tlsScanHostCert.is_le">
-                            <th scope="row">Let's Encrypt</th>
+                            <th scope="row">Free Let's Encrypt</th>
                             <td>{{ tlsScanHostCert.is_le ? 'Yes' : 'No' }}</td>
                         </tr>
                         <tr v-if="tlsScanHostCert.is_cloudflare">
-                            <th scope="row" >Cloudflare</th>
+                            <th scope="row" >Certificate managed by CDN or ISP</th>
                             <td>{{ tlsScanHostCert.is_cloudflare ? 'Yes' : 'No' }}</td>
                         </tr>
                         <tr v-bind:class="{danger: tlsScanHostCert.is_expired }">
                             <th scope="row">Time validity</th>
-                            <td>{{ tlsScanHostCert.is_expired ? 'Expired' : 'Valid' }}</td>
+                            <td>{{ tlsScanHostCert.is_expired ? 'Expired' : 'OK' }}</td>
                         </tr>
                         <tr >
                             <th scope="row">Issued on</th>
-                            <td>{{ tlsScanHostCert.valid_from }} ( {{ tlsScanHostCert.valid_from_days }} days ago )</td>
+                            <td>{{ tlsScanHostCert.valid_from }} ({{ tlsScanHostCert.valid_from_days }} days ago)</td>
                         </tr>
                         <tr v-bind:class="{danger: tlsScanHostCert.is_expired }">
-                            <th scope="row">Valid to</th>
-                            <td>{{ tlsScanHostCert.valid_to }} ( {{ tlsScanHostCert.valid_to_days }} days ) </td>
+                            <th scope="row">Expires on</th>
+                            <td>{{ tlsScanHostCert.valid_to }} (in {{ tlsScanHostCert.valid_to_days }} days) </td>
                         </tr>
                         </tbody>
                     </table>
@@ -307,7 +327,7 @@
                     </tbody>
                 </table>
                 <p v-else>
-                    No issued certificates found in databases.
+                    No issued certificates found in certificate transparency (CT) databases.
                 </p>
 
 
@@ -322,16 +342,16 @@
                     <tbody>
                     <tr v-for="cert in take(ctExpired, 20)">
                         <td>{{ cert.matched_name }} </td>
-                        <td>{{ cert.valid_to }} ( {{ -1*cert.valid_to_days }} days ago ) </td>
+                        <td>{{ cert.valid_to }} ({{ -1*cert.valid_to_days }} days ago) </td>
                     </tr>
                     </tbody>
                 </table>
                 <p v-else>
-                    No expired certificates found in databases.
+                    No expired certificates found in certificate transparency (CT) databases.
                 </p>
                 </div>
                 <p v-else>
-                    No match found in certificate databases.
+                    No match found in certificate transparency (CT) databases.
                 </p>
 
             </div>
@@ -430,7 +450,7 @@
             showLeWarning(){
                 return !this.tlsScanError && this.tlsScanHostCert && this.tlsScan
                     && this.tlsScanHostCert && this.tlsScanHostCert.is_le
-                    && this.tlsScanHostCert.valid_to_days<30.0 && this.tlsScanHostCert.valid_to_days > 0;
+                    && this.tlsScanHostCert.valid_to_days<38.0 && this.tlsScanHostCert.valid_to_days > 0;
             },
 
             showWhoisWarning(){

@@ -12,11 +12,14 @@ return [
     'home' => 'Home',
     'dashboard' => 'Dashboard',
     'servers' => 'Servers',
-    'scan' => 'Spot check',
-    'scan_desc' => 'your hosts',
+    'scan' => 'Spot Check',
     'home-page' => 'Intro page',
     'content' => 'Stories',
+    'userguide' => 'User guide',
 
-    'servers_desc' => ' list for regular scanning'
 
+    'dashboard_desc' => '&nbsp;headlines, failures, planning, and useful information',
+    'servers_desc' => '&nbsp;manage your servers and domains to watch',
+    'scan_desc' => '&nbsp;quickly test a server when you do configuration changes',
+    'userguide_desc' => ''
 ];

@@ -7,6 +7,8 @@
 <script src="{{ url (mix('/js/vendor.js')) }}"></script>
 <script src="{{ url (mix('/js/app-user.js')) }}"></script>
 
+{!! survivor() !!}
+
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
       Both of these plugins are recommended to enhance the
       user experience. Slimscroll is required when using the

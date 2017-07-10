@@ -88,6 +88,41 @@ function getJobResult(uuid, onLoaded, onFail){
 }
 
 /**
+ * Starts keepalive mechanism to keep session alive & detect failure of CSRF token before user does.
+ * @param options
+ * @param onFail
+ */
+function pingKeepAlive(options, onFail){
+    const onSuccess = (data) => {
+        // TODO: reschedule
+    };
+
+    const onIfail = (response, e) => {
+        if (e){
+            onFail(e);
+        }
+    };
+
+    axios.post('/ping', {'ping': true})
+        .then(response => {
+            if (!response || !response.data) {
+                onFail(response); // no data -> wrong
+            } else if (response.data['status'] === 'success') {
+                onSuccess(response.data);
+            } else {
+                onIfail(response);
+            }
+        })
+        .catch(e => {
+            if (e && e.response && e.response.status >= 500){
+                onIfail(undefined, e);  // CSRF / server error
+            } else {
+
+            }
+        });
+}
+
+/**
  * Default value
  * @param val
  * @param def
@@ -455,6 +490,46 @@ function certIssuer(cert) {
     return 'Other';
 }
 
+/**
+ * Converts Vue sort order definition to the order by
+ * @param sortObj
+ * @returns {[*,*]}
+ */
+function vueSortToOrderBy(sortObj){
+    return [
+        _.map(sortObj, x=>{ return x.sortField; }),
+        _.map(sortObj, x=>{ return x.direction; })
+    ]
+}
+
+/**
+ * Sorts given data according to the vuetable sort string specification.
+ * Used with custom vuetable data manager.
+ * @param data
+ * @param sort
+ * @returns {Array}
+ */
+function vueOrderBy(data, sort){
+    const ordering = Req.vueSortToOrderBy(sort);
+    return _.orderBy(data, ordering[0], ordering[1]);
+}
+
+/**
+ * Paginate data for vuetable according to the pagination info, updates pagination itself.
+ * Used with custom vuetable data manager.
+ * @param data
+ * @param pagination
+ * @returns {[*,*]}
+ */
+function vuePagination(data, pagination){
+    pagination.total = _.size(data);
+    data = _.chunk(data, pagination.per_page)[pagination.current_page - 1];
+
+    pagination.last_page = Math.ceil(pagination.total / pagination.per_page);
+    pagination.to = _.min([pagination.from + pagination.per_page - 1, pagination.total]);
+    return [data, pagination];
+}
+
 //
 // Export
 //
@@ -480,7 +555,10 @@ module.exports = {
     takeMod: takeMod,
 
     certIssuer: certIssuer,
-    normalizeIssuer: normalizeIssuer
+    normalizeIssuer: normalizeIssuer,
+    vueSortToOrderBy: vueSortToOrderBy,
+    vueOrderBy: vueOrderBy,
+    vuePagination: vuePagination
 };
 
 
