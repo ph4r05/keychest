@@ -42,6 +42,18 @@ class ServerManager {
     }
 
     /**
+     * Returns number of hosts used by the user
+     * @param null $userId
+     * @return int
+     */
+    public function numHostsUsed($userId){
+        return WatchAssoc::query()
+            ->where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->whereNull('disabled_at')->count();
+    }
+
+    /**
      * Checks if the host can be added to the certificate monitor
      * @param $server
      * @param User|null $curUser
