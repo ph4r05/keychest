@@ -110,7 +110,7 @@
                     {
                         name: '__slot:autoadd',
                         sortField: 'auto_fill_watches',
-                        title: 'Watch Now&trade;',
+                        title: 'Watch Now',
                     },
                     {
                         name: 'created_at',
