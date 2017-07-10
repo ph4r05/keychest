@@ -8,10 +8,13 @@ use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
+use App\Models\DnsEntry;
 use App\Models\DnsResult;
+use App\Models\HandshakeScan;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -74,20 +77,8 @@ class ServersController extends Controller
 
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
-        $dnsTable = (new DnsResult())->getTable();
 
-        $query = WatchAssoc::query()
-            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->leftJoin($dnsTable, $dnsTable.'.id', '=', $watchTbl.'.last_dns_scan_id')
-            ->select(
-                $watchTbl.'.*',
-                $watchAssocTbl.'.*',
-                $dnsTable.'.status AS dns_status',
-                $dnsTable.'.num_res AS dns_num_res',
-                DB::raw('(CASE WHEN '.$dnsTable.'.status IS NULL 
-                        OR '.$dnsTable.'.status!=1 
-                        OR '.$dnsTable.'.num_res=0 THEN 1 ELSE 0 END) AS dns_error')
-            )
+        $query = $this->serverManager->loadServerList()
             ->where($watchAssocTbl.'.user_id', '=', $userId)
             ->whereNull($watchAssocTbl.'.deleted_at');
 

@@ -37,8 +37,9 @@
         @vuetable:loading="onLoading"
       >
         <template slot="errors" scope="props">
-          <span class="label label-success" v-if="!props.rowData.dns_error">OK</span>
-          <span class="label label-danger" v-else="">DNS</span>
+          <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
+          <span class="label label-danger" v-if="props.rowData.tls_errors > 0">TLS</span>
+          <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">OK</span>
         </template>
       </vuetable>
       </div>
@@ -250,6 +251,15 @@ export default {
                     onFail();
                 });
 
+        },
+
+        getSortParam(sortOrder) {
+            return _.join(_.map(sortOrder, x => {
+                if (x.sortField === 'dns_error'){
+                    return 'dns_error' + '|' + x.direction + ',' + 'tls_errors' + '|' + x.direction;
+                }
+                return x.sortField + '|' + x.direction;
+            }), ',');
         },
 
         renderPagination(h) {

@@ -9,13 +9,18 @@
 namespace App\Keychest\Services;
 
 use App\Keychest\Utils\DomainTools;
+use App\Models\DnsEntry;
+use App\Models\DnsResult;
+use App\Models\HandshakeScan;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use App\User;
 use function foo\func;
 use Illuminate\Contracts\Auth\Factory as FactoryContract;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ServerManager {
 
@@ -206,6 +211,123 @@ class ServerManager {
             $criteria['scan_port'] = 443;
         }
         return $criteria;
+    }
+
+    /**
+     * Builds query to load server list, includes also aux columns
+     * dns_error, tls_errors to indicate an error in the server listing.
+     *
+     * The columns are in the main query so we can filter & sort on it.
+     * Possible optimizations:
+     *  - extract last tls scan info to a separate joinable table so no aggregation on MAX(last_scan_at) is needed
+     *  - if tls_errors is not in the sort field, we can load all IDs by the side, cache it, match on it on the query.
+     */
+    public function loadServerList(){
+//        The SQL built here is like this:
+//        ----------------------------------------------------------------------------
+//        SELECT `watch_target`.*,
+//             `user_watch_target`.*,
+//             `scan_dns`.`status`  AS `dns_status`,
+//             `scan_dns`.`num_res` AS `dns_num_res`,
+//             ( CASE
+//                 WHEN scan_dns.status IS NULL
+//        OR scan_dns.status != 1
+//        OR scan_dns.num_res = 0 THEN 1
+//                 ELSE 0
+//               end )              AS dns_error,
+//             ( CASE
+//                 WHEN sl.tls_errors IS NULL THEN 0
+//                 ELSE sl.tls_errors
+//               end )              AS tls_errors
+//        FROM   `user_watch_target`
+//             INNER JOIN `watch_target`
+//                     ON `watch_target`.`id` = `user_watch_target`.`watch_id`
+//             LEFT JOIN `scan_dns`
+//                    ON `scan_dns`.`id` = `watch_target`.`last_dns_scan_id`
+//             LEFT JOIN (SELECT Count(*) AS tls_errors,
+//                               w.id
+//                        FROM   watch_target w
+//                               LEFT JOIN `scan_dns` xd
+//                                      ON xd.`id` = w.`last_dns_scan_id`
+//                               LEFT JOIN `scan_dns_entry` xde
+//                                      ON xde.scan_id = xd.`id`
+//                               LEFT JOIN `scan_handshakes` xh
+//                                      ON xh.watch_id = w.id
+//         AND xh.ip_scanned = xde.ip
+//                               LEFT JOIN (SELECT x.watch_id,
+//                                                 x.ip_scanned,
+//                                                 Max(x.last_scan_at) AS last_scan
+//                                          FROM   scan_handshakes AS x
+//                                          WHERE  x.ip_scanned IS NOT NULL
+//                                          GROUP  BY x.watch_id,
+//                                                    x.ip_scanned) AS sx
+//                                      ON sx.watch_id = w.id
+//        AND sx.ip_scanned = xh.ip_scanned
+//        AND sx.last_scan = xh.last_scan_at
+//                        WHERE  1
+//        AND xh.err_code IS NOT NULL
+//        AND xh.err_code != 0
+//        AND xh.err_code != 1
+//                        GROUP  BY w.id) sl
+//                    ON sl.id = watch_target.id
+//        ----------------------------------------------------------------------------
+
+        $watchTbl = (new WatchTarget())->getTable();
+        $watchAssocTbl = (new WatchAssoc())->getTable();
+        $dnsTable = (new DnsResult())->getTable();
+        $dnsEntryTable = (new DnsEntry())->getTable();
+        $tlsScanTbl = (new HandshakeScan())->getTable();
+
+        $qx = HandshakeScan::query()
+            ->select('x.watch_id', 'x.ip_scanned')
+            ->selectRaw('MAX(x.last_scan_at) AS last_scan')
+            ->from($tlsScanTbl . ' AS x')
+            ->groupBy('x.watch_id', 'x.ip_scanned');
+        $qxSql = $qx->toSql();
+
+        $qsl = WatchTarget::query()
+            ->select('w.id')
+            ->selectRaw('COUNT(*) AS tls_errors')
+            ->from($watchTbl . ' AS w')
+            ->leftJoin($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
+            ->leftJoin($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
+            ->leftJoin($tlsScanTbl . ' AS xh', function(JoinClause $join) {
+                $join->on('xh.watch_id', '=', 'w.id')
+                    ->on('xh.ip_scanned', '=', 'xde.ip');
+            })
+            ->leftJoin(
+                DB::raw('(' . $qxSql. ') AS sx'),
+                function(JoinClause $join) use ($qx) {
+                    $join->on('sx.watch_id', '=', 'xh.watch_id')
+                        ->on('sx.ip_scanned', '=', 'xh.ip_scanned')
+                        ->on('sx.last_scan', '=', 'xh.last_scan_at')
+                        ->addBinding($qx->getBindings());
+                })
+            ->whereNotNull('xh.err_code')
+            ->where('xh.err_code', '!=', 0)
+            ->where('xh.err_code', '!=', 1)
+            ->groupBy('w.id');
+
+        $query = WatchAssoc::query()
+            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
+            ->leftJoin($dnsTable, $dnsTable.'.id', '=', $watchTbl.'.last_dns_scan_id')
+            ->select(
+                $watchTbl.'.*',
+                $watchAssocTbl.'.*',
+                $dnsTable.'.status AS dns_status',
+                $dnsTable.'.num_res AS dns_num_res',
+                DB::raw('(CASE WHEN '.$dnsTable.'.status IS NULL'.
+                    ' OR '.$dnsTable.'.status!=1' .
+                    ' OR '.$dnsTable.'.num_res=0 THEN 1 ELSE 0 END) AS dns_error'),
+                DB::raw('(CASE WHEN sl.tls_errors IS NULL THEN 0 ELSE sl.tls_errors END) AS tls_errors')
+            )
+            ->leftJoin(
+                DB::raw('(' . $qsl->toSql() . ') AS sl'),
+                function(JoinClause $join) use ($qsl){
+                    $join->on('sl.id', '=', 'watch_target.id');
+                    $join->addBinding($qsl->getBindings());
+                });
+        return $query;
     }
 
 }
