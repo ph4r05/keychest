@@ -99,11 +99,11 @@ may have missed.
 
 <h3 class="mg-md">Technical specification</h3>
 <ul>
-    <li>Maximum number of monitored servers - UNLIMITED.</li>
+    <li>Maximum number of monitored servers - 1,000 (temporary, get in touch if you need more).</li>
     <li>Maximum number of Active Domains - UNLIMITED.</li>
     <li>User identification - via email address, regardless of the login/registration method.</li>
-    <li>Organization - not available.</li>
-    <li>User / role definitions - not available.</li>
+    <li>Organization management - not available.</li>
+    <li>User/role definitions - not available.</li>
     <li>User identification - by email; you can use any login method and so long as it provides the same
         email address you will access your account.</li>
     <li>Watch Now&trade; interval - 48 hours.</li>
@@ -111,6 +111,8 @@ may have missed.
     <li>DNS check interval - 10 minutes.</li>
     <li>whois check interval - 48 hours.</li>
     <li>Server new certificate detection interval - 2 hours.</li>
+    <li>Server scanning depth - 1 IP address only.</li>
+    <li>Active domain restrictions - a set of biggest websites (get in touch to lift the restriction).</li>
 </ul>
 
 <h3 class="mg-md">Server configuration errors</h3>
