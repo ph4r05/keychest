@@ -150,6 +150,8 @@ class SubdomainsController extends Controller
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return response()->json(['status' => 'fail'], 422);
+        } else if ($this->manager->isBlacklisted($parsed['host'])){
+            return response()->json(['status' => 'blacklisted'], 450);
         }
 
         // DB Job data
@@ -243,6 +245,8 @@ class SubdomainsController extends Controller
 
         if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return response()->json(['status' => 'invalid-domain'], 422);
+        } else if ($this->manager->isBlacklisted($parsed['host'])){
+            return response()->json(['status' => 'blacklisted'], 450);
         }
 
         $curUser = Auth::user();
@@ -347,5 +351,16 @@ class SubdomainsController extends Controller
         // Queue entry to the scanner queue
         $jobData = ['id' => $assocId];
         dispatch((new AutoAddSubsJob($jobData))->onQueue('scanner'));
+    }
+
+    /**
+     * Returns true if domain is blacklisted.
+     * Pass already normalized URLs here.
+     * @param $url
+     * @return bool
+     */
+    protected function isBlacklisted($url){
+        $parsed = parse_url($url);
+        return $this->manager->isBlacklisted($parsed['host']);
     }
 }
