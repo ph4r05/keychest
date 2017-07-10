@@ -304,8 +304,8 @@ class ServerManager {
                         ->addBinding($qx->getBindings());
                 })
             ->whereNotNull('xh.err_code')
-            ->where('xh.err_code', '!=', 0)
-            ->where('xh.err_code', '!=', 1)
+            ->where('xh.err_code', '<>', 0)
+            ->where('xh.err_code', '<>', 1)
             ->groupBy('w.id');
 
         $query = WatchAssoc::query()
