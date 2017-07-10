@@ -59,7 +59,7 @@
                 <span v-if="tlsScan && tlsScan.err_code == 4"> Domain lookup error</span>
                 <span v-if="tlsScan && tlsScan.err_code == 5"> No TLS/SSL server found</span>
                 <div v-if="didYouMeanUrl">Is the server name
-                    <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> correct?</div>
+                    <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> and the port number correct?</div>
             </div>
 
             <!-- Label for loaded test (performed previously) -->
