@@ -113,7 +113,7 @@
                 ],
                 css: {
                     table: {
-                        tableClass: 'table table-bordered table-striped table-hover',
+                        tableClass: 'table table-sub-list table-bordered table-striped table-hover',
                         ascendingIcon: 'glyphicon glyphicon-chevron-up',
                         descendingIcon: 'glyphicon glyphicon-chevron-down'
                     },
@@ -441,7 +441,7 @@
         .btn.btn-subdom {
             min-width: 140px;
         }
-        .table.vuetable .vuetable-th-slot-actions{
+        .table.vuetable.table-sub-list .vuetable-th-slot-actions{
             width: 145px;
         }
     }
@@ -450,7 +450,7 @@
         .btn.btn-subdom {
             min-width: 240px;
         }
-        .table.vuetable .vuetable-th-slot-actions{
+        .table.vuetable.table-sub-list .vuetable-th-slot-actions{
             width: 245px;
         }
     }
