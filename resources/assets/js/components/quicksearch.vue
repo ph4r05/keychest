@@ -25,12 +25,12 @@
         </div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-            <span v-if="jobSubmittedNow">Waiting for scan to finish...</span>
-            <span v-else="">Loading scan results...</span>
+            <span v-if="jobSubmittedNow">Waiting for spot check to finish ...</span>
+            <span v-else="">Loading test results ...</span>
         </div>
 
         <div class="alert alert-success scan-alert" id="search-success" style="display: none">
-            <strong>Success!</strong> Scan finished.
+            <strong>Success!</strong> Spot check finished.
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
@@ -40,21 +40,24 @@
 
             <!-- DNS problem: do domain resolved -->
             <div class="alert alert-warning" v-if="hasDnsProblem && resultsLoaded">
-                <strong>DNS error</strong>: We could not resolve <strong>{{ curJob.scan_host }}</strong> domain.<br/>
-                <span>Please make sure the domain is entered correctly.</span>
+                <strong>DNS error</strong>: We could not resolve the <strong>{{ curJob.scan_host }}</strong> domain.<br/>
+                <span>Please make sure the server name is correct.</span>
             </div>
 
             <!-- No TLS scan - probably invalid domain -->
             <div class="alert alert-info" v-else-if="isTlsScanEmpty && resultsLoaded">
-                No TLS scan was performed
+                No TLS scan was performed.
             </div>
 
             <!-- TLS Error: problem with the scan -->
             <div class="alert alert-warning" v-else-if="tlsScanError">
-                <strong>TLS Error</strong>: Could not scan <strong>{{ curJob.scan_host }}</strong> on port {{ curJob.port }}
-                <span v-if="tlsScan && tlsScan.err_code == 1"> ( TLS handshake error )</span>
-                <span v-if="tlsScan && tlsScan.err_code == 2"> ( connection error )</span>
-                <span v-if="tlsScan && tlsScan.err_code == 3"> ( timeout )</span>
+                <strong>TLS Error</strong>: tests of <strong>{{ curJob.scan_host }}</strong> on port
+                <strong>{{ curJob.port }}</strong> failed due to:
+                <span v-if="tlsScan && tlsScan.err_code == 1"> TLS handshake Error</span>
+                <span v-if="tlsScan && tlsScan.err_code == 2"> Connection Error</span>
+                <span v-if="tlsScan && tlsScan.err_code == 3"> Timeout</span>
+                <span v-if="tlsScan && tlsScan.err_code == 4"> Domain lookup error</span>
+                <span v-if="tlsScan && tlsScan.err_code == 5"> No TLS/SSL server found</span>
                 <div v-if="didYouMeanUrl">Is the server name
                     <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> correct?</div>
             </div>
@@ -228,6 +231,8 @@
                     <span v-if="tlsScan && tlsScan.err_code == 1"> TLS Handshake Error</span>
                     <span v-if="tlsScan && tlsScan.err_code == 2"> Connection Error</span>
                     <span v-if="tlsScan && tlsScan.err_code == 3"> Timeout</span>
+                    <span v-if="tlsScan && tlsScan.err_code == 4"> Domain lookup error</span>
+                    <span v-if="tlsScan && tlsScan.err_code == 5"> No TLS/SSL server found</span>
                     <div v-if="didYouMeanUrl">Did you mean
                         <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> ?</div>
                 </div>
