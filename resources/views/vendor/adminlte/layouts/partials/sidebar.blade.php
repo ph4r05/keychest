@@ -45,13 +45,23 @@
                 <a href="{{ url('home/servers') }}"><i class='fa fa-server'></i> <span>{{ trans('admin.servers') }}</span></a>
             </li>
 
+            <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
+                <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
+            </li>
+        </ul>
+
+        <hr/>
+
+        <ul class="sidebar-menu">
+            <li class="{{ Request::path() ==  'home/enterprise' ? 'active' : ''  }}">
+                <a href="{{ url('home/enterprise') }}"><i class='fa fa-money'></i> <span>{{ trans('admin.enterprise') }}</span></a>
+            </li>
+
             <li class="{{ Request::path() ==  '/content' ? 'active' : ''  }}">
                 <a href="{{ url('/content') }}"><i class='fa fa-book'></i> <span>{{ trans('admin.content') }}</span></a>
             </li>
 
-            <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
-                <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
-            </li>
+
 
             {{--<li class="{{ Request::path() ==  '/intro' ? 'active' : ''  }}">--}}
                 {{--<a href="{{ url('/intro') }}"><i class='fa fa-home'></i> <span>{{ trans('admin.home-page') }}</span></a>--}}
