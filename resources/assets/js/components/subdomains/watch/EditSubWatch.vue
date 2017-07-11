@@ -88,8 +88,15 @@
 
                 const onDuplicate = (function(){
                     this.sentState = 0;
-                    $('#add-server-wrapper-sub').effect( "shake" );
+                    $('#update-server-wrapper-sub').effect( "shake" );
                     toastr.error('This host is already being monitored.', 'Already present');
+                }).bind(this);
+
+                const onBlacklisted = (function(){
+                    this.sentState = 0;
+                    $('#update-server-wrapper-sub').effect( "shake" );
+                    toastr.error('The selected Active Domain is currently restricted. ' +
+                        'Get in touch at support@enigmabridge.com if it is your domain.', 'Restricted domain');
                 }).bind(this);
 
                 const onSuccess = (function(data){
@@ -117,6 +124,8 @@
                     .catch(e => {
                         if (e && e.response && e.response.status === 410){
                             onDuplicate();
+                        } else if (e && e.response && e.response.status === 450) {
+                            onBlacklisted();
                         } else {
                             console.log("Add server failed: " + e);
                             onFail();

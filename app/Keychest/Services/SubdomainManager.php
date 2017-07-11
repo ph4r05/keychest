@@ -9,6 +9,7 @@
 namespace App\Keychest\Services;
 
 use App\Keychest\Utils\DomainTools;
+use App\Models\SubdomainScanBlacklist;
 use App\Models\SubdomainWatchAssoc;
 use App\Models\SubdomainWatchTarget;
 use App\Models\WatchAssoc;
@@ -18,6 +19,8 @@ use function foo\func;
 use Illuminate\Contracts\Auth\Factory as FactoryContract;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SubdomainManager {
 
@@ -36,6 +39,25 @@ class SubdomainManager {
     public function __construct($app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Returns true if the given domain is somehow blacklisted
+     * @param $hostname
+     * @return bool
+     */
+    public function isBlacklisted($hostname){
+        // select * from subdomain_scan_blacklist where 'wp12.com' LIKE CONCAT('%', rule) ;
+        $q = SubdomainScanBlacklist::query()
+            ->where(function($q) use ($hostname){
+                $q->where('rule_type', '=', 0)
+                    ->whereRaw(DB::raw('? LIKE CONCAT("%", rule)'), [$hostname]);
+            })->orWhere(function($q) use ($hostname){
+                $q->where('rule_type', '=', 1)
+                    ->where('rule', '=', $hostname);
+            });
+        Log::info($q->toSql());
+        return $q->get()->isNotEmpty();
     }
 
     /**

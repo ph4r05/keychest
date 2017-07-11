@@ -8,6 +8,8 @@
 
 namespace App\Keychest\Utils;
 
+use TrueBV\Punycode;
+
 /**
  * Minor static domain / string utilities.
  *
@@ -131,6 +133,9 @@ class DomainTools {
         $scheme = isset($parsed['scheme']) && !empty($parsed['scheme']) ? $parsed['scheme'] : 'https';
         $host = isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : self::removeUrlPath($url);
         $port = isset($parsed['port']) && !empty($parsed['port']) ? intval($parsed['port']) : 443;
+
+        $punny = new Punycode();
+        $host = $punny->encode($host);
         return self::assembleUrl($scheme, $host, $port);
     }
 
@@ -187,6 +192,9 @@ class DomainTools {
 
         $host = isset($parsed['host']) && !empty($parsed['host']) ? $parsed['host'] : self::removeUrlPath($inp);
         $port = isset($parsed['port']) && !empty($parsed['port']) ? intval($parsed['port']) : 443;
+
+        $punny = new Punycode();
+        $host = $punny->encode($host);
         return self::assembleUrl($scheme, $host, $port);
     }
 
