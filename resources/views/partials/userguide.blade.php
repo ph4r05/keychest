@@ -101,6 +101,7 @@ may have missed.
 <ul>
     <li>Maximum number of monitored servers - 1,000 (temporary, get in touch if you need more).</li>
     <li>Maximum number of Active Domains - UNLIMITED.</li>
+    <li>Restrictions for server checks - TLS only; SSL2/3 show specific error, StartTLS not supported.</li>
     <li>User identification - via email address, regardless of the login/registration method.</li>
     <li>Organization management - not available.</li>
     <li>User/role definitions - not available.</li>
