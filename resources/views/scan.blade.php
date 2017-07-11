@@ -24,6 +24,7 @@
         </p>
         <p>
             The list of spot check tests:
+        </p>
             <ul>
             <li>certificate expiration - how many days till the certificate expires;</li>
             <li>downtime - downtime during the last 2 years; CT logs data amended with server checks if this data is available;</li>
@@ -35,7 +36,6 @@
             <li>SSL detection - if your server uses insecure version SSL2 or SSL3, it will be flagged; and</li>
             <li>HSTS - if the HSTS (HTTP Strict Server Security) is enabled.</li>
         </ul>
-        </p>
     </help-modal>
 
     <div class="servers-wrapper container-fluid spark-screen">
