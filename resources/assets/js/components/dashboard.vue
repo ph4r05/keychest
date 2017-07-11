@@ -922,7 +922,7 @@
 
             week4renewals(){
                 const r = _.filter(this.tlsCerts, x => {
-                    return x && x.valid_to_days && x.valid_to_days >= 0 && x.valid_to_days <= 28;
+                    return x && x.valid_to_days && x.valid_to_days <= 28;
                 });
                 const r2 = _.map(r, x => {
                     x.week4cat = this.week4grouper(x);
@@ -936,9 +936,9 @@
 
             week4renewalsCounts(){
                 const r = _.filter(this.tlsCerts, x => {
-                    return x && x.valid_to_days && x.valid_to_days >= 0 && x.valid_to_days <= 28;
+                    return x && x.valid_to_days && x.valid_to_days <= 28;
                 });
-                const ret = [0, 0, 0, 0];
+                const ret = [0, 0, 0, 0, 0];
                 _.forEach(r, x => {
                     ret[this.week4grouper(x)] += 1;
                 });
@@ -1058,14 +1058,16 @@
             //
 
             week4grouper(x){
-                if (x.valid_to_days <= 7){
+                if (x.valid_to_days <= 0){
                     return 0;
-                } else if (x.valid_to_days <= 14){
+                } else if (x.valid_to_days <= 7){
                     return 1;
-                } else if (x.valid_to_days <= 21){
+                } else if (x.valid_to_days <=14){
                     return 2;
-                } else {
+                } else if (x.valid_to_days <= 21){
                     return 3;
+                } else {
+                    return 4;
                 }
             },
 
@@ -1409,6 +1411,7 @@
                         datasets: [{
                             data: this.week4renewalsCounts,
                             backgroundColor: [
+                                this.chartColors[12],
                                 this.chartColors[3],
                                 this.chartColors[1],
                                 this.chartColors[0],
@@ -1417,8 +1420,9 @@
                             label: 'Renewals in 4 weeks'
                         }],
                         labels: [
-                            "<= 7 days",
-                            "7-14 days",
+                            "expired",
+                            "0-7 days",
+                            "8-14 days",
                             "15-21 days",
                             "22-28 days"
                         ]
