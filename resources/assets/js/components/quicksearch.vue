@@ -10,7 +10,12 @@
                     <input type="text" class="form-control input"
                            placeholder="Server name with optional port, e.g., keychest.com or keychest.com:465"
                            name="scan-target" id="scan-target">
+
                     <span class="input-group-btn">
+                        <a class="btn btn-default" data-toggle="modal" data-target="#scanHelpModal" v-if="landing">
+                            <span class="fa fa-question-circle"></span>
+                        </a>
+
                         <button class="btn btn-default" type="submit">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
@@ -80,22 +85,22 @@
                 <!-- Overall validity status, else-ifs from the most urgent to least -->
                 <tr v-bind:class="defconStyle">
                     <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
-                        Certificate expired. Your server is down and HSTS prevents all connections. Start tracking to see
+                        Certificate expired. Your server is down and HSTS prevents all connections. Start watching to see
                         changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
                         Certificate expired. Web browsers will show a warning page that the server is not secure and
-                        potentially dangerous. Start tracking to see changes or get in touch for help.</td>
+                        potentially dangerous. Start watching to see changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<2">
-                        Certificate expires in less than 2 days. Renew it now to avoid downtime! Start tracking to see
+                        Certificate expires in less than 2 days. Renew it now to avoid downtime! Start watching to see
                         changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
-                        Certificate expires in less than 28 days. Plan renewal now! Start tracking to see
+                        Certificate expires in less than 28 days. Plan renewal now! Start watching to see
                         changes or get in touch for help.</td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
                         All looks good, well done! Our compliments for using HSTS. <span v-if="!isMonitored">Start
                         tracking to avoid downtimes.</span></td>
                     <td colspan="3" v-else>
-                        All looks good, well done! <span v-if="!isMonitored">Start tracking to stay on top of your
+                        All looks good, well done! <span v-if="!isMonitored">Start watching to stay on top of your
                         certificates.</span></td>
                 </tr>
 
@@ -108,12 +113,12 @@
                 <div class="form-group start-tracking">
                     <a v-if="Laravel.authGuest"
                        class="btn btn-primary btn-block btn-lg"
-                       href="/register">Start tracking</a
-                    ><a id="start-tracking-button" v-else=""
+                       href="/register">Dashboard</a>
+                    <a id="start-tracking-button" v-else=""
                        class="btn btn-primary btn-block btn-lg"
                        v-bind:disabled="addingStatus==2"
                        v-on:click.stop="startTracking"
-                    >Start tracking</a>
+                    >Start watching</a>
                 </div>
             </div>
             </transition>
@@ -123,25 +128,25 @@
             <!-- Cert not trusted -->
             <div class="alert alert-danger" v-if="errTrusted">
                 <div v-if="tlsScanHostCert && tlsScanHostCert.is_self_signed">
-                    The server sent a self-signed certificate. Check its configuration, re-test, and start tracking
+                    The server sent a self-signed certificate. Check its configuration, re-test, and start watching
                     changes. Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScanHostCert.is_ca">
                     The server's certificate has a CA flag and can be used only for issuing other certificates, not
-                    for server authentication. Check the server's configuration, re-test, and start tracking changes.
+                    for server authentication. Check the server's configuration, re-test, and start watching changes.
                     Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length > 1">
                     We couldn't verify the certificate chain sent by the server. Check the server's configuration, re-test, and start
-                    tracking changes. Get in touch for help.
+                    watching changes. Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length === 1">
                     The server sent only its own certificate, a certificate of the issuing CA is missing (aka bundle).
-                    Check the server's configuration, re-test, and start tracking changes. Get in touch for help.
+                    Check the server's configuration, re-test, and start watching changes. Get in touch for help.
                 </div>
                 <div v-else-if="tlsScanHostCert">
                     We couldn't verify the server as it didn't send any certificates. Check its configuration, re-test,
-                    and start tracking changes. Get in touch for help.
+                    and start watching changes. Get in touch for help.
                 </div>
                 <div v-else="">
                     <strong>Error: </strong>Server is not trusted as <span
@@ -173,7 +178,7 @@
                     'alert-warning': this.results.whois.expires_at_days > 30}" >
                 <strong>Warning</strong>: domain <u>{{ results.whois.domain }}</u> expires in
                 {{ Math.floor(results.whois.expires_at_days) }} days.
-                Consider domain renewal. <span v-if="!isMonitored">Start tracking now.</span>
+                Consider domain renewal. <span v-if="!isMonitored">Start watching now.</span>
             </div>
 
             <!-- Downtime -->
@@ -183,7 +188,7 @@
                     uptime. You were "not secure" for at least {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
                     hours<span v-if="results.downtimeTls.downtime > 3600*24*3">
                          ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }} days)</span>.
-                    <span v-if="!isMonitored">Start tracking now.</span>
+                    <span v-if="!isMonitored">Start watching now.</span>
                     </p>
             </div>
 
@@ -368,6 +373,14 @@
     import moment from 'moment';
 
     export default {
+        props: {
+            landing: {
+                required: false,
+                type: Boolean,
+                default: false
+            },
+        },
+
         data: function() {
             return {
                 curUuid: null,

@@ -13,13 +13,15 @@ return [
     'dashboard' => 'Dashboard',
     'servers' => 'Servers',
     'scan' => 'Spot Check',
-    'home-page' => 'Intro page',
+    'home-page' => 'Intro Page',
     'content' => 'Stories',
-    'userguide' => 'User guide',
+    'userguide' => 'User Guide',
+    'enterprise' => "Enterprise",
 
 
     'dashboard_desc' => '&nbsp;headlines, failures, planning, and useful information',
     'servers_desc' => '&nbsp;manage your servers and domains to watch',
     'scan_desc' => '&nbsp;quickly test a server when you do configuration changes',
-    'userguide_desc' => ''
+    'userguide_desc' => '',
+    'enterprise_desc' => '&nbsp;KeyChest Enterprise for teams and internal networks'
 ];

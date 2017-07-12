@@ -89,6 +89,10 @@ Route::get('home/user-guide', function () {
     return view('userguide');
 })->name('user-guide');
 
+Route::get('home/enterprise', function () {
+    return view('enterprise');
+})->name('enterprise');
+
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
 

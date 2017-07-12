@@ -30,7 +30,7 @@
         correct and repeat step 1 as necessary. </li>
     <li>3. (Optional, but useful) Use <a href="https://www.ssllabs.com/ssltest/" target="_blank"> SSLLabs</a> to
         get detailed information about cryptographic security and adjust your configuration.</li>
-    <li>4. <a href="/home/servers">Start tracking</a> the server by adding here to your list of servers.</li>
+    <li>4. <a href="/home/servers">Start watching</a> the server by adding here to your list of servers.</li>
     <li>5. All is good, the configuration process is completed. Let's handover to "ops".</li>
     <li>6. Check regular server status updates from KeyChest to detect renewal failures or to plan
     manual renewals as appropriate.</li>
@@ -101,6 +101,7 @@ may have missed.
 <ul>
     <li>Maximum number of monitored servers - 1,000 (temporary, get in touch if you need more).</li>
     <li>Maximum number of Active Domains - UNLIMITED.</li>
+    <li>Restrictions for server checks - TLS only; SSL2/3 show specific error, StartTLS not supported.</li>
     <li>User identification - via email address, regardless of the login/registration method.</li>
     <li>Organization management - not available.</li>
     <li>User/role definitions - not available.</li>
