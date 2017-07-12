@@ -10,7 +10,12 @@
                     <input type="text" class="form-control input"
                            placeholder="Server name with optional port, e.g., keychest.com or keychest.com:465"
                            name="scan-target" id="scan-target">
+
                     <span class="input-group-btn">
+                        <a class="btn btn-default" data-toggle="modal" data-target="#scanHelpModal" v-if="landing">
+                            <span class="fa fa-question-circle"></span>
+                        </a>
+
                         <button class="btn btn-default" type="submit">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
@@ -370,7 +375,7 @@
     export default {
         props: {
             landing: {
-                required: true,
+                required: false,
                 type: Boolean,
                 default: false
             },
