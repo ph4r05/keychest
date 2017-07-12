@@ -368,6 +368,14 @@
     import moment from 'moment';
 
     export default {
+        props: {
+            landing: {
+                required: true,
+                type: Boolean,
+                default: false
+            },
+        },
+
         data: function() {
             return {
                 curUuid: null,

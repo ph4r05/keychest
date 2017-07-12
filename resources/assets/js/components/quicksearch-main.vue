@@ -8,7 +8,7 @@
                 <div class="col-sm-12">
                     <img src="/images/logo2-rgb_keychest.png" class="img-responsive center-block" width="300">
                     <h3 class="text-center mg-lg hero-bloc-text-sub  tc-rich-electric-blue">
-                        Check, watch, and plan for 100% HTTPS uptime
+                        Check, watch, and plan for 100% HTTPS uptime <help-trigger id="scanHelpModal"></help-trigger>
                     </h3>
                 </div>
             </div>
@@ -21,6 +21,7 @@
                                  v-on:onSearchStart="onSearchStart"
                                  v-on:onResultsLoaded="onResultsLoaded"
                                  v-on:onReset="onReset"
+                                 :landing="true"
                     ></quicksearch>
                 </div>
             </div>

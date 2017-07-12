@@ -9,6 +9,7 @@
 	@include('partials.landing.loading_placeholder')
 
     <!-- Vue search component -->
+    @include('partials.spotcheck_info')
     <quicksearch-main></quicksearch-main>
 
     <!-- learn -->
