@@ -108,7 +108,7 @@
                 <div class="form-group start-tracking">
                     <a v-if="Laravel.authGuest"
                        class="btn btn-primary btn-block btn-lg"
-                       href="/register">Start tracking</a
+                       href="/register">My dashboard</a
                     ><a id="start-tracking-button" v-else=""
                        class="btn btn-primary btn-block btn-lg"
                        v-bind:disabled="addingStatus==2"
