@@ -11,6 +11,7 @@ window.Vue = require('vue');
 window.URL = require('url-parse');
 window.Req = require('./req.js');
 window.toastr = require('toastr');
+window.Moment = require('moment');
 
 require('jquery-ui/ui/effects/effect-shake');
 
@@ -23,6 +24,8 @@ require('jquery-ui/ui/effects/effect-shake');
 Vue.component('quicksearch', require('./components/quicksearch.vue'));
 Vue.component('quicksearch-main', require('./components/quicksearch-main.vue'));
 Vue.component('feedback_form', require('./components/feedback_form.vue'));
+Vue.component('help-modal', require('./components/partials/HelpModal.vue'));
+Vue.component('help-trigger', require('./components/partials/HelpTrigger.vue'));
 
 console.log('Vue.js init');
 const app = new Vue({
