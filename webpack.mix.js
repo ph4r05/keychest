@@ -54,7 +54,7 @@ mix.scripts([
     'resources/assets/js/blocs.js',
 ], 'public/js/misc.js');
 
-if (mix.config.inProduction) {
+if (mix.inProduction()) {
     mix.version();
 }
 
