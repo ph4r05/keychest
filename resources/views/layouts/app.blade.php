@@ -12,7 +12,7 @@
     <title>{{ config('app.name', 'Keychest') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/all-landing.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/all-landing.css') }}" rel="stylesheet">
 
     <!-- Scripts -->
     <script>
@@ -123,7 +123,7 @@
     <script src="{{ mix('/js/manifest.js') }}"></script>
     <script src="{{ mix('/js/vendor.js') }}"></script>
     <script src="{{ mix('/js/app.js') }}"></script>
-    <script src="{{ asset('/js/misc.js') }}"></script>
+    <script src="{{ mix('/js/misc.js') }}"></script>
 
     {!! survivor() !!}
 
