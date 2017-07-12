@@ -59,7 +59,7 @@
 						</li>
 						<li>
 							<p>
-								<strong>chain trust</strong> — each server should send all certificates to simplify verification for clients. Most web browsers will still be able to verify security of your server most of the time, if there&rsquo;s a certificate missing. It may however cause a problem and we will show you if it is the case.
+								<strong>trust chain</strong> — each server should send all certificates to simplify verification for clients. Most web browsers will still be able to verify security of your server most of the time, if there&rsquo;s a certificate missing. It may however cause a problem and we will show you if it is the case.
 							</p>
 						</li>
 						<li>
