@@ -54,9 +54,9 @@ mix.scripts([
     'resources/assets/js/blocs.js',
 ], 'public/js/misc.js');
 
-// if (mix.config.inProduction) {
-//     mix.version();
-// }
+if (mix.config.inProduction) {
+    mix.version();
+}
 
 mix.webpackConfig({
     watchOptions: {
