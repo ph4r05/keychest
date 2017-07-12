@@ -33,7 +33,7 @@ _Note: KeyChest will run any checks against a particular server, while SSL Labs 
 Let me quickly introduce a list of checks we execute against your selected server:
 
 1. **time validity** — we check how long till the certificate expires. There are three possible warning messages you can see: PLAN (if the expiration date is in less than 28 days), WARNING (if the expiration is in less than 2 days), or ERROR (the server is not available).
-2. **chain trust** — each server should send all certificates to simplify verification for clients. Most web browsers will still be able to verify security of your server most of the time, if there’s a certificate missing. It may however cause a problem and we will show you if it is the case.
+2. **trust chain** — each server should send all certificates to simplify verification for clients. Most web browsers will still be able to verify security of your server most of the time, if there’s a certificate missing. It may however cause a problem and we will show you if it is the case.
 3. **hostname** — each certificate shows on which servers it can be used. Mismatch here means that web browser will detect a security problem.
 4. **TLS version** — you’re strongly encouraged to use TLS version 1.2 and the checker will tell you if it’s anything worse than that.
 5. **multi-domain certs and wildcards** (aka neighbors) — some certificates are shared among several servers and it's good to see that this list is correct. It also shows, how many servers share the same key.
