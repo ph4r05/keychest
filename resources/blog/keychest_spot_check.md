@@ -23,7 +23,7 @@ The biggest problem of security your servers is that you need to create a new ke
 You can repeat the spot check as many times as needed until everything works. Once you're happy with the configuration, we would suggest the following steps steps:
 
 1. You can send the URL of your last spot check to your colleagues or boss - we store results of each spot check, so they will see exactly what you did.
-2. Start tracking the server if you haven't yet.
+2. Start watching the server if you haven't yet.
 3. Run the server past the SSL Labs checker for a through review of cryptographic configuration.
 
 _Note: KeyChest will run any checks against a particular server, while SSL Labs follows redirects and will ultimately provide results for the "domain name", rather than server._

@@ -33,7 +33,7 @@
 						</li>
 						<li>
 							<p>
-								Start tracking the server if you haven't yet.
+								Start watching the server if you haven't yet.
 							</p>
 						</li>
 						<li>
