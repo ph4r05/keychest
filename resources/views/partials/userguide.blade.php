@@ -98,8 +98,12 @@ may have missed.
 
 
 <h3 class="mg-md">Technical specification</h3>
+<p>
+    The following list is true to the best of our knowledge. We keep updating it as quickly as we can so it
+    tightly tracks changes but there will be short intervals when the list is inaccurate.
+</p>
 <ul>
-    <li>Maximum number of monitored servers - 1,000 (temporary, get in touch if you need more).</li>
+    <li>Maximum number of monitored servers - 1,000 (possibly more now, get in touch if you need more).</li>
     <li>Maximum number of Active Domains - UNLIMITED.</li>
     <li>Restrictions for server checks - TLS only; SSL2/3 show specific error, StartTLS not supported.</li>
     <li>User identification - via email address, regardless of the login/registration method.</li>
@@ -108,10 +112,10 @@ may have missed.
     <li>User identification - by email; you can use any login method and so long as it provides the same
         email address you will access your account.</li>
     <li>Watch Now&trade; interval - 48 hours.</li>
-    <li>Server check interval - 2 hours.</li>
-    <li>DNS check interval - 10 minutes.</li>
+    <li>Server check interval - 8 hours.</li>
+    <li>DNS check interval - 2 hours.</li>
     <li>whois check interval - 48 hours.</li>
-    <li>Server new certificate detection interval - 2 hours.</li>
+    <li>Server new certificate detection interval - 12 hours.</li>
     <li>Server scanning depth - 1 IP address only.</li>
     <li>Active domain restrictions - a set of biggest websites (get in touch to lift the restriction).</li>
 </ul>
