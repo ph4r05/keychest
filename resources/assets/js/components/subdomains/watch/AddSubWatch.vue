@@ -106,7 +106,7 @@
                 const onDuplicate = (function(){
                     this.sentState = 0;
                     $('#add-server-wrapper-sub').effect( "shake" );
-                    toastr.error('This host is already being monitored.', 'Already present');
+                    toastr.error('This domain name is already set.', 'Already present');
                 }).bind(this);
 
                 const onBlacklisted = (function(){
@@ -122,7 +122,7 @@
                     this.$emit('onSubAdded', data);
                     this.$events.fire('on-sub-added', data);
                     $("#create-item-sub").modal('hide');
-                    toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
+                    toastr.success('The domain name has been added.', 'Success', {preventDuplicates: true});
                 }).bind(this);
 
                 this.sentState = 2;
