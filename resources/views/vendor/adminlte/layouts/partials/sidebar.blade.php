@@ -51,18 +51,6 @@
         </ul>
 
         <hr/>
-        <ul class="sidebar-menu">
-            <li class="{{ Request::path() ==  'home/users' ? 'active' : ''  }}">
-                <a href="{{ url('home/users') }}"><i class='fa fa-users'></i> <span>{{ trans('admin.users') }}</span></a>
-            </li>
-
-            <li class="{{ Request::path() ==  'home/agents' ? 'active' : ''  }}">
-                <a href="{{ url('home/agents') }}"><i class='fa fa-anchor'></i> <span>{{ trans('admin.agents') }}</span></a>
-            </li>
-
-        </ul>
-
-        <hr/>
 
         <ul class="sidebar-menu">
             <li class="{{ Request::path() ==  'home/enterprise' ? 'active' : ''  }}">

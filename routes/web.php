@@ -93,14 +93,6 @@ Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
 
-Route::get('home/agents', function () {
-    return view('agents');
-})->name('agents');
-
-Route::get('home/users', function () {
-    return view('users');
-})->name('users');
-
 
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
