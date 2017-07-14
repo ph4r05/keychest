@@ -2,7 +2,7 @@
 
 
 <p>
-    to do - list of agents with:
+    to do - list of agents with: ...
 </p>
 
 <ul>
