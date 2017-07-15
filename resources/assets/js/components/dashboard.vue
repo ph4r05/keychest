@@ -973,7 +973,12 @@
         methods: {
             hookup(){
                 setTimeout(this.loadData, 0);
-                $('#chk-include-notverified').bootstrapSwitch('_width');
+                $('#chk-include-expired').bootstrapSwitch('destroy');
+                $('#chk-include-expired').bootstrapSwitch();
+                $('#chk-include-expired').bootstrapSwitch('size','normal');
+                $('#chk-include-notverified').bootstrapSwitch('destroy');
+                $('#chk-include-notverified').bootstrapSwitch();
+                $('#chk-include-notverified').bootstrapSwitch('size','normal');
             },
 
             //
@@ -1269,16 +1274,18 @@
 
             postLoad(){
                 const chkInclude = $('#chk-include-expired');
+                chkInclude.bootstrapSwitch('destroy');
                 chkInclude.bootstrapSwitch();
+                chkInclude.bootstrapSwitch('size','normal');
                 chkInclude.on('switchChange.bootstrapSwitch', (evt, state) => {
                     if (evt.type === 'switchChange'){
                         this.includeExpired = state;
                     }
                 });
-                $('#chk-include-expired').bootstrapSwitch('_width');
 
+                $('#chk-include-notverified').bootstrapSwitch('destroy');
                 $('#chk-include-notverified').bootstrapSwitch();
-                $('#chk-include-notverified').bootstrapSwitch('_width');
+                $('#chk-include-notverified').bootstrapSwitch('size','normal');
             },
 
             cleanResults(){

@@ -77,8 +77,10 @@
         },
         methods: {
             hookup(){
+                $('#sub-auto-add').bootstrapSwitch('destroy');
+                $('#sub-auto-add').bootstrapSwitch();
+                $('#sub-auto-add').bootstrapSwitch('size','normal');
                 $('#sub-auto-add').bootstrapSwitch('state', true);
-                $('#sub-auto-add').bootstrapSwitch('_width');
             },
             showModal(){
                 ga('send', 'event', 'subdomains', 'add-modal');
@@ -98,7 +100,6 @@
                 }
 
                 this.newItem.autoFill = !!($('#sub-auto-add').bootstrapSwitch('state'));
-                $('#sub-auto-add').bootstrapSwitch('_width');
                 const onFail = (function(){
                     this.sentState = -1;
                     $('#add-server-wrapper-sub').effect( "shake" );

@@ -22,7 +22,7 @@
                             </div>
 
                             <div class="form-group">
-                                <input type="checkbox" id="sub-auto-add-edit">
+                                <input type="checkbox" id="sub-auto-add-edit" style="width: 90px;">
                                 <label for="sub-auto-add-edit">&nbsp;Watch Now&trade; - automatic monitoring of new servers</label>
                             </div>
 
@@ -70,8 +70,9 @@
         },
         methods: {
             hookup(){
+                $('#sub-auto-add-edit').bootstrapSwitch('destroy');
                 $('#sub-auto-add-edit').bootstrapSwitch();
-                $('#sub-auto-add-edit').bootstrapSwitch('_width');
+                $('#sub-auto-add-edit').bootstrapSwitch('size','normal');
             },
             createItem() {
                 // Minor domain validation.
@@ -140,8 +141,10 @@
                 this.serverItem = data;
                 this.serverItem.server = window.Req.buildUrl('https', data.scan_host, undefined);
                 this.serverItem.autoFill = !!data.auto_fill_watches;
+                $('#sub-auto-add-edit').bootstrapSwitch('destroy');
                 $('#sub-auto-add-edit').bootstrapSwitch('state', this.serverItem.autoFill);
-                $('#sub-auto-add-edit').bootstrapSwitch('_width');
+                $('#sub-auto-add-edit').bootstrapSwitch('size', 'normal');
+
                 $("#update-item-sub").modal('show');
                 setTimeout(()=>{
                     $("#upd-server-name-sub").focus();
