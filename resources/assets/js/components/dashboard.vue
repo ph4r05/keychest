@@ -973,6 +973,7 @@
         methods: {
             hookup(){
                 setTimeout(this.loadData, 0);
+                $('#chk-include-notverified').bootstrapSwitch('_width');
             },
 
             //
@@ -1274,7 +1275,7 @@
                         this.includeExpired = state;
                     }
                 });
-                chkInclude.bootstrapSwitch('_width');
+                $('#chk-include-expired').bootstrapSwitch('_width');
 
                 $('#chk-include-notverified').bootstrapSwitch();
                 $('#chk-include-notverified').bootstrapSwitch('_width');
