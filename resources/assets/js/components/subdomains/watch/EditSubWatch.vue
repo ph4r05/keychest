@@ -71,6 +71,7 @@
         methods: {
             hookup(){
                 $('#sub-auto-add-edit').bootstrapSwitch();
+                $('#sub-auto-add-edit').bootstrapSwitch('_width');
             },
             createItem() {
                 // Minor domain validation.
@@ -81,6 +82,7 @@
                 }
 
                 this.serverItem.autoFill = !!($('#sub-auto-add-edit').bootstrapSwitch('state'));
+                $('#sub-auto-add-edit').bootstrapSwitch('_width');
 
                 const onFail = (function(){
                     this.sentState = -1;
@@ -139,6 +141,7 @@
                 this.serverItem.server = window.Req.buildUrl('https', data.scan_host, undefined);
                 this.serverItem.autoFill = !!data.auto_fill_watches;
                 $('#sub-auto-add-edit').bootstrapSwitch('state', this.serverItem.autoFill);
+                $('#sub-auto-add-edit').bootstrapSwitch('_width');
                 $("#update-item-sub").modal('show');
                 setTimeout(()=>{
                     $("#upd-server-name-sub").focus();
