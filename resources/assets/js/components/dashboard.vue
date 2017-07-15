@@ -1274,8 +1274,10 @@
                         this.includeExpired = state;
                     }
                 });
+                chkInclude.bootstrapSwitch('_width');
 
                 $('#chk-include-notverified').bootstrapSwitch();
+                $('#chk-include-notverified').bootstrapSwitch('_width');
             },
 
             cleanResults(){
