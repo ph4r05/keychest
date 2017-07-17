@@ -6,24 +6,31 @@
                     Welcome to KeyChest
                 </h1>
                 <div class="row">
-                  <div class="col-sm-6">
-                <p>
-                    KeyChest of Enigma Bridge is the tool you need to stay on top of all your certificates and your boss, if you have any.
-                    You can use KeyChest to plan your renewals, get your weekly inventory summary and present your certificate
-                    KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if you use KeyChest 
-                    for your web servers, email servers, web services, or to keep your infrastructure running.&nbsp;
-                    We treat all certificates equal, whether you paid $500 for each, got them free from Let's Encrypt, or
-                    created them yourself.<br> <br>
-                    When you create an account, you can quickly populate your dashboard
-                    using domain names with wildcards to search for server and print the first set of KPIs within minutes.<br> <br>&nbsp;
-                </p>
+                    <div class="col-sm-6">
+                        <p>
+                            KeyChest of Enigma Bridge is the tool you need to stay on top of all your certificates and
+                            your boss, if you have any.
+                            You can use KeyChest to plan your renewals, get your weekly inventory summary and present
+                            your certificate
+                            KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if
+                            you use KeyChest
+                            for your web servers, email servers, web services, or to keep your infrastructure running.&nbsp;
+                            We treat all certificates equal, whether you paid $500 for each, got them free from Let's
+                            Encrypt, or
+                            created them yourself.<br> <br>
+                            When you create an account, you can quickly populate your dashboard
+                            using domain names with wildcards to search for server and print the first set of KPIs
+                            within minutes.<br> <br>&nbsp;
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <img src="/images/keychest_dashboard.png" class="img-responsive"/>
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                   <img src="/images/keychest_dashboard.png" class="img-responsive" />
-                </div></div>
                 <div class="divider-h">
                     <span class="divider"></span>
-                 </div>:
+                </div>
+
                 <div class="row equal">
                     <div class="col-sm-6">
                         <div class="panel">
@@ -104,7 +111,8 @@
                                     </li>
                                     <li>
                                         <h6 class=" mg-sm">
-                                            several certificate statistics (issuers, domains per certificate, legacy certificates)
+                                            several certificate statistics (issuers, domains per certificate, legacy
+                                            certificates)
                                         </h6>
                                     </li>
                                     <li>
@@ -122,6 +130,19 @@
                         </div>
                     </div>
                 </div>
+
+                <h3 class="mg-md tc-rich-electric-blue">
+                    Road map milestones
+                </h3>
+                <ul>
+                    <li>Dashboard launched - 27 Jun 2017</li>
+                    <li>Bulk import and auto discovery of sub-domains - 10 July 2017</li>
+                    <li>Strategy for enterprise version published - 14 July 2017</li>
+                    <li>?? August 2017</li>
+                    <li>Enterprise version - ?? September 2017</li>
+                </ul>
+
+
                 <h3 class="mg-md tc-rich-electric-blue">
                     Letsencrypt users seem to like letsmonitor.org - here&rsquo;s how we compare
                 </h3>
@@ -316,7 +337,19 @@
                                     Will we ever charge you for this service?
                                 </h3>
                                 <p>
-                                    Our plan is to keep this service free, including evolutionary features. We have some thoughts about subscriptions, but these will be only for substantial extensions of KeyChest, and customization of this service for on-premise monitoring of your internal infrastructure. Get in touch if you want to chat.&nbsp;
+                                    Our plan is to keep this service free, including evolutionary features. We have some
+                                    thoughts about subscriptions, but these will be only for substantial extensions of
+                                    KeyChest, and customization of this service for on-premise monitoring of your
+                                    internal infrastructure.
+                                </p>
+                                <p>
+                                    Enterprise version will evolve around features, which make sense for large
+                                    companies:
+                                    on-premise instances, user/role management,
+                                    monitoring "sub-spaces", independent scanning agents, and security policies for
+                                    internal certificates.
+
+                                    <br/><br/>Get in touch if you want to chat.&nbsp;
                                 </p>
                             </div>
                         </div>
