@@ -138,7 +138,8 @@
                     <li>Dashboard launched - 27 Jun 2017</li>
                     <li>Bulk import and auto discovery of sub-domains - 10 July 2017</li>
                     <li>Strategy for enterprise version published - 14 July 2017</li>
-                    <li>?? August 2017</li>
+                    <li>RESTful API, integrations - ?? August 2017</li>
+                    <li>Dashboard update according to feedback - ?? August 2017</li>
                     <li>Enterprise version - ?? September 2017</li>
                 </ul>
 
