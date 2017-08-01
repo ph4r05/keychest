@@ -12,6 +12,7 @@ use App\Keychest\Utils\DomainTools;
 use App\Models\DnsEntry;
 use App\Models\DnsResult;
 use App\Models\HandshakeScan;
+use App\Models\LastScanCache;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use App\User;
@@ -243,8 +244,8 @@ class ServerManager {
 //             `scan_dns`.`num_res` AS `dns_num_res`,
 //             ( CASE
 //                 WHEN scan_dns.status IS NULL
-//        OR scan_dns.status != 1
-//        OR scan_dns.num_res = 0 THEN 1
+//                  OR scan_dns.status != 1
+//                  OR scan_dns.num_res = 0 THEN 1
 //                 ELSE 0
 //               end )              AS dns_error,
 //             ( CASE
@@ -263,19 +264,13 @@ class ServerManager {
 //                                      ON xd.`id` = w.`last_dns_scan_id`
 //                               LEFT JOIN `scan_dns_entry` xde
 //                                      ON xde.scan_id = xd.`id`
+//                              LEFT JOIN `last_scan_cache` AS `ls`
+//                                      ON ls.cache_type = 0
+//                                      AND ls.scan_type = 2
+//                                      AND `ls`.`obj_id` = `w`.`id`
+//                                      AND `ls`.`aux_key` = `xde`.`ip`
 //                               LEFT JOIN `scan_handshakes` xh
-//                                      ON xh.watch_id = w.id
-//         AND xh.ip_scanned = xde.ip
-//                               LEFT JOIN (SELECT x.watch_id,
-//                                                 x.ip_scanned,
-//                                                 Max(x.last_scan_at) AS last_scan
-//                                          FROM   scan_handshakes AS x
-//                                          WHERE  x.ip_scanned IS NOT NULL
-//                                          GROUP  BY x.watch_id,
-//                                                    x.ip_scanned) AS sx
-//                                      ON sx.watch_id = w.id
-//        AND sx.ip_scanned = xh.ip_scanned
-//        AND sx.last_scan = xh.last_scan_at
+//                                      ON xh.id = ls.scan_id
 //                        WHERE  1
 //        AND xh.err_code IS NOT NULL
 //        AND xh.err_code != 0
@@ -289,13 +284,7 @@ class ServerManager {
         $dnsTable = (new DnsResult())->getTable();
         $dnsEntryTable = (new DnsEntry())->getTable();
         $tlsScanTbl = (new HandshakeScan())->getTable();
-
-        $qx = HandshakeScan::query()
-            ->select('x.watch_id', 'x.ip_scanned')
-            ->selectRaw('MAX(x.last_scan_at) AS last_scan')
-            ->from($tlsScanTbl . ' AS x')
-            ->groupBy('x.watch_id', 'x.ip_scanned');
-        $qxSql = $qx->toSql();
+        $lastScanTbl = (new LastScanCache())->getTable();
 
         $qsl = WatchTarget::query()
             ->select('w.id')
@@ -303,18 +292,17 @@ class ServerManager {
             ->from($watchTbl . ' AS w')
             ->leftJoin($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
             ->leftJoin($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
-            ->leftJoin($tlsScanTbl . ' AS xh', function(JoinClause $join) {
-                $join->on('xh.watch_id', '=', 'w.id')
-                    ->on('xh.ip_scanned', '=', 'xde.ip');
+            ->leftJoin($lastScanTbl . ' AS ls', function(JoinClause $join){
+                $join->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 2')
+                    ->on('ls.obj_id', '=', 'w.id')
+                    ->on('ls.aux_key', '=', 'xde.ip');
             })
-            ->leftJoin(
-                DB::raw('(' . $qxSql. ') AS sx'),
-                function(JoinClause $join) use ($qx) {
-                    $join->on('sx.watch_id', '=', 'xh.watch_id')
-                        ->on('sx.ip_scanned', '=', 'xh.ip_scanned')
-                        ->on('sx.last_scan', '=', 'xh.last_scan_at')
-                        ->addBinding($qx->getBindings());
-                })
+
+            ->leftJoin($tlsScanTbl . ' AS xh', function(JoinClause $join) {
+                $join->on('xh.id', '=', 'ls.scan_id');
+            })
+
             ->whereNotNull('xh.err_code')
             ->where('xh.err_code', '<>', 0)
             ->where('xh.err_code', '<>', 1)
