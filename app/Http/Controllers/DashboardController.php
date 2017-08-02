@@ -67,7 +67,7 @@ class DashboardController extends Controller
         Log::info('Active watches ids: ' . var_export($activeWatchesIds->toJson(), true));
 
         // Load all newest DNS scans for active watches
-        $q = $this->scanManager->getNewestDnsScans($activeWatchesIds);
+        $q = $this->scanManager->getNewestDnsScansOptim($activeWatchesIds);
         $dnsScans = $this->processDnsScans($q->get());
         Log::info(var_export($dnsScans->count(), true));
 
@@ -75,11 +75,11 @@ class DashboardController extends Controller
         $primaryIPs = $this->getPrimaryIPs($dnsScans);
 
         // Load latest TLS scans for active watchers for primary IP addresses.
-        $q = $this->scanManager->getNewestTlsScans($activeWatchesIds, $dnsScans, $primaryIPs);
+        $q = $this->scanManager->getNewestTlsScansOptim($activeWatchesIds, $dnsScans, $primaryIPs);
         $tlsScans = $this->processTlsScans($q->get());
 
         // Latest CRTsh scan
-        $crtshScans = $this->scanManager->getNewestCrtshScans($activeWatchesIds)->get();
+        $crtshScans = $this->scanManager->getNewestCrtshScansOptim($activeWatchesIds)->get();
         $crtshScans = $this->processCrtshScans($crtshScans);
         Log::info(var_export($crtshScans->count(), true));
 
@@ -128,7 +128,7 @@ class DashboardController extends Controller
         $topDomainIds = $activeWatches->reject(function($item){
             return empty($item->top_domain_id);
         })->pluck('top_domain_id')->unique();
-        $whoisScans = $this->scanManager->getNewestWhoisScans($topDomainIds)->get();
+        $whoisScans = $this->scanManager->getNewestWhoisScansOptim($topDomainIds)->get();
         $whoisScans = $this->processWhoisScans($whoisScans);
 
         // TODO: downtime computation?

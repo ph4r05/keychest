@@ -12,8 +12,10 @@ use App\Keychest\Utils\DomainTools;
 use App\Models\BaseDomain;
 use App\Models\Certificate;
 use App\Models\CrtShQuery;
+use App\Models\DnsEntry;
 use App\Models\DnsResult;
 use App\Models\HandshakeScan;
+use App\Models\LastScanCache;
 use App\Models\SubdomainWatchAssoc;
 use App\Models\SubdomainWatchTarget;
 use App\Models\WatchAssoc;
@@ -94,6 +96,32 @@ class ScanManager {
         return $q;
     }
 
+
+    /**
+     * Returns a query builder for getting newest Whois results for the given watch array.
+     * Optimized version with last scan table.
+     *
+     * @param Collection $domainIds
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getNewestWhoisScansOptim($domainIds){
+        $table = (new WhoisResult())->getTable();
+        $lstScanTbl = (new LastScanCache())->getTable();
+
+        $q = LastScanCache::query()
+            ->select('s.*')
+            ->from($lstScanTbl . ' AS ls')
+            ->join($table . ' AS s', function(JoinClause $join){
+                $join->on('s.domain_id','=', 'ls.obj_id')
+                    ->on('s.id', '=', 'ls.scan_id');
+            })
+            ->whereRaw('ls.cache_type = 0')
+            ->whereRaw('ls.scan_type = 4')  // whois
+            ->whereIn('s.domain_id', $domainIds->values());
+
+        return $q;
+    }
+
     /**
      * Returns a query builder for getting newest CRT SH results for the given watch array.
      *
@@ -120,6 +148,31 @@ class ScanManager {
                         ->on('s.last_scan_at', '=', 'ss.last_scan')
                         ->addBinding($qq->getBindings());
                 });
+
+        return $q;
+    }
+
+    /**
+     * Returns a query builder for getting newest CRT SH results for the given watch array.
+     * Optimized version with last scan result.
+     *
+     * @param Collection $watches
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getNewestCrtshScansOptim($watches){
+        $table = (new CrtShQuery())->getTable();
+        $lstScanTbl = (new LastScanCache())->getTable();
+
+        $q = LastScanCache::query()
+            ->select('s.*')
+            ->from($lstScanTbl . ' AS ls')
+            ->join($table . ' AS s', function(JoinClause $join){
+                $join->on('s.watch_id','=', 'ls.obj_id')
+                    ->on('s.id', '=', 'ls.scan_id');
+            })
+            ->whereRaw('ls.cache_type = 0')
+            ->whereRaw('ls.scan_type = 3')  // crtsh
+            ->whereIn('s.watch_id', $watches);
 
         return $q;
     }
@@ -169,6 +222,54 @@ class ScanManager {
         return $q;
     }
 
+     /**
+     * Returns the newest TLS scans given the watches of interest and loaded DNS scans
+     * Optimized version with last scan cache
+     *
+     * @param $watches
+     * @param $dnsScans
+     * @param Collection $primaryIPs
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getNewestTlsScansOptim($watches, $dnsScans, $primaryIPs){
+        $table = (new HandshakeScan())->getTable();
+        $watchTbl = (new WatchTarget())->getTable();
+        $dnsTbl = (new DnsResult())->getTable();
+        $dnsEntryTbl = (new DnsEntry())->getTable();
+        $lstScanTbl = (new LastScanCache())->getTable();
+
+        // TODO: with last DNS scan && dns scan entries join - for all recent IPs
+        // TODO: query structure: target JOIN dns scans JOIN dns entries JOIN last scan cache JOIN tls scans
+//        $q = WatchTarget::query()
+//            ->select('s.*')
+//            ->from($watchTbl . ' AS w')
+//            ->join()
+
+        $q = LastScanCache::query()
+            ->select('s.*')
+            ->from($lstScanTbl . ' AS ls')
+            ->join($table . ' AS s', function(JoinClause $join){
+                $join->on('s.watch_id','=', 'ls.obj_id')
+                     ->on('s.ip_scanned','=', 'ls.aux_key')
+                     ->on('s.id', '=', 'ls.scan_id');
+            })
+            ->whereRaw('ls.cache_type = 0')
+            ->whereRaw('ls.scan_type = 2')
+            ->whereIn('s.watch_id', $watches);
+
+        if ($primaryIPs != null && $primaryIPs->isNotEmpty()){
+            $q = $q->whereIn('s.ip_scanned',
+                $primaryIPs
+                    ->values()
+                    ->reject(function($item){
+                        return empty($item);
+                    })
+                    ->all());
+        }
+
+        return $q;
+    }
+
     /**
      * Returns a query builder for getting newest DNS results for the given watch array.
      *
@@ -203,6 +304,28 @@ class ScanManager {
                         ->on('s.last_scan_at', '=', 'ss.last_scan')
                         ->addBinding($qq->getBindings());
                 });
+
+        return $q;
+    }
+
+    /**
+     * Returns a query builder for getting newest DNS results for the given watch array.
+     * Optimized version using last dns id info from the watch.
+     *
+     * @param Collection $watches
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getNewestDnsScansOptim($watches){
+        $dnsTable = (new DnsResult())->getTable();
+        $watchTbl = (new WatchTarget())->getTable();
+
+        $q = WatchTarget::query()
+            ->select('s.*')
+            ->from($watchTbl . ' AS w')
+            ->join($dnsTable . ' AS s', function(JoinClause $join){
+                $join->on('s.id','=', 'w.last_dns_scan_id');
+            })
+            ->whereIn('w.id', $watches);
 
         return $q;
     }
