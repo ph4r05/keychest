@@ -106,15 +106,17 @@ class ScanManager {
      */
     public function getNewestWhoisScansOptim($domainIds){
         $table = (new WhoisResult())->getTable();
+        $domainsTable = (new BaseDomain())->getTable();
         $lstScanTbl = (new LastScanCache())->getTable();
 
         $q = LastScanCache::query()
-            ->select('s.*')
+            ->select(['s.*', $domainsTable.'.domain_name AS domain'])
             ->from($lstScanTbl . ' AS ls')
             ->join($table . ' AS s', function(JoinClause $join){
                 $join->on('s.domain_id','=', 'ls.obj_id')
                     ->on('s.id', '=', 'ls.scan_id');
             })
+            ->join($domainsTable, $domainsTable.'.id', '=', 's.domain_id')
             ->whereRaw('ls.cache_type = 0')
             ->whereRaw('ls.scan_type = 4')  // whois
             ->whereIn('s.domain_id', $domainIds->values());
