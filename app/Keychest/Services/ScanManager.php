@@ -96,7 +96,6 @@ class ScanManager {
         return $q;
     }
 
-
     /**
      * Returns a query builder for getting newest Whois results for the given watch array.
      * Optimized version with last scan table.
@@ -229,45 +228,36 @@ class ScanManager {
      * Optimized version with last scan cache
      *
      * @param $watches
-     * @param $dnsScans
-     * @param Collection $primaryIPs
+     * @param boolean $primaryIPs
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getNewestTlsScansOptim($watches, $dnsScans, $primaryIPs){
+    public function getNewestTlsScansOptim($watches, $primaryIPs){
         $table = (new HandshakeScan())->getTable();
         $watchTbl = (new WatchTarget())->getTable();
         $dnsTbl = (new DnsResult())->getTable();
         $dnsEntryTbl = (new DnsEntry())->getTable();
         $lstScanTbl = (new LastScanCache())->getTable();
 
-        // TODO: with last DNS scan && dns scan entries join - for all recent IPs
-        // TODO: query structure: target JOIN dns scans JOIN dns entries JOIN last scan cache JOIN tls scans
-//        $q = WatchTarget::query()
-//            ->select('s.*')
-//            ->from($watchTbl . ' AS w')
-//            ->join()
-
-        $q = LastScanCache::query()
-            ->select('s.*')
-            ->from($lstScanTbl . ' AS ls')
-            ->join($table . ' AS s', function(JoinClause $join){
-                $join->on('s.watch_id','=', 'ls.obj_id')
-                     ->on('s.ip_scanned','=', 'ls.aux_key')
-                     ->on('s.id', '=', 'ls.scan_id');
+        $q = WatchTarget::query()
+            ->select('xh.*')
+            ->from($watchTbl . ' AS w')
+            ->join($dnsTbl.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
+            ->join($dnsEntryTbl . ' AS xde', function(JoinClause $join) use ($primaryIPs) {
+                $join->on('xde.scan_id', '=', 'xd.id');
+                if ($primaryIPs){
+                    $join->whereRaw('xde.res_order = 0');
+                }
             })
-            ->whereRaw('ls.cache_type = 0')
-            ->whereRaw('ls.scan_type = 2')
-            ->whereIn('s.watch_id', $watches);
-
-        if ($primaryIPs != null && $primaryIPs->isNotEmpty()){
-            $q = $q->whereIn('s.ip_scanned',
-                $primaryIPs
-                    ->values()
-                    ->reject(function($item){
-                        return empty($item);
-                    })
-                    ->all());
-        }
+            ->join($lstScanTbl . ' AS ls', function(JoinClause $join){
+                $join->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 2')  // TLS
+                    ->on('ls.obj_id', '=', 'w.id')
+                    ->on('ls.aux_key', '=', 'xde.ip');
+            })
+            ->join($table . ' AS xh', function(JoinClause $join) {
+                $join->on('xh.id', '=', 'ls.scan_id');
+            })
+            ->whereIn('w.id', $watches);
 
         return $q;
     }

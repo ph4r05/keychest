@@ -75,7 +75,7 @@ class DashboardController extends Controller
         $primaryIPs = $this->getPrimaryIPs($dnsScans);
 
         // Load latest TLS scans for active watchers for primary IP addresses.
-        $q = $this->scanManager->getNewestTlsScansOptim($activeWatchesIds, $dnsScans, $primaryIPs);
+        $q = $this->scanManager->getNewestTlsScansOptim($activeWatchesIds, true);  // TODO: all IPs
         $tlsScans = $this->processTlsScans($q->get());
 
         // Latest CRTsh scan
