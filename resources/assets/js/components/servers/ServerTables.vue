@@ -38,7 +38,11 @@
       >
         <template slot="errors" scope="props">
           <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
-          <span class="label label-danger" v-if="props.rowData.tls_errors > 0">TLS</span>
+          <span class="label" v-bind:class="{
+              'label-danger': props.rowData.tls_errors == props.rowData.tls_all,
+              'label-warning': props.rowData.tls_errors < props.rowData.tls_all
+              }" v-if="props.rowData.tls_errors > 0"><abbr v-bind:title="tlsTitle(props.rowData)" class="initialism">TLS</abbr>
+          </span>
           <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">OK</span>
         </template>
       </vuetable>
@@ -193,6 +197,9 @@ export default {
         },
         formatDate (value, fmt = 'DD-MM-YYYY') {
             return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
+        },
+        tlsTitle(rowData){
+            return `${rowData.tls_errors} TLS checks failed for ${rowData.tls_all} IP addresses`;
         },
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData);
