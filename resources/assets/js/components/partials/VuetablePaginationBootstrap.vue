@@ -63,10 +63,10 @@
                 return this.totalPage >= 20;
             },
             shift10Left(){
-                return Math.max(1, this.tablePagination.current_page - this.onEachSide - 10);
+                return Math.max(1, this.windowStart - 10);
             },
             shift10Right(){
-                return Math.min(this.totalPage, this.tablePagination.current_page + this.onEachSide + 10);
+                return Math.min(this.totalPage, this.windowStart + this.windowSize -1 + 10);
             },
             show10ShiftLeft(){
                 return this.show10Shift && !this.firstPageVisible && this.shift10Left !== 1;
@@ -79,10 +79,10 @@
                 return this.totalPage >= 200;
             },
             shift100Left(){
-                return Math.max(1, this.tablePagination.current_page - this.onEachSide - 100);
+                return Math.max(1, this.windowStart - 100);
             },
             shift100Right(){
-                return Math.min(this.totalPage, this.tablePagination.current_page + this.onEachSide + 100);
+                return Math.min(this.totalPage, this.windowStart + this.windowSize - 1 + 100);
             },
             show100ShiftLeft(){
                 return this.show100Shift && !this.firstPageVisible && this.shift100Left !== 1;
