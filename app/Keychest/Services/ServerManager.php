@@ -234,8 +234,10 @@ class ServerManager {
      * Possible optimizations:
      *  - extract last tls scan info to a separate joinable table so no aggregation on MAX(last_scan_at) is needed
      *  - if tls_errors is not in the sort field, we can load all IDs by the side, cache it, match on it on the query.
+     * @param null $userId
+     * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadServerList(){
+    public function loadServerList($userId=null){
 //        The SQL built here is like this:
 //        ----------------------------------------------------------------------------
 //        SELECT `watch_target`.*,
@@ -247,17 +249,25 @@ class ServerManager {
 //                  OR scan_dns.status != 1
 //                  OR scan_dns.num_res = 0 THEN 1
 //                 ELSE 0
-//               end )              AS dns_error,
+//               END )              AS dns_error,
 //             ( CASE
 //                 WHEN sl.tls_errors IS NULL THEN 0
 //                 ELSE sl.tls_errors
-//               end )              AS tls_errors
+//               END )              AS tls_errors
+//             ( CASE
+//                 WHEN sl.tls_all IS NULL THEN 0
+//                 ELSE sl.tls_all
+//               END )              AS tls_errors
 //        FROM   `user_watch_target`
 //             INNER JOIN `watch_target`
 //                     ON `watch_target`.`id` = `user_watch_target`.`watch_id`
 //             LEFT JOIN `scan_dns`
 //                    ON `scan_dns`.`id` = `watch_target`.`last_dns_scan_id`
-//             LEFT JOIN (SELECT Count(*) AS tls_errors,
+//             LEFT JOIN (SELECT
+//                               SUM(CASE WHEN
+//                                  xh.err_code is NOT NULL AND xh.err_code <> 0 AND xh.err_code <> 1 THEN 1 ELSE 0 END
+//                               ) AS tls_errors
+//                               Count(*) AS tls_all,
 //                               w.id
 //                        FROM   watch_target w
 //                               LEFT JOIN `scan_dns` xd
@@ -271,10 +281,6 @@ class ServerManager {
 //                                      AND `ls`.`aux_key` = `xde`.`ip`
 //                               LEFT JOIN `scan_handshakes` xh
 //                                      ON xh.id = ls.scan_id
-//                        WHERE  1
-//        AND xh.err_code IS NOT NULL
-//        AND xh.err_code != 0
-//        AND xh.err_code != 1
 //                        GROUP  BY w.id) sl
 //                    ON sl.id = watch_target.id
 //        ----------------------------------------------------------------------------
@@ -294,19 +300,27 @@ class ServerManager {
                 ) AS tls_errors')
             ->selectRaw('COUNT(*) AS tls_all')
             ->from($watchTbl . ' AS w')
-            ->leftJoin($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
-            ->leftJoin($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
-            ->leftJoin($lastScanTbl . ' AS ls', function(JoinClause $join){
+            ->join($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
+            ->join($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
+            ->join($lastScanTbl . ' AS ls', function(JoinClause $join){
                 $join->whereRaw('ls.cache_type = 0')
                     ->whereRaw('ls.scan_type = 2')
                     ->on('ls.obj_id', '=', 'w.id')
                     ->on('ls.aux_key', '=', 'xde.ip');
             })
 
-            ->leftJoin($tlsScanTbl . ' AS xh', function(JoinClause $join) {
+            ->join($tlsScanTbl . ' AS xh', function(JoinClause $join) {
                 $join->on('xh.id', '=', 'ls.scan_id');
-            })
-            ->groupBy('w.id');
+            });
+
+            if ($userId){
+                $qsl = $qsl
+                    ->join($watchAssocTbl, $watchAssocTbl.'.watch_id', '=', 'w.id')
+                    ->where($watchAssocTbl.'.user_id', '=', $userId)
+                    ->whereNull($watchAssocTbl.'.deleted_at');
+            }
+
+            $qsl = $qsl->groupBy('w.id');
 
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
@@ -328,6 +342,13 @@ class ServerManager {
                     $join->on('sl.id', '=', 'watch_target.id');
                     $join->addBinding($qsl->getBindings());
                 });
+
+        if ($userId){
+            $query = $query
+                ->where($watchAssocTbl.'.user_id', '=', $userId)
+                ->whereNull($watchAssocTbl.'.deleted_at');
+        }
+
         return $query;
     }
 

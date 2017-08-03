@@ -78,10 +78,7 @@ class ServersController extends Controller
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
 
-        $query = $this->serverManager->loadServerList()
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
-            ->whereNull($watchAssocTbl.'.deleted_at');
-
+        $query = $this->serverManager->loadServerList($userId);
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
         }
