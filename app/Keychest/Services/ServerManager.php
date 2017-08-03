@@ -330,6 +330,9 @@ class ServerManager {
                 $watchAssocTbl.'.*',
                 $dnsTable.'.status AS dns_status',
                 $dnsTable.'.num_res AS dns_num_res',
+                $dnsTable.'.num_ipv4 AS dns_num_ipv4',
+                $dnsTable.'.num_ipv6 AS dns_num_ipv6',
+                $dnsTable.'.dns AS dns_json',
                 DB::raw('(CASE WHEN '.$dnsTable.'.status IS NULL'.
                     ' OR '.$dnsTable.'.status!=1' .
                     ' OR '.$dnsTable.'.num_res=0 THEN 1 ELSE 0 END) AS dns_error'),
