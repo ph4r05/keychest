@@ -331,10 +331,12 @@ class ScanManager {
     public function getActiveWatcher($userId){
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
+        $baseDomainTbl = (new BaseDomain())->getTable();
 
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->select($watchTbl.'.*', $watchAssocTbl.'.*', $watchTbl.'.id as wid' )
+            ->select($watchTbl.'.*', $watchAssocTbl.'.*', $watchTbl.'.id as wid', $baseDomainTbl.'.domain_name AS domain')
+            ->join($baseDomainTbl, $baseDomainTbl.'.id', '=', $watchTbl.'.top_domain_id')
             ->where($watchAssocTbl.'.user_id', '=', $userId)
             ->whereNull($watchAssocTbl.'.deleted_at');
         return $query;
