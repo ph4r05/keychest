@@ -288,7 +288,11 @@ class ServerManager {
 
         $qsl = WatchTarget::query()
             ->select('w.id')
-            ->selectRaw('COUNT(*) AS tls_errors')
+            ->selectRaw('
+                SUM(CASE WHEN 
+                    xh.err_code is NOT NULL AND xh.err_code <> 0 AND xh.err_code <> 1 THEN 1 ELSE 0 END
+                ) AS tls_errors')
+            ->selectRaw('COUNT(*) AS tls_all')
             ->from($watchTbl . ' AS w')
             ->leftJoin($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
             ->leftJoin($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
@@ -302,10 +306,6 @@ class ServerManager {
             ->leftJoin($tlsScanTbl . ' AS xh', function(JoinClause $join) {
                 $join->on('xh.id', '=', 'ls.scan_id');
             })
-
-            ->whereNotNull('xh.err_code')
-            ->where('xh.err_code', '<>', 0)
-            ->where('xh.err_code', '<>', 1)
             ->groupBy('w.id');
 
         $query = WatchAssoc::query()
@@ -319,7 +319,8 @@ class ServerManager {
                 DB::raw('(CASE WHEN '.$dnsTable.'.status IS NULL'.
                     ' OR '.$dnsTable.'.status!=1' .
                     ' OR '.$dnsTable.'.num_res=0 THEN 1 ELSE 0 END) AS dns_error'),
-                DB::raw('(CASE WHEN sl.tls_errors IS NULL THEN 0 ELSE sl.tls_errors END) AS tls_errors')
+                DB::raw('(CASE WHEN sl.tls_errors IS NULL THEN 0 ELSE sl.tls_errors END) AS tls_errors'),
+                DB::raw('(CASE WHEN sl.tls_all IS NULL THEN 0 ELSE sl.tls_all END) AS tls_all')
             )
             ->leftJoin(
                 DB::raw('(' . $qsl->toSql() . ') AS sl'),
