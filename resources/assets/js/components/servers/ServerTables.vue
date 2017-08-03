@@ -199,7 +199,7 @@ export default {
             return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
         },
         tlsTitle(rowData){
-            return `${rowData.tls_errors} TLS checks failed for ${rowData.tls_all} IP addresses`;
+            return `TLS checks failed for ${rowData.tls_errors} out of ${rowData.tls_all} IP addresses`;
         },
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData);
