@@ -20,7 +20,15 @@
 
                 this.$emit('vuetable:checkbox-inverted');
             },
+            checkAll(){
+                let self = this;
+                let idColumn = this.trackBy;
 
+                this.tableData.forEach(function(dataItem) {
+                    const id = dataItem[idColumn];
+                    self.toggleCheckbox(dataItem, 'fld', {target:{checked: true}});
+                });
+            },
             uncheckAll(){
                 let self = this;
                 let idColumn = this.trackBy;
