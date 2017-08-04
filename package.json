@@ -41,6 +41,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.17.1",
     "numeral": "^2.0.6",
+    "pluralize": "^6.0.0",
     "psl": "^1.1.19",
     "sprintf-js": "^1.1.1",
     "sweetalert2": "^6.6.5",
@@ -49,6 +50,7 @@
     "vue": "^2.1.10",
     "vue-chartjs": "^2.6.5",
     "vue-events": "^3.0.0",
+    "vue2-filters": "^0.1.9",
     "vuetable-2": "^1.2.0"
   }
 }
