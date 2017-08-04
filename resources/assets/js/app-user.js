@@ -37,6 +37,7 @@ Vue.prototype.trans = (key) => {
 Vue.component('quicksearch', require('./components/quicksearch.vue'));
 Vue.component('feedback_form', require('./components/feedback_form.vue'));
 
+Vue.component('vuetable-my', require('./components/partials/VuetableMy.vue'));
 Vue.component('register-form', require('./components/auth/RegisterForm.vue'));
 Vue.component('login-form', require('./components/auth/LoginForm.vue'));
 Vue.component('email-reset-password-form', require('./components/auth/EmailResetPasswordForm.vue'));
