@@ -291,39 +291,10 @@ export default {
                 showCancelButton: true,
                 confirmButtonText: 'Yes'
             }).then((function () {
-                this.onDeleteServersConfirmed();
+                this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
             }).bind(this)).catch(() => {});
         },
-        onDeleteServerConfirmed(data){
-            const onFail = (function(){
-                this.moreParams.deleteState = -1;
-                swal('Delete error', 'Server delete failed :(', 'error');
-            }).bind(this);
-
-            const onSuccess = (function(data){
-                this.moreParams.deleteState = 1;
-                Vue.nextTick(() => this.$refs.vuetable.refresh());
-                this.$emit('onServerDeleted', data);
-                this.$events.fire('on-server-deleted', data);
-                toastr.success('Server deleted successfully.', 'Success');
-            }).bind(this);
-
-            this.moreParams.deleteState = 2;
-            axios.post('/home/servers/del', data)
-                .then(response => {
-                    if (!response || !response.data || response.data['status'] !== 'success'){
-                        onFail();
-                    } else {
-                        onSuccess(response.data);
-                    }
-                })
-                .catch(e => {
-                    console.log( "Del server failed: " + e );
-                    onFail();
-                });
-
-        },
-        onDeleteServersConfirmed(){
+        onDeleteServerConfirmed(data, isMore){
             const onFail = (function(){
                 this.moreParams.deleteState = -1;
                 swal('Delete error', 'Server delete failed :(', 'error');
@@ -332,17 +303,21 @@ export default {
             const onSuccess = (function(data){
                 this.moreParams.deleteState = 1;
                 Vue.nextTick(() => {
-                    this.$refs.vuetable.uncheckAll();
-                    this.$refs.vuetable.refresh()
+                    this.$refs.vuetable.refresh();
+                    if (isMore){
+                        this.$refs.vuetable.uncheckAll();
+                    }
                 });
 
                 this.$emit('onServerDeleted', data);
                 this.$events.fire('on-server-deleted', data);
-                toastr.success('Servers deleted successfully.', 'Success');
+                toastr.success(isMore ?
+                    'Servers deleted successfully.':
+                    'Server deleted successfully.', 'Success');
             }).bind(this);
 
             this.moreParams.deleteState = 2;
-            axios.post('/home/servers/delMore', {'ids': this.$refs.vuetable.selectedTo})
+            axios.post('/home/servers/del' + (isMore ? 'More' : ''), data)
                 .then(response => {
                     if (!response || !response.data || response.data['status'] !== 'success'){
                         onFail();
