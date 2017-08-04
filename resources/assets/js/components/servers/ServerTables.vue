@@ -63,8 +63,7 @@
                   :disabled="numSelected==0"
                   @click="uncheckAll()">
             <i class="fa fa-square-o" title="Deselect all servers on all pages"></i></button>
-          <button type="button" class="btn btn-sm btn-default" :class="{'disabled': numSelected==0}"
-                  :disabled="numSelected==0"
+          <button type="button" class="btn btn-sm btn-default"
                   @click="invertCheckBoxes()">
             <i class="glyphicon glyphicon-random" title="Invert"></i></button>
           <button type="button" class="btn btn-sm btn-danger" :class="{'disabled': numSelected==0}"
