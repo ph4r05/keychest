@@ -10,8 +10,8 @@
         },
         methods: {
             invertCheckBoxes(){
-                let self = this;
-                let idColumn = this.trackBy;
+                const self = this;
+                const idColumn = this.trackBy;
 
                 this.tableData.forEach(function(dataItem) {
                     const id = dataItem[idColumn];
@@ -21,8 +21,8 @@
                 this.$emit('vuetable:checkbox-inverted');
             },
             checkAll(){
-                let self = this;
-                let idColumn = this.trackBy;
+                const self = this;
+                const idColumn = this.trackBy;
 
                 this.tableData.forEach(function(dataItem) {
                     const id = dataItem[idColumn];
@@ -30,8 +30,8 @@
                 });
             },
             uncheckAll(){
-                let self = this;
-                let idColumn = this.trackBy;
+                const self = this;
+                const idColumn = this.trackBy;
 
                 this.tableData.forEach(function(dataItem) {
                     const id = dataItem[idColumn];
