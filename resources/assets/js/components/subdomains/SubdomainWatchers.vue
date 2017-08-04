@@ -22,7 +22,7 @@
             <edit-sub-watch></edit-sub-watch>
 
             <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
-                <vuetable ref="vuetable"
+                <vuetable-my ref="vuetable"
                           api-url="/home/subs/get"
                           :fields="fields"
                           pagination-path=""
@@ -35,6 +35,8 @@
                           @vuetable:pagination-data="onPaginationData"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
+                          @vuetable:checkbox-toggled="onCheckboxToggled"
+                          @vuetable:checkbox-toggled-all="onCheckboxToggled"
                 >
                     <template slot="actions" scope="props">
                         <div class="custom-actions">
@@ -48,7 +50,24 @@
                         <span class="label label-success" v-if="props.rowData.auto_fill_watches">On</span>
                         <span class="label label-default" v-else="">Off</span>
                     </template>
-                </vuetable>
+                </vuetable-my>
+            </div>
+
+            <div class="vuetable-bulk-actions form-group">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" :class="{'disabled': numSelected==0}"
+                            :disabled="numSelected==0"
+                            @click="uncheckAll()">
+                        <i class="fa fa-square-o" title="Deselect all servers on all pages"></i></button>
+                    <button type="button" class="btn btn-sm btn-default"
+                            @click="invertCheckBoxes()">
+                        <i class="glyphicon glyphicon-random" title="Invert"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger" :class="{'disabled': numSelected==0}"
+                            :disabled="numSelected==0"
+                            @click="deleteChecked()">
+                        <i class="glyphicon glyphicon-trash" title="Remove"></i></button>
+                </div>
+                <span>Selected {{numSelected}} active {{ numSelected | pluralize('domain') }} </span>
             </div>
 
             <div class="vuetable-pagination">
@@ -97,6 +116,9 @@
                 loadingState: 0,
                 fields: [
                     {
+                        name: '__checkbox'
+                    },
+                    {
                         name: '__sequence',
                         title: '#',
                         titleClass: 'text-right',
@@ -120,14 +142,14 @@
                         dataClass: 'text-center',
                         callback: 'formatDate|DD-MM-YYYY HH:mm'
                     },
-                    {
-                        name: 'updated_at',
-                        title: 'Update',
-                        sortField: 'updated_at',
-                        titleClass: 'text-center',
-                        dataClass: 'text-center',
-                        callback: 'formatDate|DD-MM-YYYY HH:mm'
-                    },
+                    // {
+                    //     name: 'updated_at',
+                    //     title: 'Update',
+                    //     sortField: 'updated_at',
+                    //     titleClass: 'text-center',
+                    //     dataClass: 'text-center',
+                    //     callback: 'formatDate|DD-MM-YYYY HH:mm'
+                    // },
                     {
                         name: 'last_scan_at',
                         title: 'Last scan',
@@ -169,7 +191,8 @@
                 sortOrder: [
                     {field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
                 ],
-                moreParams: {}
+                moreParams: {},
+                numSelected: 0
             }
         },
 
@@ -201,6 +224,16 @@
             onLoaded(){
                 this.loadingState = 1;
             },
+            onCheckboxToggled(){
+                this.numSelected = _.size(this.$refs.vuetable.selectedTo);
+            },
+            invertCheckBoxes(){
+                this.$refs.vuetable.invertCheckBoxes();
+            },
+            uncheckAll(){
+                this.$refs.vuetable.uncheckAllPages();
+            },
+
             onDeleteServer(data){
                 swal({
                     title: 'Are you sure?',
@@ -212,7 +245,19 @@
                     this.onDeleteServerConfirmed(data);
                 }).bind(this)).catch(() => {});
             },
-            onDeleteServerConfirmed(data){
+            deleteChecked(){
+                swal({
+                    title: 'Are you sure?',
+                    text: pluralize('Active-domain', this.numSelected, true) + " will be permanently removed",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes'
+                }).then((function () {
+                    this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
+                }).bind(this)).catch(() => {});
+            },
+
+            onDeleteServerConfirmed(data, isMore){
                 const onFail = (function(){
                     this.moreParams.deleteState = -1;
                     swal('Delete error', 'Server delete failed :(', 'error');
@@ -220,14 +265,19 @@
 
                 const onSuccess = (function(data){
                     this.moreParams.deleteState = 1;
-                    Vue.nextTick(() => this.$refs.vuetable.refresh());
+                    Vue.nextTick(() => {
+                        this.$refs.vuetable.refresh();
+                        if (isMore) {
+                            this.$refs.vuetable.uncheckAll();
+                        }
+                    });
                     this.$emit('onServerDeleted', data);
                     this.$events.fire('on-server-deleted', data);
                     toastr.success('Server deleted successfully.', 'Success');
                 }).bind(this);
 
                 this.moreParams.deleteState = 2;
-                axios.post('/home/subs/del', data)
+                axios.post('/home/subs/del' + (isMore ? 'More' : ''), data)
                     .then(response => {
                         if (!response || !response.data || response.data['status'] !== 'success'){
                             onFail();
