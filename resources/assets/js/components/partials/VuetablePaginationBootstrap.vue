@@ -12,13 +12,13 @@
             </li>
         </template>
         <template v-else>
-            <li v-if="!firstPageVisible">
+            <li v-if="!firstPageVisible" :class="{'active': isCurrentPage(1)}">
                 <a @click.prevent="loadPage(1)" v-html="1"></a>
             </li>
-            <li v-if="show10ShiftLeft">
+            <li v-if="show10ShiftLeft" :class="{'active': isCurrentPage(shift10Left)}">
                 <a @click.prevent="loadPage(shift10Left)" v-html="shift10Left"></a>
             </li>
-            <li v-if="show100ShiftLeft">
+            <li v-if="show100ShiftLeft" :class="{'active': isCurrentPage(shift100Left)}">
                 <a @click.prevent="loadPage(shift100Left)" v-html="shift100Left"></a>
             </li>
 
@@ -26,13 +26,13 @@
                 <a @click.prevent="loadPage(windowStart+n-1)" v-html="windowStart+n-1"></a>
             </li>
 
-            <li v-if="show10ShiftRight">
+            <li v-if="show10ShiftRight" :class="{'active': isCurrentPage(shift10Right)}">
                 <a @click.prevent="loadPage(shift10Right)" v-html="shift10Right"></a>
             </li>
-            <li v-if="show100ShiftRight">
+            <li v-if="show100ShiftRight" :class="{'active': isCurrentPage(shift100Right)}">
                 <a @click.prevent="loadPage(shift100Right)" v-html="shift100Right"></a>
             </li>
-            <li v-if="!lastPageVisible">
+            <li v-if="!lastPageVisible" :class="{'active': isCurrentPage(lastPage)}">
                 <a @click.prevent="loadPage(lastPage)" v-html="lastPage"></a>
             </li>
         </template>
