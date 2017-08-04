@@ -22,7 +22,7 @@
       <edit-server></edit-server>
 
       <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
-      <vuetable ref="vuetable"
+      <vuetable-my ref="vuetable"
         api-url="/home/servers/get"
         :fields="fields"
         pagination-path=""
@@ -35,6 +35,8 @@
         @vuetable:pagination-data="onPaginationData"
         @vuetable:loaded="onLoaded"
         @vuetable:loading="onLoading"
+        @vuetable:checkbox-toggled="onCheckboxToggled"
+        @vuetable:checkbox-toggled-all="onCheckboxToggled"
       >
         <template slot="errors" scope="props">
           <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
@@ -52,10 +54,24 @@
           </div>
           <span v-else="">-</span>
         </template>
-      </vuetable>
+      </vuetable-my>
       </div>
 
-      <div class="vuetable-pagination">
+      <div class="vuetable-bulk-actions form-group">
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-default" :class="{'disabled': numSelected==0}"
+                  :disabled="numSelected==0"
+                  @click="invertCheckBoxes()">
+            <i class="glyphicon glyphicon-random" title="Invert"></i></button>
+          <button type="button" class="btn btn-sm btn-danger" :class="{'disabled': numSelected==0}"
+                  :disabled="numSelected==0"
+                  @click="onDeleteServers()">
+            <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
+        </div>
+        <span>Selected {{numSelected}} {{ numSelected | pluralize('server') }} </span>
+      </div>
+
+      <div class="vuetable-pagination form-group">
         <vuetable-pagination-info ref="paginationInfo"
           info-class="pagination-info"
           :css="css.info"
@@ -65,15 +81,18 @@
           @vuetable-pagination:change-page="onChangePage"
         ></vuetable-pagination-bootstrap>
       </div>
+
     </div>
   </div>
 </template>
 <script>
 import accounting from 'accounting';
 import moment from 'moment';
+import pluralize from 'pluralize';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';
+import Vue2Filters from 'vue2-filters';
 
 import Vuetable from 'vuetable-2/src/components/Vuetable';
 import VuetablePagination from 'vuetable-2/src/components/VuetablePagination';
@@ -88,6 +107,7 @@ import EditServer from './EditServer.vue';
 import ServerInfo from './ServerInfo.vue';
 
 Vue.use(VueEvents);
+Vue.use(Vue2Filters);
 Vue.component('custom-actions', CustomActions);
 Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
@@ -106,6 +126,9 @@ export default {
         return {
             loadingState: 0,
             fields: [
+                {
+                    name: '__checkbox'
+                },
                 {
                     name: '__sequence',
                     title: '#',
@@ -198,8 +221,12 @@ export default {
             sortOrder: [
                 {field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
             ],
-            moreParams: {}
+            moreParams: {},
+            numSelected: 0
         }
+    },
+
+    computed: {
     },
 
     methods: {
@@ -233,6 +260,12 @@ export default {
         onLoaded(){
             this.loadingState = 1;
         },
+        onCheckboxToggled(){
+            this.numSelected = _.size(this.$refs.vuetable.selectedTo);
+        },
+        invertCheckBoxes(){
+            this.$refs.vuetable.invertCheckBoxes();
+        },
         onDeleteServer(data){
             swal({
                 title: 'Are you sure?',
@@ -242,6 +275,17 @@ export default {
                 confirmButtonText: 'Yes'
             }).then((function () {
                 this.onDeleteServerConfirmed(data);
+            }).bind(this)).catch(() => {});
+        },
+        onDeleteServers(){
+            swal({
+                title: 'Are you sure?',
+                text: pluralize('Server', this.numSelected, true) + " will be permanently removed",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes'
+            }).then((function () {
+                this.onDeleteServersConfirmed();
             }).bind(this)).catch(() => {});
         },
         onDeleteServerConfirmed(data){
@@ -260,6 +304,39 @@ export default {
 
             this.moreParams.deleteState = 2;
             axios.post('/home/servers/del', data)
+                .then(response => {
+                    if (!response || !response.data || response.data['status'] !== 'success'){
+                        onFail();
+                    } else {
+                        onSuccess(response.data);
+                    }
+                })
+                .catch(e => {
+                    console.log( "Del server failed: " + e );
+                    onFail();
+                });
+
+        },
+        onDeleteServersConfirmed(){
+            const onFail = (function(){
+                this.moreParams.deleteState = -1;
+                swal('Delete error', 'Server delete failed :(', 'error');
+            }).bind(this);
+
+            const onSuccess = (function(data){
+                this.moreParams.deleteState = 1;
+                Vue.nextTick(() => {
+                    this.$refs.vuetable.uncheckAll();
+                    this.$refs.vuetable.refresh()
+                });
+
+                this.$emit('onServerDeleted', data);
+                this.$events.fire('on-server-deleted', data);
+                toastr.success('Servers deleted successfully.', 'Success');
+            }).bind(this);
+
+            this.moreParams.deleteState = 2;
+            axios.post('/home/servers/delMore', {'ids': this.$refs.vuetable.selectedTo})
                 .then(response => {
                     if (!response || !response.data || response.data['status'] !== 'success'){
                         onFail();
