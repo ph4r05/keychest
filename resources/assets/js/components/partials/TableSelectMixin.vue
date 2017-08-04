@@ -41,6 +41,23 @@
             uncheckAllPages(){
                 this.selectedTo = [];
                 this.$emit('vuetable:checkbox-toggled-all', false);
+            },
+            getSelectedIds(){
+                return this.selectedTo;
+            },
+            getSelectedObjects(){
+                const self = this;
+                const idColumn = this.trackBy;
+                const ret = [];
+
+                this.tableData.forEach(function(dataItem) {
+                    const id = dataItem[idColumn];
+                    if (self.isSelectedRow(id)){
+                        ret.push(dataItem);
+                    }
+                });
+
+                return ret;
             }
         }
     }
