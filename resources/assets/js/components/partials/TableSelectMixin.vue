@@ -37,6 +37,10 @@
                     const id = dataItem[idColumn];
                     self.toggleCheckbox(dataItem, 'fld', {target:{checked: false}});
                 });
+            },
+            uncheckAllPages(){
+                this.selectedTo = [];
+                this.$emit('vuetable:checkbox-toggled-all', false);
             }
         }
     }
