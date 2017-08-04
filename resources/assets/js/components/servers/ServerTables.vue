@@ -49,8 +49,8 @@
         </template>
         <template slot="dns" scope="props">
           <div v-if="!props.rowData.dns_error">
-            <span class="label label-primary">{{props.rowData.dns_num_ipv4}} IPv4</span>
-            <span class="label label-success">{{props.rowData.dns_num_ipv6}} IPv6</span>
+            <span class="label label-primary" title="IPv4">{{props.rowData.dns_num_ipv4}}</span>
+            <span class="label label-success" title="IPv6">{{props.rowData.dns_num_ipv6}}</span>
           </div>
           <span v-else="">-</span>
         </template>
@@ -168,7 +168,7 @@ export default {
                 // },
                 {
                     name: '__slot:dns',
-                    title: 'DNS',
+                    title: 'IP v4/v6',
                     sortField: 'dns_num_res',
                     titleClass: 'text-center',
                     dataClass: 'text-center',
