@@ -69,6 +69,7 @@ Route::get('home', 'HomeController@index')->name('home');
 Route::get('home/servers', 'ServersController@index')->name('servers');
 Route::get('home/servers/get', 'ServersController@getList')->name('servers/get');
 Route::post('home/servers/add', 'ServersController@add')->name('servers/add');
+Route::post('home/servers/addMore', 'ServersController@addMore')->name('servers/addMore');
 Route::post('home/servers/del', 'ServersController@del')->name('servers/del');
 Route::post('home/servers/delMore', 'ServersController@delMore')->name('servers/delMore');
 Route::post('home/servers/update', 'ServersController@update')->name('servers/update');

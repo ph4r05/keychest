@@ -128,6 +128,24 @@ class ServersController extends Controller
     }
 
     /**
+     * Adds a new server - multiple
+     *
+     * @return Response
+     */
+    public function addMore()
+    {
+        $maxHosts = config('keychest.max_servers');
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        if ($numHosts >= $maxHosts){
+            return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
+        }
+
+        $servers = collect(trim(Input::get('servers')));
+        $resp = $this->importServersArr($servers);
+        return response()->json($resp, 200);
+    }
+
+    /**
      * Helper server add function.
      * Used for individual addition and import.
      * @param $server
@@ -333,6 +351,16 @@ class ServersController extends Controller
     public function importServers(){
         $servers = strtolower(trim(Input::get('data')));
         $servers = collect(explode("\n", $servers));
+        $resp = $this->importServersArr($servers);
+        return response()->json($resp, 200);
+    }
+
+    /**
+     * Imports all servers from the input collection
+     * @param $servers
+     * @return array
+     */
+    protected function importServersArr($servers){
         $servers = $servers->reject(function($value, $key){
             return empty(trim($value));
         })->values()->take(1000)->unique()->values()->take(100);
@@ -378,7 +406,7 @@ class ServersController extends Controller
         }
 
         $outTransformed = $validServers->values()->implode("\n");
-        return response()->json([
+        return [
             'status' => 'success',
             'transformed' => $outTransformed,
             'num_hosts' => $numHosts,
@@ -389,6 +417,6 @@ class ServersController extends Controller
             'num_total' => $num_total,
             'hit_max_limit' => $hitMaxLimit,
             'max_limit' => $maxHosts
-        ], 200);
+        ];
     }
 }
