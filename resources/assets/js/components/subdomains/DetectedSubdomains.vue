@@ -13,11 +13,12 @@
 
             <div class="table-responsive table-xfull"
                  v-bind:class="{'loading' : tblLoadingState==2 || loadingState==0}">
-                <vuetable ref="vuetable"
+                <vuetable-my ref="vuetable"
                           api-url=""
                           :apiMode="false"
                           :fields="fields"
                           :dataManager="dataManager"
+                          track-by="name"
                           pagination-path=""
                           :css="css.table"
                           :sort-order="sortOrder"
@@ -28,6 +29,8 @@
                           @vuetable:pagination-data="onPaginationData"
                           @vuetable:loaded="onLoaded"
                           @vuetable:loading="onLoading"
+                          @vuetable:checkbox-toggled="onCheckboxToggled"
+                          @vuetable:checkbox-toggled-all="onCheckboxToggled"
                 >
                     <template slot="used" scope="props">
                         <span class="label label-primary" v-if="props.rowData.used">Monitored</span>
@@ -41,7 +44,24 @@
                         >Monitoring</button>
 
                     </template>
-                </vuetable>
+                </vuetable-my>
+            </div>
+
+            <div class="vuetable-bulk-actions form-group">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-default" :class="{'disabled': numSelected==0}"
+                            :disabled="numSelected==0"
+                            @click="uncheckAll()">
+                        <i class="fa fa-square-o" title="Deselect all servers on all pages"></i></button>
+                    <button type="button" class="btn btn-sm btn-default"
+                            @click="invertCheckBoxes()">
+                        <i class="glyphicon glyphicon-random" title="Invert"></i></button>
+                    <button type="button" class="btn btn-sm btn-success" :class="{'disabled': numSelected==0}"
+                            :disabled="numSelected==0"
+                            @click="addToMonitoringChecked()">
+                        <i class="glyphicon glyphicon-plus" title="Add to monitoring"></i></button>
+                </div>
+                <span>Selected {{numSelected}} {{ numSelected | pluralize('sub-domain') }} </span>
             </div>
 
             <div class="vuetable-pagination">
@@ -93,6 +113,9 @@
 
                 fields: [
                     {
+                        name: '__checkbox'
+                    },
+                    {
                         name: '__sequence',
                         title: '#',
                         titleClass: 'text-right',
@@ -143,6 +166,7 @@
                 results: null,
                 dataProcessStart: null,
                 processedData: null,
+                numSelected: 0
             }
         },
 
@@ -182,6 +206,15 @@
             },
             onLoaded(){
                 this.tblLoadingState = 1;
+            },
+            onCheckboxToggled(){
+                this.numSelected = _.size(this.$refs.vuetable.selectedTo);
+            },
+            invertCheckBoxes(){
+                this.$refs.vuetable.invertCheckBoxes();
+            },
+            uncheckAll(){
+                this.$refs.vuetable.uncheckAllPages();
             },
 
             renderPagination(h) {
@@ -272,14 +305,28 @@
             //
             // Adding
             //
-            addToMonitoring(rowData) {
+
+            addToMonitoring(rowData){
                 ga('send', 'event', 'subdomains', 'add-monitor');
-                const newItem = {'server': rowData.name};
+                addToMonitoringExt(rowData);
+            },
+
+            addToMonitoringChecked(rowData){
+                ga('send', 'event', 'subdomains', 'add-monitor-selected');
+
+                const selectedSubs = this.$refs.vuetable.getSelectedIds();
+                addToMonitoringExt(selectedSubs, true);
+            },
+
+            addToMonitoringExt(rowData, isMore) {
+                const newItem = isMore ? {'servers': rowData} : {'server': rowData.name};
 
                 // TODO: refactor to use common code with AddServer.vue
                 const onFail = (function(){
                     Req.bodyProgress(false);
-                    toastr.error('Error while adding the server, please, try again later', 'Error');
+                    toastr.error(isMore ?
+                        'Error while adding the servers, please, try again later' :
+                        'Error while adding the server, please, try again later', 'Error');
                 }).bind(this);
 
                 const onDuplicate = (function(){
@@ -296,13 +343,21 @@
                 const onSuccess = (function(data){
                     rowData.used = true;
                     Req.bodyProgress(false);
+                    if (isMore){
+                        Vue.nextTick(() => {
+                            this.$refs.vuetable.uncheckAll();
+                        });
+                    }
+
                     this.$emit('onServerAdded', data);
                     this.$events.fire('on-server-added', data);
-                    toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
+                    toastr.success(isMore ?
+                        'Server Added Successfully.' :
+                        'Servers Added Successfully.', 'Success', {preventDuplicates: true});
                 }).bind(this);
 
                 Req.bodyProgress(true);
-                axios.post('/home/servers/add', newItem)
+                axios.post('/home/servers/add' + (isMore ? 'More' : ''), newItem)
                     .then(response => {
                         if (!response || !response.data) {
                             onFail();
