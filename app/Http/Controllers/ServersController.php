@@ -210,6 +210,33 @@ class ServersController extends Controller
     }
 
     /**
+     * Delete the server association
+     */
+    public function delMore(){
+        $ids = collect(Input::get('ids'));
+        if (empty($ids)){
+            return response()->json([], 500);
+        }
+
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+
+        $affected = WatchAssoc
+            ::whereIn('id', $ids->all())
+            ->where('user_id', $userId)
+            ->update([
+                'deleted_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+                ]);
+        if (empty($affected)){
+            return response()->json(['status' => 'not-deleted'], 422);
+        }
+
+        return response()->json(['status' => 'success', 'affected' => $affected, 'size' => $ids->count()], 200);
+    }
+
+    /**
      * Updates the server watcher record.
      * @return \Illuminate\Http\JsonResponse
      */
