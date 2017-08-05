@@ -259,9 +259,11 @@ export default {
             if (this.loadingState != 0){
                 this.loadingState = 2;
             }
+            Req.bodyProgress(true);
         },
         onLoaded(){
             this.loadingState = 1;
+            Req.bodyProgress(false);
         },
         onCheckboxToggled(){
             this.numSelected = _.size(this.$refs.vuetable.selectedTo);
