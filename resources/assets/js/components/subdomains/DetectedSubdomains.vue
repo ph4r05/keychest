@@ -309,14 +309,14 @@
 
             addToMonitoring(rowData){
                 ga('send', 'event', 'subdomains', 'add-monitor');
-                addToMonitoringExt(rowData);
+                this.addToMonitoringExt(rowData);
             },
 
             addToMonitoringChecked(rowData){
                 ga('send', 'event', 'subdomains', 'add-monitor-selected');
 
                 const selectedSubs = this.$refs.vuetable.getSelectedIds();
-                addToMonitoringExt(selectedSubs, true);
+                this.addToMonitoringExt(selectedSubs, true);
             },
 
             addToMonitoringExt(rowData, isMore) {
