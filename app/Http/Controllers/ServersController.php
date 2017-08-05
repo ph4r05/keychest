@@ -140,7 +140,7 @@ class ServersController extends Controller
             return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
         }
 
-        $servers = collect(trim(Input::get('servers')));
+        $servers = collect(Input::get('servers'));
         $resp = $this->importServersArr($servers);
         return response()->json($resp, 200);
     }
