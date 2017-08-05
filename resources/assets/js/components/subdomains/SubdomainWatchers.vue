@@ -86,6 +86,7 @@
 <script>
     import accounting from 'accounting';
     import moment from 'moment';
+    import pluralize from 'pluralize';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';

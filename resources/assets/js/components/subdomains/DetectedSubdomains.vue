@@ -80,6 +80,7 @@
 <script>
     import accounting from 'accounting';
     import moment from 'moment';
+    import pluralize from 'pluralize';
     import _ from 'lodash';
 
     import Vue from 'vue';

@@ -14,6 +14,7 @@ window.Psl = require('./lib/psl');
 window.Moment = require('moment');
 window.toastr = require('toastr');
 window.swal = require('sweetalert2');
+window.pluralize = require('pluralize');
 
 require('jquery-ui/ui/effects/effect-shake');
 require('bootstrap-switch');
