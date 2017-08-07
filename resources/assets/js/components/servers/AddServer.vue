@@ -71,16 +71,66 @@
                     $('#server-add-title').focus();
                 }, 500);
             },
+            isWildcard(value){
+                const t = _.trim(value);
+                if (_.isEmpty(t) || _.isNull(t)){
+                    return false;
+                }
+
+                return _.startsWith(t, '*') || _.startsWith(t, '%');
+            },
+            checkWildcard(value){
+                if (!this.isWildcard(value)) {
+                    this.createItemInt(); // normal work-flow - no wildcard domain
+                    return;
+                }
+
+                ga('send', 'event', 'servers', 'add-server-wildcard-entered');
+                swal({
+                    title: 'Did you mean Active-domain?',
+                    text: "You entered domain with a wildcard, it's not supported here. Did you mean Active-Domain?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No, continue'
+                }).then(() => {
+                    this.doWildcard(value);
+                }, (dismiss) => {
+                    this.newItem = {'server': Req.removeAllWildcards(this.newItem.server)};
+                    this.createItemInt();
+                });
+            },
+            doWildcard(value){
+                this.hideModal();
+                this.resetInput();
+                Req.switchTab('tab_2');
+                this.$events.fire('add-watcher-domain', value);
+            },
+            hideModal(){
+                $("#create-item").modal('hide');
+            },
+            resetInput(){
+                this.newItem = {'server':''};
+            },
             createItem() {
                 ga('send', 'event', 'servers', 'add-server');
 
                 // Minor domain validation.
-                if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1){
-                    $('#add-server-wrapper').effect( "shake" );
-                    toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
+                if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1) {
+                    $('#add-server-wrapper').effect("shake");
+                    toastr.error('Please enter correct domain.', 'Invalid input', {
+                        timeOut: 2000,
+                        preventDuplicates: true
+                    });
                     return;
                 }
 
+                // UX: Wildcard entered
+                this.checkWildcard(this.newItem.server);
+            },
+            createItemInt(){
                 const onFail = (function(){
                     this.sentState = -1;
                     $('#add-server-wrapper').effect( "shake" );
@@ -102,10 +152,10 @@
 
                 const onSuccess = (function(data){
                     this.sentState = 1;
-                    this.newItem = {'server':''};
+                    this.resetInput();
                     this.$emit('onServerAdded', data);
                     this.$events.fire('on-server-added', data);
-                    $("#create-item").modal('hide');
+                    this.hideModal();
                     toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
                 }).bind(this);
 

@@ -75,6 +75,10 @@
 
 <script>
     import axios from 'axios';
+    import Vue from 'vue';
+    import VueEvents from 'vue-events';
+
+    Vue.use(VueEvents);
 
     export default {
         data () {
@@ -104,6 +108,19 @@
                 $('#create-item-sub').modal();
                 this.focusInput();
             },
+            isWildcard(value){
+                const t = _.trim(value);
+                if (_.isEmpty(t) || _.isNull(t)){
+                    return false;
+                }
+
+                return _.startsWith(t, '*') || _.startsWith(t, '%');
+            },
+            onAddDomain(domain){
+                this.showModal();
+                const newDomain = Req.removeAllWildcards(domain);
+                this.newItem = {'server': newDomain};
+            },
             focusInput(){
                 setTimeout(()=>{
                     if (!this.addMore) {
@@ -115,20 +132,49 @@
             },
             onMore(){
                 ga('send', 'event', 'subdomains', 'add-more');
+                this.domains = this.newItem.server;
                 this.addMore = true;
                 this.focusInput();
+            },
+            checkWildcard(){
+                if (this.addMore || !this.isWildcard(this.newItem.server)){
+                    this.createItemInt();
+                    return;
+                }
+
+                const cont = () => {
+                    this.newItem.server = Req.removeAllWildcards(this.newItem.server);
+                    this.createItemInt();
+                };
+
+                ga('send', 'event', 'servers', 'add-domain-wildcard-entered');
+                swal({
+                    title: 'Wildcard domain entered',
+                    text: "You entered domain with a wildcard. It is not needed in the " +
+                    "Active-Domain section as the KeyChest scans for all sub-domains.",
+                    type: 'info',
+                    confirmButtonText: 'OK',
+                }).then(cont);
             },
             createItem() {
                 ga('send', 'event', 'subdomains', this.addMore ? 'add-server' : 'add-server-more');
 
                 // Minor domain validation.
                 if ((this.addMore && _.isEmpty(this.domains)) || (
-                    !this.addMore && (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1))){
-                    $('#add-domain-wrapper-sub').effect( "shake" );
-                    toastr.error('Please enter a correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
+                        !this.addMore && (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1))) {
+                    $('#add-domain-wrapper-sub').effect("shake");
+                    toastr.error('Please enter a correct domain.', 'Invalid input', {
+                        timeOut: 2000,
+                        preventDuplicates: true
+                    });
                     return;
                 }
 
+                // Simple wildcard check to notify user it is not needed. Not altering work flow, simple info modal.
+                this.checkWildcard();
+            },
+
+            createItemInt(){
                 this.newItem.autoFill = !!($('#sub-auto-add').bootstrapSwitch('state'));
                 const onFail = (function(){
                     this.sentState = -1;
@@ -186,6 +232,11 @@
                         }
                     });
             }
+        },
+        events: {
+            'add-watcher-domain' (domain) {
+                Vue.nextTick(() => this.onAddDomain(domain));
+            },
         }
     }
 </script>
