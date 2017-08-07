@@ -107,7 +107,7 @@ class ServersController extends Controller
 
         $maxHosts = config('keychest.max_servers');
         $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
-        if ($numHosts >= $maxHosts){
+        if ($maxHosts && $numHosts >= $maxHosts){
             return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
         }
 
@@ -136,7 +136,7 @@ class ServersController extends Controller
     {
         $maxHosts = config('keychest.max_servers');
         $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
-        if ($numHosts >= $maxHosts){
+        if ($maxHosts && $numHosts >= $maxHosts){
             return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
         }
 
@@ -385,7 +385,7 @@ class ServersController extends Controller
         $hitMaxLimit = false;
 
         foreach ($validServers->all() as $cur){
-            if ($num_total >= $maxHosts){
+            if ($maxHosts && $num_total >= $maxHosts){
                 $hitMaxLimit = true;
                 break;
             }
