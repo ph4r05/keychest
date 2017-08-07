@@ -20,11 +20,24 @@
 
                     <form method="POST" id="new-server-form" enctype="multipart/form-data" v-on:submit.prevent="createItem">
 
-                        <div class="form-group">
-                            <label for="server-add-title">Server:</label>
-                            <input type="text" name="server" id="server-add-title" class="form-control"
-                                   v-model="newItem.server" placeholder="e.g., enigmabridge.com"
-                                   autofocus="autofocus"/>
+                        <div class="form-group" v-if="!addMore">
+                            <label for="domain-add-title">Domain:</label>
+                            <div class="input-group">
+                                <input type="text" name="server" id="domain-add-title" class="form-control input"
+                                       v-model="newItem.server" placeholder="e.g., enigmabridge.com"
+                                       autofocus="autofocus"/>
+                                <span class="input-group-btn">
+                                    <a class="btn btn-default" @click="onMore">
+                                        <span class="fa fa-ellipsis-h"></span>
+                                    </a>
+                                </span>
+                            </div>
+                            <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
+                        </div>
+                        <div class="form-group" v-else="">
+                            <label for="domain-add-title-more">Domains:</label>
+                            <textarea name="server" id="domain-add-title-more" class="form-control input"
+                                      v-model="domains" placeholder="e.g., enigmabridge.com one domain per line"></textarea>
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                         </div>
 
@@ -62,12 +75,15 @@
 
 <script>
     import axios from 'axios';
+
     export default {
         data () {
             return {
                 newItem: {},
                 formErrors: {},
                 sentState: 0,
+                addMore: false,
+                domains: ''
             }
         },
         mounted(){
@@ -84,18 +100,32 @@
             },
             showModal(){
                 ga('send', 'event', 'subdomains', 'add-modal');
+                this.addMore = false;
                 $('#create-item-sub').modal();
+                this.focusInput();
+            },
+            focusInput(){
                 setTimeout(()=>{
-                    $('#server-add-title').focus();
-                }, 500);
+                    if (!this.addMore) {
+                        $('#domain-add-title').focus();
+                    } else {
+                        $('#domain-add-title-more').focus();
+                    }
+                }, this.addMore ? 100 : 500);
+            },
+            onMore(){
+                ga('send', 'event', 'subdomains', 'add-more');
+                this.addMore = true;
+                this.focusInput();
             },
             createItem() {
-                ga('send', 'event', 'subdomains', 'add-server');
+                ga('send', 'event', 'subdomains', this.addMore ? 'add-server' : 'add-server-more');
 
                 // Minor domain validation.
-                if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1){
+                if ((this.addMore && _.isEmpty(this.domains)) || (
+                    !this.addMore && (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1))){
                     $('#add-domain-wrapper-sub').effect( "shake" );
-                    toastr.error('Please enter correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
+                    toastr.error('Please enter a correct domain.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
                     return;
                 }
 
@@ -103,7 +133,7 @@
                 const onFail = (function(){
                     this.sentState = -1;
                     $('#add-domain-wrapper-sub').effect( "shake" );
-                    toastr.error('Error while adding the server, please, try again later', 'Error');
+                    toastr.error('Error while adding the domain, please, try again later', 'Error');
                 }).bind(this);
 
                 const onDuplicate = (function(){
@@ -122,14 +152,18 @@
                 const onSuccess = (function(data){
                     this.sentState = 1;
                     this.newItem = {'server':''};
+                    this.domains = '';
                     this.$emit('onSubAdded', data);
                     this.$events.fire('on-sub-added', data);
                     $("#create-item-sub").modal('hide');
-                    toastr.success('The domain name has been added.', 'Success', {preventDuplicates: true});
+                    toastr.success(this.addMore ?
+                        'The domains has been added':
+                        'The domain name has been added.', 'Success', {preventDuplicates: true});
                 }).bind(this);
 
                 this.sentState = 2;
-                axios.post('/home/subs/add', this.newItem)
+                const reqData = this.addMore ? {'data': this.domains, 'autoFill': this.newItem.autoFill} : this.newItem;
+                axios.post('/home/subs/' + ((this.addMore) ? 'import' : 'add'), reqData)
                     .then(response => {
                         if (!response || !response.data) {
                             onFail();
