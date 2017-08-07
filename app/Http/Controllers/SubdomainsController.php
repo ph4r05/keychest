@@ -173,6 +173,26 @@ class SubdomainsController extends Controller
             return response()->json(['status' => 'success', 'server' => $ret], 200);
         }
     }
+
+    /**
+     * Adds a new domain - multiple
+     *
+     * @return Response
+     */
+    public function addMore()
+    {
+        $maxHosts = config('keychest.max_active_domains');
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        if ($maxHosts && $numHosts >= $maxHosts){
+            return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
+        }
+
+        $servers = collect(Input::get('servers'));
+        $autoFill = boolval(trim(Input::get('autoFill')));
+        $resp = $this->importDomainsArr($servers, $autoFill);
+        return response()->json($resp, 200);
+    }
+
     /**
      * Helper subdomain add function.
      * Used for individual addition and import.
@@ -423,5 +443,86 @@ class SubdomainsController extends Controller
     protected function isBlacklisted($url){
         $parsed = parse_url($url);
         return $this->manager->isBlacklisted($parsed['host']);
+    }
+
+    /**
+     * Imports list of servers.
+     */
+    public function importDomains(){
+        $servers = strtolower(trim(Input::get('data')));
+        $servers = collect(explode("\n", $servers));
+        $autoFill = boolval(trim(Input::get('autoFill')));
+        $resp = $this->importDomainsArr($servers, $autoFill);
+        return response()->json($resp, 200);
+    }
+
+    /**
+     * Imports all domains from the input collection
+     * @param Collection $servers
+     * @param $autoFill
+     * @return array
+     */
+    protected function importDomainsArr($servers, $autoFill){
+        $servers = $servers->reject(function($value, $key){
+            return empty(trim($value));
+        })->values()->take(1000)->unique()->values()->take(100);
+
+        // Domain name sanitizing
+        $servers->transform(function($value, $key){
+            return DomainTools::normalizeUserDomainInput($value);
+        });
+
+        // Kick out invalid ones
+        $validServers = $servers->reject(function($value, $key){
+            $parsed = parse_url($value);
+            return (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed));
+        })->values();
+
+        $maxHosts = config('keychest.max_active_domains');
+        $numHosts = $this->manager->numDomainsUsed(Auth::user()->getAuthIdentifier());
+        $num_added = 0;
+        $num_present = 0;
+        $num_blacklisted = 0;
+        $num_failed = 0;
+        $num_total = $numHosts;
+        $hitMaxLimit = false;
+
+        foreach ($validServers->all() as $cur){
+            if ($maxHosts && $num_total >= $maxHosts){
+                $hitMaxLimit = true;
+                break;
+            }
+
+            $ret = $this->addSubdomain($cur, $autoFill);
+            if (is_numeric($ret)){
+                if ($ret === -1){
+                    $num_failed += 1;
+                } elseif ($ret === -2){
+                    $num_present += 1;
+                } elseif ($ret === -4){
+                    $num_blacklisted += 1;
+                } else {
+                    $num_failed += 1;
+                }
+            } else {
+                $num_added += 1;
+                $num_total += 1;
+            }
+        }
+
+        $outTransformed = $validServers->values()->implode("\n");
+        return [
+            'status' => 'success',
+            'transformed' => $outTransformed,
+            'num_hosts' => $numHosts,
+            'num_added' => $num_added,
+            'num_present' => $num_present,
+            'num_failed' => $num_failed,
+            'num_blacklisted' => $num_blacklisted,
+            'num_skipped' => $servers->count() - $validServers->count(),
+            'num_total' => $num_total,
+            'hit_max_limit' => $hitMaxLimit,
+            'max_limit' => $maxHosts
+        ];
     }
 }

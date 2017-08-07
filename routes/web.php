@@ -82,10 +82,12 @@ Route::get('home/dashboard/data', 'DashboardController@loadActiveCerts')
 
 Route::get('home/subs/get', 'SubdomainsController@getList')->name('subs/get');
 Route::post('home/subs/add', 'SubdomainsController@add')->name('subs/add');
+Route::post('home/subs/addMore', 'SubdomainsController@addMore')->name('subs/addMore');
 Route::post('home/subs/del', 'SubdomainsController@del')->name('subs/del');
 Route::post('home/subs/delMore', 'SubdomainsController@delMore')->name('subs/delMore');
 Route::post('home/subs/update', 'SubdomainsController@update')->name('subs/update');
 Route::post('home/subs/canAdd', 'SubdomainsController@canAdd')->name('subs/canAdd');
+Route::post('home/subs/import', 'SubdomainsController@importDomains')->name('subs/import');
 Route::get('home/subs/res', 'SubdomainsController@getDiscoveredSubdomainsList')->name('subs/res');
 
 Route::get('home/user-guide', function () {
