@@ -9,12 +9,14 @@ use App\Keychest\Services\SubdomainManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
+use App\Models\LastScanCache;
 use App\Models\SubdomainResults;
 use App\Models\SubdomainWatchAssoc;
 use App\Models\SubdomainWatchTarget;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -65,10 +67,20 @@ class SubdomainsController extends Controller
 
         $watchTbl = (new SubdomainWatchTarget())->getTable();
         $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
+        $watchResTbl = (new SubdomainResults())->getTable();
+        $lastScanTbl = (new LastScanCache())->getTable();
 
         $query = SubdomainWatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->select($watchTbl.'.*', $watchAssocTbl.'.*')
+            ->leftJoin($lastScanTbl . ' AS ls', function(JoinClause $join) use($watchTbl) {
+                $join->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 6')  // sudomain results
+                    ->on('ls.obj_id', '=', $watchTbl.'.id');
+            })
+            ->leftJoin($watchResTbl. ' AS rs', 'rs.id', '=', 'ls.scan_id')
+            ->select($watchTbl.'.*', $watchAssocTbl.'.*',
+                'rs.scan_status AS sub_scan_status', 'rs.last_scan_at AS sub_last_scan_at',
+                'rs.result_size AS sub_result_size', 'rs.result AS sub_result')
             ->where($watchAssocTbl.'.user_id', '=', $userId)
             ->whereNull($watchAssocTbl.'.deleted_at');
 
@@ -84,7 +96,24 @@ class SubdomainsController extends Controller
 
         $query = DbTools::sortQuery($query, $sort_parsed);
         $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
-        return response()->json($ret, 200);
+        $retArr = $ret->toArray();
+        $retArr['data'] = collect($retArr['data'])->transform(function($value, $key){
+            try{
+                $value['sub_result_size'] = -1;
+                if (empty($value['sub_result'])){
+                    return $value;
+                }
+
+                $value['sub_result'] = json_decode($value['sub_result']);
+                $value['sub_result_size'] = count($value['sub_result']);
+                $value['sub_result'] = []; // Optimization, not needed in frontend for now.
+                return $value;
+            } catch(Exception $e){
+                return $value;
+            }
+        });
+
+        return response()->json($retArr, 200);
     }
 
     /**

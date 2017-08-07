@@ -160,6 +160,14 @@
                         callback: 'formatDate|DD-MM-YYYY HH:mm'
                     },
                     {
+                        name: 'sub_result_size',
+                        title: 'Detected',
+                        sortField: 'sub_result_size',
+                        titleClass: 'text-right',
+                        dataClass: 'text-right',
+                        callback: 'formatResSize'
+                    },
+                    {
                         name: '__slot:actions',
                         title: 'Actions',
                         titleClass: 'text-center',
@@ -206,6 +214,13 @@
             },
             formatDate (value, fmt = 'DD-MM-YYYY') {
                 return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
+            },
+            formatResSize(value){
+                if (value === -1 || !_.isNumber(value)){
+                    return '-';
+                }
+
+                return value;
             },
             onPaginationData (paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);
