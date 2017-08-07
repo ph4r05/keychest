@@ -79,7 +79,7 @@
     export default {
         data () {
             return {
-                newItem: {},
+                newItem: {server: '', autoFill: true},
                 formErrors: {},
                 sentState: 0,
                 addMore: false,

@@ -58,7 +58,7 @@
     export default {
         data () {
             return {
-                newItem: {},
+                newItem: {server: ''},
                 formErrors: {},
                 sentState: 0,
             }
