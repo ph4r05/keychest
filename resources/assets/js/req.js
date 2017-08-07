@@ -257,6 +257,20 @@ function removeWildcard(domain){
 }
 
 /**
+ * More comprehensive wildcard removal
+ * @param domain
+ */
+function removeAllWildcards(domain){
+    if (isEmpty(domain) || !_.isString(domain)){
+        return domain;
+    }
+
+    domain = domain.replace(/^[*%]\./i, '');
+    domain = domain.replace(/^[*%]/i, '');
+    return domain;
+}
+
+/**
  * Returns true if domain is wildcard
  * @param domain
  * @returns {boolean}
@@ -531,6 +545,16 @@ function vuePagination(data, pagination){
 }
 
 //
+// Hacks & minor functions
+//
+function switchTab(tabId){
+    $('.nav-tabs a[href="#' + tabId + '"]').tab('show');
+}
+function switchTabPath(path){
+    $(path).tab('show');
+}
+
+//
 // Export
 //
 module.exports = {
@@ -547,6 +571,7 @@ module.exports = {
     buildUrl: buildUrl,
     isWildcard: isWildcard,
     removeWildcard: removeWildcard,
+    removeAllWildcards: removeAllWildcards,
     neighbourDomainList: neighbourDomainList,
     compareAscending: compareAscending,
     keyToCompare: keyToCompare,
@@ -558,7 +583,10 @@ module.exports = {
     normalizeIssuer: normalizeIssuer,
     vueSortToOrderBy: vueSortToOrderBy,
     vueOrderBy: vueOrderBy,
-    vuePagination: vuePagination
+    vuePagination: vuePagination,
+
+    switchTab: switchTab,
+    switchTabPath: switchTabPath,
 };
 
 
