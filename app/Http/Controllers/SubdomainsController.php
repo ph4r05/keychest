@@ -147,11 +147,45 @@ class SubdomainsController extends Controller
         $server = strtolower(trim(Input::get('server')));
         $autoFill = boolval(trim(Input::get('autoFill')));
         $server = DomainTools::normalizeUserDomainInput($server);
+
+        $maxHosts = config('keychest.max_active_domains');
+        if ($maxHosts){
+            $numHosts = $this->manager->numDomainsUsed(Auth::user()->getAuthIdentifier());
+            if ($numHosts >= $maxHosts) {
+                return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
+            }
+        }
+
+        $ret = $this->addSubdomain($server, $autoFill);
+        if (is_numeric($ret)){
+            if ($ret === -1){
+                return response()->json(['status' => 'fail'], 422);
+            } elseif ($ret === -2){
+                return response()->json(['status' => 'already-present'], 410);
+            } elseif ($ret === -3){
+                return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
+            } elseif ($ret === -4){
+                return response()->json(['status' => 'blacklisted'], 450);
+            } else {
+                return response()->json(['status' => 'unknown-fail'], 500);
+            }
+        } else {
+            return response()->json(['status' => 'success', 'server' => $ret], 200);
+        }
+    }
+    /**
+     * Helper subdomain add function.
+     * Used for individual addition and import.
+     * @param $server
+     * @param $autoFill
+     * @return array|int
+     */
+    protected function addSubdomain($server, $autoFill){
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
-            return response()->json(['status' => 'fail'], 422);
+            return -1; //response()->json(['status' => 'fail'], 422);
         } else if ($this->manager->isBlacklisted($parsed['host'])){
-            return response()->json(['status' => 'blacklisted'], 450);
+            return -4; //response()->json(['status' => 'blacklisted'], 450);
         }
 
         // DB Job data
@@ -173,7 +207,7 @@ class SubdomainsController extends Controller
         $userHosts = $this->manager->filterHostsWithAssoc($hosts, $hostAssoc);
 
         if ($this->manager->allHostsEnabled($userHosts)){
-            return response()->json(['status' => 'already-present'], 410);
+            return -2; //response()->json(['status' => 'already-present'], 410);
         }
 
         // Empty hosts - create new bare record
@@ -206,7 +240,7 @@ class SubdomainsController extends Controller
             $this->autoAddCheck($assoc->id);
         }
 
-        return response()->json(['status' => 'success', 'server' => $newServerDb], 200);
+        return $newServerDb; //response()->json(['status' => 'success', 'server' => $newServerDb], 200);
     }
 
     /**
