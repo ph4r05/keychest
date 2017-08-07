@@ -194,4 +194,8 @@
         padding-bottom: 10px;
         min-height: 50px;
     }
+
+    #domain-add-title-more {
+        height: 6em;
+    }
 </style>
