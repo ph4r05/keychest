@@ -19,8 +19,6 @@
                 </div>
             </div>
 
-            <edit-sub-watch></edit-sub-watch>
-
             <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
                 <vuetable-my ref="vuetable"
                           api-url="/home/subs/get"
