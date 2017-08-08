@@ -176,36 +176,36 @@
 
             createItemInt(){
                 this.newItem.autoFill = !!($('#sub-auto-add').bootstrapSwitch('state'));
-                const onFail = (function(){
+                const onFail = () => {
                     this.sentState = -1;
-                    $('#add-domain-wrapper-sub').effect( "shake" );
+                    $('#add-domain-wrapper-sub').effect("shake");
                     toastr.error('Error while adding the domain, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     this.sentState = 0;
-                    $('#add-domain-wrapper-sub').effect( "shake" );
+                    $('#add-domain-wrapper-sub').effect("shake");
                     toastr.error('This domain name is already set.', 'Already present');
-                }).bind(this);
+                };
 
-                const onBlacklisted = (function(){
+                const onBlacklisted = () => {
                     this.sentState = 0;
-                    $('#add-domain-wrapper-sub').effect( "shake" );
+                    $('#add-domain-wrapper-sub').effect("shake");
                     toastr.error('The selected Active Domain is currently restricted. ' +
                         'Get in touch at support@enigmabridge.com if it is your domain.', 'Restricted domain');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     this.sentState = 1;
-                    this.newItem = {'server':''};
+                    this.newItem = {'server': ''};
                     this.domains = '';
                     this.$emit('onSubAdded', data);
                     this.$events.fire('on-sub-added', data);
                     $("#create-item-sub").modal('hide');
                     toastr.success(this.addMore ?
-                        'The domains has been added':
+                        'The domains has been added' :
                         'The domain name has been added.', 'Success', {preventDuplicates: true});
-                }).bind(this);
+                };
 
                 this.sentState = 2;
                 const reqData = this.addMore ? {'data': this.domains, 'autoFill': this.newItem.autoFill} : this.newItem;
