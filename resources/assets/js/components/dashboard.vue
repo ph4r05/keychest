@@ -238,7 +238,7 @@
                                         <span v-else="">TLS/SSL not present</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
-                                         ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0 ).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
@@ -279,7 +279,7 @@
                                         </ul>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                        ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
@@ -315,7 +315,7 @@
                                         <span v-else="">No domains found</span>
                                     </td>
                                     <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                                        ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                 </tr>
                                 </tbody>
@@ -353,7 +353,7 @@
                                     </td>
                                     <td>{{ cert.issuerOrgNorm }}</td>
                                     <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
-                                        ({{ moment(cert.valid_to_utc * 1000.0).fromNow() }})</td>
+                                        ({{ momentu(cert.valid_to_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
                                     <!--<td>{{ cert.id }}</td>-->
                                 </tr>
@@ -393,11 +393,11 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="grp in imminentRenewalCerts">
-                                    <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-if="moment(grp[0].valid_to_utc * 1000.0)<new Date()">
-                                        SERVER DOWN since {{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
+                                    <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-if="momentu(grp[0].valid_to_utc * 1000.0)<momentu()">
+                                        SERVER DOWN since {{ momentu(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
                                     <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-else="">
                                         {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}
-                                        ({{ moment(grp[0].valid_to_utc * 1000.0).fromNow() }}) </td>
+                                        ({{ momentu(grp[0].valid_to_utc * 1000.0).fromNow() }}) </td>
                                     <td v-bind:class="grp[0].planCss.tbl">
                                         <ul class="coma-list" v-if="len(getCertHostPorts(grp)) > 0">
                                             <li v-for="domain in getCertHostPorts(grp)">{{ domain }}</li>
@@ -436,7 +436,7 @@
                                 <td v-bind:class="cur_whois.planCss.tbl">
                                     {{ cur_whois.domain }} </td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ moment(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
+                                    {{ momentu(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
                                     {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
                             </tr>
@@ -644,13 +644,13 @@
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
-                                        v-if="(moment(cert.valid_to)<new Date())&&(len(cert.watch_hosts)<2)">
-                                        SERVER DOWN since {{ moment(cert.valid_to).fromNow() }}</td>
+                                        v-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)<2)">
+                                        SERVER DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
-                                        v-else-if="(moment(cert.valid_to)<new Date())&&(len(cert.watch_hosts)>1)">
-                                        SERVERS DOWN since {{ moment(cert.valid_to).fromNow() }}</td>
+                                        v-else-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)>1)">
+                                        SERVERS DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
-                                        v-else="">{{ moment(cert.valid_to).fromNow() }}</td>
+                                        v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -695,9 +695,9 @@
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
-                                        v-if="moment(cert.valid_to)<new Date()">EXPIRED {{ moment(cert.valid_to).fromNow() }}</td>
+                                        v-if="momentu(cert.valid_to)<momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
-                                        v-else="">{{ moment(cert.valid_to).fromNow() }}</td>
+                                        v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -1003,13 +1003,17 @@
                     return;
                 }
 
-                const utc = moment(obj[key]).unix();
+                const utc = moment.utc(obj[key]).unix();
                 obj[key+'_utc'] = utc;
-                obj[key+'_days'] = Math.round(10 * (utc - moment().unix()) / 3600.0 / 24.0) / 10;
+                obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
             },
 
             moment(x){
                 return moment(x);
+            },
+
+            momentu(x){
+                return moment.utc(x);
             },
 
             transition_hook(el){
@@ -1133,7 +1137,7 @@
             },
 
             processResults() {
-                const curTime = new Date().getTime() / 1000.0;
+                const curTime = moment().valueOf() / 1000.0;
                 for(const watch_id in this.results.watches){
                     const watch = this.results.watches[watch_id];
                     this.extendDateField(watch, 'last_scan_at');
@@ -1150,7 +1154,7 @@
                 const wildcardRemover = _.memoize(Req.removeWildcard);
                 for(const certId in this.results.certificates){
                     const cert = this.results.certificates[certId];
-                    cert.valid_to_dayfmt = moment(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
+                    cert.valid_to_dayfmt = moment.utc(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.validity_sec = cert.valid_to_utc - cert.valid_from_utc;
@@ -1687,7 +1691,7 @@
 
                 // Has to clone, we dont want to add extrapolated certificates to other graphs
                 const newSet = _.clone(_.castArray(certSet));
-                const threshold = moment().add(1, 'year').unix();
+                const threshold = moment().utc().add(1, 'year').unix();
 
                 // Add each cert
                 _.forEach(filtered, cert => {
@@ -1712,7 +1716,7 @@
                 // cert per months, LE, Cloudflare, Others
                 const newSet = this.extrapolatePlannerCerts(certSet);
                 const grp = _.groupBy(newSet, x => {
-                    return moment(x.valid_to_utc * 1000.0).format('YYYY-MM');
+                    return moment.utc(x.valid_to_utc * 1000.0).format('YYYY-MM');
                 });
 
                 const fillGap = (ret, lastMoment, toMoment) => {
@@ -1721,7 +1725,7 @@
                     }
 
                     const terminal = toMoment.format('MM/YY');
-                    const i = moment(lastMoment).add(1, 'month');
+                    const i = moment.utc(lastMoment).add(1, 'month');
                     for(i; i.format('MM/YY') !== terminal && i < toMoment; i.add(1, 'month')){
                         ret.push([ i.format('MM/YY'), 0, 0, 0]);
                     }
@@ -1729,11 +1733,11 @@
 
                 const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
                 const ret = [];
-                let lastGrp = moment().subtract(1, 'month');
+                let lastGrp = moment().utc().subtract(1, 'month');
                 for(const idx in sorted){
                     const grp = sorted[idx];
                     const crt = grp[0];
-                    const curMoment = moment(crt.valid_to_utc * 1000.0);
+                    const curMoment = moment.utc(crt.valid_to_utc * 1000.0);
                     const label = curMoment.format('MM/YY');
 
                     fillGap(ret, lastGrp, curMoment);
@@ -1743,7 +1747,7 @@
                     lastGrp = curMoment;
                 }
 
-                fillGap(ret, lastGrp, moment().add(1, 'year').add(1, 'month'));
+                fillGap(ret, lastGrp, moment().utc().add(1, 'year').add(1, 'month'));
                 return ret;
             },
 
