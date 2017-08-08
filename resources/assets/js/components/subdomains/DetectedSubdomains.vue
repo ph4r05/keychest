@@ -188,7 +188,7 @@
                 return accounting.formatNumber(value, 2)
             },
             formatDate (value, fmt = 'DD-MM-YYYY') {
-                return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
+                return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
             },
             onPaginationData (paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);

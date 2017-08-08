@@ -240,7 +240,7 @@ export default {
             return accounting.formatNumber(value, 2)
         },
         formatDate (value, fmt = 'DD-MM-YYYY') {
-            return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
+            return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
         },
         tlsTitle(rowData){
             return `TLS checks failed for ${rowData.tls_errors} out of ${rowData.tls_all} IP addresses`;

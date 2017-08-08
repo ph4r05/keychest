@@ -213,7 +213,7 @@
                 return accounting.formatNumber(value, 2)
             },
             formatDate (value, fmt = 'DD-MM-YYYY') {
-                return (value === null) ? '' : moment(value, 'YYYY-MM-DD HH:mm').format(fmt);
+                return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
             },
             formatResSize(value){
                 if (value === -1 || !_.isNumber(value)){
