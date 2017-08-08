@@ -14,7 +14,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Add server</h4>
+                    <h4 class="modal-title" id="myModalLabel">Add Active-Domain</h4>
                 </div>
                 <div class="modal-body">
 
@@ -25,6 +25,7 @@
                             <div class="input-group">
                                 <input type="text" name="server" id="domain-add-title" class="form-control input"
                                        v-model="newItem.server" placeholder="e.g., enigmabridge.com"
+                                       @keydown="onKeydown"
                                        autofocus="autofocus"/>
                                 <span class="input-group-btn">
                                     <a class="btn btn-default" @click="onMore">
@@ -44,6 +45,15 @@
                         <div class="form-group">
                             <input type="checkbox" id="sub-auto-add">
                             <label for="sub-auto-add">&nbsp;Watch Now - automatic monitoring of new servers</label>
+                        </div>
+
+                        <div class="alert alert-info" v-if="suffixResp.length > 0">
+                            Domain <i>{{ getInput() }}</i> is already covered with existing
+                            {{ suffixResp.length | pluralize('record') }}: {{ suffixes() }}
+                        </div>
+                        <div class="alert alert-info" v-else-if="sldTestRes == 1">
+                            Domain <i>{{ getInput() }}</i> is not a Second Level Domain. Consider adding
+                            <i>{{ currentSld }} to cover all its sub-domains.</i>
                         </div>
 
                         <div class="alert alert-info scan-alert" v-show="sentState == 2">
@@ -75,6 +85,8 @@
 
 <script>
     import axios from 'axios';
+    import pluralize from 'pluralize';
+
     import Vue from 'vue';
     import VueEvents from 'vue-events';
 
@@ -87,7 +99,15 @@
                 formErrors: {},
                 sentState: 0,
                 addMore: false,
-                domains: ''
+                domains: '',
+                
+                checkState: 0,  // stage of the test
+                suffixResp: [],
+                currentSld: null,
+                sldTestRes: 0,
+
+                _checkValidFnc: null,
+                _resolverFnc: null,
             }
         },
         mounted(){
@@ -121,6 +141,9 @@
                 const newDomain = Req.removeAllWildcards(domain);
                 this.newItem = {'server': newDomain};
             },
+            getInput(){
+                return this.addMore ? this.domains : this.newItem.server;
+            },
             focusInput(){
                 setTimeout(()=>{
                     if (!this.addMore) {
@@ -136,6 +159,66 @@
                 this.addMore = true;
                 this.focusInput();
             },
+
+            onKeydown(){
+                if (!this._checkValidFnc){
+                    this._checkValidFnc = _.debounce(this.checkIfMeaningful, 500);
+                }
+
+                this._checkValidFnc();
+            },
+
+            checkIfMeaningful(){
+                if (this.addMore){
+                    return;
+                }
+
+                this.checkSld();
+                this.checkSuffix();
+            },
+
+            checkSuffix(){
+                const input = _.trim(this.newItem.server);
+                const onFail = () => {
+                    this.checkState = 0;
+                    this.suffixResp = [];
+                };
+
+                const onSuccess = data => {
+                    this.checkState = 0;
+                    this.suffixResp = data['status'] === 'existing' ? _.castArray(data['enabled']) : [];
+                };
+
+                this.checkState = 2;
+                axios.get('/home/subs/suffix', {params:{host: input}})
+                    .then(response => {
+                        if (!response || !response.data) {
+                            onFail();
+                        } else {
+                            onSuccess(response.data);
+                        }
+                    })
+                    .catch(e => {
+                        onFail();
+                    });
+            },
+
+            suffixes(){
+                return _.join(_.map(_.take(this.suffixResp, 5), x=>{
+                    return x['scan_host'];
+                }), ', ');
+            },
+
+            checkSld(){
+                if (!this._resolverFnc){
+                    this._resolverFnc = _.memoize(Psl.get);
+                }
+
+                const input = _.trim(this.newItem.server);
+                this.currentSld = this._resolverFnc(input);
+                this.sldTestRes = !_.isEmpty(input) && !_.isEmpty(this.currentSld) && this.currentSld !== input;
+            },
+
             checkWildcard(){
                 if (this.addMore || !this.isWildcard(this.newItem.server)){
                     this.createItemInt();
@@ -156,6 +239,7 @@
                     confirmButtonText: 'OK',
                 }).then(cont);
             },
+
             createItem() {
                 ga('send', 'event', 'subdomains', this.addMore ? 'add-server' : 'add-server-more');
 
