@@ -133,6 +133,34 @@ class SubdomainManager {
         return $query;
     }
 
+    public function getHostsWithInvSuffix($host, $userId, $withDot, $enabledOnly){
+        $assocTbl = (new SubdomainWatchAssoc())->getTable();
+        $domainTbl = (new SubdomainWatchTarget())->getTable();
+
+        $q = SubdomainWatchAssoc::query()
+            ->select('d.*',
+                'a.deleted_at AS assoc_deleted_at',
+                'a.disabled_at AS assoc_disabled_at',
+                'a.created_at AS assoc_created_at',
+                'a.auto_fill_watches AS assoc_auto_fill_watches'
+            )
+            ->from($assocTbl. ' AS a')
+            ->join($domainTbl. ' AS d', 'd.id', '=', 'a.watch_id')
+            ->where('a.user_id', $userId);
+
+        if ($enabledOnly){
+            $q = $q->whereNull('a.deleted_at');
+        }
+
+        if ($withDot){
+            $q = $q->whereRaw(DB::raw('? LIKE CONCAT("%.", d.scan_host)'), [$host]);
+        } else {
+            $q = $q->whereRaw(DB::raw('? LIKE CONCAT("%", d.scan_host)'), [$host]);
+        }
+
+        return $q;
+    }
+
     /**
      * Query builder for host suffix loading.
      * @param $suffix

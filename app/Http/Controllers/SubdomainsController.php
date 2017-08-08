@@ -233,12 +233,8 @@ class SubdomainsController extends Controller
         $curUser = Auth::user();
         $userId = $curUser->getAuthIdentifier();
 
-        $hosts = $this->manager->getHostsByInvSuffixDotQuery($host)->get();
-        $hostAssoc = $this->manager->getHostAssociations($userId, $hosts->pluck('id'));
-        $userHosts = $this->manager->filterHostsWithAssoc($hosts, $hostAssoc);
-        $enabledHosts = $this->manager->filterDisabled($userHosts);
-
-        if ($userHosts->isNotEmpty() && $enabledHosts->isNotEmpty() > 0){
+        $enabledHosts = $this->manager->getHostsWithInvSuffix($host, $userId, true, true)->get();
+        if ($enabledHosts->isNotEmpty()){
             return response()->json([
                 'status' => 'existing',
                 'enabled' => $enabledHosts
