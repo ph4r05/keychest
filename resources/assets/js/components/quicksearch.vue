@@ -54,6 +54,11 @@
                 No TLS scan was performed.
             </div>
 
+            <!-- UX - nice message for missing TLS -->
+            <div class="alert alert-info" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
+                This domain does not appear to be secured with <i>https://</i>
+            </div>
+
             <!-- TLS Error: problem with the scan -->
             <div class="alert alert-warning" v-else-if="tlsScanError">
                 <strong>TLS Error</strong>: tests of <strong>{{ curJob.scan_host }}</strong> on port
