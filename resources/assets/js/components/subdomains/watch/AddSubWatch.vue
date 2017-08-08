@@ -14,7 +14,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Add Active-Domain</h4>
+                    <h4 class="modal-title" id="myModalLabel">{{ editMode ? 'Update' : 'Add' }} Active-Domain</h4>
                 </div>
                 <div class="modal-body">
 
@@ -22,12 +22,12 @@
 
                         <div class="form-group" v-if="!addMore">
                             <label for="domain-add-title">Domain:</label>
-                            <div class="input-group">
+                            <div :class="{'input-group': !editMode}">
                                 <input type="text" name="server" id="domain-add-title" class="form-control input"
                                        v-model="newItem.server" placeholder="e.g., enigmabridge.com"
                                        @keydown="onKeydown"
                                        autofocus="autofocus"/>
-                                <span class="input-group-btn">
+                                <span class="input-group-btn" v-if="!editMode">
                                     <a class="btn btn-default" @click="onMore">
                                         <span class="fa fa-ellipsis-h"></span>
                                     </a>
@@ -48,11 +48,11 @@
                         </div>
 
                         <div class="alert alert-info" v-if="!addMore && suffixResp.length > 0">
-                            Domain <i>{{ getInput() }}</i> is already covered with existing
+                            Domain <i>{{ getInputDomain() }}</i> is already covered with existing
                             {{ suffixResp.length | pluralize('record') }}: <i>{{ suffixes() }}</i>
                         </div>
                         <div class="alert alert-info" v-else-if="!addMore && sldTestRes == 1">
-                            Domain <i>{{ getInput() }}</i> is not a Second Level Domain. Consider adding
+                            Domain <i>{{ getInputDomain() }}</i> is not a Second Level Domain. Consider adding
                             <i>{{ currentSld }} to cover all its sub-domains.</i>
                         </div>
 
@@ -95,7 +95,11 @@
     export default {
         data () {
             return {
-                newItem: {server: '', autoFill: true},
+                editMode: false,
+                newItem: {
+                    server: '',
+                    autoFill: true
+                },
                 formErrors: {},
                 sentState: 0,
                 addMore: false,
@@ -122,12 +126,15 @@
                 $('#sub-auto-add').bootstrapSwitch('size','normal');
                 $('#sub-auto-add').bootstrapSwitch('state', true);
             },
-            showModal(){
-                ga('send', 'event', 'subdomains', 'add-modal');
-                this.addMore = false;
+
+            showModal(edit){
+                ga('send', 'event', 'subdomains', edit ? 'edit-modal' : 'add-modal');
+                this.resetState();
+                $('#sub-auto-add').bootstrapSwitch('state', true);
                 $('#create-item-sub').modal();
                 this.focusInput();
             },
+
             isWildcard(value){
                 const t = _.trim(value);
                 if (_.isEmpty(t) || _.isNull(t)){
@@ -136,14 +143,33 @@
 
                 return _.startsWith(t, '*') || _.startsWith(t, '%');
             },
+
             onAddDomain(domain){
-                this.showModal();
                 const newDomain = Req.removeAllWildcards(domain);
+                this.showModal(false);
                 this.newItem = {'server': newDomain};
             },
-            getInput(){
-                return this.addMore ? this.domains : this.newItem.server;
+
+            onEditDomain(data){
+                this.showModal(true);
+
+                _.assignIn(this.newItem, data);
+                this.newItem.server = window.Req.buildUrl('https', data.scan_host, undefined);
+                this.newItem.autoFill = !!data.auto_fill_watches;
+                this.editMode = true;
+
+                $('#sub-auto-add').bootstrapSwitch('state', this.newItem.autoFill);
             },
+
+            getInput(){
+                return _.trim(this.addMore ? this.domains : this.newItem.server);
+            },
+
+            getInputDomain(){
+                const url = Req.parseUrl(this.getInput());
+                return url ? url.host : '';
+            },
+
             focusInput(){
                 setTimeout(()=>{
                     if (!this.addMore) {
@@ -153,6 +179,7 @@
                     }
                 }, this.addMore ? 100 : 500);
             },
+
             onMore(){
                 ga('send', 'event', 'subdomains', 'add-more');
                 this.domains = this.newItem.server;
@@ -178,7 +205,7 @@
             },
 
             checkSuffix(){
-                const input = _.trim(this.newItem.server);
+                const input = this.getInputDomain();
                 const onFail = () => {
                     this.checkState = 0;
                     this.suffixResp = [];
@@ -186,7 +213,10 @@
 
                 const onSuccess = data => {
                     this.checkState = 0;
-                    this.suffixResp = data['status'] === 'existing' ? _.castArray(data['enabled']) : [];
+                    this.suffixResp = _.filter(data['status'] === 'existing' ? _.castArray(data['enabled']) : [],
+                        dataRes => {
+                            return !this.editMode || dataRes['scan_host'] !== input;
+                        });
                 };
 
                 this.checkState = 2;
@@ -214,9 +244,23 @@
                     this._resolverFnc = _.memoize(Psl.get);
                 }
 
-                const input = _.trim(this.newItem.server);
+                const input = this.getInputDomain();
                 this.currentSld = this._resolverFnc(input);
                 this.sldTestRes = !_.isEmpty(input) && !_.isEmpty(this.currentSld) && this.currentSld !== input;
+            },
+
+            resetState(){
+                this.editMode = false;
+                this.sentState = 0;
+                this.addMore = false;
+                this.domains = '';
+                this.newItem.server = '';
+                this.newItem.autoFill = true;
+
+                this.checkState = 0;  // stage of the test
+                this.suffixResp = [];
+                this.currentSld = null;
+                this.sldTestRes = 0;
             },
 
             checkWildcard(){
@@ -263,7 +307,8 @@
                 const onFail = () => {
                     this.sentState = -1;
                     $('#add-domain-wrapper-sub').effect("shake");
-                    toastr.error('Error while adding the domain, please, try again later', 'Error');
+                    toastr.error('Error while '+(this.editMode ? 'updating' : 'adding')+' ' +
+                        'the domain, please, try again later', 'Error');
                 };
 
                 const onDuplicate = () => {
@@ -286,14 +331,17 @@
                     this.$emit('onSubAdded', data);
                     this.$events.fire('on-sub-added', data);
                     $("#create-item-sub").modal('hide');
-                    toastr.success(this.addMore ?
-                        'The domains has been added' :
-                        'The domain name has been added.', 'Success', {preventDuplicates: true});
+                    toastr.success('The '
+                        +(this.addMore ? 'domains' : 'domain')
+                        +' has been '
+                        + (this.editMode ? 'updated' : 'added'),
+                        'Success', {preventDuplicates: true});
                 };
 
                 this.sentState = 2;
+                const addEndpoint = '/home/subs/' + ((this.addMore) ? 'import' : 'add');
                 const reqData = this.addMore ? {'data': this.domains, 'autoFill': this.newItem.autoFill} : this.newItem;
-                axios.post('/home/subs/' + ((this.addMore) ? 'import' : 'add'), reqData)
+                axios.post(this.editMode ? '/home/subs/update' : addEndpoint, reqData)
                     .then(response => {
                         if (!response || !response.data) {
                             onFail();
@@ -320,6 +368,10 @@
         events: {
             'add-watcher-domain' (domain) {
                 Vue.nextTick(() => this.onAddDomain(domain));
+            },
+
+            'on-edit-sub-watch'(data) {
+                Vue.nextTick(() => this.onEditDomain(data));
             },
         }
     }
