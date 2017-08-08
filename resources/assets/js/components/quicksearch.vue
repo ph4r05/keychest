@@ -506,9 +506,9 @@
                     return;
                 }
 
-                const utc = moment(obj[key]).unix();
+                const utc = moment.utc(obj[key]).unix();
                 obj[key+'_utc'] = utc;
-                obj[key+'_days'] = Math.round(10 * (utc - moment().unix()) / 3600.0 / 24.0) / 10;
+                obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
             },
 
             recomp(){
