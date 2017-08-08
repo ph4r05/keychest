@@ -223,6 +223,32 @@ class SubdomainsController extends Controller
     }
 
     /**
+     * Returns set of existing hosts that are suffices of the given host.
+     * e.g. existing host keychest.net matches input test.keychest.net
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function watchingDomainWithSuffix(){
+        $host = trim(Input::get('host'));
+
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+        $hosts = $this->manager->getHostsByInvSuffixDotQuery($host)->get();
+        $hostAssoc = $this->manager->getHostAssociations($userId, $hosts->pluck('id'));
+        $userHosts = $this->manager->filterHostsWithAssoc($hosts, $hostAssoc);
+        $enabledHosts = $this->manager->filterDisabled($userHosts);
+
+        if ($userHosts->isNotEmpty() && $enabledHosts->isNotEmpty() > 0){
+            return response()->json([
+                'status' => 'existing',
+                'enabled' => $enabledHosts
+            ], 200);
+        }
+
+        return response()->json(['status' => 'free'], 200);
+    }
+
+    /**
      * Helper subdomain add function.
      * Used for individual addition and import.
      * @param $server

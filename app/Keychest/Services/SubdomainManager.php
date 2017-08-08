@@ -157,11 +157,11 @@ class SubdomainManager {
      * Query builder for host suffix loading.
      * Returns query for hosts that are suffices of the given input. Dot is required.
      * e.g., google.com host will match input test.google.com
-     * @param $suffix
+     * @param $host
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getHostsByInvSuffixDotQuery($suffix){
-        return SubdomainWatchTarget::query()->whereRaw(DB::raw('? LIKE CONCAT("%.", scan_host)'), [$suffix]);
+    public function getHostsByInvSuffixDotQuery($host){
+        return SubdomainWatchTarget::query()->whereRaw(DB::raw('? LIKE CONCAT("%.", scan_host)'), [$host]);
     }
 
     /**

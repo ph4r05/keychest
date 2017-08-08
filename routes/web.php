@@ -89,6 +89,7 @@ Route::post('home/subs/update', 'SubdomainsController@update')->name('subs/updat
 Route::post('home/subs/canAdd', 'SubdomainsController@canAdd')->name('subs/canAdd');
 Route::post('home/subs/import', 'SubdomainsController@importDomains')->name('subs/import');
 Route::get('home/subs/res', 'SubdomainsController@getDiscoveredSubdomainsList')->name('subs/res');
+Route::get('home/subs/suffix', 'SubdomainsController@watchingDomainWithSuffix')->name('subs/suffix');
 
 Route::get('home/user-guide', function () {
     return view('userguide');
