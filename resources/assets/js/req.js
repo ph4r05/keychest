@@ -187,6 +187,24 @@ function protocolFixTrailingColon(x){
 }
 
 /**
+ * Simple URL parser, adds default scheme if not present to fix the parsing
+ * @param url
+ * @param defaultScheme
+ * @returns {*}
+ */
+function parseUrl(url, defaultScheme='https'){
+    if (isEmpty(url)){
+        return url;
+    }
+
+    if (!url.match(/^([a-zA-Z0-9]+):\/\//)){
+        url = defaultScheme + '://' + url;
+    }
+
+    return URL(url, true);
+}
+
+/**
  * Adds default scheme & port
  * @param url
  * @param defaultScheme
@@ -313,7 +331,6 @@ function neighbourDomainList(domainList){
  * Compares values to sort them in ascending order.
  * Borrowed from Lodash internal context - not exported.
  *
- * @private
  * @param {*} value The value to compare.
  * @param {*} other The other value to compare.
  * @returns {number} Returns the sort order indicator for `value`.
@@ -567,6 +584,7 @@ module.exports = {
     isEmpty: isEmpty,
     isSameUrl: isSameUrl,
     autoFillSchemePort: autoFillSchemePort,
+    parseUrl: parseUrl,
     normalizeUrl: normalizeUrl,
     buildUrl: buildUrl,
     isWildcard: isWildcard,
