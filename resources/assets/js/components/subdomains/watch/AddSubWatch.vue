@@ -47,11 +47,11 @@
                             <label for="sub-auto-add">&nbsp;Watch Now - automatic monitoring of new servers</label>
                         </div>
 
-                        <div class="alert alert-info" v-if="suffixResp.length > 0">
+                        <div class="alert alert-info" v-if="!addMore && suffixResp.length > 0">
                             Domain <i>{{ getInput() }}</i> is already covered with existing
-                            {{ suffixResp.length | pluralize('record') }}: {{ suffixes() }}
+                            {{ suffixResp.length | pluralize('record') }}: <i>{{ suffixes() }}</i>
                         </div>
-                        <div class="alert alert-info" v-else-if="sldTestRes == 1">
+                        <div class="alert alert-info" v-else-if="!addMore && sldTestRes == 1">
                             Domain <i>{{ getInput() }}</i> is not a Second Level Domain. Consider adding
                             <i>{{ currentSld }} to cover all its sub-domains.</i>
                         </div>
@@ -162,7 +162,7 @@
 
             onKeydown(){
                 if (!this._checkValidFnc){
-                    this._checkValidFnc = _.debounce(this.checkIfMeaningful, 500);
+                    this._checkValidFnc = _.debounce(this.checkIfMeaningful, 400);
                 }
 
                 this._checkValidFnc();
