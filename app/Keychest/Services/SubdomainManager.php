@@ -111,9 +111,9 @@ class SubdomainManager {
      * @param $criteria
      * @param $userId user ID criteria for the match
      * @param $assoc Collection association loaded for the given user
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getHostsBy($criteria=null, $userId=null, $assoc=null){
+    public function getHostsByQuery($criteria=null, $userId=null, $assoc=null){
         $query = SubdomainWatchTarget::query();
 
         if (!empty($criteria)) {
@@ -130,7 +130,49 @@ class SubdomainManager {
             $query->whereIn('id', $assoc->pluck('watch_id'));
         }
 
-        return $query->get();
+        return $query;
+    }
+
+    /**
+     * Query builder for host suffix loading.
+     * @param $suffix
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getHostsBySuffixQuery($suffix){
+        return SubdomainWatchTarget::query()->where('scan_host', 'like', '%' . $suffix);
+    }
+
+    /**
+     * Query builder for host suffix loading.
+     * Returns query for hosts that are suffices of the given input.
+     * e.g., google.com host will match input test.google.com
+     * @param $suffix
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getHostsByInvSuffixQuery($suffix){
+        return SubdomainWatchTarget::query()->whereRaw(DB::raw('? LIKE CONCAT("%", scan_host)'), [$suffix]);
+    }
+
+    /**
+     * Query builder for host suffix loading.
+     * Returns query for hosts that are suffices of the given input. Dot is required.
+     * e.g., google.com host will match input test.google.com
+     * @param $suffix
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getHostsByInvSuffixDotQuery($suffix){
+        return SubdomainWatchTarget::query()->whereRaw(DB::raw('? LIKE CONCAT("%.", scan_host)'), [$suffix]);
+    }
+
+    /**
+     * Used to load hosts for update / add to detect duplicates
+     * @param $criteria
+     * @param $userId user ID criteria for the match
+     * @param $assoc Collection association loaded for the given user
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getHostsBy($criteria=null, $userId=null, $assoc=null){
+        return $this->getHostsByQuery($criteria, $userId, $assoc)->get();
     }
 
     /**
@@ -193,9 +235,35 @@ class SubdomainManager {
             return false;
         }
 
+        return $this->numHostsEnabled($hosts) == $hosts->count();
+    }
+
+    /**
+     * Returns true if all hosts in the collection are enabled in the association.
+     * If association is empty, true is returned.
+     * Helper function for CRUD hosts.
+     * @param $hosts Collection
+     * @return int
+     */
+    public function numHostsEnabled($hosts){
+        if ($hosts->isEmpty()){
+            return 0;
+        }
+
         return $hosts->map(function ($item, $key){
             return !empty($item->getAssoc()) ? empty($item->getAssoc()->deleted_at) : 1;
-        })->sum() == $hosts->count();
+        })->sum();
+    }
+
+    /**
+     * Filters out disabled hosts
+     * @param Collection $hosts
+     * @return Collection
+     */
+    public function filterDisabled($hosts){
+        return $hosts->reject(function ($item, $key){
+            return !empty($item->getAssoc()) ? !empty($item->getAssoc()->deleted_at) : true;
+        })->values();
     }
 
     /**
