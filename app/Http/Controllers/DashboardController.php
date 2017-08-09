@@ -63,7 +63,7 @@ class DashboardController extends Controller
             return [$item->watch_id => $item];
         });
 
-        $activeWatchesIds = $activeWatches->pluck('wid');
+        $activeWatchesIds = $activeWatches->pluck('wid')->sort()->values();
         Log::info('Active watches ids: ' . var_export($activeWatchesIds->toJson(), true));
 
         // Load all newest DNS scans for active watches
