@@ -16,6 +16,9 @@ const webpack = require('webpack');
 // __webpack_public_path__ = '/';
 mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/app-user.js', 'public/js/app-user.js')
+    .js('resources/assets/js/polyinit.js', 'public/js/polyinit.js')
+    .js('resources/assets/js/polyapp.js', 'public/js/polyapp.js')
+    .js('resources/assets/js/polyapp-user.js', 'public/js/polyapp-user.js')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .sass('resources/assets/sass/app-landing.scss', 'public/css')
 
@@ -51,7 +54,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .copy('node_modules/admin-lte/plugins','public/plugins')
     .copy('node_modules/icheck/skins/square/blue.png','public/css')
     .copy('node_modules/icheck/skins/square/blue@2x.png','public/css')
-    .extract(['vue', 'jquery', 'jquery-ui', 'axios', 'lodash', 'es6-promise']);
+    .extract(['vue', 'jquery', 'jquery-ui', 'axios', 'lodash', 'es6-promise', 'moment']);
 
 mix.scripts([
     'resources/assets/js/blocs.js',

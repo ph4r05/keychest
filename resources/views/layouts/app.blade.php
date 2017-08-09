@@ -122,7 +122,7 @@
     <!-- Scripts -->
     <script src="{{ mix('/js/manifest.js') }}"></script>
     <script src="{{ mix('/js/vendor.js') }}"></script>
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ url (mix('/js/polyapp.js')) }}"></script>
     <script src="{{ mix('/js/misc.js') }}"></script>
 
     {!! survivor() !!}

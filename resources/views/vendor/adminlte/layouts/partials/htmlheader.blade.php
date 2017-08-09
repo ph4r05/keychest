@@ -56,6 +56,9 @@
         ga('create', 'UA-84597687-4', 'auto');
         ga('send', 'pageview');
 
+        // delete window.Promise;  // testing compatibility with polyfills
+        // delete Promise;
+
     </script>
     <!-- Google Analytics END -->
 
