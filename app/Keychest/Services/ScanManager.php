@@ -22,6 +22,7 @@ use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use App\Models\WhoisResult;
 use App\User;
+use Exception;
 use function foo\func;
 use Illuminate\Contracts\Auth\Factory as FactoryContract;
 use Illuminate\Database\Query\JoinClause;
@@ -231,7 +232,7 @@ class ScanManager {
      * @param boolean $primaryIPs
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getNewestTlsScansOptim($watches, $primaryIPs){
+    public function getNewestTlsScansOptim($watches, $primaryIPs=false){
         $table = (new HandshakeScan())->getTable();
         $watchTbl = (new WatchTarget())->getTable();
         $dnsTbl = (new DnsResult())->getTable();
@@ -340,5 +341,74 @@ class ScanManager {
             ->where($watchAssocTbl.'.user_id', '=', $userId)
             ->whereNull($watchAssocTbl.'.deleted_at');
         return $query;
+    }
+
+    /**
+     * Processes loaded scan results (deserialization)
+     * @param Collection $dnsScans
+     * @return Collection
+     */
+    public function processDnsScans($dnsScans){
+        return $dnsScans->mapWithKeys(function ($item) {
+            try{
+                $item->dns = json_decode($item->dns);
+            } catch (Exception $e){
+            }
+
+            return [intval($item->watch_id) => $item];
+        });
+    }
+
+    /**
+     * Processes loaded tls scan results
+     * @param Collection $tlsScans
+     * @return Collection
+     */
+    public function processTlsScans($tlsScans){
+        return $tlsScans->transform(function($val, $key){
+            try{
+                $val->certs_ids = json_decode($val->certs_ids);
+            } catch (Exception $e){
+            }
+
+            return $val;
+        });
+    }
+
+    /**
+     * Processes loaded crtsh scan results
+     * @param Collection $crtshScans
+     * @return Collection
+     */
+    public function processCrtshScans($crtshScans){
+        return $crtshScans->mapWithKeys(function ($item){
+            try{
+                $item->certs_ids = json_decode($item->certs_ids);
+            } catch (Exception $e){
+            }
+
+            return [intval($item->watch_id) => $item];
+        });
+    }
+
+    /**
+     * Processes loaded Whois scan results
+     * @param Collection $whoisScans
+     * @return Collection
+     */
+    public function processWhoisScans($whoisScans){
+        return $whoisScans->mapWithKeys(function ($item){
+            try{
+                $item->dns = json_decode($item->dns);
+            } catch (Exception $e){
+            }
+
+            try{
+                $item->emails = json_decode($item->emails);
+            } catch (Exception $e){
+            }
+
+            return [intval($item->domain_id) => $item];
+        });
     }
 }

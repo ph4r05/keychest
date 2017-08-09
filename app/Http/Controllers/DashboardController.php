@@ -215,19 +215,7 @@ class DashboardController extends Controller
      * @return Collection
      */
     protected function processWhoisScans($whoisScans){
-        return $whoisScans->mapWithKeys(function ($item){
-            try{
-                $item->dns = json_decode($item->dns);
-            } catch (Exception $e){
-            }
-
-            try{
-                $item->emails = json_decode($item->emails);
-            } catch (Exception $e){
-            }
-
-            return [intval($item->domain_id) => $item];
-        });
+        return $this->scanManager->processWhoisScans($whoisScans);
     }
 
     /**
@@ -253,14 +241,7 @@ class DashboardController extends Controller
      * @return Collection
      */
     protected function processCrtshScans($crtshScans){
-        return $crtshScans->mapWithKeys(function ($item){
-            try{
-                $item->certs_ids = json_decode($item->certs_ids);
-            } catch (Exception $e){
-            }
-
-            return [intval($item->watch_id) => $item];
-        });
+        return $this->scanManager->processCrtshScans($crtshScans);
     }
 
     /**
@@ -269,14 +250,7 @@ class DashboardController extends Controller
      * @return Collection
      */
     protected function processTlsScans($tlsScans){
-        return $tlsScans->transform(function($val, $key){
-            try{
-                $val->certs_ids = json_decode($val->certs_ids);
-            } catch (Exception $e){
-            }
-
-            return $val;
-        });
+        return $this->scanManager->processTlsScans($tlsScans);
     }
 
     /**
@@ -285,14 +259,7 @@ class DashboardController extends Controller
      * @return Collection
      */
     protected function processDnsScans($dnsScans){
-        return $dnsScans->mapWithKeys(function ($item) {
-            try{
-                $item->dns = json_decode($item->dns);
-            } catch (Exception $e){
-            }
-
-            return [intval($item->watch_id) => $item];
-        });
+        return $this->scanManager->processDnsScans($dnsScans);
     }
 
 
