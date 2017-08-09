@@ -45,7 +45,7 @@
               'label-warning': props.rowData.tls_errors < props.rowData.tls_all
               }" v-if="props.rowData.tls_errors > 0"><abbr v-bind:title="tlsTitle(props.rowData)" class="initialism">TLS</abbr>
           </span>
-          <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">OK</span>
+          <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">ON</span>
         </template>
         <template slot="dns" scope="props">
           <div v-if="!props.rowData.dns_error">
