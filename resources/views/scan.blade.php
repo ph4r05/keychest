@@ -13,8 +13,6 @@
 @endsection
 
 @section('main-content')
-    @include('partials.spotcheck_info')
-
     <div class="servers-wrapper container-fluid spark-screen">
         <div class="row">
             <div class="servers-tab col-md-12 ">
@@ -24,4 +22,5 @@
             </div>
         </div>
     </div>
+    @include('partials.spotcheck_info')
 @endsection

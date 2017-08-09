@@ -9,7 +9,6 @@
 	@include('partials.landing.loading_placeholder')
 
     <!-- Vue search component -->
-    @include('partials.spotcheck_info')
     <quicksearch-main></quicksearch-main>
 
     <!-- learn -->
@@ -27,6 +26,10 @@
     <!-- Footer - bloc-7 -->
 	@include('partials.landing.footer')
     <!-- Footer - bloc-7 END -->
+
+    <!-- spot check info modal - placed here so does not pop-up during rendering when modals are not yet hidden -->
+    @include('partials.spotcheck_info')
+    <!-- spot check info modal END-->
 
 @endsection
 
