@@ -1,4 +1,7 @@
 const { mix } = require('laravel-mix');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const webpack = require('webpack');
 
 /*
  |--------------------------------------------------------------------------
@@ -68,5 +71,11 @@ mix.webpackConfig({
         chunkFilename: 'js/[name].' + (mix.inProduction() ? '[chunkhash].' : '') + 'app.js',
         publicPath: '/'
     },
+    plugins: [
+        new CleanWebpackPlugin(['public/js'], {verbose: false}),
+        new webpack.BannerPlugin({
+            banner: new GitRevisionPlugin().version(),
+        }),
+    ]
 });
 
