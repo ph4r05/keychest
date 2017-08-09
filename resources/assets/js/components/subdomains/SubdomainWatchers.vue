@@ -96,12 +96,10 @@
 
     import FilterBar from '../servers/FilterBar';
     import AddSubWatch from './watch/AddSubWatch.vue';
-    import EditSubWatch from './watch/EditSubWatch.vue';
 
     Vue.use(VueEvents);
     Vue.component('filter-bar', FilterBar);
     Vue.component('add-sub-watch', AddSubWatch);
-    Vue.component('edit-sub-watch', EditSubWatch);
 
     export default {
         components: {
