@@ -13,7 +13,7 @@ const webpack = require('webpack');
  | file for the application as well as bundling up all the JS files.
  |
  */
-
+// __webpack_public_path__ = '/';
 mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/app-user.js', 'public/js/app-user.js')
     .sass('resources/assets/sass/app.scss', 'public/css')
@@ -76,6 +76,15 @@ mix.webpackConfig({
         new webpack.BannerPlugin({
             banner: new GitRevisionPlugin().version(),
         }),
+        new webpack.optimize.MinChunkSizePlugin({
+            minChunkSize: 10000 // Minimum number of characters
+        }),
+        // new webpack.optimize.CommonsChunkPlugin({
+        //     names: ['es6-promise'],
+        //     chunks: ['es6-promise'],
+        //     filename: 'js/[name].' + (mix.inProduction() ? '[chunkhash].' : '') + 'js',
+        //     //minChunks: Infinity,
+        // }),
     ]
 });
 
