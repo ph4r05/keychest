@@ -62,6 +62,11 @@ mix.webpackConfig({
     watchOptions: {
         aggregateTimeout: 1000,
         ignored: '/node_modules/',
-    }
+    },
+    output: {
+        filename: '[name].js',
+        chunkFilename: 'js/[name].' + (mix.inProduction() ? '[chunkhash].' : '') + 'app.js',
+        publicPath: '/'
+    },
 });
 
