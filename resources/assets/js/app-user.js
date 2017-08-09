@@ -5,6 +5,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
+// __webpack_public_path__ = '/';  // quick hack for Vue2 lazy loaded components. Not needed now.
 require('./bootstrap');
 
 window.Vue = require('vue');
@@ -35,22 +36,47 @@ Vue.prototype.trans = (key) => {
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('quicksearch', require('./components/quicksearch.vue'));
-Vue.component('feedback_form', require('./components/feedback_form.vue'));
-
+Vue.component('sbox', require('./components/partials/sbox.vue'));
 Vue.component('vuetable-my', require('./components/partials/VuetableMy.vue'));
+
+Vue.component('help-modal', require('./components/partials/HelpModal.vue'));
+Vue.component('help-trigger', require('./components/partials/HelpTrigger.vue'));
+
+Vue.component('feedback_form', require('./components/feedback_form.vue'));
 Vue.component('register-form', require('./components/auth/RegisterForm.vue'));
 Vue.component('login-form', require('./components/auth/LoginForm.vue'));
 Vue.component('email-reset-password-form', require('./components/auth/EmailResetPasswordForm.vue'));
 Vue.component('reset-password-form', require('./components/auth/ResetPasswordForm.vue'));
-Vue.component('server-tables', require('./components/servers/ServerTables.vue'));
-Vue.component('sbox', require('./components/partials/sbox.vue'));
-Vue.component('help-modal', require('./components/partials/HelpModal.vue'));
-Vue.component('help-trigger', require('./components/partials/HelpTrigger.vue'));
-Vue.component('dashboard', require('./components/dashboard.vue'));
-Vue.component('subdomains', require('./components/subdomains/Subdomains.vue'));
-Vue.component('servers', require('./components/servers.vue'));
-Vue.component('servers-import', require('./components/servers-import/server-import.vue'));
+
+// Vue.component('quicksearch', require('./components/quicksearch.vue'));
+// Vue.component('dashboard', require('./components/dashboard.vue'));
+// Vue.component('subdomains', require('./components/subdomains/Subdomains.vue'));
+// Vue.component('servers', require('./components/servers.vue'));
+// Vue.component('servers-import', require('./components/servers-import/server-import.vue'));
+
+// another async load: Vue.component('dashboard', resolve => require(['./components/dashboard.vue'], resolve));
+
+Vue.component('quicksearch', resolve => {
+    require.ensure([], require => resolve(require('./components/quicksearch.vue')), 'quicksearch');
+});
+
+Vue.component('dashboard', resolve => {
+    require.ensure([], require => resolve(require('./components/dashboard.vue')), 'dashboard');
+});
+
+Vue.component('servers', resolve => {
+    require.ensure([], require => resolve(require('./components/servers.vue')), 'servers');
+});
+Vue.component('subdomains', resolve => {
+    require.ensure([], require => resolve(require('./components/subdomains/Subdomains.vue')), 'subdomains');
+});
+Vue.component('server-tables', resolve => {
+    require.ensure([], require => resolve(require('./components/servers/ServerTables.vue')), 'server-tables');
+});
+Vue.component('servers-import', resolve => {
+    require.ensure([], require => resolve(require('./components/servers-import/server-import.vue')), 'servers-import');
+});
+
 
 console.log('Vue.js init');
 const app = new Vue({
