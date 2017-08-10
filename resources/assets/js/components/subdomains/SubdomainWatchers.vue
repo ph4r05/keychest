@@ -200,8 +200,13 @@
                     {field: 'scan_host', sortField: 'scan_host', direction: 'asc'}
                 ],
                 moreParams: {},
-                numSelected: 0
+                numSelected: 0,
+                totalUnfinished: []
             }
+        },
+
+        computed: {
+
         },
 
         methods: {
@@ -249,6 +254,45 @@
                 this.$refs.vuetable.uncheckAllPages();
             },
 
+            getUnfinished(){
+                let unfinished = [];
+                this.$refs.vuetable.tableData.forEach(function(dataItem) {
+                    if (!dataItem['sub_result_size'] || dataItem['sub_result_size'] === -1){
+                        unfinished.push(dataItem);
+                    }
+                });
+
+                return unfinished;
+            },
+
+            loadAllUnfinished(){
+                const onFail = () => {
+                    this.totalUnfinished = [];
+                };
+
+                const onSuccess = data => {
+                    Vue.nextTick(() => {
+                        this.totalUnfinished = data['res'];
+                        this.onUnfinishedLoaded();
+                    });
+                };
+
+                axios.get('/home/subs/getUnfinished')
+                    .then(response => {
+                        if (!response || !response.data || response.data['status'] !== 'success'){
+                            onFail();
+                        } else {
+                            onSuccess(response.data);
+                        }
+                    })
+                    .catch(e => {
+                        onFail();
+                    });
+            },
+            onUnfinishedLoaded(){
+
+            },
+
             onDeleteServer(data){
                 swal({
                     title: 'Are you sure?',
@@ -256,9 +300,9 @@
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes'
-                }).then((function () {
+                }).then(() => {
                     this.onDeleteServerConfirmed(data);
-                }).bind(this)).catch(() => {});
+                }).catch(() => {});
             },
             deleteChecked(){
                 swal({
@@ -267,18 +311,18 @@
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes'
-                }).then((function () {
+                }).then(() => {
                     this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
-                }).bind(this)).catch(() => {});
+                }).catch(() => {});
             },
 
             onDeleteServerConfirmed(data, isMore){
-                const onFail = (function(){
+                const onFail = () => {
                     this.moreParams.deleteState = -1;
                     swal('Delete error', 'Server delete failed :(', 'error');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = (data) => {
                     this.moreParams.deleteState = 1;
                     Vue.nextTick(() => {
                         this.$refs.vuetable.refresh();
@@ -289,7 +333,7 @@
                     this.$emit('onServerDeleted', data);
                     this.$events.fire('on-server-deleted', data);
                     toastr.success('Server deleted successfully.', 'Success');
-                }).bind(this);
+                };
 
                 this.moreParams.deleteState = 2;
                 axios.post('/home/subs/del' + (isMore ? 'More' : ''), data)
