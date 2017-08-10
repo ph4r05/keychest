@@ -48,6 +48,12 @@
                         <span class="label label-success" v-if="props.rowData.auto_fill_watches">On</span>
                         <span class="label label-default" v-else="">Off</span>
                     </template>
+                    <template slot="detected" scope="props">
+                        <div v-if="formatResSize(props.rowData.sub_result_size) !== -1" class="text-right">
+                            {{ props.rowData.sub_result_size }} </div>
+                        <div v-else="" class="text-center">
+                            <i class='fa fa-refresh fa-spin'></i></div>
+                    </template>
                 </vuetable-my>
             </div>
 
@@ -156,12 +162,9 @@
                         callback: 'formatDate|DD-MM-YYYY HH:mm'
                     },
                     {
-                        name: 'sub_result_size',
+                        name: '__slot:detected',
                         title: 'Detected',
                         sortField: 'sub_result_size',
-                        titleClass: 'text-right',
-                        dataClass: 'text-right',
-                        callback: 'formatResSize'
                     },
                     {
                         name: '__slot:actions',
@@ -213,7 +216,7 @@
             },
             formatResSize(value){
                 if (value === -1 || !_.isNumber(value)){
-                    return '-';
+                    return -1;
                 }
 
                 return value;
@@ -340,14 +343,17 @@
             onFilterReset(){
                 this.moreParams = {};
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
+            },
+            onSubChanged(data){
+                this.$refs.vuetable.refresh();
             }
         },
         events: {
             'on-sub-added' (data) {
-                Vue.nextTick(() => this.$refs.vuetable.refresh());
+                Vue.nextTick(() => this.onSubChanged(data));
             },
             'on-sub-updated'(data) {
-                Vue.nextTick(() => this.$refs.vuetable.refresh());
+                Vue.nextTick(() => this.onSubChanged(data));
             },
             'on-delete-sub-watch'(data) {
                 this.onDeleteServer(data);
