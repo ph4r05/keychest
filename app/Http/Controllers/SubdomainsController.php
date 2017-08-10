@@ -16,6 +16,7 @@ use App\Models\SubdomainWatchTarget;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -96,23 +97,9 @@ class SubdomainsController extends Controller
 
         $query = DbTools::sortQuery($query, $sort_parsed);
         $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
+
         $retArr = $ret->toArray();
-        $retArr['data'] = collect($retArr['data'])->transform(function($value, $key){
-            try{
-                $value['sub_result_size'] = -1;
-                if (empty($value['sub_result'])){
-                    return $value;
-                }
-
-                $value['sub_result'] = json_decode($value['sub_result']);
-                $value['sub_result_size'] = count($value['sub_result']);
-                $value['sub_result'] = []; // Optimization, not needed in frontend for now.
-                return $value;
-            } catch(Exception $e){
-                return $value;
-            }
-        });
-
+        $retArr['data'] = $this->processListResults(collect($retArr['data']));
         return response()->json($retArr, 200);
     }
 
@@ -575,5 +562,28 @@ class SubdomainsController extends Controller
             'hit_max_limit' => $hitMaxLimit,
             'max_limit' => $maxHosts
         ];
+    }
+
+    /**
+     * Processes result of the load list - checks the result size.
+     * @param Collection $col
+     * @return mixed
+     */
+    protected function processListResults($col){
+        return $col->transform(function($value, $key){
+            try{
+                $value['sub_result_size'] = -1;
+                if (empty($value['sub_result'])){
+                    return $value;
+                }
+
+                $value['sub_result'] = json_decode($value['sub_result']);
+                $value['sub_result_size'] = count($value['sub_result']);
+                $value['sub_result'] = []; // Optimization, not needed in frontend for now.
+                return $value;
+            } catch(Exception $e){
+                return $value;
+            }
+        });
     }
 }
