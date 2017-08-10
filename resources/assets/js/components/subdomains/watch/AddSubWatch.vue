@@ -28,7 +28,7 @@
                                        @keydown="onKeydown"
                                        autofocus="autofocus"/>
                                 <span class="input-group-btn" v-if="!editMode">
-                                    <a class="btn btn-default" @click="onMore">
+                                    <a class="btn btn-default" @click.prevent="onMore">
                                         <span class="fa fa-ellipsis-h"></span>
                                     </a>
                                 </span>
