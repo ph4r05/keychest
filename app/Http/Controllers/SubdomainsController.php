@@ -66,25 +66,8 @@ class SubdomainsController extends Controller
         $per_page = intval(trim(Input::get('per_page')));
         $sort_parsed = DataTools::vueSortToDb($sort);
 
-        $watchTbl = (new SubdomainWatchTarget())->getTable();
         $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
-        $watchResTbl = (new SubdomainResults())->getTable();
-        $lastScanTbl = (new LastScanCache())->getTable();
-
-        $query = SubdomainWatchAssoc::query()
-            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
-            ->leftJoin($lastScanTbl . ' AS ls', function(JoinClause $join) use($watchTbl) {
-                $join->whereRaw('ls.cache_type = 0')
-                    ->whereRaw('ls.scan_type = 6')  // sudomain results
-                    ->on('ls.obj_id', '=', $watchTbl.'.id');
-            })
-            ->leftJoin($watchResTbl. ' AS rs', 'rs.id', '=', 'ls.scan_id')
-            ->select($watchTbl.'.*', $watchAssocTbl.'.*',
-                'rs.scan_status AS sub_scan_status', 'rs.last_scan_at AS sub_last_scan_at',
-                'rs.result_size AS sub_result_size', 'rs.result AS sub_result')
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
-            ->whereNull($watchAssocTbl.'.deleted_at');
-
+        $query = $this->baseLoadQuery($userId);
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
         }
@@ -99,8 +82,28 @@ class SubdomainsController extends Controller
         $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
 
         $retArr = $ret->toArray();
-        $retArr['data'] = $this->processListResults(collect($retArr['data']));
+        $retArr['data'] = $this->processListResults(collect($retArr['data']), true);
         return response()->json($retArr, 200);
+    }
+
+    /**
+     * Returns only given domain records + loaded subdomains
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDomains(){
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+        $domains = collect(Input::get('domains'));
+
+        $watchTbl = (new SubdomainWatchTarget())->getTable();
+        $query = $this->baseLoadQuery($userId);
+        $query = $query->whereIn($watchTbl.'.id', $domains);
+        $res = $query->get();
+        Log::info(var_export($res->all(), true));
+
+        $res = $this->processListResults($res, false);
+        return response()->json(['status' => 'success', 'res' => $res, 'ids' => $domains], 200);
     }
 
     /**
@@ -565,12 +568,40 @@ class SubdomainsController extends Controller
     }
 
     /**
+     * Builds query for basic load
+     * @param $userId
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    protected function baseLoadQuery($userId){
+        $watchTbl = (new SubdomainWatchTarget())->getTable();
+        $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
+        $watchResTbl = (new SubdomainResults())->getTable();
+        $lastScanTbl = (new LastScanCache())->getTable();
+
+        $query = SubdomainWatchAssoc::query()
+            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
+            ->leftJoin($lastScanTbl . ' AS ls', function(JoinClause $join) use($watchTbl) {
+                $join->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 6')  // sudomain results
+                    ->on('ls.obj_id', '=', $watchTbl.'.id');
+            })
+            ->leftJoin($watchResTbl. ' AS rs', 'rs.id', '=', 'ls.scan_id')
+            ->select($watchTbl.'.*', $watchAssocTbl.'.*', $watchTbl.'.id AS wid',
+                'rs.scan_status AS sub_scan_status', 'rs.last_scan_at AS sub_last_scan_at',
+                'rs.result_size AS sub_result_size', 'rs.result AS sub_result')
+            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->whereNull($watchAssocTbl.'.deleted_at');
+        return $query;
+    }
+
+    /**
      * Processes result of the load list - checks the result size.
      * @param Collection $col
+     * @param bool $removeSubResult
      * @return mixed
      */
-    protected function processListResults($col){
-        return $col->transform(function($value, $key){
+    protected function processListResults($col, $removeSubResult=true){
+        return $col->transform(function($value, $key) use ($removeSubResult) {
             try{
                 $value['sub_result_size'] = -1;
                 if (empty($value['sub_result'])){
@@ -579,7 +610,12 @@ class SubdomainsController extends Controller
 
                 $value['sub_result'] = json_decode($value['sub_result']);
                 $value['sub_result_size'] = count($value['sub_result']);
-                $value['sub_result'] = []; // Optimization, not needed in frontend for now.
+
+                // Optimization, not needed in frontend for now.
+                if ($removeSubResult) {
+                    $value['sub_result'] = [];
+                }
+
                 return $value;
             } catch(Exception $e){
                 return $value;
