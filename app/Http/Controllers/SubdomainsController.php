@@ -63,7 +63,8 @@ class SubdomainsController extends Controller
 
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
-        $per_page = intval(trim(Input::get('per_page')));
+        $per_page = intval(trim(Input::get('per_page', 50)));
+        $unfinished = intval(trim(Input::get('unfinished', 0)));
         $sort_parsed = DataTools::vueSortToDb($sort);
 
         $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
@@ -82,7 +83,7 @@ class SubdomainsController extends Controller
         $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100);
 
         $retArr = $ret->toArray();
-        $retArr['data'] = $this->processListResults(collect($retArr['data']), true);
+        $retArr['data'] = $this->processListResults(collect($retArr['data']), true, $unfinished);
         return response()->json($retArr, 200);
     }
 
@@ -104,6 +105,23 @@ class SubdomainsController extends Controller
 
         $res = $this->processListResults($res, false);
         return response()->json(['status' => 'success', 'res' => $res, 'ids' => $domains], 200);
+    }
+
+    /**
+     * Loads list of domains with no results yet.
+     * Over all domain records, ignoring pagination, sort & so on.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUnfinishedDomains(){
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+        $query = $this->baseLoadQuery($userId);
+        $query = $query->whereNull('rs.result_size');
+        $res = $query->get();
+
+        $res = $this->processListResults($res, false);
+        return response()->json(['status' => 'success', 'res' => $res], 200);
     }
 
     /**
@@ -598,10 +616,11 @@ class SubdomainsController extends Controller
      * Processes result of the load list - checks the result size.
      * @param Collection $col
      * @param bool $removeSubResult
+     * @param int $unfinished
      * @return mixed
      */
-    protected function processListResults($col, $removeSubResult=true){
-        return $col->transform(function($value, $key) use ($removeSubResult) {
+    protected function processListResults($col, $removeSubResult=true, $unfinished=0){
+        $col = $col->transform(function($value, $key) use ($removeSubResult) {
             try{
                 $value['sub_result_size'] = -1;
                 if (empty($value['sub_result'])){
@@ -621,5 +640,19 @@ class SubdomainsController extends Controller
                 return $value;
             }
         });
+
+        if ($unfinished != 0){
+            $fnc = function($value, $key) {
+                return empty($value['sub_result']) || $value['sub_result_size'] == -1;
+            };
+
+            if ($unfinished == 1){
+                $col = $col->filter($fnc);  // take only unfinished
+            } else {
+                $col = $col->reject($fnc);
+            }
+        }
+
+        return $col;
     }
 }
