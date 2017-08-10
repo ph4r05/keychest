@@ -244,6 +244,7 @@ In case of a weird error remove all npm packages and reinstall:
 ```
 /bin/rm -rf node_modules/
 /bin/rm package-lock.json
+/bin/rm yarn.lock
 /bin/rm public/mix-manifest.json 
 npm install
 ```
