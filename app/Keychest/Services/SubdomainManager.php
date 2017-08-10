@@ -56,7 +56,6 @@ class SubdomainManager {
                 $q->where('rule_type', '=', 1)
                     ->where('rule', '=', $hostname);
             });
-        Log::info($q->toSql());
         return $q->get()->isNotEmpty();
     }
 
