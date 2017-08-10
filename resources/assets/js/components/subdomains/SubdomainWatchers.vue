@@ -52,7 +52,7 @@
                         <div v-if="formatResSize(props.rowData.sub_result_size) !== -1" class="text-right">
                             {{ props.rowData.sub_result_size }} </div>
                         <div v-else="" class="text-center">
-                            <i class='fa fa-refresh fa-spin'></i></div>
+                            <a @click.prevent="manualRefresh()" class="btn"><i class='fa fa-refresh fa-spin'></i></a></div>
                     </template>
                 </vuetable-my>
             </div>
@@ -252,6 +252,9 @@
             },
             uncheckAll(){
                 this.$refs.vuetable.uncheckAllPages();
+            },
+            manualRefresh(){
+                this.$events.fire('on-manual-refresh');
             },
 
             getUnfinished(){
