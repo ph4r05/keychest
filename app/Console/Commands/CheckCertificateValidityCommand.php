@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class CheckCertificateValidityCommand extends Command
 {
@@ -80,7 +81,8 @@ class CheckCertificateValidityCommand extends Command
         // Load all newest DNS scans for active watches
         $q = $this->scanManager->getNewestDnsScansOptim($activeWatchesIds);
         $dnsScans = $this->scanManager->processDnsScans($q->get());
-        Log::info(var_export($dnsScans->count(), true));
+
+        Log::info('--------------------');
 
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->scanManager->getNewestTlsScansOptim($activeWatchesIds);
@@ -93,18 +95,24 @@ class CheckCertificateValidityCommand extends Command
 
         // Certificate IDs from TLS scans - more important certs.
         // Load also crtsh certificates.
-        $tlsCertMap = collect($tlsScans->mapWithKeys(function($item, $key){
-            return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf];
-        }));
+        $tlsCertMap = DataTools::multiMap($tlsScans, function($item, $key){
+            return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf]; // wid => cid
+        })->transform(function($item, $key) {
+            return $item->unique()->values();
+        });
+
         // watch_id -> leaf cert from the last tls scanning
-        $tlsCertsIds = $tlsCertMap->values()->reject(function($item){
+        $tlsCertsIds = $tlsCertMap->flatten()->values()->reject(function($item){
             return empty($item);
-        })->unique();
+        })->unique()->values();
 
         // watch_id -> array of certificate ids
-        $crtshCertMap = collect($crtshScans->mapWithKeys(function($item, $key){
-            return empty($item->certs_ids) ? [] : [$item->watch_id => $item->certs_ids];
-        }));
+        $crtshCertMap = DataTools::multiMap($crtshScans, function($item, $key){
+            return empty($item->certs_ids) ? [] : [$item->watch_id => $item->certs_ids];  // wid => []
+        }, true)->transform(function($item, $key) {
+            return $item->unique()->values();
+        });
+
         $crtshCertIds = $crtshScans->reduce(function($carry, $item){
             return $carry->union(collect($item->certs_ids));
         }, collect())->unique()->sort()->reverse()->take(300);
@@ -113,7 +121,7 @@ class CheckCertificateValidityCommand extends Command
         $cert2watchTls = DataTools::invertMap($tlsCertMap);
         $cert2watchCrtsh = DataTools::invertMap($crtshCertMap);
 
-        $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique();
+        $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique()->values();
         $certs = $this->scanManager->loadCertificates($certsToLoad)->get();
         $certs = $certs->transform(
             function ($item, $key) use ($tlsCertsIds, $certsToLoad, $cert2watchTls, $cert2watchCrtsh) {
@@ -145,7 +153,7 @@ class CheckCertificateValidityCommand extends Command
 
 
 
-        var_dump($activeWatchesIds->toJSON());
+        //var_dump($activeWatchesIds->toJSON());
         //var_dump($activeWatches->toJSON());
         //Log::warning(var_export($activeWatches, true));
     }
