@@ -1,6 +1,11 @@
-# Key Chest
+# KeyChest.net
 
-Certificate monitor
+Certificate (expiry) monitor. We operate it as a free service at [https://keychest.net](https://keychest.net). It provides:
+
+1. spot checks - for quick feedback when you configure a HTTPS or TLS server.
+2. dashboard - with reports about incidents, expiry dates, and 12 months planner.
+3. massive enrolment options - single servers, bulk import of domain names, and "Active Domains" with on-going sub-domain discovery.
+4. weekly status emails. 
 
 ## Important
 
