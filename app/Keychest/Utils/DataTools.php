@@ -186,11 +186,11 @@ class DataTools {
      */
     public static function pick($col, $ids){
         $idsArr = is_array($ids) || $ids instanceof Traversable;
-        if (!$ids){
+        if (!$idsArr){
             $ids = [$ids];
         }
 
-        $idSet = array_fill_keys($ids, true);
+        $idSet = array_fill_keys(($ids instanceof Collection) ? $ids->values()->all() : $ids, true);
         $ret = [];
 
         foreach($col as $key => $val){
