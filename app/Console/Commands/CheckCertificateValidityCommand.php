@@ -95,6 +95,7 @@ class CheckCertificateValidityCommand extends Command
             $item->url = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort);
             $item->urlShort = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort === 443 ? null : $strPort);
             $item->hostport = $item->scan_host . ($strPort === 443 ? '' : ':' . $strPort);
+            return $item;
         });
 
         Log::info('--------------------');
@@ -145,7 +146,7 @@ class CheckCertificateValidityCommand extends Command
         $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique()->values();
         $certs = $this->scanManager->loadCertificates($certsToLoad)->get();
         $certs = $certs->transform(
-            function ($item, $key) use ($activeWatches, $tlsCertsIds, $crtshCertIds,
+            function ($item, $key) use ($activeWatches, $tlsCertsIds, $crtshCertIds, $tlsScans,
                                         $certsToLoad, $cert2tls, $cert2watchTls, $cert2watchCrtsh)
             {
                 $this->attributeCertificate($item, $tlsCertsIds->values(), 'found_tls_scan');
@@ -155,6 +156,8 @@ class CheckCertificateValidityCommand extends Command
                 $item->tls_scans_ids = $cert2tls->get($item->id, collect());
                 $item->tls_watches = DataTools::pick($activeWatches, $cert2watchTls->get($item->id, []));
                 $item->crtsh_watches = DataTools::pick($activeWatches, $cert2watchCrtsh->get($item->id, []));
+
+                $this->addTlsScanIpsInfo($item, $tlsScans, $cert2tls);
 
                 return $item;
             })->mapWithKeys(function ($item){
@@ -235,7 +238,10 @@ class CheckCertificateValidityCommand extends Command
     protected function addTlsScanIpsInfo($certificate, $tlsScans, $cert2tls){
         $certificate->tls_watches->transform(function($item, $key) use ($certificate, $tlsScans, $cert2tls){
             $item->tls_scans = DataTools::pick($tlsScans, $cert2tls->get($certificate->id, []));
-            $item->ips = $item->tls_scans->pluck('ip_scanned')->sort(['DomainTools', 'compareIps'])->values();
+            $item->ips = $item->tls_scans->pluck('ip_scanned')->sort(function($a, $b){
+                return DomainTools::compareIps($a, $b);
+            })->values();
+            return $item;
         });
         return $certificate;
     }
