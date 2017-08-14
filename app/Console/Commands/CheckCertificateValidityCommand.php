@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
+use App\Keychest\Utils\DomainTools;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -75,18 +76,29 @@ class CheckCertificateValidityCommand extends Command
         $activeWatches = $user->watchTargets()->get();  // type: Collection
         $activeWatches = $activeWatches->filter(function($value, $key){
             return empty($value->pivot->deleted_at);
-        });
+        })->keyBy('id');
         $activeWatchesIds = $activeWatches->pluck('id');
 
         // Load all newest DNS scans for active watches
         $q = $this->scanManager->getNewestDnsScansOptim($activeWatchesIds);
         $dnsScans = $this->scanManager->processDnsScans($q->get());
 
+        // Augment watches with DNS scans
+        $activeWatches->transform(function($item, $key) use ($dnsScans) {
+            $item->dnsScan = $dnsScans->get($item->id);
+
+            $strPort = intval($item->scan_port) || 443;
+            $item->url = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort);
+            $item->urlShort = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort === 443 ? null : $strPort);
+            $item->hostport = $item->scan_host . ($strPort === 443 ? '' : ':' . $strPort);
+        });
+
         Log::info('--------------------');
 
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->scanManager->getNewestTlsScansOptim($activeWatchesIds);
-        $tlsScans = $this->scanManager->processTlsScans($q->get());
+        $tlsScans = $this->scanManager->processTlsScans($q->get())->keyBy('id');
+        $tlsScansGrp = $tlsScans->groupBy('watch_id');
 
         // Latest CRTsh scan
         $crtshScans = $this->scanManager->getNewestCrtshScansOptim($activeWatchesIds)->get();
@@ -95,19 +107,24 @@ class CheckCertificateValidityCommand extends Command
 
         // Certificate IDs from TLS scans - more important certs.
         // Load also crtsh certificates.
-        $tlsCertMap = DataTools::multiMap($tlsScans, function($item, $key){
-            return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf]; // wid => cid
+        $watch2certsTls = DataTools::multiMap($tlsScans, function($item, $key){
+            return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf]; // wid => cid, TODO: CA leaf cert?
         })->transform(function($item, $key) {
             return $item->unique()->values();
         });
 
+        // mapping cert back to IP & watch id it was taken from
+        $cert2tls = DataTools::multiMap($tlsScans, function($item, $key){
+            return empty($item->cert_id_leaf) ? [] : [$item->cert_id_leaf => $item->id]; // wid => cid, TODO: CA leaf cert?
+        });
+
         // watch_id -> leaf cert from the last tls scanning
-        $tlsCertsIds = $tlsCertMap->flatten()->values()->reject(function($item){
+        $tlsCertsIds = $watch2certsTls->flatten()->values()->reject(function($item){
             return empty($item);
         })->unique()->values();
 
         // watch_id -> array of certificate ids
-        $crtshCertMap = DataTools::multiMap($crtshScans, function($item, $key){
+        $watch2certsCrtsh = DataTools::multiMap($crtshScans, function($item, $key){
             return empty($item->certs_ids) ? [] : [$item->watch_id => $item->certs_ids];  // wid => []
         }, true)->transform(function($item, $key) {
             return $item->unique()->values();
@@ -118,17 +135,23 @@ class CheckCertificateValidityCommand extends Command
         }, collect())->unique()->sort()->reverse()->take(300);
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
-        $cert2watchTls = DataTools::invertMap($tlsCertMap);
-        $cert2watchCrtsh = DataTools::invertMap($crtshCertMap);
+        $cert2watchTls = DataTools::invertMap($watch2certsTls);
+        $cert2watchCrtsh = DataTools::invertMap($watch2certsCrtsh);
 
         $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique()->values();
         $certs = $this->scanManager->loadCertificates($certsToLoad)->get();
         $certs = $certs->transform(
-            function ($item, $key) use ($tlsCertsIds, $certsToLoad, $cert2watchTls, $cert2watchCrtsh) {
+            function ($item, $key) use ($activeWatches, $tlsCertsIds, $crtshCertIds,
+                                        $certsToLoad, $cert2tls, $cert2watchTls, $cert2watchCrtsh)
+            {
                 $this->attributeCertificate($item, $tlsCertsIds->values(), 'found_tls_scan');
                 $this->attributeCertificate($item, $certsToLoad->values(), 'found_crt_sh');
                 $this->augmentCertificate($item);
                 $this->addWatchIdToCert($item, $cert2watchTls, $cert2watchCrtsh);
+                $item->tls_scans_ids = $cert2tls->get($item->id, collect());
+                $item->tls_watches = DataTools::pick($activeWatches, $cert2watchTls->get($item->id, []));
+                $item->crtsh_watches = DataTools::pick($activeWatches, $cert2watchCrtsh->get($item->id, []));
+
                 return $item;
             })->mapWithKeys(function ($item){
             return [$item->id => $item];
@@ -150,6 +173,27 @@ class CheckCertificateValidityCommand extends Command
         //
         // Processing section
         //
+        $tlsCerts = $certs->filter(function ($value, $key) {
+            return $value->found_tls_scan;
+        });
+
+        // 1. expiring certs in 7, 28 days, cert, domain, ip, when
+        $certExpired = $tlsCerts->filter(function ($value, $key) {
+            return Carbon::now()->greaterThanOrEqualTo($value->valid_to);
+        });
+
+        $certExpire7days = $tlsCerts->filter(function ($value, $key) {
+            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
+                && Carbon::now()->addDays(7)->greaterThanOrEqualTo($value->valid_to);
+        });
+
+        $certExpire28days = $tlsCerts->filter(function ($value, $key) {
+            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
+                && Carbon::now()->addDays(28)->greaterThanOrEqualTo($value->valid_to);
+        });
+
+        // 2. incidents
+        // 3. # of servers, active servers, certificates
 
 
 
@@ -173,8 +217,23 @@ class CheckCertificateValidityCommand extends Command
      * @param Collection $crt_sh_map
      */
     protected function addWatchIdToCert($certificate, $tls_map, $crt_sh_map){
-        $certificate->tls_watches = $tls_map->get($certificate->id, []);
-        $certificate->crtsh_watches = $crt_sh_map->get($certificate->id, []);
+        $certificate->tls_watches_ids = $tls_map->get($certificate->id, []);
+        $certificate->crtsh_watches_ids = $crt_sh_map->get($certificate->id, []);
+    }
+
+    /**
+     * Watches & IP related certificate record augmentation
+     * @param $certificate
+     * @param $tlsScans
+     * @param $cert2tls
+     * @return mixed
+     */
+    protected function addTlsScanIpsInfo($certificate, $tlsScans, $cert2tls){
+        $certificate->tls_watches->transform(function($item, $key) use ($certificate, $tlsScans, $cert2tls){
+            $item->tls_scans = DataTools::pick($tlsScans, $cert2tls->get($certificate->id, []));
+            $item->ips = $item->tls_scans->pluck('ip_scanned')->sort(['DomainTools', 'compareIps'])->values();
+        });
+        return $certificate;
     }
 
     /**
@@ -205,6 +264,8 @@ class CheckCertificateValidityCommand extends Command
         $certificate->updated_at_utc = $certificate->updated_at->getTimestamp();
         $certificate->valid_from_utc = $certificate->valid_from->getTimestamp();
         $certificate->valid_to_utc = $certificate->valid_to->getTimestamp();
+        $certificate->valid_to_days = ($certificate->valid_to->getTimestamp() - time()) / 3600.0 / 24.0;
+        $certificate->validity_sec = $certificate->valid_to_utc - $certificate->valid_from_utc;
 
         $certificate->is_legacy = false;  // will be defined by a separate relation
         $certificate->is_expired = $certificate->valid_to->lt(Carbon::now());
