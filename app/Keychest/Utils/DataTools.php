@@ -222,4 +222,34 @@ class DataTools {
             return [$item, $asc];
         })->values();
     }
+
+    /**
+     * Simple comparator on arrays.
+     * Lexicographic comparator
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    public static function compareArrays($a, $b){
+        $cA = count($a);
+        $cB = count($b);
+        $cMin = min($cA, $cB);
+
+        for($i=0; $i < $cMin; $i++){
+            $aa = $a[$i];
+            $bb = $b[$i];
+            $res = 0;
+            if (is_numeric($aa) && is_numeric($bb)){
+                $res = $aa - $bb;
+            } else {
+                $res = strnatcmp($aa, $bb);
+            }
+
+            if ($res != 0){
+                return $res;
+            }
+        }
+
+        return $cA - $cB;
+    }
 }

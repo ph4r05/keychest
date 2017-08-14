@@ -286,4 +286,63 @@ class DomainTools {
 
         return false;
     }
+
+    /**
+     * Comparator on domains - hierarchical
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    public static function compareDomainsHierarchical($a, $b){
+        $aPart = array_reverse(explode('.', $a));
+        $bPart = array_reverse(explode('.', $b));
+        return DataTools::compareArrays($aPart, $bPart);
+    }
+
+    /**
+     * Quick & unreliable IP address caregorization. IPv4 vs IPv6
+     * @param $ip
+     * @return int 10 for IPv6, 2 for IPv4
+     */
+    public static function quickIpCat($ip){
+        return strpos($ip, ':') !== false ? 10 : 2;
+    }
+
+    /**
+     * Comparator on IP addresses.
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    public static function compareIps($a, $b){
+        // exact
+        if ($a === $b){
+            return 0;
+        }
+
+        // emptyness
+        if (empty($a)){
+            return -1;
+        } else if (empty($b)){
+            return 1;
+        }
+
+        // categories, ipv4 first
+        $aCat = self::quickIpCat($a);
+        $bCat = self::quickIpCat($b);
+        if ($aCat != $bCat){
+            return $aCat == 2 ? -1 : 1;
+        }
+
+        // octets
+        $numConv = $aCat == 2 ? function($x) {
+            return intval($x);
+        } : function($x){
+            return intval($x, 16);
+        };
+
+        $aOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $a));
+        $bOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $b));
+        return DataTools::compareArrays($aOct, $bOct);
+    }
 }
