@@ -9,8 +9,9 @@
 <body class="hold-transition register-page">
     <div id="app" v-cloak>
         <div class="register-box">
-            <div class="register-logo">
+            <div class="register-logo" style="background: #fff; opacity: 0.6;" >
                 <a href="{{ url('/') }}"><b>KeyChest</b> Dashboard</a></br>
+                <div style="color:#00a7d7;font-size:18px"><b>FREE HTTPS/TLS monitoring service</b></div>
             </div>
 
             @if (count($errors) > 0)
@@ -40,7 +41,9 @@
     @include('adminlte::layouts.partials.scripts_auth')
 
     @include('adminlte::auth.terms')
-
+ <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;z-index:-100  ">
+      <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Oiju0an1pzQ?controls=0&showinfo=0&rel=0&autoplay=1&loop=1&playlist=Oiju0an1pzQ" frameborder="0" allowfullscreen></iframe>
+</div>
 </body>
 
 @endsection
