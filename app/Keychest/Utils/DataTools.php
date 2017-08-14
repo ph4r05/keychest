@@ -178,6 +178,31 @@ class DataTools {
     }
 
     /**
+     * Returns subset of the collection / map by the given keys.
+     * Could be implemented as a filter on the key. Syntactic sugar.
+     * @param $col
+     * @param $ids
+     * @return Collection
+     */
+    public static function pick($col, $ids){
+        $idsArr = is_array($ids) || $ids instanceof Traversable;
+        if (!$ids){
+            $ids = [$ids];
+        }
+
+        $idSet = array_fill_keys($ids, true);
+        $ret = [];
+
+        foreach($col as $key => $val){
+            if (array_key_exists($key, $idSet)){
+                $ret[$key] = $val;
+            }
+        }
+
+        return collect($ret);
+    }
+
+    /**
      * Processes sort string produced by Vue table, returns parsed result for query.
      * @param $sort
      * @return Collection
