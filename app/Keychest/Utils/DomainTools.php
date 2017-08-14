@@ -107,6 +107,22 @@ class DomainTools {
     }
 
     /**
+     * Similar to assembleUrl but port is optional. Equal fnc than in the frontend Req.buildUrl().
+     * @param $scheme
+     * @param $host
+     * @param $port
+     * @return string
+     */
+    public static function buildUrl($scheme, $host, $port){
+        if (empty($scheme)){
+            $scheme = 'https';
+        }
+
+        $ret = $scheme . '://' . $host;
+        return !$port ? $ret : $ret . ':' . $port;
+    }
+
+    /**
      * Removes path part from the url
      * @param $url
      * @return string
