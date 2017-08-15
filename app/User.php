@@ -28,6 +28,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * Carbon converted date fields
+     * @return array
+     */
+    public function getDates()
+    {
+        return array('created_at', 'updated_at', 'last_email_report_sent_at');
+    }
+
+    /**
      * Watch targets that belongs to the user
      */
     public function watchTargets()
