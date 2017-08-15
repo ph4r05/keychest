@@ -346,6 +346,10 @@ class DomainTools {
      * @return \Illuminate\Support\Collection
      */
     public static function sortByIPs($col, $callback){
+        if ($col === null){
+            return collect();
+        }
+
         $cnt = $col instanceof Collection ? $col->count() : count($col);
         if ($cnt <= 1){
             return collect($col);
