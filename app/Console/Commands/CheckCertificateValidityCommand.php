@@ -98,10 +98,10 @@ class CheckCertificateValidityCommand extends Command
         $md->getActiveWatches()->transform(function($item, $key) use ($md) {
             $item->dns_scan = $md->getDnsScans()->get($item->id);
 
-            $strPort = intval($item->scan_port) || 443;
+            $strPort = empty($item->scan_port) ? 443 : intval($item->scan_port);
             $item->url = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort);
             $item->url_short = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort === 443 ? null : $strPort);
-            $item->host_port = $item->scan_host . ($strPort === 443 ? '' : ':' . $strPort);
+            $item->host_port = $item->scan_host . ($strPort == 0 || $strPort === 443 ? '' : ':' . $strPort);
             return $item;
         });
 
