@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
@@ -73,19 +74,21 @@ class CheckCertificateValidityCommand extends Command
      * @param $user
      */
     protected function processUser($user){
-        $activeWatches = $user->watchTargets()->get();  // type: Collection
-        $activeWatches = $activeWatches->filter(function($value, $key){
+        $md = new ValidityDataModel();
+
+        $md->setActiveWatches($user->watchTargets()->get());
+        $md->setActiveWatches($md->getActiveWatches()->filter(function($value, $key){
             return empty($value->pivot->deleted_at);
-        })->keyBy('id');
-        $activeWatchesIds = $activeWatches->pluck('id');
+        })->keyBy('id'));
+        $md->setActiveWatchesIds($md->getActiveWatches()->pluck('id'));
 
         // Load all newest DNS scans for active watches
-        $q = $this->scanManager->getNewestDnsScansOptim($activeWatchesIds);
-        $dnsScans = $this->scanManager->processDnsScans($q->get());
+        $q = $this->scanManager->getNewestDnsScansOptim($md->getActiveWatchesIds());
+        $md->setDnsScans($this->scanManager->processDnsScans($q->get()));
 
         // Augment watches with DNS scans
-        $activeWatches->transform(function($item, $key) use ($dnsScans) {
-            $item->dns_scan = $dnsScans->get($item->id);
+        $md->getActiveWatches()->transform(function($item, $key) use ($md) {
+            $item->dns_scan = $md->getDnsScans()->get($item->id);
 
             $strPort = intval($item->scan_port) || 443;
             $item->url = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort);
@@ -94,89 +97,90 @@ class CheckCertificateValidityCommand extends Command
             return $item;
         });
 
-        Log::info('--------------------');
+        Log::info('--------------------3');
 
         // Load latest TLS scans for active watchers for primary IP addresses.
-        $q = $this->scanManager->getNewestTlsScansOptim($activeWatchesIds);
-        $tlsScans = $this->scanManager->processTlsScans($q->get())->keyBy('id');
-        $tlsScansGrp = $tlsScans->groupBy('watch_id');
+        $q = $this->scanManager->getNewestTlsScansOptim($md->getActiveWatchesIds());
+        $md->setTlsScans($this->scanManager->processTlsScans($q->get())->keyBy('id'));
+        $md->setTlsScansGrp($md->getTlsScans()->groupBy('watch_id'));
 
         // Latest CRTsh scan
-        $crtshScans = $this->scanManager->getNewestCrtshScansOptim($activeWatchesIds)->get();
-        $crtshScans = $this->scanManager->processCrtshScans($crtshScans);
-        Log::info(var_export($crtshScans->count(), true));
+        $md->setCrtshScans($this->scanManager->getNewestCrtshScansOptim($md->getActiveWatchesIds())->get());
+        $md->setCrtshScans($this->scanManager->processCrtshScans($md->getCrtshScans()));
+        Log::info(var_export($md->getCrtshScans()->count(), true));
 
         // Certificate IDs from TLS scans - more important certs.
         // Load also crtsh certificates.
-        $watch2certsTls = DataTools::multiMap($tlsScans, function($item, $key){
+        $md->setWatch2certsTls(DataTools::multiMap($md->getTlsScans(), function($item, $key){
             return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf]; // wid => cid, TODO: CA leaf cert?
         })->transform(function($item, $key) {
             return $item->unique()->values();
-        });
+        }));
 
         // mapping cert back to IP & watch id it was taken from
-        $cert2tls = DataTools::multiMap($tlsScans, function($item, $key){
+        $md->setCert2tls(DataTools::multiMap($md->getTlsScans(), function($item, $key){
             return empty($item->cert_id_leaf) ? [] : [$item->cert_id_leaf => $item->id]; // wid => cid, TODO: CA leaf cert?
-        });
+        }));
 
         // watch_id -> leaf cert from the last tls scanning
-        $tlsCertsIds = $watch2certsTls->flatten()->values()->reject(function($item){
+        $md->setTlsCertsIds($md->getWatch2certsTls()->flatten()->values()->reject(function($item){
             return empty($item);
-        })->unique()->values();
+        })->unique()->values());
 
         // watch_id -> array of certificate ids
-        $watch2certsCrtsh = DataTools::multiMap($crtshScans, function($item, $key){
+        $md->setWatch2certsCrtsh(DataTools::multiMap($md->getCrtshScans(), function($item, $key){
             return empty($item->certs_ids) ? [] : [$item->watch_id => $item->certs_ids];  // wid => []
         }, true)->transform(function($item, $key) {
             return $item->unique()->values();
-        });
+        }));
 
-        $crtshCertIds = $crtshScans->reduce(function($carry, $item){
+        $md->setCrtshCertIds($md->getCrtshScans()->reduce(function($carry, $item){
             return $carry->union(collect($item->certs_ids));
-        }, collect())->unique()->sort()->reverse()->take(300);
+        }, collect())->unique()->sort()->reverse()->take(300));
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
-        $cert2watchTls = DataTools::invertMap($watch2certsTls);
-        $cert2watchCrtsh = DataTools::invertMap($watch2certsCrtsh);
+        $md->setCert2watchTls(DataTools::invertMap($md->getWatch2certsTls()));
+        $md->setCert2watchCrtsh(DataTools::invertMap($md->getWatch2certsCrtsh()));
 
-        $certsToLoad = $tlsCertsIds->union($crtshCertIds)->values()->unique()->values();
-        $certs = $this->scanManager->loadCertificates($certsToLoad)->get();
-        $certs = $certs->transform(
-            function ($item, $key) use ($activeWatches, $tlsCertsIds, $crtshCertIds, $tlsScans,
-                                        $certsToLoad, $cert2tls, $cert2watchTls, $cert2watchCrtsh)
+        $md->setCertsToLoad($md->getTlsCertsIds()->union($md->getCrtshCertIds())->values()->unique()->values());
+        $md->setCerts($this->scanManager->loadCertificates($md->getCertsToLoad())->get());
+        $md->setCerts($md->getCerts()->transform(
+            function ($item, $key) use ($md)
             {
-                $this->attributeCertificate($item, $tlsCertsIds->values(), 'found_tls_scan');
-                $this->attributeCertificate($item, $certsToLoad->values(), 'found_crt_sh');
+                $this->attributeCertificate($item, $md->tlsCertsIds->values(), 'found_tls_scan');
+                $this->attributeCertificate($item, $md->certsToLoad->values(), 'found_crt_sh');
                 $this->augmentCertificate($item);
-                $this->addWatchIdToCert($item, $cert2watchTls, $cert2watchCrtsh);
-                $item->tls_scans_ids = $cert2tls->get($item->id, collect());
-                $item->tls_watches = DataTools::pick($activeWatches, $cert2watchTls->get($item->id, []));
-                $item->crtsh_watches = DataTools::pick($activeWatches, $cert2watchCrtsh->get($item->id, []));
+                $this->addWatchIdToCert($item, $md->cert2watchTls, $md->cert2watchCrtsh);
+                $item->tls_scans_ids = $md->cert2tls->get($item->id, collect());
+                $item->tls_watches = DataTools::pick($md->activeWatches, $md->cert2watchTls->get($item->id, []));
+                $item->crtsh_watches = DataTools::pick($md->activeWatches, $md->cert2watchCrtsh->get($item->id, []));
 
-                $this->addTlsScanIpsInfo($item, $tlsScans, $cert2tls);
+                $this->addTlsScanIpsInfo($item, $md->tlsScans, $md->cert2tls);
 
                 return $item;
             })->mapWithKeys(function ($item){
             return [$item->id => $item];
-        });
+        }));
 
-        Log::info(var_export($certs->count(), true));
+        Log::info(var_export($md->getCerts()->count(), true));
 
         // Whois scan load
-        $topDomainsMap = $activeWatches->mapWithKeys(function($item){
+        $md->setTopDomainsMap($md->getActiveWatches()->mapWithKeys(function($item){
             return empty($item->top_domain_id) ? [] : [$item->watch_id => $item->top_domain_id];
-        });
-        $topDomainToWatch = DataTools::invertMap($topDomainsMap);
-        $topDomainIds = $activeWatches->reject(function($item){
+        }));
+
+        $md->setTopDomainToWatch(DataTools::invertMap($md->getTopDomainsMap()));
+        $md->setTopDomainIds($md->getActiveWatches()->reject(function($item){
             return empty($item->top_domain_id);
-        })->pluck('top_domain_id')->unique();
-        $whoisScans = $this->scanManager->getNewestWhoisScansOptim($topDomainIds)->get();
-        $whoisScans = $this->scanManager->processWhoisScans($whoisScans);
+        })->pluck('top_domain_id')->unique());
+
+        $md->setWhoisScans($this->scanManager->getNewestWhoisScansOptim($md->getTopDomainIds())->get());
+        $md->setWhoisScans($this->scanManager->processWhoisScans($md->getWhoisScans()));
 
         //
         // Processing section
         //
-        $tlsCerts = $certs->filter(function ($value, $key) {
+        $tlsCerts = $md->getCerts()->filter(function ($value, $key) {
             return $value->found_tls_scan;
         });
 
@@ -196,7 +200,11 @@ class CheckCertificateValidityCommand extends Command
         });
 
         // 2. incidents
-        // 3. # of servers, active servers, certificates
+        // TODO: ...
+
+        // 3. # of servers, active certificates / all certificates
+
+
 
 
 
@@ -204,6 +212,8 @@ class CheckCertificateValidityCommand extends Command
         //var_dump($activeWatches->toJSON());
         //Log::warning(var_export($activeWatches, true));
     }
+
+
 
     /**
      * Loads all users from the DB
