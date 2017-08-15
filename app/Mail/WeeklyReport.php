@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Keychest\DataClasses\ValidityDataModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -12,13 +13,18 @@ class WeeklyReport extends Mailable
     use Queueable, SerializesModels;
 
     /**
+     * @var ValidityDataModel
+     */
+    public $md;
+
+    /**
      * Create a new message instance.
      *
-     * @return void
+     * @param ValidityDataModel $md
      */
-    public function __construct()
+    public function __construct(ValidityDataModel $md)
     {
-        //
+        $this->md = $md;
     }
 
     /**
@@ -28,6 +34,8 @@ class WeeklyReport extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->view('emails.reports.weekly')
+            ->text('emails.reports.weekly_plain');
     }
 }
