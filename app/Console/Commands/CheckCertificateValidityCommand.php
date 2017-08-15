@@ -7,12 +7,13 @@ use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
+use App\Mail\WeeklyReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\VarDumper\Cloner\Data;
+use Illuminate\Support\Facades\Mail;
 
 class CheckCertificateValidityCommand extends Command
 {
@@ -138,11 +139,27 @@ class CheckCertificateValidityCommand extends Command
 
         // 3. # of servers, active certificates / all certificates
 
+        $this->sendReport($md);
+    }
 
+    /**
+     * Stub function for sending a report
+     * @param ValidityDataModel $md
+     */
+    protected function sendReport(ValidityDataModel $md){
+        // TODO: implement
 
-        //var_dump($activeWatchesIds->toJSON());
-        //var_dump($activeWatches->toJSON());
-        //Log::warning(var_export($activeWatches, true));
+        Log::info('Sending email...');
+        Mail::to($md->getUser())->send(new WeeklyReport($md));
+        $this->onReportSent($md);
+    }
+
+    /**
+     * Update user last report sent date.
+     * @param ValidityDataModel $md
+     */
+    protected function onReportSent(ValidityDataModel $md){
+        // TODO: update
     }
 
     /**
