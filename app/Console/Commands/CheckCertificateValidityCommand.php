@@ -74,6 +74,13 @@ class CheckCertificateValidityCommand extends Command
      * @param $user
      */
     protected function processUser($user){
+        // Check if the last report is not too recent
+        if ($user->last_email_report_sent_at &&
+            Carbon::now()->subDays(7)->lessThanOrEqualTo($user->last_email_report_sent_at))
+        {
+            return;
+        }
+
         $md = new ValidityDataModel();
 
         $md->setActiveWatches($user->watchTargets()->get());
@@ -98,7 +105,50 @@ class CheckCertificateValidityCommand extends Command
         });
 
         Log::info('--------------------3');
+        $this->loadCerts($md);
 
+        Log::info(var_export($md->getCerts()->count(), true));
+        $this->loadWhois($md);
+
+        //
+        // Processing section
+        //
+        $tlsCerts = $md->getCerts()->filter(function ($value, $key) {
+            return $value->found_tls_scan;
+        });
+
+        // 1. expiring certs in 7, 28 days, cert, domain, ip, when
+        $certExpired = $tlsCerts->filter(function ($value, $key) {
+            return Carbon::now()->greaterThanOrEqualTo($value->valid_to);
+        });
+
+        $certExpire7days = $tlsCerts->filter(function ($value, $key) {
+            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
+                && Carbon::now()->addDays(7)->greaterThanOrEqualTo($value->valid_to);
+        });
+
+        $certExpire28days = $tlsCerts->filter(function ($value, $key) {
+            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
+                && Carbon::now()->addDays(28)->greaterThanOrEqualTo($value->valid_to);
+        });
+
+        // 2. incidents
+        // TODO: ...
+
+        // 3. # of servers, active certificates / all certificates
+
+
+
+        //var_dump($activeWatchesIds->toJSON());
+        //var_dump($activeWatches->toJSON());
+        //Log::warning(var_export($activeWatches, true));
+    }
+
+    /**
+     * Loads Scans & certificate related data
+     * @param ValidityDataModel $md
+     */
+    protected function loadCerts(ValidityDataModel $md){
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->scanManager->getNewestTlsScansOptim($md->getActiveWatchesIds());
         $md->setTlsScans($this->scanManager->processTlsScans($q->get())->keyBy('id'));
@@ -161,9 +211,13 @@ class CheckCertificateValidityCommand extends Command
             })->mapWithKeys(function ($item){
             return [$item->id => $item];
         }));
+    }
 
-        Log::info(var_export($md->getCerts()->count(), true));
-
+    /**
+     * Loads whois related data
+     * @param ValidityDataModel $md
+     */
+    protected function loadWhois(ValidityDataModel $md){
         // Whois scan load
         $md->setTopDomainsMap($md->getActiveWatches()->mapWithKeys(function($item){
             return empty($item->top_domain_id) ? [] : [$item->watch_id => $item->top_domain_id];
@@ -176,44 +230,7 @@ class CheckCertificateValidityCommand extends Command
 
         $md->setWhoisScans($this->scanManager->getNewestWhoisScansOptim($md->getTopDomainIds())->get());
         $md->setWhoisScans($this->scanManager->processWhoisScans($md->getWhoisScans()));
-
-        //
-        // Processing section
-        //
-        $tlsCerts = $md->getCerts()->filter(function ($value, $key) {
-            return $value->found_tls_scan;
-        });
-
-        // 1. expiring certs in 7, 28 days, cert, domain, ip, when
-        $certExpired = $tlsCerts->filter(function ($value, $key) {
-            return Carbon::now()->greaterThanOrEqualTo($value->valid_to);
-        });
-
-        $certExpire7days = $tlsCerts->filter(function ($value, $key) {
-            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
-                && Carbon::now()->addDays(7)->greaterThanOrEqualTo($value->valid_to);
-        });
-
-        $certExpire28days = $tlsCerts->filter(function ($value, $key) {
-            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
-                && Carbon::now()->addDays(28)->greaterThanOrEqualTo($value->valid_to);
-        });
-
-        // 2. incidents
-        // TODO: ...
-
-        // 3. # of servers, active certificates / all certificates
-
-
-
-
-
-        //var_dump($activeWatchesIds->toJSON());
-        //var_dump($activeWatches->toJSON());
-        //Log::warning(var_export($activeWatches, true));
     }
-
-
 
     /**
      * Loads all users from the DB
