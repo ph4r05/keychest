@@ -52,8 +52,9 @@
                             {{ suffixResp.length | pluralize('record') }}: <i>{{ suffixes() }}</i>
                         </div>
                         <div class="alert alert-info" v-else-if="!addMore && sldTestRes == 1">
-                            Domain <i>{{ getInputDomain() }}</i> is not a Second Level Domain. Consider adding
-                            <i>{{ currentSld }} to cover all its sub-domains.</i>
+                            This active domain will monitor all sub-domains of <i>{{ getInputDomain() }}</i>.
+                             You may want to consider
+                            <i>{{ currentSld }} to monitor all sub-domains of the registered domain.</i>
                         </div>
 
                         <div class="alert alert-info scan-alert" v-show="sentState == 2">
