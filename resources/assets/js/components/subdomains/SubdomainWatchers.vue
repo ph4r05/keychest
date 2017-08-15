@@ -298,22 +298,22 @@
 
             onDeleteServer(data){
                 swal({
-                    title: 'Are you sure?',
-                    text: "Server will be permanently removed",
+                    title: 'Please confirm removal',
+                    text: "The selected Active Domain will be permanently removed.",
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Yes'
+                    confirmButtonText: 'Remove'
                 }).then(() => {
                     this.onDeleteServerConfirmed(data);
                 }).catch(() => {});
             },
             deleteChecked(){
                 swal({
-                    title: 'Are you sure?',
-                    text: pluralize('Active-domain', this.numSelected, true) + " will be permanently removed",
+                    title: 'Please confirm deletion',
+                    text: pluralize('Active Domain', this.numSelected, true) + " will be permanently removed.",
                     type: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Yes'
+                    confirmButtonText: 'Remove'
                 }).then(() => {
                     this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
                 }).catch(() => {});
