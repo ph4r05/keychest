@@ -85,12 +85,12 @@ class CheckCertificateValidityCommand extends Command
 
         // Augment watches with DNS scans
         $activeWatches->transform(function($item, $key) use ($dnsScans) {
-            $item->dnsScan = $dnsScans->get($item->id);
+            $item->dns_scan = $dnsScans->get($item->id);
 
             $strPort = intval($item->scan_port) || 443;
             $item->url = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort);
-            $item->urlShort = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort === 443 ? null : $strPort);
-            $item->hostport = $item->scan_host . ($strPort === 443 ? '' : ':' . $strPort);
+            $item->url_short = DomainTools::buildUrl($item->scan_scheme, $item->scan_host, $strPort === 443 ? null : $strPort);
+            $item->host_port = $item->scan_host . ($strPort === 443 ? '' : ':' . $strPort);
             return $item;
         });
 
@@ -232,13 +232,41 @@ class CheckCertificateValidityCommand extends Command
      * @return mixed
      */
     protected function addTlsScanIpsInfo($certificate, $tlsScans, $cert2tls){
-        $certificate->tls_watches->transform(function($item, $key) use ($certificate, $tlsScans, $cert2tls){
-            $item->tls_scans = DataTools::pick($tlsScans, $cert2tls->get($certificate->id, []));
-            $item->ips = $item->tls_scans->pluck('ip_scanned')->sort(function($a, $b){
-                return DomainTools::compareIps($a, $b);
-            })->values();
+        $certificate->tls_watches->transform(function($item, $key) use ($certificate, $tlsScans, $cert2tls)
+        {
+            $item->tls_scans = DataTools::pick($tlsScans, $cert2tls->get($certificate->id, []))
+                ->filter(function($item2, $key2) use ($item) {
+                    return $item->id == $item2->watch_id;
+                });
+
+            // All IPs the certificate was found on the given watch
+            $item->tls_ips = $item->tls_scans
+                ->pluck('ip_scanned')
+                ->sort()
+                ->unique()
+                ->pipe(function($col){
+                    return DomainTools::sortByIPs($col, null);
+                })
+                ->values();
+
+            // All IPs available
+            $item->tls_ips_all = $item->dns_scan ?
+                collect($item->dns_scan->dns)
+                    ->sort()
+                    ->unique()
+                    ->transform(function($item, $key){
+                        return $item[1];
+                    })
+                    ->pipe(function($col){
+                        return DomainTools::sortByIPs($col, null);
+                    })
+                    ->values() : collect();
+
+            $item->tls_ips_are_all = $item->dns_scan ? $item->tls_ips->count() == count($item->dns_scan->dns) : false;
             return $item;
         });
+
+        $certificate->tls_watches = DomainTools::sortByDomains($certificate->tls_watches, 'scan_host');
         return $certificate;
     }
 
