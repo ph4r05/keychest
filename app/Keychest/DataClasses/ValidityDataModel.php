@@ -95,6 +95,18 @@ class ValidityDataModel {
     public $certs;
 
     /**
+     * @derived
+     * @var int
+     */
+    public $numCertsActive;
+
+    /**
+     * @derived
+     * @var int
+     */
+    public $numAllCerts;
+
+    /**
      * @var Collection
      */
     public $topDomainsMap;
@@ -448,6 +460,38 @@ class ValidityDataModel {
     public function setTlsCerts($tlsCerts)
     {
         $this->tlsCerts = $tlsCerts;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumCertsActive()
+    {
+        return $this->numCertsActive;
+    }
+
+    /**
+     * @param int $numCertsActive
+     */
+    public function setNumCertsActive($numCertsActive)
+    {
+        $this->numCertsActive = $numCertsActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNumAllCerts()
+    {
+        return $this->numAllCerts;
+    }
+
+    /**
+     * @param mixed $numAllCerts
+     */
+    public function setNumAllCerts($numAllCerts)
+    {
+        $this->numAllCerts = $numAllCerts;
     }
 
 
