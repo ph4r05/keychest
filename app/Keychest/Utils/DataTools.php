@@ -252,4 +252,38 @@ class DataTools {
 
         return $cA - $cB;
     }
+
+    /**
+     * Determine if the given value is callable, but not a string.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
+    public static function useAsCallable($value)
+    {
+        return ! is_string($value) && is_callable($value);
+    }
+
+    /**
+     * Get a value retrieving callback.
+     *
+     * @param  string  $value
+     * @return callable
+     */
+    public static function valueRetriever($value)
+    {
+        if (is_null($value)){
+            return function ($item) {
+                return $item;
+            };
+        }
+
+        if (self::useAsCallable($value)) {
+            return $value;
+        }
+
+        return function ($item) use ($value) {
+            return data_get($item, $value);
+        };
+    }
 }
