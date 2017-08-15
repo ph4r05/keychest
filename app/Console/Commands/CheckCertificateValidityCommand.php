@@ -81,7 +81,7 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        $md = new ValidityDataModel();
+        $md = new ValidityDataModel($user);
 
         $md->setActiveWatches($user->watchTargets()->get());
         $md->setActiveWatches($md->getActiveWatches()->filter(function($value, $key){
@@ -113,24 +113,25 @@ class CheckCertificateValidityCommand extends Command
         //
         // Processing section
         //
-        $tlsCerts = $md->getCerts()->filter(function ($value, $key) {
+
+        $md->setTlsCerts($md->getCerts()->filter(function ($value, $key) {
             return $value->found_tls_scan;
-        });
+        }));
 
         // 1. expiring certs in 7, 28 days, cert, domain, ip, when
-        $certExpired = $tlsCerts->filter(function ($value, $key) {
+        $md->setCertExpired($md->getTlsCerts()->filter(function ($value, $key) {
             return Carbon::now()->greaterThanOrEqualTo($value->valid_to);
-        });
+        }));
 
-        $certExpire7days = $tlsCerts->filter(function ($value, $key) {
+        $md->setCertExpire7days($md->getTlsCerts()->filter(function ($value, $key) {
             return Carbon::now()->lessThanOrEqualTo($value->valid_to)
                 && Carbon::now()->addDays(7)->greaterThanOrEqualTo($value->valid_to);
-        });
+        }));
 
-        $certExpire28days = $tlsCerts->filter(function ($value, $key) {
+        $md->setCertExpire28days($md->getTlsCerts()->filter(function ($value, $key) {
             return Carbon::now()->lessThanOrEqualTo($value->valid_to)
                 && Carbon::now()->addDays(28)->greaterThanOrEqualTo($value->valid_to);
-        });
+        }));
 
         // 2. incidents
         // TODO: ...

@@ -8,9 +8,15 @@
 
 namespace App\Keychest\DataClasses;
 
+use App\User;
 use Illuminate\Support\Collection;
 
 class ValidityDataModel {
+    /**
+     * @var User
+     */
+    public $user;
+
     /**
      * @var Collection
      */
@@ -130,6 +136,46 @@ class ValidityDataModel {
     // Processed
     //
 
+    /**
+     * @derived
+     * @var Collection
+     */
+    public $tlsCerts;
+
+    /**
+     * @derived
+     * @var Collection
+     */
+    public $certExpired;
+
+    /**
+     * @derived
+     * @var Collection
+     */
+    public $certExpire7days;
+
+    /**
+     * @derived
+     * @var Collection
+     */
+    public $certExpire28days;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Constructor
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    /**
+     * ValidityDataModel constructor.
+     * @param User|null $user
+     */
+    public function __construct(User $user=null)
+    {
+        $this->setUser($user);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters & Setters
@@ -138,9 +184,20 @@ class ValidityDataModel {
     */
 
     /**
-     * @var Collection
+     * @return User
      */
-    public $tlsCerts;
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
 
     /**
      * @return Collection
@@ -492,6 +549,54 @@ class ValidityDataModel {
     public function setNumAllCerts($numAllCerts)
     {
         $this->numAllCerts = $numAllCerts;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCertExpired()
+    {
+        return $this->certExpired;
+    }
+
+    /**
+     * @param Collection $certExpired
+     */
+    public function setCertExpired($certExpired)
+    {
+        $this->certExpired = $certExpired;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCertExpire7days()
+    {
+        return $this->certExpire7days;
+    }
+
+    /**
+     * @param Collection $certExpire7days
+     */
+    public function setCertExpire7days($certExpire7days)
+    {
+        $this->certExpire7days = $certExpire7days;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCertExpire28days()
+    {
+        return $this->certExpire28days;
+    }
+
+    /**
+     * @param Collection $certExpire28days
+     */
+    public function setCertExpire28days($certExpire28days)
+    {
+        $this->certExpire28days = $certExpire28days;
     }
 
 
