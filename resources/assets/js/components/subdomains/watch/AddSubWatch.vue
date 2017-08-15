@@ -277,9 +277,10 @@
 
                 ga('send', 'event', 'servers', 'add-domain-wildcard-entered');
                 swal({
-                    title: 'Wildcard domain entered',
-                    text: "You entered domain with a wildcard. It is not needed in the " +
-                    "Active-Domain section as the KeyChest scans for all sub-domains.",
+                    title: 'We do wildcards for you',
+                    text: "Whatever Active Domain you enter, we will look for certificates in all sub-domains, " +
+                     "and start monitoring them (if Watch Now is 'ON') as soon as they are issued. As such we will " +
+                     "remove the '*' from your domain name but don't worry, we know what you want KeyChest to do for you.",
                     type: 'info',
                     confirmButtonText: 'OK',
                 }).then(cont);
