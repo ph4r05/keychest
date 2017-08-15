@@ -8,6 +8,7 @@
 
 namespace App\Keychest\Utils;
 
+use Illuminate\Support\Collection;
 use TrueBV\Punycode;
 
 /**
@@ -104,6 +105,22 @@ class DomainTools {
             $port = 443;
         }
         return $scheme . '://' . $host . ':' . $port;
+    }
+
+    /**
+     * Similar to assembleUrl but port is optional. Equal fnc than in the frontend Req.buildUrl().
+     * @param $scheme
+     * @param $host
+     * @param $port
+     * @return string
+     */
+    public static function buildUrl($scheme, $host, $port){
+        if (empty($scheme)){
+            $scheme = 'https';
+        }
+
+        $ret = $scheme . '://' . $host;
+        return !$port ? $ret : $ret . ':' . $port;
     }
 
     /**
@@ -269,5 +286,172 @@ class DomainTools {
         }
 
         return false;
+    }
+
+    /**
+     * Sorts the collection by hierarchical domain
+     * @param array|Collection $col
+     * @param $callback
+     * @return \Illuminate\Support\Collection
+     */
+    public static function sortByDomains($col, $callback){
+        // global ordering, id -> ranking, sort by the ranking
+        $results = [];
+        $callback = DataTools::valueRetriever($callback);
+
+        // First we will loop through the items and get the comparator from a callback
+        // function which we were given. Then, we will sort the returned values and
+        // and grab the corresponding values for the sorted keys from this array.
+        foreach ($col as $key => $value) {
+            $results[$key] = self::computeDomainSortKey($callback($value, $key));
+        }
+
+        uasort($results, '\App\Keychest\Utils\DataTools::compareArrays');
+
+        // Once we have sorted all of the keys in the array, we will loop through them
+        // and grab the corresponding model so we can set the underlying items list
+        // to the sorted version. Then we'll just return the collection instance.
+        foreach (array_keys($results) as $key) {
+            $results[$key] = $col->get($key);
+        }
+
+        return collect($results);
+    }
+
+    /**
+     * Simple domain sort key for optimized domain sort.
+     * @param $domain
+     * @return array
+     */
+    public static function computeDomainSortKey($domain){
+        return array_reverse(explode('.', $domain));
+    }
+
+    /**
+     * Comparator on domains - hierarchical
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    public static function compareDomainsHierarchical($a, $b){
+        $aPart = array_reverse(explode('.', $a));
+        $bPart = array_reverse(explode('.', $b));
+        return DataTools::compareArrays($aPart, $bPart);
+    }
+
+    /**
+     * Sorts the collection by IPs
+     * @param array|Collection $col
+     * @param $callback
+     * @return \Illuminate\Support\Collection
+     */
+    public static function sortByIPs($col, $callback){
+        if ($col === null){
+            return collect();
+        }
+
+        $cnt = $col instanceof Collection ? $col->count() : count($col);
+        if ($cnt <= 1){
+            return collect($col);
+        }
+
+        // global ordering, id -> ranking, sort by the ranking
+        $results = [];
+        $callback = DataTools::valueRetriever($callback);
+
+        // First we will loop through the items and get the comparator from a callback
+        // function which we were given. Then, we will sort the returned values and
+        // and grab the corresponding values for the sorted keys from this array.
+        foreach ($col as $key => $value) {
+            $results[$key] = self::computeIpSortKey($callback($value, $key));
+        }
+
+        uasort($results, function($a, $b){
+            $aCat = $a[0];
+            $bCat = $b[0];
+            if ($aCat != $bCat){
+                return $aCat - $bCat;
+            }
+
+            return DataTools::compareArrays($a[1], $b[1]);
+        });
+
+        // Once we have sorted all of the keys in the array, we will loop through them
+        // and grab the corresponding model so we can set the underlying items list
+        // to the sorted version. Then we'll just return the collection instance.
+        foreach (array_keys($results) as $key) {
+            $results[$key] = $col->get($key);
+        }
+
+        return collect($results);
+    }
+
+    /**
+     * Computes sort key for sorting by IP - optimized sort.
+     * Otherwise this is computed with each comparison - overhead.
+     * @param $ip
+     * @return array
+     */
+    public static function computeIpSortKey($ip){
+        if (empty($ip)){
+            return [0, null];
+        }
+
+        $cat = self::quickIpCat($ip);
+        $numConv = $cat == 2 ? function($x) {
+            return intval($x);
+        } : function($x){
+            return intval($x, 16);
+        };
+
+        $oct = array_map($numConv, explode($cat == 2 ? '.' : ':', $ip));
+        return [$cat, $oct];
+    }
+
+    /**
+     * Quick & unreliable IP address caregorization. IPv4 vs IPv6
+     * @param $ip
+     * @return int 10 for IPv6, 2 for IPv4
+     */
+    public static function quickIpCat($ip){
+        return strpos($ip, ':') !== false ? 10 : 2;
+    }
+
+    /**
+     * Comparator on IP addresses.
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    public static function compareIps($a, $b){
+        // exact
+        if ($a === $b){
+            return 0;
+        }
+
+        // emptyness
+        if (empty($a)){
+            return -1;
+        } else if (empty($b)){
+            return 1;
+        }
+
+        // categories, ipv4 first
+        $aCat = self::quickIpCat($a);
+        $bCat = self::quickIpCat($b);
+        if ($aCat != $bCat){
+            return $aCat == 2 ? -1 : 1;
+        }
+
+        // octets
+        $numConv = $aCat == 2 ? function($x) {
+            return intval($x);
+        } : function($x){
+            return intval($x, 16);
+        };
+
+        $aOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $a));
+        $bOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $b));
+        return DataTools::compareArrays($aOct, $bOct);
     }
 }

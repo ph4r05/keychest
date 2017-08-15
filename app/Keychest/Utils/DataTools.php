@@ -178,6 +178,31 @@ class DataTools {
     }
 
     /**
+     * Returns subset of the collection / map by the given keys.
+     * Could be implemented as a filter on the key. Syntactic sugar.
+     * @param $col
+     * @param $ids
+     * @return Collection
+     */
+    public static function pick($col, $ids){
+        $idsArr = is_array($ids) || $ids instanceof Traversable;
+        if (!$idsArr){
+            $ids = [$ids];
+        }
+
+        $idSet = array_fill_keys(($ids instanceof Collection) ? $ids->values()->all() : $ids, true);
+        $ret = [];
+
+        foreach($col as $key => $val){
+            if (array_key_exists($key, $idSet)){
+                $ret[$key] = $val;
+            }
+        }
+
+        return collect($ret);
+    }
+
+    /**
      * Processes sort string produced by Vue table, returns parsed result for query.
      * @param $sort
      * @return Collection
@@ -196,5 +221,69 @@ class DataTools {
             }
             return [$item, $asc];
         })->values();
+    }
+
+    /**
+     * Simple comparator on arrays.
+     * Lexicographic comparator
+     * @param $a
+     * @param $b
+     * @return int
+     */
+    public static function compareArrays($a, $b){
+        $cA = count($a);
+        $cB = count($b);
+        $cMin = min($cA, $cB);
+
+        for($i=0; $i < $cMin; $i++){
+            $aa = $a[$i];
+            $bb = $b[$i];
+            $res = 0;
+            if (is_numeric($aa) && is_numeric($bb)){
+                $res = $aa - $bb;
+            } else {
+                $res = strnatcmp($aa, $bb);
+            }
+
+            if ($res != 0){
+                return $res;
+            }
+        }
+
+        return $cA - $cB;
+    }
+
+    /**
+     * Determine if the given value is callable, but not a string.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
+    public static function useAsCallable($value)
+    {
+        return ! is_string($value) && is_callable($value);
+    }
+
+    /**
+     * Get a value retrieving callback.
+     *
+     * @param  string  $value
+     * @return callable
+     */
+    public static function valueRetriever($value)
+    {
+        if (is_null($value)){
+            return function ($item) {
+                return $item;
+            };
+        }
+
+        if (self::useAsCallable($value)) {
+            return $value;
+        }
+
+        return function ($item) use ($value) {
+            return data_get($item, $value);
+        };
     }
 }
