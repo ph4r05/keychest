@@ -117,7 +117,7 @@ class CheckCertificateValidityCommand extends Command
 
         $md->setTlsCerts($md->getCerts()->filter(function ($value, $key) {
             return $value->found_tls_scan;
-        }));
+        })->sortBy('valid_to'));
 
         // 1. expiring certs in 7, 28 days, cert, domain, ip, when
         $md->setCertExpired($md->getTlsCerts()->filter(function ($value, $key) {
