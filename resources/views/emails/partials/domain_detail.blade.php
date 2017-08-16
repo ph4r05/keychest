@@ -2,7 +2,7 @@
     <thead>
         <tr style="text-align: left">
             <th>Domain</th>
-            <th>IPs</th>
+            <th></th>
             <th>Expiration</th>
         </tr>
     </thead>

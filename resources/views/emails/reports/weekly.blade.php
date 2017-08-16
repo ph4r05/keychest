@@ -8,7 +8,7 @@
 
         {{ trans_choice('emails.expiry7', $md->getCertExpire7days()->count(), [
             'certificates' => $md->getCertExpire7days()->count()
-        ]) }} <br/>
+        ]) }} <br/><br/>
 
         @component('emails.partials.domain_detail', ['certs' => $md->getCertExpire7days()])
         @endcomponent
@@ -22,7 +22,7 @@
     @if ($md->getCertExpire28days()->isNotEmpty())
         {{ trans_choice('emails.expiry28', $md->getCertExpire28days()->count(), [
             'certificates' => $md->getCertExpire28days()->count()
-        ]) }} <br/>
+        ]) }} <br/><br/>
 
         @component('emails.partials.domain_detail', ['certs' => $md->getCertExpire28days()])
         @endcomponent
