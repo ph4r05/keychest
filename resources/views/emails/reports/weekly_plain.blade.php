@@ -32,7 +32,7 @@ At the moment, KeyChest monitors: {{ $md->getActiveWatches()->count() }} {{ tran
 
 
 You can see more details about incidents when you login to your dashboard at:
-{{ url('/register') }}
+{{ url('/login') }}
 
 @component('emails.partials.unsubscribe')
 @endcomponent

@@ -43,7 +43,7 @@
 
     <p>
         You can see more details about incidents when you login to your dashboard at:
-        <a href="{{ url('/register') }}">{{ url('/register') }}</a>
+        <a href="{{ url('/login') }}">{{ url('/login') }}</a>
     </p>
 
     <p>
