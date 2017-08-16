@@ -130,7 +130,7 @@ class CheckCertificateValidityCommand extends Command
         }));
 
         $md->setCertExpire28days($md->getTlsCerts()->filter(function ($value, $key) {
-            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
+            return Carbon::now()->addDays(7)->lessThanOrEqualTo($value->valid_to)
                 && Carbon::now()->addDays(28)->greaterThanOrEqualTo($value->valid_to);
         }));
 

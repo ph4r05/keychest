@@ -6,7 +6,8 @@ Hi,
         'certificates' => $md->getCertExpire7days()->count()
     ]) }}
 
-    {{--<domain name> <date>--}}
+    @component('emails.partials.domain_detail_plain', ['certs' => $md->getCertExpire7days()])
+    @endcomponent
 @else
     @lang('emails.expiry7empty')
 @endif
@@ -15,6 +16,9 @@ Hi,
     {{ trans_choice('emails.expiry28', $md->getCertExpire28days()->count(), [
         'certificates' => $md->getCertExpire28days()->count()
     ]) }}
+
+    @component('emails.partials.domain_detail_plain', ['certs' => $md->getCertExpire28days()])
+    @endcomponent
 
 @else
     @lang('emails.expiry28empty')
