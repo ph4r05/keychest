@@ -150,8 +150,11 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        // TODO: enqueue
         Mail::to($md->getUser())->send(new WeeklyReport($md, $news));
+//            ->queue((new WeeklyReport($md, $news))
+//                ->onConnection('database')
+//                ->onQueue('emails'));
+
         $this->onReportSent($md, $news);
     }
 
@@ -167,8 +170,10 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        // TODO: enqueue
         Mail::to($md->getUser())->send(new WeeklyNoServers($md, $news));
+        //    ->queue((new WeeklyNoServers($md, $news))
+        //        ->onConnection('database')
+        //        ->onQueue('emails'));
 
         $md->getUser()->last_email_no_servers_sent_at = Carbon::now();
         $this->onReportSent($md, $news);
