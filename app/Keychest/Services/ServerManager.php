@@ -227,8 +227,55 @@ class ServerManager {
     }
 
     /**
+     * Load server errors for the user
+     * @param int|null $userId
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    public function loadServerErrorsQuery($userId=null){
+        $watchTbl = (new WatchTarget())->getTable();
+        $watchAssocTbl = (new WatchAssoc())->getTable();
+        $dnsTable = (new DnsResult())->getTable();
+        $dnsEntryTable = (new DnsEntry())->getTable();
+        $tlsScanTbl = (new HandshakeScan())->getTable();
+        $lastScanTbl = (new LastScanCache())->getTable();
+
+        $qsl = WatchTarget::query()
+            ->select('w.id')
+            ->selectRaw('
+                SUM(CASE WHEN 
+                    xh.err_code is NOT NULL AND xh.err_code <> 0 AND xh.err_code <> 1 THEN 1 ELSE 0 END
+                ) AS tls_errors')
+            ->selectRaw('COUNT(*) AS tls_all')
+            ->from($watchTbl . ' AS w')
+            ->join($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
+            ->join($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
+            ->join($lastScanTbl . ' AS ls', function(JoinClause $join){
+                $join->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 2')
+                    ->on('ls.obj_id', '=', 'w.id')
+                    ->on('ls.aux_key', '=', 'xde.ip');
+            })
+
+            ->join($tlsScanTbl . ' AS xh', function(JoinClause $join) {
+                $join->on('xh.id', '=', 'ls.scan_id');
+            });
+
+        if ($userId){
+            $qsl = $qsl
+                ->join($watchAssocTbl, $watchAssocTbl.'.watch_id', '=', 'w.id')
+                ->where($watchAssocTbl.'.user_id', '=', $userId)
+                ->whereNull($watchAssocTbl.'.deleted_at');
+        }
+
+        $qsl = $qsl->groupBy('w.id');
+        return $qsl;
+    }
+
+    /**
      * Builds query to load server list, includes also aux columns
      * dns_error, tls_errors to indicate an error in the server listing.
+     *
+     * 'id' returned in the query is ID of the watch association.
      *
      * The columns are in the main query so we can filter & sort on it.
      * Possible optimizations:
@@ -288,40 +335,11 @@ class ServerManager {
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
         $dnsTable = (new DnsResult())->getTable();
-        $dnsEntryTable = (new DnsEntry())->getTable();
-        $tlsScanTbl = (new HandshakeScan())->getTable();
-        $lastScanTbl = (new LastScanCache())->getTable();
 
-        $qsl = WatchTarget::query()
-            ->select('w.id')
-            ->selectRaw('
-                SUM(CASE WHEN 
-                    xh.err_code is NOT NULL AND xh.err_code <> 0 AND xh.err_code <> 1 THEN 1 ELSE 0 END
-                ) AS tls_errors')
-            ->selectRaw('COUNT(*) AS tls_all')
-            ->from($watchTbl . ' AS w')
-            ->join($dnsTable.' AS xd', 'xd.id', '=', 'w.last_dns_scan_id')
-            ->join($dnsEntryTable . ' AS xde', 'xde.scan_id', '=', 'xd.id')
-            ->join($lastScanTbl . ' AS ls', function(JoinClause $join){
-                $join->whereRaw('ls.cache_type = 0')
-                    ->whereRaw('ls.scan_type = 2')
-                    ->on('ls.obj_id', '=', 'w.id')
-                    ->on('ls.aux_key', '=', 'xde.ip');
-            })
+        // Server error query
+        $qsl = $this->loadServerErrorsQuery($userId);
 
-            ->join($tlsScanTbl . ' AS xh', function(JoinClause $join) {
-                $join->on('xh.id', '=', 'ls.scan_id');
-            });
-
-            if ($userId){
-                $qsl = $qsl
-                    ->join($watchAssocTbl, $watchAssocTbl.'.watch_id', '=', 'w.id')
-                    ->where($watchAssocTbl.'.user_id', '=', $userId)
-                    ->whereNull($watchAssocTbl.'.deleted_at');
-            }
-
-            $qsl = $qsl->groupBy('w.id');
-
+        // Basic loading query
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
             ->leftJoin($dnsTable, $dnsTable.'.id', '=', $watchTbl.'.last_dns_scan_id')
@@ -349,7 +367,8 @@ class ServerManager {
         if ($userId){
             $query = $query
                 ->where($watchAssocTbl.'.user_id', '=', $userId)
-                ->whereNull($watchAssocTbl.'.deleted_at');
+                ->whereNull($watchAssocTbl.'.deleted_at')
+                ->whereNull($watchAssocTbl.'.disabled_at');
         }
 
         return $query;
