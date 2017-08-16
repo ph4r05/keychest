@@ -86,6 +86,18 @@ Queued events processing - processing events from web / python worker.
 php artisan queue:work --sleep 0.05
 ```
 
+### DB migrations
+
+```bash
+php artisan migrate
+```
+
+Hack `migrations` table if needed.
+
+```bash
+php artisan migrate:status
+```
+
 ### Mac Setup
 
 ```
