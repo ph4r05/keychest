@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
@@ -41,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(ScanManager::class, function($app){
             return new ScanManager($app);
+        });
+        $this->app->bind(EmailManager::class, function($app){
+            return new EmailManager($app);
         });
     }
 }

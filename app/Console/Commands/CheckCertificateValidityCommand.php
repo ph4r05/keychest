@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Keychest\DataClasses\ValidityDataModel;
+use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
@@ -46,16 +47,23 @@ class CheckCertificateValidityCommand extends Command
     protected $serverManager;
 
     /**
+     * @var EmailManager
+     */
+    protected $emailManager;
+
+    /**
      * Create a new command instance.
      * @param ServerManager $serverManager
      * @param ScanManager $scanManager
+     * @param EmailManager $emailManager
      */
-    public function __construct(ServerManager $serverManager, ScanManager $scanManager)
+    public function __construct(ServerManager $serverManager, ScanManager $scanManager, EmailManager $emailManager)
     {
         parent::__construct();
 
         $this->serverManager = $serverManager;
         $this->scanManager = $scanManager;
+        $this->emailManager = $emailManager;
     }
 
     /**
@@ -163,7 +171,7 @@ class CheckCertificateValidityCommand extends Command
     protected function sendReport(ValidityDataModel $md){
         Log::debug('Sending email...');
 
-        $news = $this->loadEmailNewsToSend($md->getUser());
+        $news = $this->emailManager->loadEmailNewsToSend($md->getUser());
 
         // No watched servers?
         if ($md->getActiveWatches()->isEmpty()){
@@ -174,35 +182,6 @@ class CheckCertificateValidityCommand extends Command
         // TODO: enqueue
         Mail::to($md->getUser())->send(new WeeklyReport($md, $news));
         $this->onReportSent($md, $news);
-    }
-
-    /**
-     * Loads list of the email news to send to the user - not sent already.
-     * @param User $user
-     * @return Collection
-     */
-    protected function loadEmailNewsToSend(User $user){
-        $q = EmailNews::query()
-            ->whereDoesntHave('users', function(Builder $query) use($user) {
-                $query->where('users.id', '=', $user->id);
-            })
-            ->whereNull('deleted_at')
-            ->whereNull('disabled_at')
-            ->where(function(Builder $query){
-               $query->whereNull('schedule_at')
-                   ->orWhere('schedule_at', '<=', 'NOW()');
-            })
-            ->where(function(Builder $query){
-                $query->whereNull('valid_to')
-                    ->orWhere('valid_to', '>=', 'NOW()');
-            })->orderBy('created_at');
-
-        $newsDb = $q->get();
-
-        return $newsDb->transform(function ($item, $key) {
-            $item->show_at = $item->schedule_at ? $item->schedule_at : $item->created_at;
-            return $item;
-        })->sortBy('show_at');
     }
 
     /**
@@ -235,14 +214,7 @@ class CheckCertificateValidityCommand extends Command
         $user->save();
 
         // Save sent news.
-        if ($news && $news->isNotEmpty()) {
-            $user->emailNews()->attach(
-                array_combine(
-                    $news->pluck('id')->values()->all(),
-                    array_fill(0, $news->count(), ['created_at' => Carbon::now()])
-                )
-            );
-        }
+        $this->emailManager->associateNewsToUser($user, $news);
     }
 
     /**
