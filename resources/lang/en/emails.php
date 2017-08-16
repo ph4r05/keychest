@@ -20,4 +20,6 @@ return [
                 .'|Another :certificates certificates will expire within the next 28 days:',
     'expiry28empty' => 'There are no certificates requiring planning of their renewal in the next 28 days.',
 
+    'Notes' => 'A note|Notes',
+
 ];

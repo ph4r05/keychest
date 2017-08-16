@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Collection;
 
 class WeeklyReport extends Mailable
 {
@@ -18,13 +19,19 @@ class WeeklyReport extends Mailable
     public $md;
 
     /**
+     * @var Collection
+     */
+    public $news;
+
+    /**
      * Create a new message instance.
      *
      * @param ValidityDataModel $md
      */
-    public function __construct(ValidityDataModel $md)
+    public function __construct(ValidityDataModel $md, Collection $news)
     {
         $this->md = $md;
+        $this->news = $news;
     }
 
     /**

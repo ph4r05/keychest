@@ -12,3 +12,5 @@ address of this email.
 Kind regards
   {{ config('app.name') }} & Enigma Bridge
 
+@component('emails.partials.news_footer_plain', ['news'=>$news])
+@endcomponent

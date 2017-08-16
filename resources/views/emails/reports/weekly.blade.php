@@ -55,4 +55,7 @@
     Kind regards <br/>
           <i>{{ config('app.name') }} &amp; Enigma Bridge</i>
     </p>
+
+    @component('emails.partials.news_footer', ['news'=>$news])
+    @endcomponent
 @endsection

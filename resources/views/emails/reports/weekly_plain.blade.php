@@ -40,3 +40,6 @@ You can see more details about incidents when you login to your dashboard at:
 Kind regards
   {{ config('app.name') }} & Enigma Bridge
 
+@component('emails.partials.news_footer_plain', ['news'=>$news])
+@endcomponent
+

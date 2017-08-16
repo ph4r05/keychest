@@ -9,9 +9,11 @@ use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
 use App\Mail\WeeklyNoServers;
 use App\Mail\WeeklyReport;
+use App\Models\EmailNews;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -161,22 +163,54 @@ class CheckCertificateValidityCommand extends Command
     protected function sendReport(ValidityDataModel $md){
         Log::debug('Sending email...');
 
+        $news = $this->loadEmailNewsToSend($md->getUser());
+
         // No watched servers?
         if ($md->getActiveWatches()->isEmpty()){
-            $this->sendNoServers($md);
+            $this->sendNoServers($md, $news);
             return;
         }
 
         // TODO: enqueue
-        Mail::to($md->getUser())->send(new WeeklyReport($md));
-        $this->onReportSent($md);
+        Mail::to($md->getUser())->send(new WeeklyReport($md, $news));
+        $this->onReportSent($md, $news);
+    }
+
+    /**
+     * Loads list of the email news to send to the user - not sent already.
+     * @param User $user
+     * @return Collection
+     */
+    protected function loadEmailNewsToSend(User $user){
+        $q = EmailNews::query()
+            ->whereDoesntHave('users', function(Builder $query) use($user) {
+                $query->where('users.id', '=', $user->id);
+            })
+            ->whereNull('deleted_at')
+            ->whereNull('disabled_at')
+            ->where(function(Builder $query){
+               $query->whereNull('schedule_at')
+                   ->orWhere('schedule_at', '<=', 'NOW()');
+            })
+            ->where(function(Builder $query){
+                $query->whereNull('valid_to')
+                    ->orWhere('valid_to', '>=', 'NOW()');
+            })->orderBy('created_at');
+
+        $newsDb = $q->get();
+
+        return $newsDb->transform(function ($item, $key) {
+            $item->show_at = $item->schedule_at ? $item->schedule_at : $item->created_at;
+            return $item;
+        })->sortBy('show_at');
     }
 
     /**
      * Sends no servers yet message
      * @param ValidityDataModel $md
+     * @param Collection $news
      */
-    protected function sendNoServers(ValidityDataModel $md){
+    protected function sendNoServers(ValidityDataModel $md, Collection $news){
         // Check if the last report is not too recent
         if ($md->getUser()->last_email_no_servers_sent_at &&
             Carbon::now()->subDays(28)->lessThanOrEqualTo($md->getUser()->last_email_no_servers_sent_at)) {
@@ -184,20 +218,31 @@ class CheckCertificateValidityCommand extends Command
         }
 
         // TODO: enqueue
-        Mail::to($md->getUser())->send(new WeeklyNoServers($md));
+        Mail::to($md->getUser())->send(new WeeklyNoServers($md, $news));
 
         $md->getUser()->last_email_no_servers_sent_at = Carbon::now();
-        $this->onReportSent($md);
+        $this->onReportSent($md, $news);
     }
 
     /**
      * Update user last report sent date.
      * @param ValidityDataModel $md
+     * @param Collection $news
      */
-    protected function onReportSent(ValidityDataModel $md){
+    protected function onReportSent(ValidityDataModel $md, Collection $news){
         $user = $md->getUser();
         $user->last_email_report_sent_at = Carbon::now();
         $user->save();
+
+        // Save sent news.
+        if ($news && $news->isNotEmpty()) {
+            $user->emailNews()->attach(
+                array_combine(
+                    $news->pluck('id')->values()->all(),
+                    array_fill(0, $news->count(), ['created_at' => Carbon::now()])
+                )
+            );
+        }
     }
 
     /**
