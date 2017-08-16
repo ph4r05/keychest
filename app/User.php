@@ -47,7 +47,17 @@ class User extends Authenticatable
             'user_id',
             'watch_id')
             ->withTimestamps()
-            ->withPivot(['deleted_at', 'scan_periodicity', 'scan_type']);
+            ->withPivot(['deleted_at', 'disabled_at', 'scan_periodicity', 'scan_type']);
+    }
+
+    /**
+     * Active watches only
+     * @return mixed
+     */
+    public function activeWatchTargets(){
+        return $this->watchTargets()
+            ->whereNull('deleted_at')
+            ->whereNull('disabled_at');
     }
 
     /**
