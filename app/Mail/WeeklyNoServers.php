@@ -43,6 +43,7 @@ class WeeklyNoServers extends Mailable
     public function build()
     {
         return $this
+            ->subject('Weekly Report')
             ->view('emails.reports.weekly_no_servers')
             ->text('emails.reports.weekly_no_servers_plain');
     }
