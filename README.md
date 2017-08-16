@@ -72,6 +72,14 @@ On Vue component modification re-upload compiled resources in `public/`
 
 Do not edit CSS / JS files in `public/` directly, its generated. Changes will be lost.
 
+### Task scheduler
+
+Add to crontab: 
+
+```
+* * * * * nginx php /var/www/keychest/artisan schedule:run >> /dev/null 2>&1
+```
+
 ### Operation
 
 Queue management - obsolete now processed by python component.
