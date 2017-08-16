@@ -7,6 +7,7 @@ use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
+use App\Mail\WeeklyNoServers;
 use App\Mail\WeeklyReport;
 use App\User;
 use Carbon\Carbon;
@@ -158,13 +159,34 @@ class CheckCertificateValidityCommand extends Command
      * @param ValidityDataModel $md
      */
     protected function sendReport(ValidityDataModel $md){
-        // TODO: implement
+        Log::debug('Sending email...');
 
-        Log::info('Sending email...');
+        // No watched servers?
+        if ($md->getActiveWatches()->isEmpty()){
+            $this->sendNoServers($md);
+            return;
+        }
 
         // TODO: enqueue
         Mail::to($md->getUser())->send(new WeeklyReport($md));
+        $this->onReportSent($md);
+    }
 
+    /**
+     * Sends no servers yet message
+     * @param ValidityDataModel $md
+     */
+    protected function sendNoServers(ValidityDataModel $md){
+        // Check if the last report is not too recent
+        if ($md->getUser()->last_email_no_servers_sent_at &&
+            Carbon::now()->subDays(28)->lessThanOrEqualTo($md->getUser()->last_email_no_servers_sent_at)) {
+            return;
+        }
+
+        // TODO: enqueue
+        Mail::to($md->getUser())->send(new WeeklyNoServers($md));
+
+        $md->getUser()->last_email_no_servers_sent_at = Carbon::now();
         $this->onReportSent($md);
     }
 
