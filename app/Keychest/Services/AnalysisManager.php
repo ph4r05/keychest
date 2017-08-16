@@ -60,12 +60,8 @@ class AnalysisManager
      * @return $this
      */
     public function loadHosts(User $user, ValidityDataModel $md){
-        $md->setActiveWatches($user->watchTargets()->get());
-
-        $md->setActiveWatches($md->getActiveWatches()->filter(function($value, $key){
-            return empty($value->pivot->deleted_at);
-        })->keyBy('id'));
-        $md->setActiveWatchesIds($md->getActiveWatches()->pluck('id'));
+        $md->setActiveWatches($user->activeWatchTargets()->get()->keyBy('id'));
+        $md->setActiveWatchesIds($md->getActiveWatches()->pluck('id')->sort()->values());
 
         // Load all newest DNS scans for active watches
         $q = $this->scanManager->getNewestDnsScansOptim($md->getActiveWatchesIds());
