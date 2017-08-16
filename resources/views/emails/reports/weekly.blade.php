@@ -46,6 +46,10 @@
         <a href="{{ url('/register') }}">{{ url('/register') }}</a>
     </p>
 
+    <p>
+        @component('emails.partials.unsubscribe')
+        @endcomponent
+    </p>
 
     <p>
     Kind regards <br/>

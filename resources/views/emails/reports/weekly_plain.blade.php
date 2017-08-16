@@ -34,7 +34,9 @@ At the moment, KeyChest monitors: {{ $md->getActiveWatches()->count() }} {{ tran
 You can see more details about incidents when you login to your dashboard at:
 {{ url('/register') }}
 
+@component('emails.partials.unsubscribe')
+@endcomponent
+
 Kind regards
   {{ config('app.name') }} & Enigma Bridge
-
 
