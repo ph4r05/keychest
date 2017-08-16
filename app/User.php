@@ -49,4 +49,17 @@ class User extends Authenticatable
             ->withTimestamps()
             ->withPivot(['deleted_at', 'scan_periodicity', 'scan_type']);
     }
+
+    /**
+     * Email news already sent to the user
+     */
+    public function emailNews()
+    {
+        return $this->belongsToMany(
+            'App\Models\EmailNews',
+            'email_news_user',
+            'user_id',
+            'email_news_id')
+            ->withTimestamps();
+    }
 }
