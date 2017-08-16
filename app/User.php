@@ -33,7 +33,7 @@ class User extends Authenticatable
      */
     public function getDates()
     {
-        return array('created_at', 'updated_at', 'last_email_report_sent_at');
+        return array('created_at', 'updated_at', 'last_email_report_sent_at', 'last_email_no_servers_sent_at');
     }
 
     /**

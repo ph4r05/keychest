@@ -72,16 +72,29 @@ class CheckCertificateValidityCommand extends Command
 
     /**
      * Check for one particular user.
-     * @param $user
+     * @param User $user
      */
-    protected function processUser($user){
-        // Check if the last report is not too recent
-        if ($user->last_email_report_sent_at &&
-            Carbon::now()->subDays(7)->lessThanOrEqualTo($user->last_email_report_sent_at))
-        {
+    protected function processUser($user)
+    {
+        // User disabled reporting
+        if ($user->weekly_emails_disabled) {
             return;
         }
 
+        // Check if the last report is not too recent
+        if ($user->last_email_report_sent_at &&
+            Carbon::now()->subDays(7)->lessThanOrEqualTo($user->last_email_report_sent_at)) {
+            return;
+        }
+
+        $this->loadUserDataAndProcess($user);
+    }
+
+    /**
+     * Loads user related data and proceeds to the reporting.
+     * @param User $user
+     */
+    protected function loadUserDataAndProcess($user){
         $md = new ValidityDataModel($user);
 
         $md->setActiveWatches($user->watchTargets()->get());
@@ -137,8 +150,6 @@ class CheckCertificateValidityCommand extends Command
         // 2. incidents
         // TODO: ...
 
-        // 3. # of servers, active certificates / all certificates
-
         $this->sendReport($md);
     }
 
@@ -150,7 +161,10 @@ class CheckCertificateValidityCommand extends Command
         // TODO: implement
 
         Log::info('Sending email...');
+
+        // TODO: enqueue
         Mail::to($md->getUser())->send(new WeeklyReport($md));
+
         $this->onReportSent($md);
     }
 
@@ -159,7 +173,9 @@ class CheckCertificateValidityCommand extends Command
      * @param ValidityDataModel $md
      */
     protected function onReportSent(ValidityDataModel $md){
-        // TODO: update
+        $user = $md->getUser();
+        $user->last_email_report_sent_at = Carbon::now();
+        $user->save();
     }
 
     /**
