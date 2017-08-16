@@ -61,6 +61,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Latest DNS scan
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function latestDnsScan(){
+        return $this->belongsTo('\App\Models\DnsResult', 'last_dns_scan_id');
+    }
+
+    /**
      * Email news already sent to the user
      */
     public function emailNews()

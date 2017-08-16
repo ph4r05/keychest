@@ -19,16 +19,16 @@ class DnsEntry extends Model
 
     protected $table = 'scan_dns_entry';
 
+    public function getDates()
+    {
+        return array();
+    }
+
     /**
      * Get the scan_id record for this result
      */
     public function dnsScan()
     {
         return $this->belongsTo('App\Model\DnsResult', 'scan_id');
-    }
-
-    public function getDates()
-    {
-        return array();
     }
 }
