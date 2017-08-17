@@ -4,6 +4,12 @@
     <p>Hi,</p>
 
     <p>
+        At the moment, KeyChest monitors:
+        {{ $md->getNumActiveWatches() }} {{ trans_choice('emails.server', $md->getNumActiveWatches()) }},
+        {{ $md->getNumCertsActive() }} {{ trans_choice('emails.certificate', $md->getNumCertsActive()) }}.
+    </p>
+
+    <p>
     @if ($md->getCertExpire7days()->isNotEmpty())
 
         {{ trans_choice('emails.expiry7', $md->getCertExpire7days()->count(), [
@@ -34,12 +40,6 @@
 
     {{--”“--}}
     {{--We have also detected XXX incidents related to HTTPS/TLS configuration on your servers.--}}
-
-    <p>
-        At the moment, KeyChest monitors:
-        {{ $md->getNumActiveWatches() }} {{ trans_choice('emails.server', $md->getNumActiveWatches()) }},
-        {{ $md->getNumCertsActive() }} {{ trans_choice('emails.certificate', $md->getNumCertsActive()) }}.
-    </p>
 
     <p>
         You can see more details about incidents when you login to your dashboard at:
