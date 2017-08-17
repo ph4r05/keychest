@@ -25,7 +25,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command(CheckCertificateValidityCommand::class)->hourly()->withoutOverlapping();
+         $schedule->command(CheckCertificateValidityCommand::class)  // ['--id=2']
+             ->everyTenMinutes()
+             ->withoutOverlapping();
     }
 
     /**
