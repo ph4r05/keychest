@@ -27,12 +27,6 @@ class ReportDataModel
     public $numActiveWatches;
 
     /**
-     * @derived
-     * @var Collection
-     */
-    public $activeWatchesIds;
-
-    /**
      * @var int
      */
     public $numAllCerts;
@@ -110,22 +104,6 @@ class ReportDataModel
     public function setNumActiveWatches($numActiveWatches)
     {
         $this->numActiveWatches = $numActiveWatches;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getActiveWatchesIds()
-    {
-        return $this->activeWatchesIds;
-    }
-
-    /**
-     * @param Collection $activeWatchesIds
-     */
-    public function setActiveWatchesIds($activeWatchesIds)
-    {
-        $this->activeWatchesIds = $activeWatchesIds;
     }
 
     /**

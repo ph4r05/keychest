@@ -145,13 +145,35 @@ class CheckCertificateValidityCommand extends Command
     protected function translateModel(ValidityDataModel $md){
         $mm = new ReportDataModel($md->getUser());
         $mm->setNumActiveWatches($md->getActiveWatches()->count());
-        $mm->setActiveWatchesIds($md->getActiveWatchesIds());
         $mm->setNumAllCerts($md->getNumAllCerts());
         $mm->setNumCertsActive($md->getNumCertsActive());
-        $mm->setCertExpired($md->getCertExpired());
-        $mm->setCertExpire7days($md->getCertExpire7days());
-        $mm->setCertExpire28days($md->getCertExpire28days());
+
+        $mm->setCertExpired($this->thinCertsModel($md->getCertExpired()));
+        $mm->setCertExpire7days($this->thinCertsModel($md->getCertExpire7days()));
+        $mm->setCertExpire28days($this->thinCertsModel($md->getCertExpire28days()));
         return $mm;
+    }
+
+    /**
+     * Removes unnecessary data from the certs model - removes the serialization overhead.
+     * @param Collection $certs
+     * @return Collection
+     */
+    protected function thinCertsModel(Collection $certs){
+        if (!$certs){
+            return collect();
+        }
+
+        return $certs->map(function($item, $key){
+            if ($item->tls_watches){
+                $item->tls_watches->map(function($item2, $key2){
+                    $item2->dns_scan = collect();
+                    $item2->tls_scans = collect();
+                    return $item2;
+                });
+            }
+            return $item;
+        });
     }
 
     /**
