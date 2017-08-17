@@ -8,6 +8,7 @@
 
 namespace App\Keychest\DataClasses;
 
+use App\Keychest\Utils\AnalysisTools;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Queue\SerializesModels;
@@ -170,15 +171,12 @@ class ValidityDataModel {
     }
 
     /**
+     * TLS certificates
      * @return Collection
      */
     public function getTlsCerts()
     {
-        return $this->getCerts() ? $this->getCerts()
-            ->filter(function ($value, $key) {
-                return $value->found_tls_scan;
-            })
-            ->sortBy('valid_to') : collect();
+        return AnalysisTools::getTlsCerts($this->getCerts());
     }
 
     /**
@@ -187,9 +185,7 @@ class ValidityDataModel {
      */
     public function getCertExpired()
     {
-        return $this->getTlsCerts()->filter(function ($value, $key) {
-            return Carbon::now()->greaterThanOrEqualTo($value->valid_to);
-        });
+        return AnalysisTools::getCertExpired($this->getCerts());
     }
 
     /**
@@ -198,10 +194,7 @@ class ValidityDataModel {
      */
     public function getCertExpire7days()
     {
-        return $this->getTlsCerts()->filter(function ($value, $key) {
-            return Carbon::now()->lessThanOrEqualTo($value->valid_to)
-                && Carbon::now()->addDays(7)->greaterThanOrEqualTo($value->valid_to);
-        });
+        return AnalysisTools::getCertExpire7days($this->getCerts());
     }
 
     /**
@@ -210,10 +203,7 @@ class ValidityDataModel {
      */
     public function getCertExpire28days()
     {
-        return $this->getTlsCerts()->filter(function ($value, $key) {
-            return Carbon::now()->addDays(7)->lessThanOrEqualTo($value->valid_to)
-                && Carbon::now()->addDays(28)->greaterThanOrEqualTo($value->valid_to);
-        });
+        return AnalysisTools::getCertExpire28days($this->getCerts());
     }
 
     /*
