@@ -43,6 +43,7 @@ class WeeklyReport extends Mailable
     public function build()
     {
         return $this
+            ->subject(config('app.name') .' weekly report')
             ->view('emails.reports.weekly')
             ->text('emails.reports.weekly_plain');
     }
