@@ -46,6 +46,7 @@
     "less-loader": "^4.0.5",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "numeral": "^2.0.6",
     "pluralize": "^6.0.0",
     "psl": "^1.1.19",
