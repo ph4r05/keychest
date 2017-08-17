@@ -16,6 +16,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -150,11 +151,7 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        Mail::to($md->getUser())->send(new WeeklyReport($md, $news));
-//            ->queue((new WeeklyReport($md, $news))
-//                ->onConnection('database')
-//                ->onQueue('emails'));
-
+        $this->sendMail($md->getUser(), new WeeklyReport($md, $news), false);
         $this->onReportSent($md, $news);
     }
 
@@ -170,13 +167,27 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        Mail::to($md->getUser())->send(new WeeklyNoServers($md, $news));
-        //    ->queue((new WeeklyNoServers($md, $news))
-        //        ->onConnection('database')
-        //        ->onQueue('emails'));
+        $this->sendMail($md->getUser(), new WeeklyNoServers($md, $news), false);
 
         $md->getUser()->last_email_no_servers_sent_at = Carbon::now();
         $this->onReportSent($md, $news);
+    }
+
+    /**
+     * Actually sends the email, either synchronously or enqueue for sending.
+     * @param User $user
+     * @param Mailable $mailable
+     * @param bool $enqueue
+     */
+    protected function sendMail(User $user, Mailable $mailable, $enqueue=false){
+        $s = Mail::to($user);
+        if ($enqueue){
+            $s->queue($mailable
+                ->onConnection('database')
+                ->onQueue('emails'));
+        } else {
+            $s->send($mailable);
+        }
     }
 
     /**
