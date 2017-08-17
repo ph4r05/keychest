@@ -144,7 +144,7 @@ class CheckCertificateValidityCommand extends Command
      */
     protected function translateModel(ValidityDataModel $md){
         $mm = new ReportDataModel($md->getUser());
-        $mm->setActiveWatches($md->getActiveWatches());
+        $mm->setNumActiveWatches($md->getActiveWatches()->count());
         $mm->setActiveWatchesIds($md->getActiveWatchesIds());
         $mm->setNumAllCerts($md->getNumAllCerts());
         $mm->setNumCertsActive($md->getNumCertsActive());

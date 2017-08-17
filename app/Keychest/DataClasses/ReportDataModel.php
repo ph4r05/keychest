@@ -22,9 +22,9 @@ class ReportDataModel
     public $user;
 
     /**
-     * @var Collection
+     * @var int
      */
-    public $activeWatches;
+    public $numActiveWatches;
 
     /**
      * @derived
@@ -97,19 +97,19 @@ class ReportDataModel
     }
 
     /**
-     * @return Collection
+     * @return int
      */
-    public function getActiveWatches()
+    public function getNumActiveWatches()
     {
-        return $this->activeWatches;
+        return $this->numActiveWatches;
     }
 
     /**
-     * @param Collection $activeWatches
+     * @param int $numActiveWatches
      */
-    public function setActiveWatches($activeWatches)
+    public function setNumActiveWatches($numActiveWatches)
     {
-        $this->activeWatches = $activeWatches;
+        $this->numActiveWatches = $numActiveWatches;
     }
 
     /**
