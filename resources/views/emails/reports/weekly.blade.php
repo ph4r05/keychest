@@ -38,7 +38,7 @@
     <p>
         At the moment, KeyChest monitors:
         {{ $md->getActiveWatches()->count() }} {{ trans_choice('emails.server', $md->getActiveWatches()->count()) }},
-        {{ $md->getTlsCertsIds()->count() }} {{ trans_choice('emails.certificate', $md->getTlsCertsIds()->count()) }}.
+        {{ $md->getNumCertsActive() }} {{ trans_choice('emails.certificate', $md->getNumCertsActive()) }}.
     </p>
 
     <p>

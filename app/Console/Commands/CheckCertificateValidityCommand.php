@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Keychest\DataClasses\ReportDataModel;
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\AnalysisManager;
 use App\Keychest\Services\EmailManager;
@@ -137,6 +138,23 @@ class CheckCertificateValidityCommand extends Command
     }
 
     /**
+     * Translates model from ValidityDataModel to ReportDataModel
+     * @param ValidityDataModel $md
+     * @return ReportDataModel
+     */
+    protected function translateModel(ValidityDataModel $md){
+        $mm = new ReportDataModel($md->getUser());
+        $mm->setActiveWatches($md->getActiveWatches());
+        $mm->setActiveWatchesIds($md->getActiveWatchesIds());
+        $mm->setNumAllCerts($md->getNumAllCerts());
+        $mm->setNumCertsActive($md->getNumCertsActive());
+        $mm->setCertExpired($md->getCertExpired());
+        $mm->setCertExpire7days($md->getCertExpire7days());
+        $mm->setCertExpire28days($md->getCertExpire28days());
+        return $mm;
+    }
+
+    /**
      * Stub function for sending a report
      * @param ValidityDataModel $md
      */
@@ -151,7 +169,8 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        $this->sendMail($md->getUser(), new WeeklyReport($md, $news), false);
+        $mm = $this->translateModel($md);
+        $this->sendMail($md->getUser(), new WeeklyReport($mm, $news), false);
         $this->onReportSent($md, $news);
     }
 
@@ -167,7 +186,8 @@ class CheckCertificateValidityCommand extends Command
             return;
         }
 
-        $this->sendMail($md->getUser(), new WeeklyNoServers($md, $news), false);
+        $mm = $this->translateModel($md);
+        $this->sendMail($md->getUser(), new WeeklyNoServers($mm, $news), false);
 
         $md->getUser()->last_email_no_servers_sent_at = Carbon::now();
         $this->onReportSent($md, $news);

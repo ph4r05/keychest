@@ -28,7 +28,7 @@ Hi,
 {{--We have also detected XXX incidents related to HTTPS/TLS configuration on your servers.--}}
 
 
-At the moment, KeyChest monitors: {{ $md->getActiveWatches()->count() }} {{ trans_choice('emails.server', $md->getActiveWatches()->count()) }}, {{ $md->getTlsCertsIds()->count() }} {{ trans_choice('emails.certificate', $md->getTlsCertsIds()->count()) }}.
+At the moment, KeyChest monitors: {{ $md->getActiveWatches()->count() }} {{ trans_choice('emails.server', $md->getActiveWatches()->count()) }}, {{ $md->getNumCertsActive() }} {{ trans_choice('emails.certificate', $md->getNumCertsActive()) }}.
 
 
 You can see more details about incidents when you login to your dashboard at:

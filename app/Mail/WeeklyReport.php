@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Keychest\DataClasses\ReportDataModel;
 use App\Keychest\DataClasses\ValidityDataModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -26,9 +27,9 @@ class WeeklyReport extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param ValidityDataModel $md
+     * @param ReportDataModel $md
      */
-    public function __construct(ValidityDataModel $md, Collection $news)
+    public function __construct(ReportDataModel $md, Collection $news)
     {
         $this->md = $md;
         $this->news = $news;
