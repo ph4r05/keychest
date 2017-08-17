@@ -26,6 +26,10 @@ At the moment, KeyChest monitors: {{ $md->getNumActiveWatches() }} {{ trans_choi
     @lang('emails.expiry28empty')
 @endif
 
+@if ($md->getCertExpire7days()->isNotEmpty() || $md->getCertExpire28days()->isNotEmpty())
+Please note all times are in UTC timezone.
+@endif
+
 {{--”“--}}
 {{--We have also detected XXX incidents related to HTTPS/TLS configuration on your servers.--}}
 

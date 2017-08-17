@@ -38,6 +38,12 @@
     @endif
     </p>
 
+    @if ($md->getCertExpire7days()->isNotEmpty() || $md->getCertExpire28days()->isNotEmpty())
+    <p>
+        Please note all times are in UTC timezone.
+    </p>
+    @endif
+
     {{--”“--}}
     {{--We have also detected XXX incidents related to HTTPS/TLS configuration on your servers.--}}
 
