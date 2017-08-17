@@ -7,6 +7,8 @@
  */
 
 namespace App\Keychest\Utils;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Collection;
 use Traversable;
 
@@ -285,5 +287,20 @@ class DataTools {
         return function ($item) use ($value) {
             return data_get($item, $value);
         };
+    }
+
+    /**
+     * Sanitizes the timezone with carbon.
+     * @param $timezone
+     * @return string
+     */
+    public static function sanitizeTimezone($timezone){
+        try{
+            Carbon::now($timezone);
+            return $timezone;
+
+        } catch(Exception $e){
+            return 'UTC';
+        }
     }
 }

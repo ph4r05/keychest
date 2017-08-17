@@ -43,6 +43,12 @@ class SendUserWeeklyReport implements ShouldQueue
     protected $user;
 
     /**
+     * Options
+     * @var Collection
+     */
+    protected $options;
+
+    /**
      * Scan manager
      * @var ScanManager
      */
@@ -66,10 +72,12 @@ class SendUserWeeklyReport implements ShouldQueue
     /**
      * Create a new job instance.
      * @param User $user
+     * @param Collection|array $options
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $options = null)
     {
         $this->user = $user;
+        $this->options = $options ? collect($options) : collect();
     }
 
     /**
@@ -89,8 +97,10 @@ class SendUserWeeklyReport implements ShouldQueue
         $this->analysisManager = $analysisManager;
 
         // Double check last sent email, if job is enqueued multiple times by any chance, do not spam the user.
-        if ($this->user->last_email_report_sent_at &&
-            Carbon::now()->subDays(4)->lessThanOrEqualTo($this->user->last_email_report_sent_at)) {
+        if (!$this->isForce() &&
+            $this->user->last_email_report_sent_at &&
+            Carbon::now()->subHours(2)->lessThanOrEqualTo($this->user->last_email_report_sent_at))
+        {
             Log::info('Report for the user '
                 . $this->user->id . ' already sent recently: '
                 . $this->user->last_email_report_sent_at);
@@ -234,4 +244,11 @@ class SendUserWeeklyReport implements ShouldQueue
         $this->emailManager->associateNewsToUser($user, $news);
     }
 
+    /**
+     * Force send?
+     * @return mixed
+     */
+    protected function isForce(){
+        return $this->options->get('force', false);
+    }
 }
