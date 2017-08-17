@@ -27,7 +27,7 @@ At the moment, KeyChest monitors: {{ $md->getNumActiveWatches() }} {{ trans_choi
 @endif
 
 @if ($md->getCertExpire7days()->isNotEmpty() || $md->getCertExpire28days()->isNotEmpty())
-Please note all times are in UTC timezone.
+Please note all times are in GMT timezone.
 @endif
 
 {{--”“--}}

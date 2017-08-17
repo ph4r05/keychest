@@ -40,7 +40,7 @@
 
     @if ($md->getCertExpire7days()->isNotEmpty() || $md->getCertExpire28days()->isNotEmpty())
     <p>
-        Please note all times are in UTC timezone.
+        Please note all times are in GMT timezone.
     </p>
     @endif
 
