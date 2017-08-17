@@ -19,6 +19,7 @@ window.pluralize = require('pluralize');
 
 require('jquery-ui/ui/effects/effect-shake');
 require('bootstrap-switch');
+require('moment-timezone');
 
 /**
  * Admin LTE
@@ -82,3 +83,6 @@ console.log('Vue.js init');
 const app = new Vue({
     el: '#app'
 });
+
+// Fill in missing time zones
+window.Req.timezoneCheck();
