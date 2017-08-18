@@ -88,6 +88,42 @@ function getJobResult(uuid, onLoaded, onFail){
 }
 
 /**
+ * Checks if user is logged in and has timezone filled in. If not, uploads current one.
+ */
+function doTimezoneCheck(){
+    if (!window.Laravel){
+        window.setTimeout(doTimezoneCheck, 5000);
+        return;
+    }
+
+    const laravel = window.Laravel;
+    if (!laravel.authUserId || laravel.userTz){
+        return;
+    }
+
+    const data = {
+        'timezone': Moment.tz.guess(),
+        'utcOffset': Moment().utcOffset()
+    };
+
+    axios.post('/timezoneSet', data)
+        .then(response => {
+
+        })
+        .catch(e => {
+            console.log(e);
+        });
+}
+
+/**
+ * Basic time zone checking.
+ * If not filled in, upload one
+ */
+function timezoneCheck(){
+    window.setTimeout(doTimezoneCheck, 1000);
+}
+
+/**
  * Starts keepalive mechanism to keep session alive & detect failure of CSRF token before user does.
  * @param options
  * @param onFail
@@ -580,6 +616,8 @@ module.exports = {
     submitJob: submitJob,
     getJobState: getJobState,
     getJobResult: getJobResult,
+    timezoneCheck: timezoneCheck,
+
     defval: defval,
     isEmpty: isEmpty,
     isSameUrl: isSameUrl,

@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 
-class WeeklyReport extends Mailable
+class WeeklyNoServers extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -28,6 +28,7 @@ class WeeklyReport extends Mailable
      * Create a new message instance.
      *
      * @param ReportDataModel $md
+     * @param Collection $news
      */
     public function __construct(ReportDataModel $md, Collection $news)
     {
@@ -44,7 +45,7 @@ class WeeklyReport extends Mailable
     {
         return $this
             ->subject(config('app.name') .' weekly report')
-            ->view('emails.reports.weekly')
-            ->text('emails.reports.weekly_plain');
+            ->view('emails.reports.weekly_no_servers')
+            ->text('emails.reports.weekly_no_servers_plain');
     }
 }

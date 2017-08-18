@@ -3,7 +3,12 @@
 return [
 
     'max_servers' => env('APP_MAX_SERVERS', 1000),
-    'max_active_domains' => env('APP_ACTIVE_DOMAINS', 1000)
+    'max_active_domains' => env('APP_ACTIVE_DOMAINS', 1000),
+
+    'wrk_weekly_report_conn' => env('WORK_WEEKLY_REPORT_CONN', 'database'),
+    'wrk_weekly_report_queue' => env('WORK_WEEKLY_REPORT_QUEUE', 'default'),
+    'wrk_weekly_emails_conn' => env('WORK_WEEKLY_EMAILS_CONN', 'database'),
+    'wrk_weekly_emails_queue' => env('WORK_WEEKLY_EMAILS_QUEUE', 'emails'),
 
 ];
 

@@ -339,7 +339,8 @@ class ScanManager {
             ->select($watchTbl.'.*', $watchAssocTbl.'.*', $watchTbl.'.id as wid', $baseDomainTbl.'.domain_name AS domain')
             ->leftJoin($baseDomainTbl, $baseDomainTbl.'.id', '=', $watchTbl.'.top_domain_id')
             ->where($watchAssocTbl.'.user_id', '=', $userId)
-            ->whereNull($watchAssocTbl.'.deleted_at');
+            ->whereNull($watchAssocTbl.'.deleted_at')
+            ->whereNull($watchAssocTbl.'.disabled_at');
         return $query;
     }
 

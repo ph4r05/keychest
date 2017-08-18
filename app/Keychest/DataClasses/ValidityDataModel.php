@@ -8,10 +8,15 @@
 
 namespace App\Keychest\DataClasses;
 
+use App\Keychest\Utils\AnalysisTools;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
 class ValidityDataModel {
+    // use SerializesModels;
+
     /**
      * @var User
      */
@@ -101,18 +106,6 @@ class ValidityDataModel {
     public $certs;
 
     /**
-     * @derived
-     * @var int
-     */
-    public $numCertsActive;
-
-    /**
-     * @derived
-     * @var int
-     */
-    public $numAllCerts;
-
-    /**
      * @var Collection
      */
     public $topDomainsMap;
@@ -136,30 +129,6 @@ class ValidityDataModel {
     // Processed
     //
 
-    /**
-     * @derived
-     * @var Collection
-     */
-    public $tlsCerts;
-
-    /**
-     * @derived
-     * @var Collection
-     */
-    public $certExpired;
-
-    /**
-     * @derived
-     * @var Collection
-     */
-    public $certExpire7days;
-
-    /**
-     * @derived
-     * @var Collection
-     */
-    public $certExpire28days;
-
     /*
     |--------------------------------------------------------------------------
     | Constructor
@@ -174,6 +143,67 @@ class ValidityDataModel {
     public function __construct(User $user=null)
     {
         $this->setUser($user);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Derived data views
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    /**
+     * Number of all certificates loaded
+     * @return mixed
+     */
+    public function getNumAllCerts()
+    {
+        return $this->getCerts() ? $this->getCerts()->count() : 0;
+    }
+
+    /**
+     * Number of TLS certificates
+     * @return int
+     */
+    public function getNumCertsActive()
+    {
+        return $this->getTlsCerts()->count();
+    }
+
+    /**
+     * TLS certificates
+     * @return Collection
+     */
+    public function getTlsCerts()
+    {
+        return AnalysisTools::getTlsCerts($this->getCerts());
+    }
+
+    /**
+     * TLS expired certs
+     * @return Collection
+     */
+    public function getCertExpired()
+    {
+        return AnalysisTools::getCertExpired($this->getCerts());
+    }
+
+    /**
+     * TLS expire in 7 days
+     * @return Collection
+     */
+    public function getCertExpire7days()
+    {
+        return AnalysisTools::getCertExpire7days($this->getCerts());
+    }
+
+    /**
+     * TLS expire in 28 days
+     * @return Collection
+     */
+    public function getCertExpire28days()
+    {
+        return AnalysisTools::getCertExpire28days($this->getCerts());
     }
 
     /*
@@ -502,102 +532,4 @@ class ValidityDataModel {
     {
         $this->whoisScans = $whoisScans;
     }
-
-    /**
-     * @return Collection
-     */
-    public function getTlsCerts()
-    {
-        return $this->tlsCerts;
-    }
-
-    /**
-     * @param Collection $tlsCerts
-     */
-    public function setTlsCerts($tlsCerts)
-    {
-        $this->tlsCerts = $tlsCerts;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNumCertsActive()
-    {
-        return $this->numCertsActive;
-    }
-
-    /**
-     * @param int $numCertsActive
-     */
-    public function setNumCertsActive($numCertsActive)
-    {
-        $this->numCertsActive = $numCertsActive;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNumAllCerts()
-    {
-        return $this->numAllCerts;
-    }
-
-    /**
-     * @param mixed $numAllCerts
-     */
-    public function setNumAllCerts($numAllCerts)
-    {
-        $this->numAllCerts = $numAllCerts;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getCertExpired()
-    {
-        return $this->certExpired;
-    }
-
-    /**
-     * @param Collection $certExpired
-     */
-    public function setCertExpired($certExpired)
-    {
-        $this->certExpired = $certExpired;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getCertExpire7days()
-    {
-        return $this->certExpire7days;
-    }
-
-    /**
-     * @param Collection $certExpire7days
-     */
-    public function setCertExpire7days($certExpire7days)
-    {
-        $this->certExpire7days = $certExpire7days;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getCertExpire28days()
-    {
-        return $this->certExpire28days;
-    }
-
-    /**
-     * @param Collection $certExpire28days
-     */
-    public function setCertExpire28days($certExpire28days)
-    {
-        $this->certExpire28days = $certExpire28days;
-    }
-
-
 }

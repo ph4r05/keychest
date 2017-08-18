@@ -19,6 +19,11 @@ class DnsResult extends Model
 
     protected $table = 'scan_dns';
 
+    public function getDates()
+    {
+        return array('created_at', 'updated_at', 'last_scan_at');
+    }
+
     /**
      * Get the watch_id record for this result
      */
@@ -27,8 +32,11 @@ class DnsResult extends Model
         return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
     }
 
-    public function getDates()
-    {
-        return array('created_at', 'updated_at', 'last_scan_at');
+    /**
+     * DNS scan entries
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function entries(){
+        return $this->hasMany('\App\Model\DnsEntry', 'scan_id');
     }
 }

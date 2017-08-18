@@ -144,6 +144,35 @@ class SearchController extends Controller
     }
 
     /**
+     * Updates missing timezone automatically - browser TZ.
+     */
+    public function restTimezoneSet(){
+        if (Auth::guest()){
+            return response()->json([
+                'error' => 'not-logged-in'
+            ], 403);
+        }
+
+        $tz = trim(Input::get('timezone'));
+        $utcOffset = intval(Input::get('utcOffset'));
+
+        $curUser = Auth::user();
+        if (!empty($curUser->timezone)){
+            return response()->json([
+                'error' => 'already-set'
+            ], 411);
+        }
+        
+        $curUser->timezone = $tz;
+        $curUser->utc_offset = $utcOffset;
+        $curUser->save();
+
+        return response()->json([
+            'status' => 'success'
+        ], 200);
+    }
+
+    /**
      * Returns current job state
      */
     public function restGetJobState()

@@ -42,7 +42,8 @@
             'urlLogout' => route('logout'),
             'urlFeedback' => route('rfeedback'),
             'authUserName' => Auth::guest() ? null : Auth::user()->name,
-            'authUserId' => Auth::guest() ? null : Auth::user()->getAuthIdentifier()
+            'authUserId' => Auth::guest() ? null : Auth::user()->getAuthIdentifier(),
+            'userTz' => Auth::guest() ? null : Auth::user()->timezone,
         ]) !!};
     </script>
 

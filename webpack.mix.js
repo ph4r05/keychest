@@ -54,9 +54,9 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .copy('node_modules/admin-lte/plugins','public/plugins')
     .copy('node_modules/icheck/skins/square/blue.png','public/css')
     .copy('node_modules/icheck/skins/square/blue@2x.png','public/css')
-    .extract(['vue', 'jquery', 'jquery-ui', 'axios', 'lodash', 'es6-promise', 'moment']);
+    .extract(['vue', 'jquery', 'jquery-ui', 'axios', 'lodash', 'es6-promise', 'moment', 'moment-timezone']);
 
-mix.scripts([
+mix.babel([
     'resources/assets/js/blocs.js',
 ], 'public/js/misc.js');
 

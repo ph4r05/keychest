@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Keychest\Services\AnalysisManager;
+use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
@@ -41,6 +44,12 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(ScanManager::class, function($app){
             return new ScanManager($app);
+        });
+        $this->app->bind(EmailManager::class, function($app){
+            return new EmailManager($app);
+        });
+        $this->app->bind(AnalysisManager::class, function(Application $app){
+            return new AnalysisManager($app);
         });
     }
 }

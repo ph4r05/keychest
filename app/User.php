@@ -33,7 +33,8 @@ class User extends Authenticatable
      */
     public function getDates()
     {
-        return array('created_at', 'updated_at', 'last_email_report_sent_at');
+        return array('created_at', 'updated_at', 'last_email_report_sent_at',
+            'last_email_no_servers_sent_at', 'last_email_report_enqueued_at');
     }
 
     /**
@@ -47,6 +48,37 @@ class User extends Authenticatable
             'user_id',
             'watch_id')
             ->withTimestamps()
-            ->withPivot(['deleted_at', 'scan_periodicity', 'scan_type']);
+            ->withPivot(['deleted_at', 'disabled_at', 'scan_periodicity', 'scan_type']);
+    }
+
+    /**
+     * Active watches only
+     * @return mixed
+     */
+    public function activeWatchTargets(){
+        return $this->watchTargets()
+            ->whereNull('deleted_at')
+            ->whereNull('disabled_at');
+    }
+
+    /**
+     * Latest DNS scan
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function latestDnsScan(){
+        return $this->belongsTo('\App\Models\DnsResult', 'last_dns_scan_id');
+    }
+
+    /**
+     * Email news already sent to the user
+     */
+    public function emailNews()
+    {
+        return $this->belongsToMany(
+            'App\Models\EmailNews',
+            'email_news_user',
+            'user_id',
+            'email_news_id')
+            ->withTimestamps();
     }
 }
