@@ -2,7 +2,7 @@
    <ul class="nav nav-tabs">
       <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Introduction</a></li>
       <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">New Server</a></li>
-      <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">User Guide</a></li>
+      <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Fair Use</a></li>
       <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Restrictions</a></li>
       <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Error Codes</a></li>
       <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">KeyChest Versions</a></li>
@@ -10,21 +10,20 @@
    </ul>
    <div class="tab-content">
       <div class="tab-pane active" id="tab_1">
-         <h3 class="mg-md">Welcome to KeyChest</h3>
          <p>
-            We have designed KeyChest as we need to continuously monitor our servers to avoid any downtimes
-            due to expire or misconfigured certificates. We implemented it as a system you setup and forget. It just
-            works.
+            We have designed KeyChest as we needed to continuously monitor our servers to avoid downtimes
+            due to expire or misconfigured certificates. We implemented it as a system you would set up and forget.
+             A system that just works. We had a pretty good idea about the main features to make KeyChest a useful tool,
+             rather than just yet-another-management-system we have to think about all the time (did we add all servers,
+             does data collection work, etc.).
          </p>
          <p>
-            We had a pretty good idea about the main features to make KeyChest a real helping tool, rather than just yet
-            another management system we have to think about all the time (did we add all servers, does data
-            collection work, etc.). The best monitoring system is useless, if you forget to register your
+            The best monitoring system is useless, if you forget to register your
             servers with it. So KeyChest will automatically find all new servers from <i>Active Domains</i> the moment
-            you prime them with their first certificate. It will keep monitoring servers to detect any downtimes
+            you get their first certificate. KeyChest will keep monitoring all servers to detect any downtimes
             and it will only bother you if there is a problem.
          </p>
-         <h3 class="mg-md">How to use KeyChest</h3>
+         <h3 class="mg-md tc-rich-electric-blue">How to use KeyChest</h3>
          <p>
             KeyChest gives you a quick information when you are setting up a new server and it
             continuously monitors your certificates and servers. It is not intended for thorough
@@ -57,7 +56,7 @@
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_2">
-         <h3 class="mg-md">New server - recommended approach</h3>
+         <h3 class="mg-md tc-rich-electric-blue">New server - recommended approach</h3>
          <p>
             Setting up a new server is usually a fun - so long as there aren't too many of them. Still, it's
             good to choose and follow the same procedure to get it done without wasting our time. We
@@ -89,7 +88,7 @@
                <a href="/home/scan">Spot Check</a> to quickly check your corrections.
             </li>
          </ul>
-         <h3 class="mg-md">Watch Now&trade;</h3>
+         <h3 class="mg-md tc-rich-electric-blue">Watch Now&trade;</h3>
          Watch Now&trade; is a feature you can switch on when you set new Active Domains. It really makes
          KeyChest a powerful monitoring system, which thinks for you. You don't have to think about
          monitoring when you set up a new server. The Watch Now&trade; feature will detect the new server is
@@ -99,7 +98,7 @@
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_3">
-         <h3 class="mg-md">Technical specification</h3>
+         <h3 class="mg-md tc-rich-electric-blue">Technical specification</h3>
          <p>
             The following list is true to the best of our knowledge. We keep updating it as quickly as we can so it
             tightly tracks changes but there will be short intervals when the list is inaccurate.
@@ -125,7 +124,7 @@
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_4">
-         <h3 class="mg-md">Current Restrictions</h3>
+         <h3 class="mg-md tc-rich-electric-blue">Current Restrictions</h3>
          <p>
             The system is currently under intensive development and we add features as they are requested by
             you, our users. This section lists some of the restrictions we are aware of and will improve or completely
@@ -152,7 +151,7 @@
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_5">
-         <h3 class="mg-md">Server configuration errors</h3>
+         <h3 class="mg-md tc-rich-electric-blue">Server configuration errors</h3>
          <p>
             The list of possible error causes shown in the section <i>Servers with configuration errors</i> includes:
          </p>
@@ -174,7 +173,7 @@
                CA.
             </li>
          </ul>
-         <h3 class="mg-md">TLS errors in Spot Check</h3>
+         <h3 class="mg-md tc-rich-electric-blue">TLS errors in Spot Check</h3>
          <p>
             The list of possible error causes shown by <i>Spot Check</i> includes:
          </p>
@@ -193,27 +192,15 @@
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_6">
-         <h3 class="mg-md">Enterprise Features</h3>
-         <p><i>We expect launch of the enterprise version in August.</i></p>
+         <h3 class="mg-md tc-rich-electric-blue">Enterprise Features</h3>
+         <p><i>We expect launch of the enterprise version in September.</i></p>
          <p>
             We have started building a set of enterprise features, for users who want to manage
             certificates in a large company or a corporation. The main differences from the free
-            version is organization/user management, and monitoring of internal networks.
+            version is organization/user management, monitoring of internal networks, and integration.
          </p>
          <p>
-            User and organization management provides separation of servers and certificates relevant
-            to a particular department. The management structure is defined at two levels of granularity:
-         </p>
-         <ul>
-            <li>departments - organizational units within a company, which are responsible for particular
-               networks or servers; and
-            </li>
-            <li>users - users responsible for relevant infrastructure operations within their department.</li>
-         </ul>
-         <p>
-            The second feature of the enterprise version is monitoring of internal network servers. This is
-            being implemented via lightweight monitoring agents scanning and testing servers from within
-            their VLAN.
+            Please have a look at <a href="{{ url('/home/enterprise') }}">the Enterprise tab</a> for more details.
          </p>
       </div>
       <!-- /.tab-pane -->
