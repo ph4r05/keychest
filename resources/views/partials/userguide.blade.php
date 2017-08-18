@@ -10,21 +10,21 @@
    </ul>
    <div class="tab-content">
       <div class="tab-pane active" id="tab_1">
-         <p>
+         <p class="tc-onyx">
             We have designed KeyChest as we needed to continuously monitor our servers to avoid downtimes
             due to expire or misconfigured certificates. We implemented it as a system you would set up and forget.
              A system that just works. We had a pretty good idea about the main features to make KeyChest a useful tool,
              rather than just yet-another-management-system we have to think about all the time (did we add all servers,
              does data collection work, etc.).
          </p>
-         <p>
+          <p class="tc-onyx">
             The best monitoring system is useless, if you forget to register your
             servers with it. So KeyChest will automatically find all new servers from <i>Active Domains</i> the moment
             you get their first certificate. KeyChest will keep monitoring all servers to detect any downtimes
             and it will only bother you if there is a problem.
          </p>
          <h3 class="mg-md tc-rich-electric-blue">How to use KeyChest</h3>
-         <p>
+          <p class="tc-onyx">
             KeyChest gives you a quick information when you are setting up a new server and it
             continuously monitors your certificates and servers. It is not intended for thorough
             security audits as there are already good free tools for that. Also, each thorough
@@ -33,9 +33,9 @@
             certificate installed, etc.). KeyChest helps to quickly complete and verify this initial
             configuration.
          </p>
-         <p>
+          <p class="tc-onyx">
             KeyChest consists of two main tools:
-         <ul>
+          <ul class="tc-onyx">
             <li>Spot check - a quick check of a particular server with instant results. A typical
                use-case for spot check is setup of a new server, or to check the correct setup after
                configuration changes.
@@ -46,7 +46,7 @@
          </ul>
          If you want to monitor, you need to import some data into a monitoring system first. There are three options
          to add new servers into KeyChest and some more options, if you deploy it on-premise:
-         <ul>
+          <ul class="tc-onyx">
             <li>Serve name - you simply enter a server name you want to start watching.</li>
             <li>Active domain - you add a domain, for which you want to watch all the subdomains.</li>
             <li>Bulk import - you can paste a list of domain names - one per line, to speed up initial import.</li>
@@ -57,14 +57,15 @@
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_2">
          <h3 class="mg-md tc-rich-electric-blue">New server - recommended approach</h3>
-         <p>
+          <p class="tc-onyx">
             Setting up a new server is usually a fun - so long as there aren't too many of them. Still, it's
             good to choose and follow the same procedure to get it done without wasting our time. We
             recommend the following approach with a clear handover from <i>setting up</i> (project)
             to <i>keep it running</i> (operations).
          </p>
-         <p><b>Option 1</b></p>
-         <ul style="list-style: none">
+          <p class="tc-onyx">
+              <b>Option 1</b></p>
+         <ul class="tc-onyx" style="list-style: none">
             <li>1. Setup / amend the configuration of your server.</li>
             <li>2. Use our <a href="/home/scan">Spot Check</a> to verify that your configuration is
                correct and repeat step 1 as necessary.
@@ -78,8 +79,9 @@
                manual renewals as appropriate.
             </li>
          </ul>
-         <p><b>Option 2 - Watch Now&trade;</b></p>
-         <ul style="list-style: none">
+          <p class="tc-onyx">
+              <b>Option 2 - Watch Now&trade;</b></p>
+         <ul class="tc-onyx" style="list-style: none">
             <li>1. Use <a href="/home/servers">Active Domains</a> to add your registered domain or sub-domain
                for automatic server discovery. Switch on the Watch Now&trade; option.
             </li>
@@ -89,21 +91,23 @@
             </li>
          </ul>
          <h3 class="mg-md tc-rich-electric-blue">Watch Now&trade;</h3>
-         Watch Now&trade; is a feature you can switch on when you set new Active Domains. It really makes
+          <p class="tc-onyx">
+          Watch Now&trade; is a feature you can switch on when you set new Active Domains. It really makes
          KeyChest a powerful monitoring system, which thinks for you. You don't have to think about
          monitoring when you set up a new server. The Watch Now&trade; feature will detect the new server is
          using a certificate and it will start watching it automatically.
          That means it will appear in the next status update and it will show any configuration problem you
          may have missed.
+          </p>
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_3">
          <h3 class="mg-md tc-rich-electric-blue">Technical specification</h3>
-         <p>
+          <p class="tc-onyx">
             The following list is true to the best of our knowledge. We keep updating it as quickly as we can so it
             tightly tracks changes but there will be short intervals when the list is inaccurate.
          </p>
-         <ul>
+         <ul class="tc-onyx">
             <li>Maximum number of monitored servers - 2,000 (possibly more now, get in touch if you need more).</li>
             <li>Maximum number of Active Domains - 1,000.</li>
             <li>Restrictions for server checks - TLS only; SSL2/3 show specific error, StartTLS not supported.</li>
@@ -125,12 +129,12 @@
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_4">
          <h3 class="mg-md tc-rich-electric-blue">Current Restrictions</h3>
-         <p>
+          <p class="tc-onyx">
             The system is currently under intensive development and we add features as they are requested by
             you, our users. This section lists some of the restrictions we are aware of and will improve or completely
             remove.
          </p>
-         <ul>
+         <ul class="tc-onyx">
             <li>IP address scanning - we now test all resolved IP addresses for a given server
                name. This may still lead to an incomplete picture, e.g., when the domain name uses some kind of DNS
                rotation / load balancing.
@@ -152,10 +156,10 @@
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_5">
          <h3 class="mg-md tc-rich-electric-blue">Server configuration errors</h3>
-         <p>
+          <p class="tc-onyx">
             The list of possible error causes shown in the section <i>Servers with configuration errors</i> includes:
          </p>
-         <ul>
+         <ul class="tc-onyx">
             <li>Self-signed certificate - the certificate provided by the server is self-signed; this
                can be due to a path to a default certificate still present in the server configuration;
             </li>
@@ -174,10 +178,10 @@
             </li>
          </ul>
          <h3 class="mg-md tc-rich-electric-blue">TLS errors in Spot Check</h3>
-         <p>
+          <p class="tc-onyx">
             The list of possible error causes shown by <i>Spot Check</i> includes:
          </p>
-         <ul>
+         <ul class="tc-onyx">
             <li>TLS handshake error - check your TLS configuration, this error may indicate use of
                insecure versions SSL3 or SSL2. The same error can be caused by StartTLS, which we do
                not support yet;
@@ -193,13 +197,14 @@
       <!-- /.tab-pane -->
       <div class="tab-pane" id="tab_6">
          <h3 class="mg-md tc-rich-electric-blue">Enterprise Features</h3>
-         <p><i>We expect launch of the enterprise version in September.</i></p>
-         <p>
+          <p class="tc-onyx">
+              <i>We expect launch of the enterprise version in September.</i></p>
+          <p class="tc-onyx">
             We have started building a set of enterprise features, for users who want to manage
             certificates in a large company or a corporation. The main differences from the free
             version is organization/user management, monitoring of internal networks, and integration.
          </p>
-         <p>
+          <p class="tc-onyx">
             Please have a look at <a href="{{ url('/home/enterprise') }}">the Enterprise tab</a> for more details.
          </p>
       </div>

@@ -1,13 +1,13 @@
 
 
-<p>
+<p class="tc-onyx">
     Let's Encrypt brought huge changes since it was launched and the adoption rate of HTTPS
     has been incredible. While Let's Encrypt provides free certificates, we decided to provide you a free monitoring
     service so that you never regret the day you secured your website. Just because your certificate expired and made
     your website unavailable.
 </p>
 
-<p>
+<p class="tc-onyx">
     The Professional version of KeyChest, and its free cloud service, is a perfect fit for everyone who cares about the
     security of their servers. Still, there are users who need more as their operations are more complex. This requires
     more effort from our side - not only to develop new features, but also to support these users. Security can get
@@ -18,13 +18,13 @@
 
 <h3 class="mg-md tc-rich-electric-blue">Clear distinction between Professional and Enterprise</h3>
 
-<p>
+<p class="tc-onyx">
     We will not compromise on basic features and all users of KeyChest will keep having access to the same depth
     of information detected by KeyChest. We have decided that the distinction between Professional and Enterprise versions
     will be in features, which really are important for larger companies. These are:
 </p>
 
-<ul>
+<ul class="tc-onyx">
     <li>User/role management - ability to define departments and users assigned to the departments.</li>
     <li>Internal networks - monitoring of certificates in internal networks (or VLANs) requiring local agents.</li>
     <li>Internal key management - ability to verify certificates issued by internal CAs/PKI systems.</li>
@@ -32,7 +32,7 @@
     systems.</li>
 </ul>
 
-<p>
+<p class="tc-onyx">
     The following table shows the difference between the Professional version (including the free cloud service at
     <a href="https://keychest.net">https://keychest.net</a> with a fair use policy) and the Enterprise version.
 </p>
@@ -93,7 +93,7 @@
 
 <h3 class="mg-md tc-rich-electric-blue">Pricing</h3>
 
-<p>
+<p class="tc-onyx">
 List prices have a limited validity so please <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in
     touch via our support system</a> to get up to date quotation.
 </p>
@@ -143,5 +143,5 @@ List prices have a limited validity so please <a target="_blank" href="https://e
     </tr>
 </table>
 
-<p><i>Note: all prices are without VAT and sales taxes where applicable.</i></p>
+<p class="tc-onyx"><i>Note: all prices are without VAT and sales taxes where applicable.</i></p>
 
