@@ -185,7 +185,7 @@ class ValidityDataModel {
      */
     public function getCertExpired()
     {
-        return AnalysisTools::getCertExpired($this->getCerts());
+        return AnalysisTools::getCertExpired($this->getTlsCerts());
     }
 
     /**
@@ -194,7 +194,7 @@ class ValidityDataModel {
      */
     public function getCertExpire7days()
     {
-        return AnalysisTools::getCertExpire7days($this->getCerts());
+        return AnalysisTools::getCertExpire7days($this->getTlsCerts());
     }
 
     /**
@@ -203,7 +203,7 @@ class ValidityDataModel {
      */
     public function getCertExpire28days()
     {
-        return AnalysisTools::getCertExpire28days($this->getCerts());
+        return AnalysisTools::getCertExpire28days($this->getTlsCerts());
     }
 
     /*
