@@ -23,7 +23,7 @@
                             <p>
                                 The absolutely unique feature of KeyChest is the ability to enroll all your servers and
                                 domain names within minutes. You can set particular servers, import server names in
-                                bulk (50 at a time), and set "Active Domains" for auto-enrollment of all subdomains
+                                bulk (100 at a time), and set "Active Domains" for auto-enrollment of all subdomains
                                 servers as soon as you issue the first certificate for them.
                             </p>
                         </div>
