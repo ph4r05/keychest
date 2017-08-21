@@ -6,10 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
 
+    <meta name="description" content="KeyChest - certificate monitoring for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up.">
+    <meta name="author" content="Enigma Bridge Ltd, KeyChest">
+
+    <meta property="og:title" content="KeyChest certificate monitoring - HTTPS, TLS, Letsencrypt" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="KeyChest - certificate monitoring for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up." />
+    <meta property="og:url" content="https://keychest.net" />
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Keychest') }}</title>
+    <title>{{ config('app.name', 'Keychest') }} - certificate (expiry) monitoring HTTPS, TLS, Letsencrypt</title>
 
     <!-- Styles -->
     <link href="{{ mix('css/all-landing.css') }}" rel="stylesheet">
