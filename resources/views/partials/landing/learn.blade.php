@@ -176,165 +176,210 @@
                     The following table compares features of KeyChest with Letsmonitor.org.
                 </p>
                 <div class="row bgc-capri">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-md tc-onyx">
                             <strong>Feature</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h4 class="mg-md tc-onyx">
                             <strong>letsmonitor.org</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h4 class="mg-md tc-onyx">
+                            <strong>certificatemonitor.org</strong>
+                        </h4>
+                    </div>
+                    <div class="col-sm-4">
                         <h4 class="mg-md tc-onyx">
                             <strong>keychest.net</strong>
                         </h4>
                     </div>
                 </div>
-                <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Primary focus</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             networking
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            certificate expiry
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>HTTPS/TLS uptime and security</strong>
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-white">
-                    <div class="col-sm-3">
+                <div class="row bgc-gainsboro">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Enrolment</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
-                            per server
+                            one server at a time
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            up to 20 at a time
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>bulk servers, whole domains (Active Domains)</strong>
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Views</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             rule-per-server views
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            none, only emails
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>all-in-one view</strong>
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-white">
-                    <div class="col-sm-3">
+                <div class="row bgc-gainsboro">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
-                            <strong>Adding new items</strong>
+                            <strong>Ports</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
-                            one server at a time
+                            443 or user-defined
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            443
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>bulk and auto-enrolment of subdomains</strong>
+                            <strong>443 or user-defined</strong>
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Tests</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
-                        <h6>
-                            servers directly
-                        </h6>
-                    </div>
-                    <div class="col-sm-5">
-                        <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>CT logs (certificate transparency), and servers directly</strong>
-                        </h5>
-                    </div>
-                </div>
-                <div class="row bgc-white">
                     <div class="col-sm-3">
-                        <h4 class="mg-clear tc-onyx">
-                            <strong>Frequency</strong>
-                        </h4>
-                    </div>
-                    <div class="col-sm-4">
                         <h6>
-                            hourly
+                            servers
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            servers
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>4-12 hours (per type)</strong><br>
+                            <strong>CT logs (certificate transparency), and servers</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-gainsboro">
+                    <div class="col-sm-2">
+                        <h4 class="mg-clear tc-onyx">
+                            <strong>Frequency</strong>
+                        </h4>
+                    </div>
                     <div class="col-sm-3">
+                        <h6>
+                            hourly
+                        </h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6>
+                            every other day
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
+                        <h5 class=" mg-clear tc-rich-electric-blue">
+                            <strong>4-12 hours (varies per test type)</strong><br>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Emails</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
-                            certs - once before expiration
+                            once before expiration
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            up to 9 reminders
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>weekly - inventory and planner for all certs</strong>
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-white">
-                    <div class="col-sm-3">
+                <div class="row bgc-gainsboro">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Monitoring</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             150+ stations
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            centrally, 1 instance
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class="mg-clear  tc-rich-electric-blue">
-                            <strong>centrally, 1+ instances, additional instances for availability</strong>
+                            <strong>centrally, 1 instance</strong>
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Security tests</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             simple
                         </h6>
@@ -346,7 +391,12 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            certificate expiry only
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class="mg-clear  tc-rich-electric-blue">
                             <strong>deployed, CT logs, cross-checking</strong>
                         </h5>
