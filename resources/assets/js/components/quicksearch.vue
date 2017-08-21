@@ -229,7 +229,7 @@
 
         <!-- Expert stats - will be shown later, on icon click -->
         <transition name="fade" v-on:after-leave="transition_hook">
-        <div class="scan-results" id="scan-results" v-show="resultsLoaded && showExpertStats">
+        <div class="scan-results" id="scan-results" v-if="resultsLoaded && showExpertStats">
             <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
             <div class="tls-results" id="tls-results">
