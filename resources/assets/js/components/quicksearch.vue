@@ -56,7 +56,9 @@
 
             <!-- UX - nice message for missing TLS -->
             <div class="alert alert-info" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
-                This domain does not appear to be secured with <i>https://</i>
+                The domain <u>{{ curJob.scan_host }}</u>
+                <span v-if="scanIp">on the IP address <i>{{ scanIp }}</i></span> does
+                not appear to be secured with <i>https://</i>
             </div>
 
             <!-- TLS Error: problem with the scan -->
@@ -403,7 +405,9 @@
                 showExpertStats: false,
                 addingStatus: 0,
 
-                tlsScan: {},
+                tlsScan: {
+                    ip_scanned: null
+                },
                 tlsScanError: false,
                 tlsScanLeafCert: null,
                 tlsScanHostCert: null,
@@ -489,7 +493,7 @@
             },
 
             scanIp(){
-                return this.curJob && this.curJob.scan_ip ? this.curJob.scan_ip : null;
+                return !this.hasDnsProblem && this.tlsScan ? this.tlsScan.ip_scanned : null;
             },
 
             ips(){
