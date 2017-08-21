@@ -486,7 +486,25 @@
                     success: this.form.defcon===5,
                     warning: this.form.defcon<=4 && this.form.defcon>=2,
                     danger: this.form.defcon===1 };
-            }
+            },
+
+            scanIp(){
+                return this.curJob && this.curJob.scan_ip ? this.curJob.scan_ip : null;
+            },
+
+            ips(){
+                if (this.hasDnsProblem){
+                    return [];
+                }
+
+                return _.map(this.results.dns.dns, x => {
+                    return {
+                        'type': x[0],
+                        'ip': x[1],
+                        'cur': this.scanIp === x[1]
+                    };
+                });
+            },
         },
 
         methods: {
