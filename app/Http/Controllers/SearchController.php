@@ -579,7 +579,8 @@ class SearchController extends Controller
     {
         $uuid = Uuid::generate()->string;
         $server = strtolower(trim(Input::get('scan-target')));
-        Log::info(sprintf('UUID: %s, target: %s', $uuid, $server));
+        $ip = strtolower(trim(Input::get('ip')));
+        Log::info(sprintf('UUID: %s, target: %s, ip: %s', $uuid, $server, $ip));
 
         $parsed = parse_url($server);
         if (empty($parsed) || strpos($server, '.') === false){
@@ -592,6 +593,7 @@ class SearchController extends Controller
             'scan_scheme' => isset($parsed['scheme']) ? $parsed['scheme'] : null,
             'scan_host' => isset($parsed['host']) ? $parsed['host'] : $server,
             'scan_port' => isset($parsed['port']) ? $parsed['port'] : null,
+            'scan_ip' => !empty($ip) ? $ip : null,
             'state' => 'init',
             'user_ip' => request()->ip(),
             'user_sess' => substr(md5(request()->session()->getId()), 0, 16),

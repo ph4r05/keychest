@@ -391,6 +391,7 @@
                 curUuid: null,
                 curJob: {},
                 curUrl: null,
+                curIp: null,
                 form: {
                     defcon: 5,
                     textStatus: 'OK'
@@ -521,10 +522,11 @@
             },
 
             hookup(){
-                let uuid = Req.findGetParameter('uuid');
-                let url = Req.findGetParameter('url');
-                let new_job = Req.findGetParameter('new');
-                let scanTarget = $('#scan-target');
+                const uuid = Req.findGetParameter('uuid');
+                const url = _.trim(Req.findGetParameter('url'));
+                const ip = _.trim(Req.findGetParameter('ip'));
+                const new_job = Req.findGetParameter('new');
+                const scanTarget = $('#scan-target');
 
                 // lowercase input
                 $.fn.lowercaseFilter = function() {
@@ -543,6 +545,7 @@
                     this.jobSubmittedNow = new_job;
                     this.onUuidProvided(uuid);
                 } else if (url){
+                    this.curIp = ip;
                     setTimeout(this.submitForm, 550); // auto submit after page load
                 }
             },
@@ -654,6 +657,9 @@
             },
 
             processResults() {
+                // IP reset
+                this.curIp = null;
+
                 // Certificates
                 const curTime = new Date().getTime() / 1000.0;
                 for(const certId in this.results.certificates){
@@ -866,7 +872,8 @@
                 this.curUrl = targetUri;
                 this.jobSubmittedNow = true;
 
-                Req.submitJob(targetUri, (function(json){
+                const req_data = {'scan-target': targetUri, 'ip':this.curIp};
+                Req.submitJob(req_data, json => {
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
                         return;
@@ -877,6 +884,10 @@
                     // Update URL so it contains params - job ID & url
                     let new_url = window.location.pathname + "?uuid=" + json.uuid
                         + '&url=' + encodeURI(targetUri);
+                    if (this.curIp){
+                        new_url += '&ip=' + encodeURI(this.curIp);
+                    }
+
                     try{
                         history.pushState(null, null, new_url); // new URL with history
                         history.replaceState(null, null, new_url); // replace the existing
@@ -888,9 +899,9 @@
                         window.location.replace(new_url + '&new=1');
                     }
 
-                }).bind(this), (function(jqxhr, textStatus, error){
+                }, (jqxhr, textStatus, error) => {
                     this.errMsg(error);
-                }).bind(this));
+                });
             },
 
             startTracking(){
