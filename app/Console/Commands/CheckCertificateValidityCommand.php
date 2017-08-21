@@ -147,7 +147,7 @@ class CheckCertificateValidityCommand extends Command
         $diffLastSentDays = $diffLastSentSec / 3600.0 / 24.0;
 
         // If sent just recently - do not send again, 1 day boundary
-        if (!$firstEmail && $diffLastSentDays <= 1.0){
+        if (!$firstEmail && $diffLastSentDays <= 2.0){
             return false;
         }
 
@@ -157,10 +157,16 @@ class CheckCertificateValidityCommand extends Command
 
         // Define target time for sending in the user timezone.
         $targetUserLocal = Carbon::now($tz);
-        if ($targetUserLocal->dayOfWeek != $targetDay){
-            $targetUserLocal->next($targetDay);
-        }
         $targetUserLocal->setTime($targetHour, $targetMinute);
+        if ($targetUserLocal->dayOfWeek != $targetDay){
+            // Carbon->next(Carbon::MONDAY) sucks, does not work well
+            // It just changes time, but the time is in the local time zone (BUG)
+            $daysToAdd = $targetUserLocal->dayOfWeek < $targetDay ?
+                     $targetDay  - $targetUserLocal->dayOfWeek :
+                (7 + $targetDay) - $targetUserLocal->dayOfWeek;
+
+            $targetUserLocal->addDays($daysToAdd);
+        }
 
         // Distance from the target
         // If target is ahead (positive value), wait till we reach the boundary
