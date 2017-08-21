@@ -9,10 +9,10 @@
  * @returns {*}
  */
 function findGetParameter(parameterName) {
-    var result = null,
+    let result = null,
         tmp = [];
-    var items = location.search.substr(1).split("&");
-    for (var index = 0; index < items.length; index++) {
+    const items = location.search.substr(1).split("&");
+    for (let index = 0; index < items.length; index++) {
         tmp = items[index].split("=");
         if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
     }
@@ -24,7 +24,7 @@ function findGetParameter(parameterName) {
  * @param started if true overlay is displayed. Hidden otherwise.
  */
 function bodyProgress(started){
-    var htmlBody = $("body");
+    const htmlBody = $("body");
     if (started){
         htmlBody.addClass("loading");
     } else {
@@ -39,15 +39,16 @@ function bodyProgress(started){
  * @param onLoaded
  * @param onFail
  */
-function submitJob(target, onLoaded, onFail){
-    $.getJSON("/submitJob", {'scan-target': target})
-        .done(function( json ) {
-            onLoaded(json);
+function submitJob(target, onLoaded, onFail) {
+    const req_data = _.isObjectLike(target) ? target : {'scan-target': target };
+    axios.post('/submitJob', req_data)
+        .then(response => {
+            onLoaded(response.data);
         })
-        .fail(function( jqxhr, textStatus, error ) {
-            var err = textStatus + ", " + error;
-            console.log( "Submit job Request Failed: " + err );
-            onFail(jqxhr, textStatus, error);
+        .catch(e => {
+            const err = textStatus + ", " + error;
+            console.log("Submit job Request Failed: " + err);
+            onFail(e, textStatus, error);
         });
 }
 
@@ -57,15 +58,15 @@ function submitJob(target, onLoaded, onFail){
  * @param onLoaded
  * @param onFail
  */
-function getJobState(uuid, onLoaded, onFail){
-    $.getJSON("/jobState", {'job_uuid': uuid})
-        .done(function( json ) {
-            onLoaded(json);
+function getJobState(uuid, onLoaded, onFail) {
+    axios.get('/jobState', {params: {'job_uuid': uuid}})
+        .then(response => {
+            onLoaded(response.data);
         })
-        .fail(function( jqxhr, textStatus, error ) {
-            var err = textStatus + ", " + error;
-            console.log( "Get Job state Request Failed: " + err );
-            onFail(jqxhr, textStatus, error);
+        .catch(e => {
+            const err = textStatus + ", " + error;
+            console.log("Submit job Request Failed: " + err);
+            onFail(e, textStatus, error);
         });
 }
 
@@ -75,15 +76,15 @@ function getJobState(uuid, onLoaded, onFail){
  * @param onLoaded
  * @param onFail
  */
-function getJobResult(uuid, onLoaded, onFail){
-    $.getJSON("/jobResult", {'job_uuid': uuid})
-        .done(function( json ) {
-            onLoaded(json);
+function getJobResult(uuid, onLoaded, onFail) {
+    axios.get('/jobResult', {params: {'job_uuid': uuid}})
+        .then(response => {
+            onLoaded(response.data);
         })
-        .fail(function( jqxhr, textStatus, error ) {
-            var err = textStatus + ", " + error;
-            console.log( "Get Job result Request Failed: " + err );
-            onFail(jqxhr, textStatus, error);
+        .catch(e => {
+            const err = textStatus + ", " + error;
+            console.log("Submit job Request Failed: " + err);
+            onFail(e, textStatus, error);
         });
 }
 
