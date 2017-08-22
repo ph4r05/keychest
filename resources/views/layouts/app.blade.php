@@ -10,6 +10,7 @@
     <meta name="description" content="KeyChest - certificate monitoring for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up.">
     <meta name="author" content="Enigma Bridge Ltd, KeyChest">
     <meta name="keywords" content="letsencrypt, monitor, monitoring, tls, https, certificate monitoring, free monitoring">
+    <meta name="title" content="Certificate monitoring KeyChest for HTTPS, TLS, Letsencrypt expiry and status">
 
     <!-- Facebook -->
     <meta property="og:title" content="KeyChest certificate monitoring - HTTPS, TLS, Letsencrypt" >
@@ -79,7 +80,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        <img src="/images/logo2-rgb_keychest.png" height="30" title="{{ config('app.name', 'Keychest') }}">
+                        <img src="/images/logo2-rgb_keychest.png" alt="Certificate monitoring KeyChest logo" height="30" title="{{ config('app.name', 'Keychest') }}">
                     </a>
                 </div>
 

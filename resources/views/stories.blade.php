@@ -10,7 +10,7 @@
             <div class="row">
 
                 <div class="col-sm-12">
-                    <img src="/images/logo2-rgb_keychest.png" class="img-responsive center-block" width="300">
+                    <img src="/images/logo2-rgb_keychest.png" alt="Certificate monitoring KeyChest logo" class="img-responsive center-block" width="300">
                     <h3 class="text-center mg-lg hero-bloc-text-sub  tc-rich-electric-blue">
                         Check, watch, and plan for 100% HTTPS uptime
                     </h3>
@@ -22,7 +22,7 @@
 
             <div class="row">
                 <div class="col-sm-4">
-                    <a href="/content/keychest_spot_check"><img src="/images/worldAtHand_EB.png" class="img-responsive" /></a>
+                    <a href="/content/keychest_spot_check"><img src="/images/worldAtHand_EB.png" alt="Certificate monitoring KeyChest - world at hand" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
                         <a class="ltc-rich-electric-blue" href="/content/keychest_spot_check">KeyChest spot check</a><br>
                     </h3>
@@ -31,7 +31,7 @@
                     </p>
                 </div>
                 <div class="col-sm-4">
-                    <a href="/content/letsencrypt_numbers_to_know"><img src="/images/secure_gateway_370x290.jpg" class="img-responsive" /></a>
+                    <a href="/content/letsencrypt_numbers_to_know"><img src="/images/secure_gateway_370x290.jpg" alt="Certificate monitoring KeyChest - secure gateway" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
                         <a class="ltc-rich-electric-blue" href="/content/letsencrypt_numbers_to_know">Let&rsquo;s Encrypt in numbers</a><br>
                     </h3>
@@ -40,7 +40,7 @@
                     </p>
                 </div>
                 <div class="col-sm-4">
-                    <a href="/content/understand_spot_checks"><img src="/images/blue_lock_370x290.png" class="img-responsive" /></a>
+                    <a href="/content/understand_spot_checks"><img src="/images/blue_lock_370x290.png" alt="Certificate monitoring KeyChest lock" class="img-responsive" /></a>
                     <h3 class="mg-md tc-rich-electric-blue text-center">
                         <a class="ltc-rich-electric-blue" href="/content/understand_spot_checks">Understand spot check results</a><br>
                     </h3>

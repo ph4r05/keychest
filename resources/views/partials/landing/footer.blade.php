@@ -14,7 +14,7 @@
                         </p>
                     </div>
                     <div class="col-sm-2">
-                        <img src="/images/logo2-rgb_cropped.gif" class="img-responsive mg-md" />
+                        <img src="/images/logo2-rgb_cropped.gif" alt="Certificate monitoring KeyChest logo" class="img-responsive mg-md" />
                     </div>
                 </div>
             </div>

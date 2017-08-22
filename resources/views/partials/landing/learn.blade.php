@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <h1 class="mg-md tc-rich-electric-blue">
-                    Welcome to KeyChest
+                    Welcome to KeyChest certificate monitoring
                 </h1>
                 <div class="row">
                         <div class="col-sm-6" >
@@ -456,7 +456,7 @@
                                     <li><p>Enterprise networks scanning.</p></li>
                                     <li><p>Governance.</p></li>
                                 </ul>
-                                <p>We can currenlty only provide instances as a fully managed service. Our pricing is based on the
+                                <p>We can currently only provide instances as a fully managed service. Our pricing is based on the
                                     number of users, sites, and independent scanners.
                                     If you want to discuss your particular requirements, please get in touch with
                                     <a href="mailto:support@enigmabridge.com?Subject=KeyChest%20enquiry" target="_top">our
