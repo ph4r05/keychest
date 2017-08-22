@@ -6,26 +6,34 @@
                     Welcome to KeyChest
                 </h1>
                 <div class="row">
-                    <div class="col-sm-6">
-                        <p>
-                            KeyChest of Enigma Bridge is the tool you need to stay on top of all your certificates and
-                            your boss, if you have any.
-                            You can use KeyChest to plan your renewals, get your weekly inventory summary and present
-                            your certificate
-                            KPIs (key performance indicators) to your boss or your team. <br> <br>We don&rsquo;t mind if
-                            you use KeyChest
-                            for your web servers, email servers, web services, or to keep your infrastructure running.&nbsp;
-                            We treat all certificates equal, whether you paid $500 for each, got them free from Let's
-                            Encrypt, or
-                            created them yourself.<br> <br>
-                            When you create an account, you can quickly populate your dashboard
-                            using domain names with wildcards to search for server and print the first set of KPIs
-                            within minutes.<br> <br>&nbsp;
-                        </p>
-                    </div>
-                    <div class="col-sm-6">
-                        <img src="/images/keychest_dashboard.png" class="img-responsive"/>
-                    </div>
+                        <div class="col-sm-6" >
+                            <p>
+                                KeyChest of Enigma Bridge is the tool for monitoring of your HTTPS and TLS servers. It
+                                helps you monitor expiry of TLS certificates, availability of your servers, and their
+                                configuration. It will provide you with inventory summaries, as well as planning tasks
+                                for certificate renewals. You get all the information you need for operational teams, as
+                                well as for you managers if they ask for key performance indicators (KPIs).
+                            </p>
+                            <p>
+                                This free service running KeyChest Professional only imposes "fair-use" limits so you
+                                can use it to monitor small thousands of your certificates. It can monitor HTTPS
+                                servers, but also web applications using TLS, email servers (not StartTLS though), and
+                                any other services with TLS protocol for secure communication.
+                            </p>
+                            <p>
+                                The absolutely unique feature of KeyChest is the ability to enroll all your servers and
+                                domain names within minutes. You can set particular servers, import server names in
+                                bulk (100 at a time), and set "Active Domains" for auto-enrollment of all subdomains
+                                servers as soon as you issue the first certificate for them.
+                            </p>
+                        </div>
+
+                        <div class="col-sm-6" style="height:100%;pointer-events: none;">
+                                <iframe style="width: 45vw; height: 26vw;"
+                                        src="https://www.youtube.com/embed/p8QVzU6X6oA?controls=0&showinfo=0&rel=0&autoplay=1&loop=1&playlist=p8QVzU6X6oA"
+                                        frameborder="0"></iframe>
+                            <!--                        <img src="/images/keychest_dashboard.png" class="img-responsive"/> -->
+                        </div>
                 </div>
                 <div class="divider-h">
                     <span class="divider"></span>
@@ -43,12 +51,22 @@
                                 <ul>
                                     <li>
                                         <h6 class=" mg-sm">
-                                            expiration date / validity of a certificate on the server
+                                            expiration date/validity of a certificate on the server
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h6 class=" mg-sm">
+                                            HTTPS/TLS downtime in the last 2 years
                                         </h6>
                                     </li>
                                     <li>
                                         <h6 class=" mg-sm">
                                             certificate chain completeness
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h6 class=" mg-sm">
+                                            certificate issuer
                                         </h6>
                                     </li>
                                     <li>
@@ -84,11 +102,18 @@
                         <div class="panel">
                             <div class="panel-heading">
                                 <h3 class="mg-clear tc-rich-electric-blue">
-                                    Dashboard (subject to change)
+                                    Dashboard
                                 </h3>
                             </div>
                             <div class="panel-body">
                                 <ul>
+                                    <li>
+                                        <h6 class=" mg-sm">
+                                            massive options for enrolment - single servers, bulk uploads, "Active
+                                            Domains" with
+                                            continuous automatic enrolment of subdomain servers
+                                        </h6>
+                                    </li>
                                     <li>
                                         <h6 class=" mg-sm">
                                             plan for next 28 days
@@ -101,7 +126,9 @@
                                     </li>
                                     <li>
                                         <h6 class=" mg-sm">
-                                            incidents - servers without a valid certificate
+                                            incidents - DNS errors, servers without a valid certificate, incomplete
+                                            trust chain,
+                                            TLS availability, incorrect certificate name
                                         </h6>
                                     </li>
                                     <li>
@@ -111,7 +138,7 @@
                                     </li>
                                     <li>
                                         <h6 class=" mg-sm">
-                                            several certificate statistics (issuers, domains per certificate, legacy
+                                            several certificate statistics (issuers, domains per certificate, types of
                                             certificates)
                                         </h6>
                                     </li>
@@ -120,30 +147,28 @@
                                             weekly emails with important indicators and tasks for next 28 days
                                         </h6>
                                     </li>
-                                    <li>
-                                        <h6 class=" mg-sm">
-                                            tbd
-                                        </h6>
-                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <h3 class="mg-md tc-rich-electric-blue">
-                    Road map milestones
+                <h3 id="roadmap" class="mg-md tc-rich-electric-blue">
+                    Road map
                 </h3>
                 <ul>
-                    <li>Dashboard launched - 27 Jun 2017</li>
-                    <li>Bulk import and auto discovery of sub-domains - 10 July 2017</li>
-                    <li>Strategy for enterprise version published - 14 July 2017</li>
-                    <li>RESTful API, integrations - ?? August 2017</li>
-                    <li>Dashboard update according to feedback - ?? August 2017</li>
-                    <li>Enterprise version - ?? September 2017</li>
+                    <li><p>Dashboard launched - 27 Jun 2017</p></li>
+                    <li><p>Bulk import and auto discovery of sub-domains - 10 July 2017</p></li>
+                    <li><p>Strategy for enterprise version published - 14 July 2017</p></li>
+                    <li><p>Independent scanners (KeyChest Enterprise) - 7 August 2017</p></li>
+                    <li><p>Dashboard update according to feedback - 10 August 2017</p></li>
+                    <li><p><i>Integration with Slack (KeyChest Enterprise) - ?? August/September 2017</i></p></li>
+                    <li><p><i>IP address-based scanning (KeyChest Enterprise) - ?? August 2017</i></p></li>
+                    <li><p><i>Essential RESTful API - ?? August 2017</i></p></li>
+                    <li><p><i>User/roles (KeyChest Enterprise) - ?? August 2017</i></p></li>
                 </ul>
 
-
+                <p>&nbsp;</p>
                 <h3 class="mg-md tc-rich-electric-blue">
                     Letsencrypt users seem to like letsmonitor.org - here&rsquo;s how we compare
                 </h3>
@@ -151,148 +176,210 @@
                     The following table compares features of KeyChest with Letsmonitor.org.
                 </p>
                 <div class="row bgc-capri">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-md tc-onyx">
                             <strong>Feature</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h4 class="mg-md tc-onyx">
                             <strong>letsmonitor.org</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h4 class="mg-md tc-onyx">
+                            <strong>certificatemonitor.org</strong>
+                        </h4>
+                    </div>
+                    <div class="col-sm-4">
                         <h4 class="mg-md tc-onyx">
                             <strong>keychest.net</strong>
                         </h4>
                     </div>
                 </div>
-                <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Primary focus</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             networking
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            certificate expiry
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>security</strong>
+                            <strong>HTTPS/TLS uptime and security</strong>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row bgc-gainsboro">
+                    <div class="col-sm-2">
+                        <h4 class="mg-clear tc-onyx">
+                            <strong>Enrolment</strong>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6>
+                            one server at a time
+                        </h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6>
+                            up to 20 at a time
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
+                        <h5 class=" mg-clear tc-rich-electric-blue">
+                            <strong>bulk servers, whole domains (Active Domains)</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-white">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Views</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             rule-per-server views
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            none, only emails
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>all-in-one view</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
-                            <strong>Adding new items</strong>
+                            <strong>Ports</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
-                            one server at a time
+                            443 or user-defined
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            443
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>domains (with wildcards)</strong>
+                            <strong>443 or user-defined</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-white">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Tests</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
-                            servers directly
+                            servers
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            servers
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>CT logs (certificate transparency), and servers (optional)</strong>
+                            <strong>CT logs (certificate transparency), and servers</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Frequency</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             hourly
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            every other day
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>weekly and on demand</strong><br>
+                            <strong>4-12 hours (varies per test type)</strong><br>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-white">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Emails</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
-                            certs - once before expiration
+                            once before expiration
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            up to 9 reminders
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>weekly - inventory and planner for all certs</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-gainsboro">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Monitoring</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             150+ stations
                         </h6>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            centrally, 1 instance
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class="mg-clear  tc-rich-electric-blue">
-                            <strong>centrally, 1+ instances, additional instances for availability</strong>
+                            <strong>centrally, 1 instance</strong>
                         </h5>
                     </div>
                 </div>
                 <div class="row bgc-white">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Security tests</strong>
                         </h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <h6>
                             simple
                         </h6>
@@ -304,7 +391,12 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
+                        <h6>
+                            certificate expiry only
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
                         <h5 class="mg-clear  tc-rich-electric-blue">
                             <strong>deployed, CT logs, cross-checking</strong>
                         </h5>
@@ -338,19 +430,37 @@
                                     Will we ever charge you for this service?
                                 </h3>
                                 <p>
-                                    Our plan is to keep this service free, including evolutionary features. We have some
-                                    thoughts about subscriptions, but these will be only for substantial extensions of
-                                    KeyChest, and customization of this service for on-premise monitoring of your
-                                    internal infrastructure.
+                                    We are developing Professsional and Enterprise versions of KeyChest. This free
+                                    service at <a target="_blank" href="https://keychest.net">KeyChest.net</a> uses
+                                    KeyChest Professional and remains free. It is equal to KeyChest Enterprise in terms
+                                    of
+                                    the depth of spot checks, scanning, monitoring, dashboard information, and server
+                                    enrolment.
+                                </p>
+                                <h3 class="mg-md tc-rich-electric-blue">
+                                    Going private and enterprise - paid features
+                                </h3>
+                                <p>We offer dedicated KeyChest Professional instances. They can be hosted in Amazon
+                                    cloud, on your internal server(s), or elsewhere (needs prior agreement). Monthly
+                                    subscriptions start at $100 and minimum contract lengths apply.
                                 </p>
                                 <p>
-                                    Enterprise version will evolve around features, which make sense for large
+                                    <b>KeyChest Enterprise</b> adds features useful for teams, and large
                                     companies:
-                                    on-premise instances, user/role management,
-                                    monitoring "sub-spaces", independent scanning agents, and security policies for
-                                    internal certificates.
-
-                                    <br/><br/>Get in touch if you want to chat.&nbsp;
+                                </p>
+                                <ul>
+                                    <li><p>API - essential API will be available in Professional version - see
+                                            <a href="#roadmap">the roadmap</a>.</p></li>
+                                    <li><p>Integration.</p></li>
+                                    <li><p>User/role management.</p></li>
+                                    <li><p>Enterprise networks scanning.</p></li>
+                                    <li><p>Governance.</p></li>
+                                </ul>
+                                <p>We can currenlty only provide instances as a fully managed service. Our pricing is based on the
+                                    number of users, sites, and independent scanners.
+                                    If you want to discuss your particular requirements, please get in touch with
+                                    <a href="mailto:support@enigmabridge.com?Subject=KeyChest%20enquiry" target="_top">our
+                                        support</a> or simple fill in the form below.
                                 </p>
                             </div>
                         </div>
