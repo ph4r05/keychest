@@ -172,7 +172,7 @@
                 <div v-if="neighbourhood.length > 0"> Domain names in the certificate are:
                     <ul class="domain-neighbours">
                         <li v-for="domain in neighbourhood">
-                            <a v-bind:href="'?url=' + encodeURI(Req.removeWildcard(domain))">{{ domain }}</a>
+                            <a v-bind:href="newScanUrl(domain)">{{ domain }}</a>
                         </li>
                     </ul>
                 </div>
@@ -217,7 +217,7 @@
                     allowed to use the same private key:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">
-                        <span v-if="!Req.isWildcard(domain)"><a v-bind:href="'?url=' + encodeURI(domain)">{{ domain }}</a></span
+                        <span v-if="!Req.isWildcard(domain)"><a v-bind:href="newScanUrl(domain)">{{ domain }}</a></span
                         ><span v-else="">{{ domain }}</span
                     ></li>
                 </ul>
@@ -573,7 +573,15 @@
             },
 
             didYouMeanUrlFull() {
-                return '?url=' + encodeURI(this.didYouMeanUrl);
+                return this.newScanUrl(this.didYouMeanUrl);
+            },
+
+            newScanUrl(url, ip){
+                let ret = '?url=' + encodeURIComponent(Req.removeWildcard(url && !_.isEmpty(url) ? url : this.curHostAddr));
+                if (ip && !_.isEmpty(ip)){
+                    ret += '&ip=' + encodeURIComponent(ip);
+                }
+                return ret;
             },
 
             formBlock(block){
