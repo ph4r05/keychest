@@ -12,7 +12,9 @@ window.URL = require('url-parse');
 window.Req = require('./req.js');
 window.toastr = require('toastr');
 window.Moment = require('moment');
+window.pluralize = require('pluralize');
 
+require('./common.js');
 require('jquery-ui/ui/effects/effect-shake');
 
 /**
