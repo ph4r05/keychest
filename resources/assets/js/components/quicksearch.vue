@@ -378,6 +378,7 @@
 <script>
     import axios from 'axios';
     import moment from 'moment';
+    import pluralize from 'pluralize';
 
     export default {
         props: {
@@ -492,6 +493,10 @@
                     danger: this.form.defcon===1 };
             },
 
+            curHostAddr(){
+                return this.curJob ? (this.curJob.scan_host + (this.curJob.portString || '')) : '';
+            },
+
             scanIp(){
                 return !this.hasDnsProblem && this.tlsScan ? this.tlsScan.ip_scanned : null;
             },
@@ -509,6 +514,10 @@
                     };
                 });
             },
+
+            anotherIps(){
+                return _.filter(this.ips, x => !x.cur);
+            }
         },
 
         methods: {
@@ -537,6 +546,10 @@
                 const utc = moment.utc(obj[key]).unix();
                 obj[key+'_utc'] = utc;
                 obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
+            },
+
+            pluralize(str, num, disp){
+                return pluralize(str, num, disp);
             },
 
             recomp(){
@@ -913,9 +926,9 @@
 
                     // Update URL so it contains params - job ID & url
                     let new_url = window.location.pathname + "?uuid=" + json.uuid
-                        + '&url=' + encodeURI(targetUri);
+                        + '&url=' + encodeURIComponent(targetUri);
                     if (this.curIp){
-                        new_url += '&ip=' + encodeURI(this.curIp);
+                        new_url += '&ip=' + encodeURIComponent(this.curIp);
                     }
 
                     try{
