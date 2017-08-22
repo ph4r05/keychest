@@ -17,9 +17,11 @@ window.toastr = require('toastr');
 window.swal = require('sweetalert2');
 window.pluralize = require('pluralize');
 
+require('moment-timezone');
+require('./common.js');
+
 require('jquery-ui/ui/effects/effect-shake');
 require('bootstrap-switch');
-require('moment-timezone');
 
 /**
  * Admin LTE

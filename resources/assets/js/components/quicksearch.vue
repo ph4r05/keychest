@@ -51,12 +51,13 @@
 
             <!-- No TLS scan - probably invalid domain -->
             <div class="alert alert-info" v-else-if="isTlsScanEmpty && resultsLoaded">
-                No TLS scan was performed.
+                No TLS scan could be performed for the <u>{{ curJob.scan_host }}</u>.
+                <!--<span v-if="scanIp">on the IP address <i>{{ scanIp }}</i></span>-->
             </div>
 
             <!-- UX - nice message for missing TLS -->
             <div class="alert alert-info" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
-                This domain does not appear to be secured with <i>https://</i>
+                The domain <u>{{ curJob.scan_host }}</u> does not appear to be secured with <i>https://</i>
             </div>
 
             <!-- TLS Error: problem with the scan -->
@@ -111,6 +112,16 @@
 
                 </tbody>
             </table>
+
+            <div class="alert alert-default" v-if="!hasDnsProblem && scanIp && ips.length > 1">
+                The IP address being scanned is <i>{{ scanIp }}</i>. <br/>
+                We found it running also on the following {{ pluralize('address', anotherIps.length) }}. Click to scan:
+                <ul>
+                    <li v-for="ip in anotherIps">
+                        <a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a>
+                    </li>
+                </ul>
+            </div>
 
             <!-- Start tracking -->
             <transition name="fade" v-on:after-leave="transition_hook">
@@ -170,7 +181,7 @@
                 <div v-if="neighbourhood.length > 0"> Domain names in the certificate are:
                     <ul class="domain-neighbours">
                         <li v-for="domain in neighbourhood">
-                            <a v-bind:href="'?url=' + encodeURI(Req.removeWildcard(domain))">{{ domain }}</a>
+                            <a v-bind:href="newScanUrl(domain)">{{ domain }}</a>
                         </li>
                     </ul>
                 </div>
@@ -215,7 +226,7 @@
                     allowed to use the same private key:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">
-                        <span v-if="!Req.isWildcard(domain)"><a v-bind:href="'?url=' + encodeURI(domain)">{{ domain }}</a></span
+                        <span v-if="!Req.isWildcard(domain)"><a v-bind:href="newScanUrl(domain)">{{ domain }}</a></span
                         ><span v-else="">{{ domain }}</span
                     ></li>
                 </ul>
@@ -227,7 +238,7 @@
 
         <!-- Expert stats - will be shown later, on icon click -->
         <transition name="fade" v-on:after-leave="transition_hook">
-        <div class="scan-results" id="scan-results" v-show="resultsLoaded && showExpertStats">
+        <div class="scan-results" id="scan-results" v-if="resultsLoaded && showExpertStats">
             <h1>Results for <span class="scan-results-host bg-success">{{ curJob.scan_host }}:{{ curJob.port }}</span></h1>
 
             <div class="tls-results" id="tls-results">
@@ -376,6 +387,7 @@
 <script>
     import axios from 'axios';
     import moment from 'moment';
+    import pluralize from 'pluralize';
 
     export default {
         props: {
@@ -391,6 +403,7 @@
                 curUuid: null,
                 curJob: {},
                 curUrl: null,
+                curIp: null,
                 form: {
                     defcon: 5,
                     textStatus: 'OK'
@@ -402,7 +415,9 @@
                 showExpertStats: false,
                 addingStatus: 0,
 
-                tlsScan: {},
+                tlsScan: {
+                    ip_scanned: null
+                },
                 tlsScanError: false,
                 tlsScanLeafCert: null,
                 tlsScanHostCert: null,
@@ -485,6 +500,32 @@
                     success: this.form.defcon===5,
                     warning: this.form.defcon<=4 && this.form.defcon>=2,
                     danger: this.form.defcon===1 };
+            },
+
+            curHostAddr(){
+                return this.curJob ? (this.curJob.scan_host + (this.curJob.portString || '')) : '';
+            },
+
+            scanIp(){
+                return !this.hasDnsProblem && this.tlsScan ? this.tlsScan.ip_scanned : null;
+            },
+
+            ips(){
+                if (this.hasDnsProblem){
+                    return [];
+                }
+
+                return _.map(this.results.dns.dns, x => {
+                    return {
+                        'type': x[0],
+                        'ip': x[1],
+                        'cur': this.scanIp === x[1]
+                    };
+                });
+            },
+
+            anotherIps(){
+                return _.filter(this.ips, x => !x.cur);
             }
         },
 
@@ -516,15 +557,20 @@
                 obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
             },
 
+            pluralize(str, num, disp){
+                return pluralize(str, num, disp);
+            },
+
             recomp(){
                 this.$emit('onRecompNeeded');
             },
 
             hookup(){
-                let uuid = Req.findGetParameter('uuid');
-                let url = Req.findGetParameter('url');
-                let new_job = Req.findGetParameter('new');
-                let scanTarget = $('#scan-target');
+                const uuid = Req.findGetParameter('uuid');
+                const url = _.trim(Req.findGetParameter('url'));
+                const ip = _.trim(Req.findGetParameter('ip'));
+                const new_job = Req.findGetParameter('new');
+                const scanTarget = $('#scan-target');
 
                 // lowercase input
                 $.fn.lowercaseFilter = function() {
@@ -543,12 +589,21 @@
                     this.jobSubmittedNow = new_job;
                     this.onUuidProvided(uuid);
                 } else if (url){
+                    this.curIp = ip;
                     setTimeout(this.submitForm, 550); // auto submit after page load
                 }
             },
 
             didYouMeanUrlFull() {
-                return '?url=' + encodeURI(this.didYouMeanUrl);
+                return this.newScanUrl(this.didYouMeanUrl);
+            },
+
+            newScanUrl(url, ip){
+                let ret = '?url=' + encodeURIComponent(Req.removeWildcard(url && !_.isEmpty(url) ? url : this.curHostAddr));
+                if (ip && !_.isEmpty(ip)){
+                    ret += '&ip=' + encodeURIComponent(ip);
+                }
+                return ret;
             },
 
             formBlock(block){
@@ -654,6 +709,9 @@
             },
 
             processResults() {
+                // IP reset
+                this.curIp = null;
+
                 // Certificates
                 const curTime = new Date().getTime() / 1000.0;
                 for(const certId in this.results.certificates){
@@ -866,7 +924,8 @@
                 this.curUrl = targetUri;
                 this.jobSubmittedNow = true;
 
-                Req.submitJob(targetUri, (function(json){
+                const req_data = {'scan-target': targetUri, 'ip':this.curIp};
+                Req.submitJob(req_data, json => {
                     if (json.status !== 'success'){
                         this.errMsg('Could not submit the scan');
                         return;
@@ -876,7 +935,11 @@
 
                     // Update URL so it contains params - job ID & url
                     let new_url = window.location.pathname + "?uuid=" + json.uuid
-                        + '&url=' + encodeURI(targetUri);
+                        + '&url=' + encodeURIComponent(targetUri);
+                    if (this.curIp){
+                        new_url += '&ip=' + encodeURIComponent(this.curIp);
+                    }
+
                     try{
                         history.pushState(null, null, new_url); // new URL with history
                         history.replaceState(null, null, new_url); // replace the existing
@@ -888,9 +951,9 @@
                         window.location.replace(new_url + '&new=1');
                     }
 
-                }).bind(this), (function(jqxhr, textStatus, error){
+                }, (jqxhr, textStatus, error) => {
                     this.errMsg(error);
-                }).bind(this));
+                });
             },
 
             startTracking(){

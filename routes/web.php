@@ -23,7 +23,7 @@ Route::post('rfeedback', 'SearchController@restSubmitFeedback')->name('rfeedback
 Route::get('scan', 'SearchController@show');
 Route::post('scan', 'SearchController@search');
 
-Route::get('submitJob', 'SearchController@restSubmitJob');
+Route::post('submitJob', 'SearchController@restSubmitJob');
 Route::get('jobState', 'SearchController@restGetJobState');
 Route::get('jobResult', 'SearchController@restJobResults');
 
