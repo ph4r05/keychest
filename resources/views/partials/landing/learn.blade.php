@@ -8,15 +8,16 @@
                 <div class="row">
                         <div class="col-sm-6" >
                             <p>
-                                KeyChest of Enigma Bridge is the tool for monitoring of your HTTPS and TLS servers. It
-                                helps you monitor expiry of TLS certificates, availability of your servers, and their
+                                KeyChest of Enigma Bridge is the tool for certificate monitoring on your HTTPS and TLS
+                                servers. It helps you monitor expiry of TLS certificates, availability status of your servers,
+                                and their
                                 configuration. It will provide you with inventory summaries, as well as planning tasks
                                 for certificate renewals. You get all the information you need for operational teams, as
                                 well as for you managers if they ask for key performance indicators (KPIs).
                             </p>
                             <p>
                                 This free service running KeyChest Professional only imposes "fair-use" limits so you
-                                can use it to monitor small thousands of your certificates. It can monitor HTTPS
+                                can use it to monitor small thousands of your certificates only. It can monitor HTTPS
                                 servers, but also web applications using TLS, email servers (not StartTLS though), and
                                 any other services with TLS protocol for secure communication.
                             </p>
@@ -46,6 +47,7 @@
                                 <h3 class="mg-clear tc-rich-electric-blue">
                                     Spot check
                                 </h3>
+                                <p>just paste your domain, no registration</p>
                             </div>
                             <div class="panel-body">
                                 <ul>
@@ -104,14 +106,13 @@
                                 <h3 class="mg-clear tc-rich-electric-blue">
                                     Dashboard
                                 </h3>
+                                <p>register with email or social account</p>
                             </div>
                             <div class="panel-body">
                                 <ul>
                                     <li>
                                         <h6 class=" mg-sm">
-                                            massive options for enrolment - single servers, bulk uploads, "Active
-                                            Domains" with
-                                            continuous automatic enrolment of subdomain servers
+                                            massive options for enrolment - single servers, bulk enrolment, fully automated enrolment of subdomain servers
                                         </h6>
                                     </li>
                                     <li>
@@ -152,10 +153,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="divider-h">
+                    <span class="divider"></span>
+                </div>
 
-                <h3 id="roadmap" class="mg-md tc-rich-electric-blue">
+                <h2 class="mg-md tc-rich-electric-blue">Our goals</h2>
+                <p>bla bla</p>
+
+                <h2 id="roadmap" class="mg-md tc-rich-electric-blue">
                     Road map
-                </h3>
+                </h2>
                 <ul>
                     <li><p>Dashboard launched - 27 Jun 2017</p></li>
                     <li><p>Bulk import and auto discovery of sub-domains - 10 July 2017</p></li>
@@ -169,11 +176,11 @@
                 </ul>
 
                 <p>&nbsp;</p>
-                <h3 class="mg-md tc-rich-electric-blue">
-                    Letsencrypt users seem to like letsmonitor.org - here&rsquo;s how we compare
-                </h3>
+                <h2 class="mg-md tc-rich-electric-blue">
+                    Here&rsquo;s how we compare
+                </h2>
                 <p>
-                    The following table compares features of KeyChest with Letsmonitor.org.
+                    The following table compares features of KeyChest with Letsmonitor.org and certificatemonitor.org.
                 </p>
                 <div class="row bgc-capri">
                     <div class="col-sm-2">
@@ -197,7 +204,7 @@
                         </h4>
                     </div>
                 </div>
-                <div class="row bgc-white">
+                <div class="row bgc-gainsboro">
                     <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Primary focus</strong>
@@ -219,7 +226,7 @@
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-gainsboro">
+                <div class="row bgc-white">
                     <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Enrolment</strong>
@@ -241,7 +248,7 @@
                         </h5>
                     </div>
                 </div>
-                <div class="row bgc-white">
+                <div class="row bgc-gainsboro">
                     <div class="col-sm-2">
                         <h4 class="mg-clear tc-onyx">
                             <strong>Views</strong>
@@ -260,6 +267,28 @@
                     <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
                             <strong>all-in-one view</strong>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row bgc-white">
+                    <div class="col-sm-2">
+                        <h4 class="mg-clear tc-onyx">
+                            <strong>API</strong>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6>
+                            planned
+                        </h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6>
+                            none
+                        </h6>
+                    </div>
+                    <div class="col-sm-4">
+                        <h5 class=" mg-clear tc-rich-electric-blue">
+                            <strong>in testing</strong>
                         </h5>
                     </div>
                 </div>
@@ -426,9 +455,9 @@
                                 <div class="divider-h">
                                     <span class="divider"></span>
                                 </div>
-                                <h3 class="mg-md tc-rich-electric-blue">
+                                <h2 class="mg-md tc-rich-electric-blue">
                                     Will we ever charge you for this service?
-                                </h3>
+                                </h2>
                                 <p>
                                     We are developing Professsional and Enterprise versions of KeyChest. This free
                                     service at <a target="_blank" href="https://keychest.net">KeyChest.net</a> uses
@@ -437,9 +466,9 @@
                                     the depth of spot checks, scanning, monitoring, dashboard information, and server
                                     enrolment.
                                 </p>
-                                <h3 class="mg-md tc-rich-electric-blue">
+                                <h2 class="mg-md tc-rich-electric-blue">
                                     Going private and enterprise - paid features
-                                </h3>
+                                </h2>
                                 <p>We offer dedicated KeyChest Professional instances. They can be hosted in Amazon
                                     cloud, on your internal server(s), or elsewhere (needs prior agreement). Monthly
                                     subscriptions start at $100 and minimum contract lengths apply.
