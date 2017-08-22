@@ -102,6 +102,7 @@ Make user-based node installation, if you dont have that yet
 rsync -av /root/.nvm/versions/node/v6.10.3/ /opt/node-6.10.3/
 chown -R ec2-user /opt/node-6.10.3
 npm config set prefix /opt/node-6.10.3/
+ln -s /opt/node-6.10.3/ /opt/node
 
 #
 # As ec2-user
@@ -119,11 +120,25 @@ npm install -g node-sqlite3
 npm install -g node-pre-gyp gyp laravel-echo-server
 ```
 
-Configure:
+More info: [Laravel Echo Server]
+
+[Laravel Echo Server]: https://github.com/tlaverdure/laravel-echo-server
+
+Configure - done by us:
 
 ```bash
 laravel-echo-server init
+
+# or check laravel-echo-server.json
 ```
+
+Starting the server (debug)
+
+```bash
+laravel-echo-server start
+```
+
+Or let _supervisord_ manage it.
 
 
 ## Configure social plugin - OAuth login
