@@ -71,7 +71,13 @@ SyntaxError: Unexpected end of JSON input
  - It helps to add `console.log()` to the scripts causing exceptions, in this case here `node_modules/laravel-mix/src/Manifest.js:149`
  - The culprit was the `public/mix-manifest.json` was empty somehow, so it threw JSON parsing exception. To fix remove / reupload the file.
  
+Permission fix: 
  
+```bash
+sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
+sudo chown -R $(whoami) $(npm config get prefix)
+```
+
 ### NPM watching
 
 If problem with watch option on unix system there may be too little watches configured.
