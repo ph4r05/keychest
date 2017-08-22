@@ -25,7 +25,7 @@ class LastUserAction
             $oldAction = $user->last_action_at;
             $user->last_action_at = Carbon::now();
 
-            if (empty($oldAction) || $user->last_action_at->diffInSeconds($oldAction->diffIn) > 10) {
+            if (empty($oldAction) || $user->last_action_at->diffInSeconds($oldAction) > 10) {
                 $user->save();
             }
         }
