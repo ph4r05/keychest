@@ -34,7 +34,8 @@ class User extends Authenticatable
     public function getDates()
     {
         return array('created_at', 'updated_at', 'last_email_report_sent_at',
-            'last_email_no_servers_sent_at', 'last_email_report_enqueued_at');
+            'last_email_no_servers_sent_at', 'last_email_report_enqueued_at',
+            'last_login_at', 'cur_login_at', 'last_action_at');
     }
 
     /**
@@ -67,6 +68,14 @@ class User extends Authenticatable
      */
     public function latestDnsScan(){
         return $this->belongsTo('\App\Models\DnsResult', 'last_dns_scan_id');
+    }
+
+    /**
+     * Latest login record
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function latestLogin(){
+        return $this->belongsTo('\App\Models\UserLoginHistory', 'user_id');
     }
 
     /**
