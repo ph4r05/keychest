@@ -757,3 +757,31 @@ h4,h5,h6{
   width: 100%;
 }
 
+/* = Misc styling - e.g., donor button
+-------------------------------------------------------------- */
+
+.landing-donor {
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 10%;
+  text-align: center;
+}
+
+.landing-donor-button {
+  background: #00a7d7 url(https://d1iczxrky3cnb2.cloudfront.net/white_logo.png) no-repeat 37px center;
+  color: #fff;
+  text-decoration: none;
+  font-family: Verdana, sans-serif;
+  display: inline-block;
+  font-size: 16px;
+  padding: 15px 38px 15px 75px;
+  padding-left: auto;
+  padding-right: auto;
+  margin-top: 15px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  box-shadow: 0 1px 0 0 #007496;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+}
+

@@ -51,6 +51,8 @@
     </script>
     <!-- Google Analytics END -->
 
+    <script src="https://donorbox.org/install-popup-button.js" type="text/javascript" defer></script>
+
 </head>
 <body>
     <div id="app" class="page-container search-page">
