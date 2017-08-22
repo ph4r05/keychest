@@ -51,14 +51,13 @@
 
             <!-- No TLS scan - probably invalid domain -->
             <div class="alert alert-info" v-else-if="isTlsScanEmpty && resultsLoaded">
-                No TLS scan was performed.
+                No TLS scan could be performed for the <u>{{ curJob.scan_host }}</u>.
+                <!--<span v-if="scanIp">on the IP address <i>{{ scanIp }}</i></span>-->
             </div>
 
             <!-- UX - nice message for missing TLS -->
             <div class="alert alert-info" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
-                The domain <u>{{ curJob.scan_host }}</u>
-                <span v-if="scanIp">on the IP address <i>{{ scanIp }}</i></span> does
-                not appear to be secured with <i>https://</i>
+                The domain <u>{{ curJob.scan_host }}</u> does not appear to be secured with <i>https://</i>
             </div>
 
             <!-- TLS Error: problem with the scan -->
@@ -113,6 +112,16 @@
 
                 </tbody>
             </table>
+
+            <div class="alert alert-default" v-if="!hasDnsProblem && scanIp && ips.length > 1">
+                The IP address being scanned is <i>{{ scanIp }}</i>. <br/>
+                We found it running also on the following {{ pluralize('address', anotherIps.length) }}. Click to scan:
+                <ul>
+                    <li v-for="ip in anotherIps">
+                        <a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a>
+                    </li>
+                </ul>
+            </div>
 
             <!-- Start tracking -->
             <transition name="fade" v-on:after-leave="transition_hook">
