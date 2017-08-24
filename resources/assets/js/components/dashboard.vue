@@ -192,6 +192,8 @@
                 </div>
             </div>
 
+
+
             <!-- Section heading -->
             <div class="row" v-if="
                     dnsFailedLookups.length > 0 ||
@@ -513,7 +515,7 @@
                         <div class="form-group">
                             <p>
                                 Certificates in your inventory can be managed by third-party (CDN or ISP). You are
-                                responsible for renewing certificate issued by Let???s Encrypt (short validity
+                                responsible for renewing certificate issued by Let&#39;s Encrypt (short validity
                                 certificates) and by other authorities (long validity certificates).
                             </p>
                             <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
@@ -575,11 +577,11 @@
                                     <!--<th colspan="3">SLDs in global logs</th> -->
                                 </tr>
                                 <tr>
-                                    <th>Let's Encrypt</th>
+                                    <th>Let&#39;s Encrypt</th>
                                     <th>Other certificates</th>
                                     <th><i>Number of all issuers</i></th>
 
-                                    <th>Let's Encrypt</th>
+                                    <th>Let&#39;s Encrypt</th>
                                     <th>Other certificates</th>
                                     <th><i>Number of all issuers</i></th>
 
