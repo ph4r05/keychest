@@ -114,6 +114,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="{{ url('/ws/socket.io/socket.io.js')  }}"></script>
     <script src="{{ mix('/js/manifest.js') }}"></script>
     <script src="{{ mix('/js/vendor.js') }}"></script>
     <script src="{{ url (mix('/js/polyapp.js')) }}"></script>
