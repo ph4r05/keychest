@@ -31,7 +31,7 @@
 
                         <div class="col-sm-6" style="height:100%;pointer-events: none;">
                                 <iframe style="width: 45vw; height: 26vw;"
-                                        src="https://www.youtube.com/embed/p8QVzU6X6oA?controls=0&showinfo=0&rel=0&autoplay=1&loop=1&playlist=p8QVzU6X6oA"
+                                        src="https://www.youtube.com/embed/p8QVzU6X6oA?controls=1&showinfo=0&rel=0&autoplay=1&loop=0"
                                         frameborder="0"></iframe>
                             <!--                        <img src="/images/keychest_dashboard.png" class="img-responsive"/> -->
                         </div>
@@ -157,7 +157,7 @@
                     <span class="divider"></span>
                 </div>
 
-                <h2 class="mg-md tc-rich-electric-blue">Our goals</h2>
+                <h2 class="mg-md tc-rich-electric-blue">Our vision</h2>
 
                 <p>
                     Our main goal with KeyChest is to encourage use of HTTPS by improving operational experience. The single

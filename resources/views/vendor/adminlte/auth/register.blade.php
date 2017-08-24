@@ -42,7 +42,7 @@
 
     @include('adminlte::auth.terms')
  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;z-index:-100  ">
-      <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Oiju0an1pzQ?controls=0&showinfo=0&rel=0&autoplay=1&loop=1&playlist=Oiju0an1pzQ" frameborder="0" allowfullscreen></iframe>
+      <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Oiju0an1pzQ?controls=0&showinfo=0&rel=0&autoplay=1&loop=0" frameborder="0" allowfullscreen></iframe>
 </div>
 </body>
 
