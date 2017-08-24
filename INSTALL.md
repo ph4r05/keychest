@@ -124,13 +124,24 @@ More info: [Laravel Echo Server]
 
 [Laravel Echo Server]: https://github.com/tlaverdure/laravel-echo-server
 
-Configure - done by us:
+Initial configuration, usually not needed as it is done by us:
 
 ```bash
 laravel-echo-server init
-
-# or check laravel-echo-server.json
 ```
+
+Edit the example configuration, add new client with API key:
+
+```bash
+cp laravel-echo-server-prod.example.json laravel-echo-server-prod.json
+```
+
+Link the configuration
+
+```bash
+ln -s laravel-echo-server-prod.json laravel-echo-server.json
+```
+
 
 Starting the server (debug)
 
