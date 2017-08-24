@@ -9,11 +9,11 @@
                         <div class="col-sm-6" >
                             <p>
                                 KeyChest of Enigma Bridge is the tool for certificate monitoring on your HTTPS and TLS
-                                servers. It helps you monitor expiry of TLS certificates, availability status of your servers,
-                                and their
-                                configuration. It will provide you with inventory summaries, as well as planning tasks
-                                for certificate renewals. You get all the information you need for operational teams, as
-                                well as for you managers if they ask for key performance indicators (KPIs).
+                                servers. It helps you monitor expiry of TLS certificates, the availability status of
+                                your servers, and their configuration. It will provide you with inventory summaries,
+                                as well as planning tasks for certificate renewals. You get all the information you need
+                                for operational teams, as well as for you managers if they ask for key performance
+                                indicators (KPIs).
                             </p>
                             <p>
                                 This free service running KeyChest Professional only imposes "fair-use" limits so you
@@ -22,7 +22,7 @@
                                 any other services with TLS protocol for secure communication.
                             </p>
                             <p>
-                                The absolutely unique feature of KeyChest is the ability to enroll all your servers and
+                                One of the unique features of KeyChest is the ability to enroll all your servers and
                                 domain names within minutes. You can set particular servers, import server names in
                                 bulk (100 at a time), and set "Active Domains" for auto-enrollment of all subdomains
                                 servers as soon as you issue the first certificate for them.
