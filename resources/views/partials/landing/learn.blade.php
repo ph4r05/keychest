@@ -9,11 +9,11 @@
                         <div class="col-sm-6" >
                             <p>
                                 KeyChest of Enigma Bridge is the tool for certificate monitoring on your HTTPS and TLS
-                                servers. It helps you monitor expiry of TLS certificates, availability status of your servers,
-                                and their
-                                configuration. It will provide you with inventory summaries, as well as planning tasks
-                                for certificate renewals. You get all the information you need for operational teams, as
-                                well as for you managers if they ask for key performance indicators (KPIs).
+                                servers. It helps you monitor expiry of TLS certificates, the availability status of
+                                your servers, and their configuration. It will provide you with inventory summaries,
+                                as well as planning tasks for certificate renewals. You get all the information you need
+                                for operational teams, as well as for you managers if they ask for key performance
+                                indicators (KPIs).
                             </p>
                             <p>
                                 This free service running KeyChest Professional only imposes "fair-use" limits so you
@@ -22,7 +22,7 @@
                                 any other services with TLS protocol for secure communication.
                             </p>
                             <p>
-                                The absolutely unique feature of KeyChest is the ability to enroll all your servers and
+                                One of the unique features of KeyChest is the ability to enroll all your servers and
                                 domain names within minutes. You can set particular servers, import server names in
                                 bulk (100 at a time), and set "Active Domains" for auto-enrollment of all subdomains
                                 servers as soon as you issue the first certificate for them.
@@ -158,7 +158,30 @@
                 </div>
 
                 <h2 class="mg-md tc-rich-electric-blue">Our goals</h2>
-                <p>bla bla</p>
+
+                <p>
+                    Our main goal with KeyChest is to encourage use of HTTPS by improving operational experience. The single
+                most important downside of using certificates and HTTPS is that websites and web services become
+                unavailable once their certificates expire. The growing number of people using Let's Encrypt certificates with
+                just 3 months' validity makes the problem ever more visible. While we can discuss internet security,
+                when your service is down, you have no business.
+                </p>
+
+                <p>
+                    While KeyChest doesn't solve (yet) the problem of certificate renewal, it helps its users to plan related
+                    operational tasks (certificate renewal, deployment, or application restarts). It also gives you piece
+                    of mind that you didn't forget any of your services by providing
+                    a dashboard with all the information in one place.
+                </p>
+
+                <p>
+                    We are now also working on the KeyChest Enterprise for use within large organizations, or where there is
+                    a team managing certificates. This version is going to be available as managed service instances hosted
+                    either in a public cloud, or within clients' networks. A natural progression is to start actively managing
+                    certificates from dedicated instances. We have already built our cloud encryption service with secure
+                    hardware to manage keys and our current task is to extend the capabilities to support different types of
+                    clients and environments.
+                </p>
 
                 <h2 id="roadmap" class="mg-md tc-rich-electric-blue">
                     Road map

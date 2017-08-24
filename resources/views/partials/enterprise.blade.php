@@ -37,7 +37,7 @@
     <a href="https://keychest.net">https://keychest.net</a> with a fair use policy) and the Enterprise version.
 </p>
 
-<table class="tg">
+<table class="tg table">
     <tr>
         <th class="tg-9hbo">Functionality</th>
         <th class="tg-9hbo">Professional Version</th>
@@ -98,14 +98,14 @@ List prices have a limited validity so please <a target="_blank" href="https://e
     touch via our support system</a> to get up to date quotation.
 </p>
 
-<table class="tg">
+<table class="tg table">
     <tr>
         <th class="tg-9hbo" colspan="4">Professional version</th>
     </tr>
     <tr>
         <td class="tg-v4ss">Public cloud service</td>
-        <td class="tg-lvf9">free</td>
-        <td class="tg-lvf9">free</td>
+        <td class="tg-m2nm">free</td>
+        <td class="tg-m2nm">free</td>
         <td class="tg-6k2t">n/a</td>
     </tr>
     <tr>
@@ -115,7 +115,7 @@ List prices have a limited validity so please <a target="_blank" href="https://e
         <td class="tg-yw4l">minimum term 2 months</td>
     </tr>
     <tr>
-        <td class="tg-v4ss">Private manage instance</td>
+        <td class="tg-v4ss">Private managed instance</td>
         <td class="tg-m2nm">$1,000 / yr</td>
         <td class="tg-m2nm">$100 / mth</td>
         <td class="tg-6k2t">minimum term 6 months</td>
