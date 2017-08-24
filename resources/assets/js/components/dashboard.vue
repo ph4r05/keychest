@@ -1197,7 +1197,7 @@
             warmup(){
                 setTimeout(() => {
                     Psl.get('test.now.sh');
-                    Psl.get('test.??????');
+                    Psl.get('test.通販');
                 }, 10);
             },
 
