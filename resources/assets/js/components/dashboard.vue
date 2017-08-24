@@ -177,7 +177,8 @@
                         <br><br>
                             You may want to check that all certificates are legitimate if:
                             <ul>
-                            <li>there is a difference between the two charts; and</li>
+                            <li>there is a difference between the two charts;</li>
+                            <li>all monitored servers are running; and</li>
                             <li>there is no CDN/ISP certificate in the first chart.</li>
                             </ul>
                             The "Informational" part of this dashboard lists all certificates sorted by expiration date
