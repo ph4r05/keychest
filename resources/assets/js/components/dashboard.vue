@@ -189,7 +189,7 @@
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">DNS configuration issues</template>
+                        <template slot="title">DNS configuration issues ({{dnsFailedLookups.length}})</template>
                         <p>Please check if the following domain names are correct. You may also need to verify
                             your DNS configuration at your DNS registrar and at your DNS servers.</p>
                         <div class="table-responsive table-xfull">
@@ -214,7 +214,7 @@
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Unreachable servers</template>
+                        <template slot="title">Unreachable servers ({{tlsErrors.length}})</template>
 
                         <p>We failed to connect to one or more servers using TLS protocol.</p>
                         <div class="table-responsive table-xfull">
@@ -252,7 +252,7 @@
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Servers with configuration errors</template>
+                        <template slot="title">Servers with configuration errors ({{len(tlsInvalidTrust)}})</template>
                         <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
@@ -293,7 +293,7 @@
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Unused, default, or incorrect certificates</template>
+                        <template slot="title">Unused, default, or incorrect certificates ({{len(tlsInvalidHostname)}})</template>
                         <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
@@ -329,7 +329,7 @@
             <div v-if="len(expiredCertificates) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger">
-                        <template slot="title">Servers with expired certificates</template>
+                        <template slot="title">Servers with expired certificates ({{len(expiredCertificates)}})</template>
                         <p>Clients can't connect to following servers due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
@@ -490,7 +490,7 @@
                         <div class="form-group">
                             <p>
                                 Certificates in your inventory can be managed by third-party (CDN or ISP). You are
-                                responsible for renewing certificate issued by Let’s Encrypt (short validity
+                                responsible for renewing certificate issued by Let???s Encrypt (short validity
                                 certificates) and by other authorities (long validity certificates).
                             </p>
                             <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
@@ -1124,7 +1124,7 @@
             warmup(){
                 setTimeout(() => {
                     Psl.get('test.now.sh');
-                    Psl.get('test.通販');
+                    Psl.get('test.??????');
                 }, 10);
             },
 
