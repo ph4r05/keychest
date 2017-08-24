@@ -188,6 +188,54 @@
                 </div>
             </div>
 
+
+            <!-- incident summary table -->
+            <a name="incidentSummary"></a>
+            <div class="row">
+                <div class="xcol-md-12">
+                    <sbox cssBox="box-success">
+                        <template slot="title">Number of incidents per category</template>
+                            <p>The table shows a summary of the number of active incidents per category.
+                            Futher details are in the "Incidents" section of the dashboard.
+                            </p>
+                        <div class="table-responsive table-xfull">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <!--<th>ID</th>-->
+                                    <th>Incident category</th>
+                                    <th>Number of active incidents</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr>
+                                <td>DNS configuration issues</td>
+                                <td>{{dnsFailedLookups.length}}</td>
+                                </tr>
+
+                                <tr>
+                                <td>Unreachable servers</td>
+                                <td>{{tlsErrors.length}}</td>
+                                </tr>
+
+                                <tr>
+                                <td>Servers with configuration errors</td>
+                                <td>{{len(tlsInvalidTrust)}}</td>
+                                </tr>
+
+                                <tr>
+                                <td>Incorrect certificates</td>
+                                <td>{{len(tlsInvalidHostname)}}</td>
+                                </tr>
+
+                                <tr>
+                                <td>Expired certificates</td>
+                                <td>{{len(expiredCertificates)}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </sbox>
                 </div>
             </div>
