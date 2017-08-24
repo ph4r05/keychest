@@ -158,6 +158,13 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success">
                         <template slot="title">Yearly renewal calendar</template>
+                        <p>
+                        The following two charts provide information about the effort needed in the next 12 months to
+                        keep all your certificates valid. The first chart shows certificates we verified directly
+                        when scanning your servers.
+                        <br>
+                        <i>Note: you can click an chart labels to hide/unhide types of certificates.</i>
+                        </p>
                             <div class="form-group">
                                 <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
                             </div>
@@ -165,6 +172,22 @@
                             <div class="form-group">
                                 <canvas id="columnchart_certificates_all_js" style="width:100%; height: 350px"></canvas>
                             </div>
+                        <p><i>Note: The number of renewals for certificates, notably Let&#39;Encrypt certificates, valid
+                        for less than 12 months, is estimated for months beyond their maximum validity.</i>
+                        <br><br>
+                            You may want to check that all certificates are legitimate if:
+                            <ul>
+                            <li>there is a difference between the two charts; and</li>
+                            <li>there is no CDN/ISP certificate in the first chart.</li>
+                            </ul>
+                            The "Informational" part of this dashboard lists all certificates sorted by expiration date
+                            so you can easily find a complete list of relevant certificates with expiry dates in the
+                            given month.
+                        </p>
+                    </sbox>
+                </div>
+            </div>
+
                     </sbox>
                 </div>
             </div>
@@ -1360,13 +1383,13 @@
                 const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
                 graphCrtTlsData.options.title = {
                     display: true,
-                    text: 'Certificates on watched servers'
+                    text: 'Certificates on watched servers - excluding those hidden behind CDN/ISP proxies'
                 };
 
                 const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
                 graphCrtAllData.options.title = {
                     display: true,
-                    text: 'All issued certificates (CT)'
+                    text: 'All issued certificates (CT)  - all valid certificates even when not detected on servers'
                 };
 
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
