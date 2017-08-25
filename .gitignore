@@ -15,6 +15,9 @@ npm-debug.log
 .env.local
 .env.dusk.local
 .env.dusk.testing
+laravel-echo-server.json
+laravel-echo-server-dev.json
+laravel-echo-server-prod.json
 resources/vendor
 resources/lang/vendor
 public/css/app.css

@@ -51,8 +51,8 @@
 
             <!-- No TLS scan - probably invalid domain -->
             <div class="alert alert-info" v-else-if="isTlsScanEmpty && resultsLoaded">
-                No TLS scan could be performed for the <u>{{ curJob.scan_host }}</u>.
-                <!--<span v-if="scanIp">on the IP address <i>{{ scanIp }}</i></span>-->
+                No TLS scan could be performed for the <u>{{ curJob.scan_host }}</u><template
+                    v-if="curJob.scan_ip"> at {{ curJob.scan_ip }}</template>.
             </div>
 
             <!-- UX - nice message for missing TLS -->
@@ -114,7 +114,7 @@
             </table>
 
             <div class="alert alert-default" v-if="!hasDnsProblem && scanIp && ips.length > 1">
-                The IP address being scanned is <i>{{ scanIp }}</i>. <br/>
+                The IP address being scanned is <i>{{ scanIp }}</i>. <br/>  <!-- {{ scanIpIsIpv6 }} -->
                 We found it running also on the following {{ pluralize('address', anotherIps.length) }}. Click to scan:
                 <ul>
                     <li v-for="ip in anotherIps">
@@ -508,6 +508,10 @@
 
             scanIp(){
                 return !this.hasDnsProblem && this.tlsScan ? this.tlsScan.ip_scanned : null;
+            },
+
+            scanIpIsIpv6(){
+                return this.scanIp && this.scanIp.indexOf(':') !== -1;
             },
 
             ips(){
