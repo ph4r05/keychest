@@ -119,6 +119,10 @@ class SearchController extends Controller
     public function restSubmitJob()
     {
         list($newJobDb, $elDb) = $this->submitJob();
+        if (empty($newJobDb)){
+            return response()->json(['status' => 'error'], 500);
+        }
+
         $data = [
             'status' => 'success',
             'uuid' => $newJobDb['uuid'],
@@ -127,7 +131,9 @@ class SearchController extends Controller
             'scan_host' => $newJobDb['scan_host'],
         ];
 
-        //return response($json_data, 200)->header('Content-Type', 'application/json');
+        $req = request();
+        $req->session()->put('last_scan_url', $newJobDb['scan_url']);
+
         return response()->json($data, 200);
     }
 
@@ -611,6 +617,7 @@ class SearchController extends Controller
         // Queue entry to the scanner queue
         dispatch((new ScanHostJob($elDb, $elJson))->onQueue('scanner'));
 
+        $newJobDb['scan_url'] = DomainTools::normalizeUserDomainInput($server);
         return [$newJobDb, $elDb];
     }
 

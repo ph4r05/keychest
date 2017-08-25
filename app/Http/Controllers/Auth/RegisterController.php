@@ -36,6 +36,7 @@ class RegisterController extends Controller
     {
         $req = request();
         $req->session()->put('accredit', Input::get('accredit'));
+        $req->session()->put('start_watching', Input::get('start_watching'));
 
         return view('adminlte::auth.register');
     }

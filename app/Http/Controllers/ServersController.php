@@ -78,6 +78,10 @@ class ServersController extends Controller
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
 
+        // start watching from registration before server load
+        $this->checkStartWatching();
+
+        // server list load
         $query = $this->serverManager->loadServerList($userId);
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
@@ -143,6 +147,25 @@ class ServersController extends Controller
         $servers = collect(Input::get('servers'));
         $resp = $this->importServersArr($servers);
         return response()->json($resp, 200);
+    }
+
+    /**
+     * Start watching feature
+     * Used when unregistered user hits start watching button.
+     *
+     * Session values used:
+     *  - start_watching
+     *  - last_scan_url
+     */
+    protected function checkStartWatching(){
+        $sess = request()->session();
+        if (!session('start_watching')){
+            return -10;
+        }
+
+        $sess->forget('start_watching');
+        $server = $sess->get('last_scan_url');
+        return $this->addServer($server);
     }
 
     /**
