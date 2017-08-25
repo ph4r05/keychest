@@ -34,7 +34,7 @@
             <span v-else="">Loading test results ...</span>
         </div>
 
-        <div class="alert alert-success scan-alert" id="search-success" style="display: none">
+        <div class="alert alert-default scan-alert" id="search-success" style="display: none">
             <strong>Success!</strong> Spot check finished.
         </div>
 
@@ -56,8 +56,13 @@
             </div>
 
             <!-- UX - nice message for missing TLS -->
-            <div class="alert alert-info" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
-                The domain <u>{{ curJob.scan_host }}</u> does not appear to be secured with <i>https://</i>
+            <div class="alert alert-danger" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
+                There is no HTTPS/TLS server <u>{{ curJob.scan_host }}</u> at the network address
+                <span v-if="scanIpIsIpv6">IPv6 {{ scanIp }}.<br>If {{ curJob.scan_host }} is correct, you may
+                not be able to renew Let&#39;s Encrypt certificates, see more at <a target="_blank"
+                 href="https://community.letsencrypt.org/t/preferring-ipv6-for-challenge-validation-of-dual-homed-hosts/34774">
+                        letsencrypt.org</a>.</span>
+                <span v-else>IPv4 {{ scanIp }}.</span>
             </div>
 
             <!-- TLS Error: problem with the scan -->
@@ -81,7 +86,8 @@
             <table class="table" v-if="showResultsTable">
                 <tbody>
                 <tr v-bind:class="defconStyle">
-                    <td><strong>{{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                    <td><strong v-if="scanIpIsIpv6"><span class="tc-dark-green">IPv6 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                        <strong v-else><span class="tc-dark-green">IPv4 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
                         <span v-if="tlsScanHostCert && tlsScanHostCert.issuerOrgNorm"> (by {{ tlsScanHostCert.issuerOrgNorm }})</span></td>
                     <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days ago</td>
                     <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }} days</td>
@@ -112,16 +118,6 @@
 
                 </tbody>
             </table>
-
-            <div class="alert alert-default" v-if="!hasDnsProblem && scanIp && ips.length > 1">
-                The IP address being scanned is <i>{{ scanIp }}</i>. <br/>  <!-- {{ scanIpIsIpv6 }} -->
-                We found it running also on the following {{ pluralize('address', anotherIps.length) }}. Click to scan:
-                <ul>
-                    <li v-for="ip in anotherIps">
-                        <a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a>
-                    </li>
-                </ul>
-            </div>
 
             <!-- Start tracking -->
             <transition name="fade" v-on:after-leave="transition_hook">
@@ -218,6 +214,13 @@
             <!-- Redirect - scan that too? -->
             <div class="alert alert-info" v-if="!tlsScanError && didYouMeanUrl">
                 We detected a redirection. Click to check destination server <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a>.
+            </div>
+
+            <!-- Other IP addresses -->
+            <div class="alert alert-info" v-if="!hasDnsProblem && scanIp && ips.length > 1">
+                We have found additional network {{ pluralize('address', anotherIps.length) }} for {{ curJob.scan_host }}.
+                Please click on a particular address to test it.<br>
+                <span v-for="ip in anotherIps"> &nbsp;<a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a></span>.
             </div>
 
             <!-- Neighbours -->
