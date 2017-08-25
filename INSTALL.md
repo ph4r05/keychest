@@ -103,11 +103,11 @@ rsync -av /root/.nvm/versions/node/v6.10.3/ /opt/node-6.10.3/
 chown -R ec2-user /opt/node-6.10.3
 npm config set prefix /opt/node-6.10.3/
 ln -s /opt/node-6.10.3/ /opt/node
+echo 'export PATH=/opt/node-6.10.3/bin:$PATH' > /etc/profile.d/node.sh
 
 #
 # As ec2-user
 #
-echo 'export PATH=/opt/node-6.10.3/bin:$PATH' > /etc/profile.d/node.sh
 source /etc/profile.d/node.sh 
 sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 sudo chown -R $(whoami) $(npm config get prefix)
@@ -119,7 +119,7 @@ Install the required packages
 npm install -g node-sqlite3
 
 # If the previous installation fails, try this:
-npm install https://github.com/mapbox/node-sqlite3/tarball/master
+npm install -g https://github.com/mapbox/node-sqlite3/tarball/master
 
 # Install laravel echo server
 npm uninstall -g laravel-echo-server
