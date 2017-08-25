@@ -33,6 +33,8 @@ class OnUserLogin
         $event->user->cur_login_at = Carbon::now();
 
         $req = request();
+        $event->user->accredit = $req->session()->get('accredit');
+
         $newLoginRecord = new UserLoginHistory([
             'user_id' => $event->user->id,
             'login_at' => $event->user->cur_login_at,
