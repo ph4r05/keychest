@@ -46,8 +46,13 @@ if (token) {
 import Echo from 'laravel-echo'
 // window.Pusher = require('pusher-js');
 
-window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: 'https://' + window.location.host,
-    path: '/ws/socket.io'
-});
+try {
+    window.Echo = new Echo({
+        broadcaster: 'socket.io',
+        host: 'https://' + window.location.host,
+        path: '/ws/socket.io'
+    });
+
+} catch (e) {
+    console.warn('Exception staring LaravelEcho %o', e);
+}
