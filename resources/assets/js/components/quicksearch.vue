@@ -34,7 +34,7 @@
             <span v-else="">Loading test results ...</span>
         </div>
 
-        <div class="alert alert-success scan-alert" id="search-success" style="display: none">
+        <div class="alert alert-default scan-alert" id="search-success" style="display: none">
             <strong>Success!</strong> Spot check finished.
         </div>
 
@@ -81,7 +81,8 @@
             <table class="table" v-if="showResultsTable">
                 <tbody>
                 <tr v-bind:class="defconStyle">
-                    <td><strong>{{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                    <td><strong v-if="scanIpIsIpv6"><span class="tc-dark-green">IPv6 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                        <strong v-else><span class="tc-dark-green">IPv4 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
                         <span v-if="tlsScanHostCert && tlsScanHostCert.issuerOrgNorm"> (by {{ tlsScanHostCert.issuerOrgNorm }})</span></td>
                     <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }} days ago</td>
                     <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }} days</td>
