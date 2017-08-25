@@ -92,7 +92,7 @@ Do not edit CSS / JS files in `public/` directly, its generated. Changes will be
 
 ## Websocket server
 
-Make user-based node installation, if you dont have that yet
+Make user-based node installation, if you don't have that yet
 
 ```bash
 #
@@ -117,6 +117,12 @@ Install the required packages
 
 ```bash
 npm install -g node-sqlite3
+
+# If the previous installation fails, try this:
+npm install https://github.com/mapbox/node-sqlite3/tarball/master
+
+# Install laravel echo server
+npm uninstall -g laravel-echo-server
 npm install -g node-pre-gyp gyp laravel-echo-server
 ```
 
