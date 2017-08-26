@@ -114,11 +114,11 @@ class ScanManager {
             ->from($lstScanTbl . ' AS ls')
             ->join($table . ' AS s', function(JoinClause $join){
                 $join->on('s.domain_id','=', 'ls.obj_id')
-                    ->on('s.id', '=', 'ls.scan_id');
+                    ->on('s.id', '=', 'ls.scan_id')
+                    ->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 4');  // whois
             })
             ->join($domainsTable, $domainsTable.'.id', '=', 's.domain_id')
-            ->whereRaw('ls.cache_type = 0')
-            ->whereRaw('ls.scan_type = 4')  // whois
             ->whereIn('s.domain_id', $domainIds->values());
 
         return $q;
@@ -170,10 +170,10 @@ class ScanManager {
             ->from($lstScanTbl . ' AS ls')
             ->join($table . ' AS s', function(JoinClause $join){
                 $join->on('s.watch_id','=', 'ls.obj_id')
-                    ->on('s.id', '=', 'ls.scan_id');
+                    ->on('s.id', '=', 'ls.scan_id')
+                    ->whereRaw('ls.cache_type = 0')
+                    ->whereRaw('ls.scan_type = 3');  // crtsh
             })
-            ->whereRaw('ls.cache_type = 0')
-            ->whereRaw('ls.scan_type = 3')  // crtsh
             ->whereIn('s.watch_id', $watches);
 
         return $q;
