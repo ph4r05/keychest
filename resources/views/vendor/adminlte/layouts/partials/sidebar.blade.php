@@ -45,14 +45,18 @@
                 <a href="{{ url('home/servers') }}"><i class='fa fa-server'></i> <span>{{ trans('admin.servers') }}</span></a>
             </li>
 
-            <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
-                <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
+            <li class="{{ Request::path() ==  'home/license' ? 'active' : ''  }}">
+                <a href="{{ url('home/license') }}"><i class='fa fa-drivers-license'></i> <span>{{ trans('admin.license') }}</span></a>
             </li>
         </ul>
 
         <hr/>
 
         <ul class="sidebar-menu">
+            <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
+                <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
+            </li>
+
             <li class="{{ Request::path() ==  'home/enterprise' ? 'active' : ''  }}">
                 <a href="{{ url('home/enterprise') }}"><i class='fa fa-money'></i> <span>{{ trans('admin.enterprise') }}</span></a>
             </li>

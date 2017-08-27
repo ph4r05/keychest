@@ -17,11 +17,13 @@ return [
     'content' => 'Stories',
     'userguide' => 'User Guide',
     'enterprise' => "Enterprise",
+    'license' => 'License',
 
 
     'dashboard_desc' => '&nbsp;headlines, incidents, planning, and useful information',
     'servers_desc' => '&nbsp;manage your servers and domains to watch',
     'scan_desc' => '&nbsp;quickly test a server when you do configuration changes',
     'userguide_desc' => '',
-    'enterprise_desc' => '&nbsp;KeyChest Enterprise for teams and internal networks'
+    'enterprise_desc' => '&nbsp;KeyChest Enterprise for teams and internal networks',
+    'license_desc' => '&nbsp;License and accout information',
 ];

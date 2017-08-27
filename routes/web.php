@@ -102,7 +102,9 @@ Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
 
-
+Route::get('home/license', function () {
+    return view('license');
+})->name('license');
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
