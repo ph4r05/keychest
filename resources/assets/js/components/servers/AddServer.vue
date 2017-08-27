@@ -23,6 +23,7 @@
                         <div class="form-group">
                             <label for="server-add-title">Server:</label>
                             <input type="text" name="server" id="server-add-title" class="form-control"
+                                   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                    v-model="newItem.server" placeholder="e.g., https://enigmabridge.com:443"
                                    autofocus="autofocus"/>
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
