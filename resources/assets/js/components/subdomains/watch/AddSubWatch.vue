@@ -25,6 +25,7 @@
                             <div :class="{'input-group': !editMode}">
                                 <input type="text" name="server" id="domain-add-title" class="form-control input"
                                        v-model="newItem.server" placeholder="e.g., enigmabridge.com"
+                                       autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                        @keydown="onKeydown"
                                        autofocus="autofocus"/>
                                 <span class="input-group-btn" v-if="!editMode">

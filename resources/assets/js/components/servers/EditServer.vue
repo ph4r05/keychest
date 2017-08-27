@@ -16,6 +16,7 @@
                             <div class="form-group">
                                 <label for="upd-server-name">Server:</label>
                                 <input type="text" name="server" id="upd-server-name" class="form-control"
+                                       autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                        v-model="serverItem.server" placeholder="e.g., https://enigmabridge.com"
                                        autofocus="autofocus"/>
                                 <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
