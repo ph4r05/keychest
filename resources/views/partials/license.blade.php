@@ -28,6 +28,14 @@
                     <td class="tg-v4ss">Created</td>
                     <td class="tg-6k2t">{{date("j F Y, g:ia", strtotime(Auth::user()->created_at))}}  GMT</td>
                 </tr>
+                <tr>
+                    <td class="tg-9hbo">User timezone</td>
+                    <td class="tg-yw4l">{{Auth::user()->timezone}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-v4ss">Email weekly updates</td>
+                    <td class="tg-6k2t">{{  (Auth::user()->weekly_emails_disabled == 1) ? "disabled" : "Monday, 8:00am" }}</td>
+                </tr>
             </table>
 
             <p class="tc-onyx">
