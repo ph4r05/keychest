@@ -256,3 +256,122 @@ Init script change to support `chkconfig`:
 # config: /etc/redis/6379.conf
 # pidfile: /var/run/redis_6379.pid
 ```
+
+## RHEL 7.x
+
+Epel:
+
+```
+sudo yum install epel-release
+
+# OR
+
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install epel-release-latest-7.noarch.rpm
+```
+
+Servers and tools:
+
+```
+sudo yum install -y gcc gcc-c++ make automake autoreconf
+sudo yum install -y git rsync vim htop wget mlocate screen
+sudo yum install -y mariadb-server
+sudo yum install -y --enablerepo=epel nginx
+sudo yum install -y --enablerepo=epel redis
+sudo yum install -y --enablerepo=epel supervisor
+sudo yum install -y --enablerepo=epel nodejs
+sudo yum install -y --enablerepo=epel python-pip python-setuptools python-wheel
+```
+
+```bash
+sudo systemctl enable mariadb.service
+sudo systemctl enable nginx.service
+sudo systemctl enable redis.service
+sudo systemctl enable supervisord.service
+
+sudo systemctl start mariadb.service
+sudo systemctl start nginx.service
+sudo systemctl start redis.service
+sudo systemctl start supervisord.service
+```
+
+PHP 5.6 - RHEL 7
+```bash
+sudo yum update rh-amazon-rhui-client.noarch
+sudo yum-config-manager --enable rhui-REGION-rhel-server-rhscl
+sudo yum install rh-php56 rh-php56-php rh-php56-php-fpm \
+ rh-php56-php-fpm rh-php56-php-mysqlnd rh-php56-php-mbstring rh-php56-php-gd rh-php56-php-xml \
+ rh-php56-php-pecl-xdebug rh-php56-php-opcache rh-php56-php-intl \
+ rh-php56-php-pear   
+ 
+sudo systemctl enable rh-php56-php-fpm.service
+sudo systemctl start rh-php56-php-fpm.service
+sudo systemctl status rh-php56-php-fpm.service
+
+echo 'export PATH=$PATH:/opt/rh/rh-php56/root/bin' | sudo tee /etc/profile.d/php.sh
+```
+
+PHP composer
+```bash
+cd /tmp
+wget https://getcomposer.org/installer
+php installer 
+
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+sudo /opt/rh/rh-php56/root/bin/php composer-setup.php --install-dir=/bin --filename=composer
+```
+
+Node Js
+```bash
+curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
+yum install -y nodejs
+```
+
+Python 2.7.13
+
+```bash
+cd /usr/src
+sudo wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
+sudo tar xzf Python-2.7.13.tgz
+./configure --enable-optimizations
+sudo make altinstall
+
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+sudo python2.7 get-pip.py
+```
+
+Self-signed - temporary!
+```bash
+export MYDOMAIN=ec2-34-250-10-31.eu-west-1.compute.amazonaws.com
+mkdir -p /etc/letsencrypt/live/${MYDOMAIN}/
+cd /etc/letsencrypt/live/${MYDOMAIN}/
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out cert.pem
+```
+
+Database setup
+```bash
+
+```
+
+KeyChest:
+```bash
+sudo mkdir -p /var/www
+cd /var/www
+sudo mkdir keychest
+sudo chown nginx:nginx keychest
+
+# AWS only
+sudo usermod -a -G nginx ec2-user
+
+cd /tmp
+wget https://github.com/EnigmaBridge/keychest/archive/v0.0.9.tar.gz
+tar xvf v0.0.9.tar.gz
+sudo rsync -av keychest-0.0.9/ /var/www/keychest/
+
+cd /var/www/keychest
+composer install
+npm install
+```
+
