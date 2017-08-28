@@ -273,14 +273,18 @@ sudo yum install epel-release-latest-7.noarch.rpm
 Servers and tools:
 
 ```
-sudo yum install -y gcc gcc-c++ make automake autoreconf
+sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
 sudo yum install -y git rsync vim htop wget mlocate screen
+sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
+    libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel
+    
 sudo yum install -y mariadb-server
 sudo yum install -y --enablerepo=epel nginx
 sudo yum install -y --enablerepo=epel redis
 sudo yum install -y --enablerepo=epel supervisor
 sudo yum install -y --enablerepo=epel nodejs
 sudo yum install -y --enablerepo=epel python-pip python-setuptools python-wheel
+sudo yum install -y --enablerepo=epel nasm
 ```
 
 ```bash
@@ -352,7 +356,11 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out cer
 
 Database setup
 ```bash
-
+sudo mysql_secure_installation
+mysql -uroot -p
+   CREATE DATABASE keychest CHARACTER SET utf8 COLLATE utf8_general_ci;
+   GRANT ALL PRIVILEGES ON keychest.* TO 'keychest'@'localhost' IDENTIFIED BY 'keychest_passwd';
+   FLUSH PRIVILEGES;
 ```
 
 KeyChest:
@@ -373,5 +381,48 @@ sudo rsync -av keychest-0.0.9/ /var/www/keychest/
 cd /var/www/keychest
 composer install
 npm install
+npm run prod
+
+cp .env.example .env
+php artisan key:generate
+php artisan down
+
+# CONFIGURE:
+#  APP_DEBUG=
+#  APP_URL=
+#  DB_CONNECTION=mysql
+#  DB_HOST=127.0.0.1
+#  DB_PORT=3306
+#  DB_DATABASE=keychest
+#  DB_USERNAME=keychest
+#  DB_PASSWORD=secret
+
+# MySQL migration fix:
+# /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
+# substitute json() with text()
+sed -i 's/->json/->text/g' /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
+
+php artisan migrate
+php artisan migrate:status
 ```
 
+Keychest scanner
+
+```bash
+cd
+wget https://github.com/EnigmaBridge/keychest-scanner/archive/v0.1.5.tar.gz
+tar -xzvf v0.1.5.tar.gz
+cd keychest-scanner-0.1.5
+sudo pip install -U --find-links=. .
+
+# Configure alembic migration script
+cp alembic.ini.example alembic.ini
+
+# Edit alembic.ini
+# sqlalchemy.url = driver://user:pass@localhost/dbname
+
+# Database setup
+sudo -E -H pip install alembic
+
+
+```
