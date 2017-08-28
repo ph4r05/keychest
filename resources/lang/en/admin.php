@@ -17,7 +17,7 @@ return [
     'content' => 'Stories',
     'userguide' => 'User Guide',
     'enterprise' => "Enterprise",
-    'license' => 'License',
+    'license' => 'Account',
 
 
     'dashboard_desc' => '&nbsp;headlines, incidents, planning, and useful information',
