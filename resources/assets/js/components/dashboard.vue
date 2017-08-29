@@ -262,7 +262,7 @@
             <!-- DNS lookup fails -->
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger">
+                    <sbox cssBox="box-danger collapsed-box" collapsed="true" >
                         <template slot="title">DNS configuration issues ({{dnsFailedLookups.length}})</template>
                         <p>Please check if the following domain names are correct. You may also need to verify
                             your DNS configuration at your DNS registrar and at your DNS servers.</p>
@@ -287,7 +287,7 @@
             <!-- TLS connection fails -->
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger">
+                    <sbox cssBox="box-danger collapsed-box" collapsed="true" >
                         <template slot="title">Unreachable servers ({{tlsErrors.length}})</template>
 
                         <p>We failed to connect to one or more servers using TLS protocol.</p>
@@ -325,7 +325,7 @@
             <!-- TLS trust errors -->
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger">
+                    <sbox cssBox="box-danger collapsed-box" collapsed="true" >
                         <template slot="title">Servers with configuration errors ({{len(tlsInvalidTrust)}})</template>
                         <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
@@ -366,7 +366,7 @@
             <!-- TLS hostname errors -->
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger">
+                    <sbox cssBox="box-danger collapsed-box" collapsed="true" >
                         <template slot="title">Unused, default, or incorrect certificates ({{len(tlsInvalidHostname)}})</template>
                         <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
@@ -685,7 +685,7 @@
             <a name="certs"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-primary">
+                    <sbox cssBox="box-primary collapsed-box" collapsed="true" >
                         <template slot="title">Certificates under your management</template>
                         <div class="form-group">
                         <p>This is a list of all certificates that you control and are responsible for renewals.
@@ -737,7 +737,7 @@
             <a name="allCerts"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-primary">
+                    <sbox cssBox="box-primary collapsed-box" collapsed="true" >
                         <template slot="title">All certificates of your servers</template>
                         <div class="form-group">
                             <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
