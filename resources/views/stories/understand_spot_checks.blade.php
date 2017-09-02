@@ -14,11 +14,16 @@
                         Understand spot checks
                     </h1>
                     <p class=" mg-md">
-                        We have implemented spot checks so that they return as little information as necessary. The main
-                        point was simplicity. If there is a problem that needs to be fixed, you will see it. If you get
-                        everything right, you will get thumbs up. When you start using it, however, you may
-                        wonder why you are shown certain information. This page explains what we mean, when we show you
-                        certain information to re-assure you about the results of your tests.
+                        The main goal of KeyChest Spot Check is to give you a quick information about the configuration
+                        of a particular server. We tried to make it as simple as possible and it reflects in the amount
+                        of information you can see. <br><br>
+
+                        If the server in question is well configured, you will see just a
+                        "well done" message. If there is a problem that needs to be fixed, you will see everthing relevant
+                        to the problem. The downside is that when you start using it, you may
+                        wonder why you are shown only so little information. <br><br>
+
+                        This page explains what KeyChest Spot Check does so you know what to expect.
                     </p>
                     <h2 class="mg-md  tc-rich-electric-blue">
                         Which server you test
@@ -26,9 +31,18 @@
                     <p class=" mg-lg">
                         KeyChest checks servers with names you give it. It resolves the name, gets an IP address and
                         runs tests against that IP address. If the domain name leads
-                        to, e.g., a web-server, which then redirects your browser, we will ignore this redirection. The
-                        initial scanning will be done against the “primary” server. If we detect a re-direction,
-                        you will see a text allowing you to do a one-click scan of the secondary server.
+                        to, e.g., a web-server, which then redirects your browser, KeyChest ignores this redirection. The
+                        initial scanning will be done against the specified server. If we detect a re-direction,
+                        you will see a text allowing you to do a one-click scan of the secondary server.<br><br>
+
+                        If KeyChest detects more IP addresses for a given domain name, it will automatically scan
+                        one of the IP addresses and shows a list of all other detected IP addresses. Simply click any
+                        of those to test a particular IP address you're interested in. <br><br>
+
+                        In some cases, the certificate used shows additional servers, as it may be needed for load balancing,
+                        or high availability reasons. If it is the case, you will see all those names and can test them
+                        one by one as well.
+
                     </p>
                     <h2 class="mg-md  tc-rich-electric-blue">
                         Time validity messages
