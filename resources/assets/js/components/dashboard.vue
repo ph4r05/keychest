@@ -456,13 +456,14 @@
                 <sbox cssBox="box-success">
                     <template slot="title">Renewals due in next 28 days</template>
                     <p>Watch carefully dates in the following table to prevent downtime on your servers. </p>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
                                     <th colspan="2">Renew before</th>
                                     <th>Server names</th>
+                                    <th>Last update</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -478,12 +479,13 @@
                                         </ul>
                                         <span v-else="">No domains found</span>
                                     </td>
+                                    <td v-bind:class="grp[0].planCss.tbl">{{new Date(grp[0].last_scan_at_utc * 1000.0).toLocaleString()}}</td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <canvas id="imminent_renewals_js" style="width: 100%; height: 300px;"></canvas>
                     </div>
                 </sbox>
