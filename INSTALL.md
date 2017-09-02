@@ -274,7 +274,7 @@ Servers and tools:
 
 ```
 sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
-sudo yum install -y git rsync vim htop wget mlocate screen
+sudo yum install -y git rsync vim htop wget mlocate screen tcpdump
 sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
     libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel
     
@@ -341,8 +341,10 @@ sudo tar xzf Python-2.7.13.tgz
 ./configure --enable-optimizations
 sudo make altinstall
 
+echo 'export PATH=/usr/local/bin:$PATH' | sudo tee /etc/profile.d/py2.7.13.sh
+
 curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-sudo python2.7 get-pip.py
+sudo /usr/local/bin/python2.7 get-pip.py
 ```
 
 Self-signed - temporary!
@@ -423,6 +425,28 @@ cp alembic.ini.example alembic.ini
 
 # Database setup
 sudo -E -H pip install alembic
+alembic upgrade head
 
+mkdir -p /etc/enigma-keychest-scanner
 
+# 
 ```
+
+`/etc/enigma-keychest-scanner/config.json`
+
+```json
+{
+  "config": {
+    "mysql_password": "keychest", 
+    "workers": 10,
+    "periodic_workers": 35, 
+    "mysql_db": "keychest", 
+    "redis_host": "127.0.0.1", 
+    "mysql_user": "keychest2", 
+    "redis_port": 6379,
+    "enable_rest_api": true
+  }
+}
+```
+
+
