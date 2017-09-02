@@ -147,10 +147,15 @@
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content info-box-label">
-                        Key Management Report - {{ Date() }}
+                        Key Management Report - {{ (new Date()).toLocaleString("en-us",{'day':'numeric','month':'short',
+                    'year':'numeric', 'hour':'numeric','minute':'numeric'}) }}
                         <!-- TODO: fix: Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60) -->
                     </div>
                 </div>
+                This dashboard contains latest available information for your servers and certificates. If you've
+                made recent changes to some of your servers and these are not yet reflected in the dashboard, please use
+                the Spot Check function to get the real-time status.<br><br>
+
             </div>
 
             <!-- Monthly planner -->
