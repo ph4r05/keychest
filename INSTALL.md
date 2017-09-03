@@ -474,26 +474,6 @@ sudo npm uninstall -g laravel-echo-server
 sudo npm install -g --unsafe-perm laravel-echo-server
 ```
 
-Supervisor.d configuration
-```bash
-cd /var/www/keychest
-sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
-sudo cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
-
-# epiper helper
-sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
-sudo chmod +x /usr/bin/epiper
-
-# supervisor config reload & start
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl status
-
-# in case of a problem, add following lines to /etc/supervisord.conf
-# [include]
-# files = supervisord.d/*.conf
-```
-
 Selinux
 
 ```bash
@@ -518,6 +498,26 @@ sudo semanage fcontext -a -t httpd_sys_content_t "/var/www(/.*)?"
 sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/keychest/storage(/.*)?"
 restorecon -Rv /var/www
 ls -lZ /var/www
+```
+
+Supervisor.d configuration
+```bash
+cd /var/www/keychest
+sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
+sudo cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
+
+# epiper helper
+sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
+sudo chmod +x /usr/bin/epiper
+
+# supervisor config reload & start
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl status
+
+# in case of a problem, add following lines to /etc/supervisord.conf
+# [include]
+# files = supervisord.d/*.conf
 ```
 
 Start
