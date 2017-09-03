@@ -1,0 +1,11 @@
+module httpd-to-redis-socket 1.0;
+
+require {
+	type redis_port_t;
+	type httpd_t;
+	class tcp_socket name_connect;
+}
+
+#============= httpd_t ==============
+#!!!! This avc can be allowed using the boolean 'httpd_can_network_connect'
+allow httpd_t redis_port_t:tcp_socket name_connect;

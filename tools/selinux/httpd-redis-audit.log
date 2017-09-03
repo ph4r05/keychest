@@ -1,0 +1,1 @@
+type=AVC msg=audit(1504445867.345:5460): avc:  denied  { name_connect } for  pid=19509 comm="php-fpm" dest=6379 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:redis_port_t:s0 tclass=tcp_socket
