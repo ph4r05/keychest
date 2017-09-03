@@ -181,6 +181,7 @@ return [
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
         GrahamCampbell\Markdown\MarkdownServiceProvider::class,
         Influendo\LaravelSurvivor\SurvivorServiceProvider::class,
+        Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -245,6 +246,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Markdown' => GrahamCampbell\Markdown\Facades\Markdown::class,
         'Uuid' => Webpatser\Uuid\Uuid::class,
+        'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
 
         /*
          * Acacha Llum Aliases...
