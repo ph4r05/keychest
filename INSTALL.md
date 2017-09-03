@@ -116,14 +116,15 @@ sudo chown -R $(whoami) $(npm config get prefix)
 Install the required packages
 
 ```bash
-npm install -g node-sqlite3
+sudo npm install -g --unsafe-perm node-sqlite3
 
 # If the previous installation fails, try this:
 npm install -g https://github.com/mapbox/node-sqlite3/tarball/master
 
 # Install laravel echo server
-npm uninstall -g laravel-echo-server
-npm install -g node-pre-gyp gyp laravel-echo-server
+sudo npm uninstall -g laravel-echo-server
+sudo npm install -g node-pre-gyp gyp 
+sudo npm install -g --unsafe-perm laravel-echo-server
 ```
 
 More info: [Laravel Echo Server]
@@ -271,6 +272,12 @@ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum install epel-release-latest-7.noarch.rpm
 ```
 
+Settings:
+```bash
+export KC_SCANNER_VER=0.1.6
+export KC_VER=0.0.10
+```
+
 Servers and tools:
 
 ```
@@ -314,6 +321,7 @@ sudo systemctl start rh-php56-php-fpm.service
 sudo systemctl status rh-php56-php-fpm.service
 
 echo 'export PATH=$PATH:/opt/rh/rh-php56/root/bin' | sudo tee /etc/profile.d/php.sh
+sudo ln -s /opt/rh/rh-php56/root/bin/php /bin/php
 ```
 
 PHP composer
@@ -331,6 +339,7 @@ Node Js
 curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
 sudo yum remove -y nodejs npm
 sudo yum install -y nodejs
+sudo npm install -g npm
 ```
 
 Python 2.7.13
@@ -376,9 +385,9 @@ sudo chown nginx:nginx keychest
 sudo usermod -a -G nginx ec2-user
 
 cd /tmp
-wget https://github.com/EnigmaBridge/keychest/archive/v0.0.10.tar.gz
-tar xvf v0.0.10.tar.gz
-sudo rsync -av keychest-0.0.10/ /var/www/keychest/
+wget https://github.com/EnigmaBridge/keychest/archive/v${KC_VER}.tar.gz
+tar xvf v${KC_VER}.tar.gz
+sudo rsync -av keychest-${KC_VER}/ /var/www/keychest/
 
 cd /var/www/keychest
 composer install
@@ -395,9 +404,9 @@ Keychest scanner
 
 ```bash
 cd
-wget https://github.com/EnigmaBridge/keychest-scanner/archive/v0.1.6.tar.gz
-tar -xzvf v0.1.6.tar.gz
-cd keychest-scanner-0.1.6
+wget https://github.com/EnigmaBridge/keychest-scanner/archive/v${KC_SCANNER_VER}.tar.gz
+tar -xzvf v${KC_SCANNER_VER}.tar.gz
+cd keychest-scanner-${KC_SCANNER_VER}
 sudo /usr/local/bin/pip install -U --find-links=. .
 ```
 
@@ -406,7 +415,7 @@ Keychest Configuration
 ```bash
 # Scanner config setup, DB setup
 
-cd ~/keychest-scanner-0.1.6
+cd ~/keychest-scanner-${KC_SCANNER_VER}
 sudo keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
 
 # KeyChest setup
@@ -421,7 +430,7 @@ php artisan migrate
 php artisan migrate:status
 
 # Scanner Database setup, phase 2
-cd ~/keychest-scanner-0.1.6
+cd ~/keychest-scanner-${KC_SCANNER_VER}
 sudo -E -H /usr/local/bin/pip install alembic
 alembic upgrade head
 ```
@@ -430,5 +439,43 @@ Nginx configuration
 
 ```bash
 cd /var/www/keychest
+sudo cp tools/nginx/conf.d/* /etc/nginx/conf.d/
 
+# edit config files - URL, certificates
+sudo systemctl restart nginx.service
+
+# in case of a problem add following line to the /etc/nginx/nginx.conf to the 'http' directive
+# server_names_hash_bucket_size 128;
 ```
+
+Laravel Echo server
+
+```bash
+sudo npm install -g node-pre-gyp gyp 
+sudo npm install -g --unsafe-perm node-sqlite3
+
+# If the previous installation fails, try this:
+sudo npm install -g --unsafe-perm https://github.com/mapbox/node-sqlite3/tarball/master
+
+# Install laravel echo server
+sudo npm uninstall -g laravel-echo-server
+sudo npm install -g --unsafe-perm laravel-echo-server
+```
+
+Supervisor.d configuration
+```bash
+cd /var/www/keychest
+sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
+cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
+
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl status
+
+# in case of a problem, add following lines to /etc/supervisord.conf
+# [include]
+# files = supervisord.d/*.conf
+```
+
+
+
