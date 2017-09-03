@@ -385,27 +385,10 @@ composer install
 npm install
 npm run prod
 
-cp .env.example .env
-php artisan key:generate
-php artisan down
-
-# CONFIGURE:
-#  APP_DEBUG=
-#  APP_URL=
-#  DB_CONNECTION=mysql
-#  DB_HOST=127.0.0.1
-#  DB_PORT=3306
-#  DB_DATABASE=keychest
-#  DB_USERNAME=keychest
-#  DB_PASSWORD=secret
-
 # MySQL migration fix:
 # /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
 # substitute json() with text()
 sed -i 's/->json/->text/g' /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
-
-php artisan migrate
-php artisan migrate:status
 ```
 
 Keychest scanner
@@ -415,38 +398,28 @@ cd
 wget https://github.com/EnigmaBridge/keychest-scanner/archive/v0.1.5.tar.gz
 tar -xzvf v0.1.5.tar.gz
 cd keychest-scanner-0.1.5
-sudo pip install -U --find-links=. .
+sudo /usr/local/bin/pip install -U --find-links=. .
+```
 
-# Configure alembic migration script
-cp alembic.ini.example alembic.ini
+Keychest Configuration
 
-# Edit alembic.ini
-# sqlalchemy.url = driver://user:pass@localhost/dbname
+```bash
+# Scanner config setup, DB setup
 
-# Database setup
-sudo -E -H pip install alembic
+cd ~/keychest-scanner-0.1.5
+keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
+
+# KeyChest setup
+cd /var/www/keychest
+php artisan app:setup --prod --db-config-auto
+php artisan app:setupEcho --init-prod
+php artisan key:generate
+php artisan down
+
+php artisan migrate
+php artisan migrate:status
+
+# Scanner Database setup, phase 2
+sudo -E -H /usr/local/bin/pip install alembic
 alembic upgrade head
-
-mkdir -p /etc/enigma-keychest-scanner
-
-# 
 ```
-
-`/etc/enigma-keychest-scanner/config.json`
-
-```json
-{
-  "config": {
-    "mysql_password": "keychest", 
-    "workers": 10,
-    "periodic_workers": 35, 
-    "mysql_db": "keychest", 
-    "redis_host": "127.0.0.1", 
-    "mysql_user": "keychest2", 
-    "redis_port": 6379,
-    "enable_rest_api": true
-  }
-}
-```
-
-
