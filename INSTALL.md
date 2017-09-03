@@ -284,7 +284,8 @@ Servers and tools:
 sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
 sudo yum install -y git rsync vim htop wget mlocate screen tcpdump
 sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
-    libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel libpng-devel
+    libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel libpng-devel \
+    policycoreutils-devel setools-console
     
 sudo yum install -y mariadb-server
 sudo yum install -y --enablerepo=epel nginx
@@ -315,7 +316,12 @@ sudo yum install rh-php56 rh-php56-php rh-php56-php-fpm \
  rh-php56-php-fpm rh-php56-php-mysqlnd rh-php56-php-mbstring rh-php56-php-gd rh-php56-php-xml \
  rh-php56-php-pecl-xdebug rh-php56-php-opcache rh-php56-php-intl \
  rh-php56-php-pear   
- 
+
+# change apache to nginx
+# /etc/opt/rh/rh-php56/php-fpm.d/www.conf
+sudo sed -i 's/user = apache/user = nginx/g' /etc/opt/rh/rh-php56/php-fpm.d/www.conf
+sudo sed -i 's/group = apache/group = nginx/g' /etc/opt/rh/rh-php56/php-fpm.d/www.conf
+
 sudo systemctl enable rh-php56-php-fpm.service
 sudo systemctl start rh-php56-php-fpm.service
 sudo systemctl status rh-php56-php-fpm.service
@@ -423,7 +429,7 @@ cd /var/www/keychest
 php artisan app:setup --prod --db-config-auto
 php artisan app:setupEcho --init-prod
 php artisan key:generate
-php artisan dotenv:set-key APP_URL http://ec2-34-252-109-85.eu-west-1.compute.amazonaws.com
+php artisan dotenv:set-key APP_URL https://${MYDOMAIN}
 php artisan down
 
 php artisan migrate
@@ -446,6 +452,9 @@ sudo systemctl restart nginx.service
 
 # in case of a problem add following line to the /etc/nginx/nginx.conf to the 'http' directive
 # server_names_hash_bucket_size 128;
+
+cd /var/www/keychest
+sudo ./fix.sh
 ```
 
 Laravel Echo server
@@ -468,6 +477,11 @@ cd /var/www/keychest
 sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
 cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
 
+# epiper helper
+sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
+chmod +x /usr/bin/epiper
+
+# supervisor config reload & start
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl status
@@ -477,5 +491,36 @@ sudo supervisorctl status
 # files = supervisord.d/*.conf
 ```
 
+Selinux
 
+```bash
+
+# check redis port reserved state:
+sepolicy network -p 6379
+
+sudo semanage port -a -t http_port_t -p tcp 6379
+sudo semanage port -a -t http_port_t -p tcp 6001
+sudo semanage port -a -t http_port_t -p tcp 9000
+sudo setsebool -P httpd_can_network_connect_db 1
+
+cd tools/selinux
+checkmodule -M -m -o httpd-to-redis-socket.mod httpd-to-redis-socket.te
+semodule_package -o httpd-to-redis-socket.pp -m httpd-to-redis-socket.mod
+sudo semodule -i httpd-to-redis-socket.pp
+cd - 
+
+sudo chcon -Rt httpd_sys_content_t /var/www
+sudo chcon -Rt httpd_sys_rw_content_t /var/www/keychest/storage/
+sudo semanage fcontext -a -t httpd_sys_content_t "/var/www(/.*)?"
+sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/keychest/storage(/.*)?"
+restorecon -Rv /var/www
+ls -lZ /var/www
+```
+
+Start
+
+```bash
+cd /var/www/keychest
+php artisan up
+```
 
