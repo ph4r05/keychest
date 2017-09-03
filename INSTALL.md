@@ -274,8 +274,8 @@ sudo yum install epel-release-latest-7.noarch.rpm
 
 Settings:
 ```bash
-export KC_SCANNER_VER=0.1.6
-export KC_VER=0.0.10
+export KC_SCANNER_VER=0.1.7
+export KC_VER=0.0.11
 ```
 
 Servers and tools:
