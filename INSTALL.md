@@ -266,6 +266,7 @@ sudo yum install epel-release
 
 # OR
 
+sudo yum install -y wget
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum install epel-release-latest-7.noarch.rpm
 ```
@@ -276,7 +277,7 @@ Servers and tools:
 sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
 sudo yum install -y git rsync vim htop wget mlocate screen tcpdump
 sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
-    libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel
+    libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel libpng-devel
     
 sudo yum install -y mariadb-server
 sudo yum install -y --enablerepo=epel nginx
@@ -318,8 +319,7 @@ echo 'export PATH=$PATH:/opt/rh/rh-php56/root/bin' | sudo tee /etc/profile.d/php
 PHP composer
 ```bash
 cd /tmp
-wget https://getcomposer.org/installer
-php installer 
+source /etc/profile.d/php.sh 
 
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
@@ -329,20 +329,24 @@ sudo /opt/rh/rh-php56/root/bin/php composer-setup.php --install-dir=/bin --filen
 Node Js
 ```bash
 curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
-yum install -y nodejs
+sudo yum remove -y nodejs npm
+sudo yum install -y nodejs
 ```
 
 Python 2.7.13
 
 ```bash
-cd /usr/src
-sudo wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
-sudo tar xzf Python-2.7.13.tgz
+cd /tmp
+wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
+tar xzf Python-2.7.13.tgz
+cd Python-2.7.13
 ./configure --enable-optimizations
 sudo make altinstall
 
 echo 'export PATH=/usr/local/bin:$PATH' | sudo tee /etc/profile.d/py2.7.13.sh
+source /etc/profile.d/py2.7.13.sh
 
+cd /tmp
 curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
 sudo /usr/local/bin/python2.7 get-pip.py
 ```
@@ -350,19 +354,15 @@ sudo /usr/local/bin/python2.7 get-pip.py
 Self-signed - temporary!
 ```bash
 export MYDOMAIN=ec2-34-250-10-31.eu-west-1.compute.amazonaws.com
-mkdir -p /etc/letsencrypt/live/${MYDOMAIN}/
+sudo mkdir -p /etc/letsencrypt/live/${MYDOMAIN}/
 cd /etc/letsencrypt/live/${MYDOMAIN}/
 
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out cert.pem
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out cert.pem
 ```
 
 Database setup
 ```bash
 sudo mysql_secure_installation
-mysql -uroot -p
-   CREATE DATABASE keychest CHARACTER SET utf8 COLLATE utf8_general_ci;
-   GRANT ALL PRIVILEGES ON keychest.* TO 'keychest'@'localhost' IDENTIFIED BY 'keychest_passwd';
-   FLUSH PRIVILEGES;
 ```
 
 KeyChest:
@@ -376,9 +376,9 @@ sudo chown nginx:nginx keychest
 sudo usermod -a -G nginx ec2-user
 
 cd /tmp
-wget https://github.com/EnigmaBridge/keychest/archive/v0.0.9.tar.gz
-tar xvf v0.0.9.tar.gz
-sudo rsync -av keychest-0.0.9/ /var/www/keychest/
+wget https://github.com/EnigmaBridge/keychest/archive/v0.0.10.tar.gz
+tar xvf v0.0.10.tar.gz
+sudo rsync -av keychest-0.0.10/ /var/www/keychest/
 
 cd /var/www/keychest
 composer install
@@ -395,9 +395,9 @@ Keychest scanner
 
 ```bash
 cd
-wget https://github.com/EnigmaBridge/keychest-scanner/archive/v0.1.5.tar.gz
-tar -xzvf v0.1.5.tar.gz
-cd keychest-scanner-0.1.5
+wget https://github.com/EnigmaBridge/keychest-scanner/archive/v0.1.6.tar.gz
+tar -xzvf v0.1.6.tar.gz
+cd keychest-scanner-0.1.6
 sudo /usr/local/bin/pip install -U --find-links=. .
 ```
 
@@ -406,20 +406,29 @@ Keychest Configuration
 ```bash
 # Scanner config setup, DB setup
 
-cd ~/keychest-scanner-0.1.5
-keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
+cd ~/keychest-scanner-0.1.6
+sudo keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
 
 # KeyChest setup
 cd /var/www/keychest
 php artisan app:setup --prod --db-config-auto
 php artisan app:setupEcho --init-prod
 php artisan key:generate
+php artisan dotenv:set-key APP_URL http://ec2-34-252-109-85.eu-west-1.compute.amazonaws.com
 php artisan down
 
 php artisan migrate
 php artisan migrate:status
 
 # Scanner Database setup, phase 2
+cd ~/keychest-scanner-0.1.6
 sudo -E -H /usr/local/bin/pip install alembic
 alembic upgrade head
+```
+
+Nginx configuration
+
+```bash
+cd /var/www/keychest
+
 ```
