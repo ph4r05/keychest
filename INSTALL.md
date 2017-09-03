@@ -400,6 +400,9 @@ composer install
 npm install
 npm run prod
 
+# git repository needed for npm run prod (git tag in the generated files)
+# either clone the repo (TODO: clone tag) or create a new one with initial commit.
+
 # MySQL migration fix:
 # /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
 # substitute json() with text()
@@ -422,11 +425,11 @@ Keychest Configuration
 # Scanner config setup, DB setup
 
 cd ~/keychest-scanner-${KC_SCANNER_VER}
-sudo keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
+sudo /usr/local/bin/keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
 
 # KeyChest setup
 cd /var/www/keychest
-php artisan app:setup --prod --db-config-auto
+sudo php artisan app:setup --prod --db-config-auto && sudo ./fix.sh
 php artisan app:setupEcho --init-prod
 php artisan key:generate
 php artisan dotenv:set-key APP_URL https://${MYDOMAIN}
@@ -475,11 +478,11 @@ Supervisor.d configuration
 ```bash
 cd /var/www/keychest
 sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
-cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
+sudo cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
 
 # epiper helper
 sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
-chmod +x /usr/bin/epiper
+sudo chmod +x /usr/bin/epiper
 
 # supervisor config reload & start
 sudo supervisorctl reread
