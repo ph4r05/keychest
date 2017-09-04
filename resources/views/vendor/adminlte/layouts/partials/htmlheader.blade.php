@@ -11,20 +11,20 @@
     <meta name="description" content="KeyChest - certificate expiry, certificate monitoring for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up.">
     <meta name="author" content="Enigma Bridge Ltd, KeyChest">
     <meta name="keywords" content="letsencrypt, monitor, monitoring, tls, https, certificate expiry, certificate expiration, certificate monitoring, free monitoring">
-    <meta name="title" content="Certificate monitoring KeyChest for HTTPS, TLS, Letsencrypt expiry and status">
+    <meta name="title" content="Certificate expiry monitoring, KeyChest for HTTPS, TLS, Letsencrypt expiry and server status">
 
     <!-- Facebook -->
-    <meta property="og:title" content="KeyChest certificate monitoring - HTTPS, TLS, Letsencrypt" >
+    <meta property="og:title" content="Certificate expiry monitoring, KeyChest for HTTPS, TLS, Letsencrypt expiry and server status" >
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="KeyChest - certificate expiry, certificate monitoring for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up." >
+    <meta property="og:description" content="KeyChest - certificate expiry monitor, certificate monitoring, server status checker for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up." >
     <meta property="og:url" content="{{ url('/home') }}" />
     <meta property="og:image" content="{{url('/images/keychest_centre_meta_clean.png') }}" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="landing_centre_clean">
 
-    <meta name="twitter:title" content="KeyChest certificate monitoring - HTTPS, TLS, Letsencrypt">
-    <meta name="twitter:description" content="KeyChest - certificate expiry, certificate monitoring  for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up.">
+    <meta name="twitter:title" content="Certificate expiry monitoring, KeyChest for HTTPS, TLS, Letsencrypt expiry and server status">
+    <meta name="twitter:description" content="KeyChest - certificate expiry monitoring and server status checker for TLS, HTTPS, Letsencrypt, with free cloud service. Automatic monitoring of subdomain servers as they are set up.">
     <meta name="twitter:image" content="{{url('/images/keychest_centre_meta_clean.png') }}">
 
 
