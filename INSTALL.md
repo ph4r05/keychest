@@ -92,7 +92,7 @@ Do not edit CSS / JS files in `public/` directly, its generated. Changes will be
 
 ## Websocket server
 
-Make user-based node installation, if you dont have that yet
+Make user-based node installation, if you don't have that yet
 
 ```bash
 #
@@ -103,11 +103,11 @@ rsync -av /root/.nvm/versions/node/v6.10.3/ /opt/node-6.10.3/
 chown -R ec2-user /opt/node-6.10.3
 npm config set prefix /opt/node-6.10.3/
 ln -s /opt/node-6.10.3/ /opt/node
+echo 'export PATH=/opt/node-6.10.3/bin:$PATH' > /etc/profile.d/node.sh
 
 #
 # As ec2-user
 #
-echo 'export PATH=/opt/node-6.10.3/bin:$PATH' > /etc/profile.d/node.sh
 source /etc/profile.d/node.sh 
 sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 sudo chown -R $(whoami) $(npm config get prefix)
@@ -116,8 +116,15 @@ sudo chown -R $(whoami) $(npm config get prefix)
 Install the required packages
 
 ```bash
-npm install -g node-sqlite3
-npm install -g node-pre-gyp gyp laravel-echo-server
+sudo npm install -g --unsafe-perm node-sqlite3
+
+# If the previous installation fails, try this:
+npm install -g https://github.com/mapbox/node-sqlite3/tarball/master
+
+# Install laravel echo server
+sudo npm uninstall -g laravel-echo-server
+sudo npm install -g node-pre-gyp gyp 
+sudo npm install -g --unsafe-perm laravel-echo-server
 ```
 
 More info: [Laravel Echo Server]
@@ -250,3 +257,273 @@ Init script change to support `chkconfig`:
 # config: /etc/redis/6379.conf
 # pidfile: /var/run/redis_6379.pid
 ```
+
+## RHEL 7.x
+
+Epel:
+
+```
+sudo yum install epel-release
+
+# OR
+
+sudo yum install -y wget
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install epel-release-latest-7.noarch.rpm
+```
+
+Settings:
+```bash
+export KC_SCANNER_VER=0.1.7
+export KC_VER=0.0.11
+```
+
+Servers and tools:
+
+```
+sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
+sudo yum install -y git rsync vim htop wget mlocate screen tcpdump
+sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
+    libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel libpng-devel \
+    policycoreutils-devel setools-console
+    
+sudo yum install -y mariadb-server
+sudo yum install -y --enablerepo=epel nginx
+sudo yum install -y --enablerepo=epel redis
+sudo yum install -y --enablerepo=epel supervisor
+sudo yum install -y --enablerepo=epel nodejs
+sudo yum install -y --enablerepo=epel python-pip python-setuptools python-wheel
+sudo yum install -y --enablerepo=epel nasm
+```
+
+```bash
+sudo systemctl enable mariadb.service
+sudo systemctl enable nginx.service
+sudo systemctl enable redis.service
+sudo systemctl enable supervisord.service
+
+sudo systemctl start mariadb.service
+sudo systemctl start nginx.service
+sudo systemctl start redis.service
+sudo systemctl start supervisord.service
+```
+
+PHP 5.6 - RHEL 7
+```bash
+sudo yum update rh-amazon-rhui-client.noarch
+sudo yum-config-manager --enable rhui-REGION-rhel-server-rhscl
+sudo yum install rh-php56 rh-php56-php rh-php56-php-fpm \
+ rh-php56-php-fpm rh-php56-php-mysqlnd rh-php56-php-mbstring rh-php56-php-gd rh-php56-php-xml \
+ rh-php56-php-pecl-xdebug rh-php56-php-opcache rh-php56-php-intl \
+ rh-php56-php-pear   
+
+# change apache to nginx
+# /etc/opt/rh/rh-php56/php-fpm.d/www.conf
+sudo sed -i 's/user = apache/user = nginx/g' /etc/opt/rh/rh-php56/php-fpm.d/www.conf
+sudo sed -i 's/group = apache/group = nginx/g' /etc/opt/rh/rh-php56/php-fpm.d/www.conf
+
+sudo systemctl enable rh-php56-php-fpm.service
+sudo systemctl start rh-php56-php-fpm.service
+sudo systemctl status rh-php56-php-fpm.service
+
+echo 'export PATH=$PATH:/opt/rh/rh-php56/root/bin' | sudo tee /etc/profile.d/php.sh
+sudo ln -s /opt/rh/rh-php56/root/bin/php /bin/php
+```
+
+PHP composer
+```bash
+cd /tmp
+source /etc/profile.d/php.sh 
+
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+sudo /opt/rh/rh-php56/root/bin/php composer-setup.php --install-dir=/bin --filename=composer
+```
+
+Node Js
+```bash
+curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
+sudo yum remove -y nodejs npm
+sudo yum install -y nodejs
+sudo npm install -g npm
+```
+
+Python 2.7.13
+
+```bash
+cd /tmp
+wget https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
+tar xzf Python-2.7.13.tgz
+cd Python-2.7.13
+./configure --enable-optimizations
+sudo make altinstall
+
+echo 'export PATH=/usr/local/bin:$PATH' | sudo tee /etc/profile.d/py2.7.13.sh
+source /etc/profile.d/py2.7.13.sh
+
+cd /tmp
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+sudo /usr/local/bin/python2.7 get-pip.py
+```
+
+Self-signed - temporary!
+```bash
+export MYDOMAIN=ec2-34-250-10-31.eu-west-1.compute.amazonaws.com
+sudo mkdir -p /etc/letsencrypt/live/${MYDOMAIN}/
+cd /etc/letsencrypt/live/${MYDOMAIN}/
+
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out cert.pem
+```
+
+Database setup
+```bash
+sudo mysql_secure_installation
+```
+
+KeyChest:
+```bash
+sudo mkdir -p /var/www
+cd /var/www
+sudo mkdir keychest
+sudo chown nginx:nginx keychest
+
+# AWS only
+sudo usermod -a -G nginx ec2-user
+
+cd /tmp
+wget https://github.com/EnigmaBridge/keychest/archive/v${KC_VER}.tar.gz
+tar xvf v${KC_VER}.tar.gz
+sudo rsync -av keychest-${KC_VER}/ /var/www/keychest/
+
+cd /var/www/keychest
+composer install
+npm install
+npm run prod
+
+# git repository needed for npm run prod (git tag in the generated files)
+# either clone the repo (TODO: clone tag) or create a new one with initial commit.
+
+# MySQL migration fix:
+# /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
+# substitute json() with text()
+sed -i 's/->json/->text/g' /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
+```
+
+Keychest scanner
+
+```bash
+cd
+wget https://github.com/EnigmaBridge/keychest-scanner/archive/v${KC_SCANNER_VER}.tar.gz
+tar -xzvf v${KC_SCANNER_VER}.tar.gz
+cd keychest-scanner-${KC_SCANNER_VER}
+sudo /usr/local/bin/pip install -U --find-links=. .
+```
+
+Keychest Configuration
+
+```bash
+# Scanner config setup, DB setup
+
+cd ~/keychest-scanner-${KC_SCANNER_VER}
+sudo /usr/local/bin/keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
+
+# KeyChest setup
+cd /var/www/keychest
+sudo php artisan app:setup --prod --db-config-auto && sudo ./fix.sh
+php artisan app:setupEcho --init-prod
+php artisan key:generate
+php artisan dotenv:set-key APP_URL https://${MYDOMAIN}
+php artisan down
+
+php artisan migrate
+php artisan migrate:status
+
+# Scanner Database setup, phase 2
+cd ~/keychest-scanner-${KC_SCANNER_VER}
+sudo -E -H /usr/local/bin/pip install alembic
+alembic upgrade head
+```
+
+Nginx configuration
+
+```bash
+cd /var/www/keychest
+sudo cp tools/nginx/conf.d/* /etc/nginx/conf.d/
+
+# edit config files - URL, certificates
+sudo systemctl restart nginx.service
+
+# in case of a problem add following line to the /etc/nginx/nginx.conf to the 'http' directive
+# server_names_hash_bucket_size 128;
+
+cd /var/www/keychest
+sudo ./fix.sh
+```
+
+Laravel Echo server
+
+```bash
+sudo npm install -g node-pre-gyp gyp 
+sudo npm install -g --unsafe-perm node-sqlite3
+
+# If the previous installation fails, try this:
+sudo npm install -g --unsafe-perm https://github.com/mapbox/node-sqlite3/tarball/master
+
+# Install laravel echo server
+sudo npm uninstall -g laravel-echo-server
+sudo npm install -g --unsafe-perm laravel-echo-server
+```
+
+Selinux
+
+```bash
+
+# check redis port reserved state:
+sepolicy network -p 6379
+
+sudo semanage port -a -t http_port_t -p tcp 6379
+sudo semanage port -a -t http_port_t -p tcp 6001
+sudo semanage port -a -t http_port_t -p tcp 9000
+sudo setsebool -P httpd_can_network_connect_db 1
+
+cd tools/selinux
+checkmodule -M -m -o httpd-to-redis-socket.mod httpd-to-redis-socket.te
+semodule_package -o httpd-to-redis-socket.pp -m httpd-to-redis-socket.mod
+sudo semodule -i httpd-to-redis-socket.pp
+cd - 
+
+sudo chcon -Rt httpd_sys_content_t /var/www
+sudo chcon -Rt httpd_sys_rw_content_t /var/www/keychest/storage/
+sudo semanage fcontext -a -t httpd_sys_content_t "/var/www(/.*)?"
+sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/keychest/storage(/.*)?"
+restorecon -Rv /var/www
+ls -lZ /var/www
+```
+
+Supervisor.d configuration
+```bash
+cd /var/www/keychest
+sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
+sudo cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
+
+# epiper helper
+sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
+sudo chmod +x /usr/bin/epiper
+
+# supervisor config reload & start
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl status
+
+# in case of a problem, add following lines to /etc/supervisord.conf
+# [include]
+# files = supervisord.d/*.conf
+```
+
+Start
+
+```bash
+cd /var/www/keychest
+php artisan up
+```
+

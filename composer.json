@@ -17,6 +17,7 @@
         "graham-campbell/markdown": "^7.1",
         "icanboogie/inflector": "^1.4",
         "influendo/laravel-survivor": "^1.0",
+        "jackiedo/dotenv-editor": "^1.0",
         "laracasts/utilities": "~2.0",
         "laravel/browser-kit-testing": "^1.0.2",
         "laravel/dusk": "^1.0",

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Illuminate\Support\Facades\Input;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -33,6 +34,10 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
+        $req = request();
+        $req->session()->put('accredit', Input::get('accredit'));
+        $req->session()->put('start_watching', Input::get('start_watching'));
+
         return view('adminlte::auth.register');
     }
 

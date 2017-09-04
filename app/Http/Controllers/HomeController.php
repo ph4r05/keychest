@@ -33,6 +33,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if (session('start_watching')){
+            return redirect(route('servers'));
+        }
+
         return view('adminlte::home');
     }
 }
