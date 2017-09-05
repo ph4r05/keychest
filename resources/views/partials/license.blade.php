@@ -15,26 +15,75 @@
                 <tr>
                     <th class="tg-9hbo">Property</th>
                     <th class="tg-9hbo">Value</th>
+                    <th class="tg-9hbo">Action</th>
                 </tr>
                 <tr>
-                    <td class="tg-v4ss">Email address</td>
+                    <td class="tg-v4ss">Display name</td>
+                    <td class="tg-6k2t">{{Auth::user()->name}}</td>
+                    <td class="tg-6k2t">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Change (coming soon)
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-9hbo">Email address</td>
+                    <td class="tg-yw4l">{{Auth::user()->email}}</td>
+                    <td class="tg-yw4l">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Verify (coming soon)
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-v4ss">Notification address</td>
                     <td class="tg-6k2t">{{Auth::user()->email}}</td>
-                </tr>
-                <tr>
-                    <td class="tg-9hbo">Display name</td>
-                    <td class="tg-yw4l">{{Auth::user()->name}}</td>
-                </tr>
-                <tr>
-                    <td class="tg-v4ss">Created</td>
-                    <td class="tg-6k2t">{{date("j F Y, g:ia", strtotime(Auth::user()->created_at))}}  GMT</td>
+                    <td class="tg-6k2t">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Change (coming soon)
+                        </button>
+                    </td>
                 </tr>
                 <tr>
                     <td class="tg-9hbo">User timezone</td>
                     <td class="tg-yw4l">{{Auth::user()->timezone}}</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td class="tg-v4ss">Email weekly updates</td>
                     <td class="tg-6k2t">{{  (Auth::user()->weekly_emails_disabled == 1) ? "disabled" : "Monday, 8:00am" }}</td>
+                    <td class="tg-6k2t">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Enable (coming soon)
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-9hbo">Notifications</td>
+                    <td class="tg-yw4l">none</td>
+                    <td class="tg-yw4l">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Change (coming soon) - all certs/suspicious/none
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-v4ss">Trusted CAs</td>
+                    <td class="tg-6k2t">All</td>
+                    <td class="tg-6k2t">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                           Change (coming soon)
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-9hbo">Created</td>
+                    <td class="tg-yw4l">{{date("j F Y, g:ia", strtotime(Auth::user()->created_at))}}  GMT</td>
+                    <td class="tg-yw4l">
+                        <button type="button" disabled="disabled" class="btn btn-sm btn-warning btn-block">
+                            Close account (coming soon)
+                        </button>
+                    </td>
                 </tr>
             </table>
 
