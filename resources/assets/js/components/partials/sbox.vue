@@ -1,12 +1,12 @@
 <template>
-    <div class="box" v-bind:class="cssBox">
+    <div class="box" v-bind:class="[auxCss, cssBox]">
         <div class="box-header with-border">
             <h3 class="box-title"><slot name="title"></slot></h3>
 
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                    <i v-if="collapsed" class="fa fa-plus" v-else></i>
-                    <i class="fa fa-minus" v-else></i>
+                    <i v-if="collapsed" class="fa fa-plus"></i>
+                    <i v-else="" class="fa fa-minus"></i>
                 </button>
                 <button v-if="remove" type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
                     <i class="fa fa-times"></i></button>
@@ -50,6 +50,11 @@
         },
 
         computed: {
+            auxCss(){
+                return {
+                    'collapsed-box': this.collapsed
+                };
+            }
         },
 
         methods: {
