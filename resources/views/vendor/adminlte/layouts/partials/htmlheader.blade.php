@@ -89,4 +89,6 @@
     </script>
     <!-- Google Analytics END -->
 
+    @yield('header-scripts')
+
 </head>

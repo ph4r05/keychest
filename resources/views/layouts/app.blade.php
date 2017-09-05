@@ -63,6 +63,7 @@
     </script>
     <!-- Google Analytics END -->
 
+    @yield('header-scripts')
     <script src="https://donorbox.org/install-popup-button.js" type="text/javascript" defer></script>
 
 </head>
@@ -119,6 +120,7 @@
     <script src="{{ mix('/js/vendor.js') }}"></script>
     <script src="{{ url (mix('/js/polyapp.js')) }}"></script>
     <script src="{{ mix('/js/misc.js') }}"></script>
+    @yield('footer-scripts')
 
     {!! survivor() !!}
 
