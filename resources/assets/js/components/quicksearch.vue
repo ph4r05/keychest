@@ -8,7 +8,7 @@
             <form role="form" id="search-form" @submit.prevent="submitForm()">
                 <div class="input-group" id="scan-wrapper">
                     <input type="text" class="form-control input"
-                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                           autocorrect="off" autocapitalize="off" spellcheck="false"
                            placeholder="Server name with optional port, e.g., keychest.net or keychest.net:465"
                            name="scan-target" id="scan-target">
 
