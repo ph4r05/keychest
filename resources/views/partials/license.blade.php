@@ -41,11 +41,6 @@
             <p class="tc-onyx">
             Please use the following form, if you have any question, comment, or request for a new feature or change.
             </p>
-
-            <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
-            <style type="text/css" media="screen, projection">
-                @import url(https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.css);
-            </style>
             <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&submitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
                     scrolling="no" height="500px" width="100%" frameborder="0" >
@@ -214,11 +209,6 @@
                 </tr>
 
             </table>
-
-            <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
-            <style type="text/css" media="screen, projection">
-                @import url(https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.css);
-            </style>
             <iframe title="KeyChest license" class="freshwidget-embedded-form" id="freshwidget-embedded-form"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
                     scrolling="no" height="500px" width="100%" frameborder="0" >
