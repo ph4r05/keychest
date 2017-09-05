@@ -460,7 +460,8 @@
                 <div class="xcol-md-12">
                 <sbox cssBox="box-success">
                     <template slot="title">Renewals due in next 28 days</template>
-                    <p>Watch carefully dates in the following table to prevent downtime on your servers. </p>
+                    <p>Watch carefully dates in the following table to prevent downtime on your servers. Certificates expired
+                    more than 28 days ago are excluded.</p>
                     <div class="col-md-8">
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
@@ -898,13 +899,13 @@
 
             numExpiresSoon(){
                 return Number(_.sumBy(this.tlsCerts, cur => {
-                    return cur.valid_to_days <= 28;
+                    return (cur.valid_to_days <= 28 && cur.valid_to_days >= -28);
                 }));
             },
 
             numExpiresNow(){
                 return Number(_.sumBy(this.tlsCerts, cur => {
-                    return cur.valid_to_days <= 8;
+                    return (cur.valid_to_days <= 8 && cur.valid_to_days >= -28);
                 }));
             },
 
@@ -914,7 +915,7 @@
 
             showImminentRenewals(){
                 return _.reduce(this.tlsCerts, (acc, cur) => {
-                    return acc + (cur.valid_to_days <= 28);
+                    return (acc + (cur.valid_to_days <= 28 && cur.valid_to_days >= -28));
                 }, 0) > 0;
             },
 
@@ -931,7 +932,7 @@
             },
 
             imminentRenewalCerts(){
-                const imm = _.filter(this.tlsCerts, x => { return x.valid_to_days <= 28 });
+                const imm = _.filter(this.tlsCerts, x => { return (x.valid_to_days <= 28 && x.valid_to_days >= -28) });
                 const grp = _.groupBy(imm, x => {
                     return x.valid_to_dayfmt;
                 });
@@ -1017,7 +1018,7 @@
 
             week4renewalsCounts(){
                 const r = _.filter(this.tlsCerts, x => {
-                    return x && x.valid_to_days && x.valid_to_days <= 28;
+                    return x && x.valid_to_days && x.valid_to_days <= 28 && x.valid_to_days >= -28;
                 });
                 const ret = [0, 0, 0, 0, 0];
                 _.forEach(r, x => {
@@ -1149,7 +1150,7 @@
             //
 
             week4grouper(x){
-                if (x.valid_to_days <= 0){
+                if (x.valid_to_days <= 0 && x.valid_to_days >= -28){
                     return 0;
                 } else if (x.valid_to_days <= 7){
                     return 1;
