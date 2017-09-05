@@ -391,9 +391,16 @@ sudo chown nginx:nginx keychest
 sudo usermod -a -G nginx ec2-user
 
 cd /tmp
-wget https://github.com/EnigmaBridge/keychest/archive/v${KC_VER}.tar.gz
-tar xvf v${KC_VER}.tar.gz
-sudo rsync -av keychest-${KC_VER}/ /var/www/keychest/
+
+# Release download - use git instead
+# wget https://github.com/EnigmaBridge/keychest/archive/v${KC_VER}.tar.gz
+# tar xvf v${KC_VER}.tar.gz
+# sudo rsync -av keychest-${KC_VER}/ /var/www/keychest/
+
+# Git clone / tag fetch
+git clone https://github.com/EnigmaBridge/keychest keychest
+cd keychest
+git checkout tags/v${KC_VER} -b rel_v${KC_VER}
 
 cd /var/www/keychest
 composer install
@@ -401,7 +408,7 @@ npm install
 npm run prod
 
 # git repository needed for npm run prod (git tag in the generated files)
-# either clone the repo (TODO: clone tag) or create a new one with initial commit.
+# In case of release install (no git clone) create a new one with initial commit.
 
 # MySQL migration fix:
 # /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
@@ -413,9 +420,17 @@ Keychest scanner
 
 ```bash
 cd
-wget https://github.com/EnigmaBridge/keychest-scanner/archive/v${KC_SCANNER_VER}.tar.gz
-tar -xzvf v${KC_SCANNER_VER}.tar.gz
-cd keychest-scanner-${KC_SCANNER_VER}
+
+# Release download - use git instead
+# wget https://github.com/EnigmaBridge/keychest-scanner/archive/v${KC_SCANNER_VER}.tar.gz
+# tar -xzvf v${KC_SCANNER_VER}.tar.gz
+# cd keychest-scanner-${KC_SCANNER_VER}
+
+# Git clone / tag fetch
+git clone https://github.com/EnigmaBridge/keychest-scanner.git keychest-scanner
+cd keychest-scanner
+git checkout tags/v${KC_SCANNER_VER} -b rel_v${KC_SCANNER_VER}
+
 sudo /usr/local/bin/pip install -U --find-links=. .
 ```
 
@@ -424,7 +439,7 @@ Keychest Configuration
 ```bash
 # Scanner config setup, DB setup
 
-cd ~/keychest-scanner-${KC_SCANNER_VER}
+cd ~/keychest-scanner
 sudo /usr/local/bin/keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
 
 # KeyChest setup
@@ -439,7 +454,7 @@ php artisan migrate
 php artisan migrate:status
 
 # Scanner Database setup, phase 2
-cd ~/keychest-scanner-${KC_SCANNER_VER}
+cd ~/keychest-scanner
 sudo -E -H /usr/local/bin/pip install alembic
 alembic upgrade head
 ```
@@ -504,7 +519,7 @@ Supervisor.d configuration
 ```bash
 cd /var/www/keychest
 sudo rsync -a tools/supervisor.d/*.conf /etc/supervisord.d/
-sudo cp ~/keychest-scanner-${KC_SCANNER_VER}/assets/supervisord.d/keychest.conf /etc/supervisord.d/
+sudo cp ~/keychest-scanner/assets/supervisord.d/keychest.conf /etc/supervisord.d/
 
 # epiper helper
 sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
