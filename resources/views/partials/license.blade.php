@@ -41,7 +41,7 @@
             <p class="tc-onyx">
             Please use the following form, if you have any question, comment, or request for a new feature or change.
             </p>
-            <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form"
+            <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form-1"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&submitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
                     scrolling="no" height="500px" width="100%" frameborder="0" >
             </iframe>
@@ -209,7 +209,7 @@
                 </tr>
 
             </table>
-            <iframe title="KeyChest license" class="freshwidget-embedded-form" id="freshwidget-embedded-form"
+            <iframe title="KeyChest license" class="freshwidget-embedded-form" id="freshwidget-embedded-form-2"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
                     scrolling="no" height="500px" width="100%" frameborder="0" >
             </iframe>
