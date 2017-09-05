@@ -43,7 +43,7 @@
             </p>
             <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form-1"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&submitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
-                    scrolling="no" height="500px" width="100%" frameborder="0" >
+                    scrolling="no" height="410px" width="100%" frameborder="0" >
             </iframe>
 
         </div>
@@ -211,7 +211,7 @@
             </table>
             <iframe title="KeyChest license" class="freshwidget-embedded-form" id="freshwidget-embedded-form-2"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
-                    scrolling="no" height="500px" width="100%" frameborder="0" >
+                    scrolling="no" height="410px" width="100%" frameborder="0" >
             </iframe>
 
 
