@@ -14,5 +14,5 @@
 
 @section('main-content')
     @include('partials.license')
-    @include('partials.share', ['path' => 'https://keychest.net/register'])
+    @include('partials.share', ['path' => url('/register')])
 @endsection
