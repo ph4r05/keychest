@@ -164,28 +164,32 @@
                     <sbox cssBox="box-success">
                         <template slot="title">Yearly renewal calendar</template>
                         <p>
-                        The following two charts provide information about the effort needed in the next 12 months to
-                        keep all your certificates valid. The first chart shows certificates we verified directly
-                        when scanning your servers.
-                        <br>
-                        <i>Note: you can click an chart labels to hide/unhide types of certificates.</i>
+                            The following two charts provide information about the effort needed in the next 12 months to
+                            keep all your certificates valid. The first chart shows certificates we verified directly
+                            when scanning your servers.
+                            <br>
+                            <i>Note: you can click an chart labels to hide/unhide types of certificates.</i>
                         </p>
-                            <div class="form-group">
-                                <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
-                            </div>
+                        <div class="form-group">
+                            <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
+                        </div>
 
-                            <div class="form-group">
-                                <canvas id="columnchart_certificates_all_js" style="width:100%; height: 350px"></canvas>
-                            </div>
-                        <p><i>Note: The number of renewals for certificates, notably Let&#39;Encrypt certificates, valid
-                        for less than 12 months, is estimated for months beyond their maximum validity.</i>
-                        <br><br>
+                        <div class="form-group">
+                            <canvas id="columnchart_certificates_all_js" style="width:100%; height: 350px"></canvas>
+                        </div>
+                        <p>
+
+                            <i>Note: The number of renewals for certificates, notably Let&#39;Encrypt certificates, valid
+                                for less than 12 months, is estimated for months beyond their maximum validity.</i>
+                            <br/><br/>
                             You may want to check that all certificates are legitimate if:
-                            <ul>
+                        </p>
+                        <ul>
                             <li>there is a difference between the two charts;</li>
                             <li>all monitored servers are running; and</li>
                             <li>there is no CDN/ISP certificate in the first chart.</li>
-                            </ul>
+                        </ul>
+                        <p>
                             The "Informational" part of this dashboard lists all certificates sorted by expiration date
                             so you can easily find a complete list of relevant certificates with expiry dates in the
                             given month.
