@@ -390,22 +390,6 @@ sudo -E -H /usr/local/bin/pip install alembic
 alembic upgrade head
 ```
 
-Nginx configuration
-
-```bash
-cd /var/www/keychest
-sudo cp tools/nginx/conf.d/* /etc/nginx/conf.d/
-
-# long domain names can cause problems, this is the workaround
-echo 'server_names_hash_bucket_size 128;' | sudo tee /etc/nginx/conf.d/01-nginx.conf
-
-# edit config files - URL, certificates
-sudo systemctl restart nginx.service
-
-cd /var/www/keychest
-sudo ./fix.sh
-```
-
 Laravel Echo server
 
 ```bash
@@ -420,6 +404,22 @@ sudo npm install -g --unsafe-perm https://github.com/mapbox/node-sqlite3/tarball
 # Install laravel echo server
 sudo npm uninstall -g laravel-echo-server
 sudo npm install -g --unsafe-perm laravel-echo-server
+```
+
+Nginx configuration
+
+```bash
+cd /var/www/keychest
+sudo cp tools/nginx/conf.d/* /etc/nginx/conf.d/
+
+# long domain names can cause problems, this is the workaround
+echo 'server_names_hash_bucket_size 128;' | sudo tee /etc/nginx/conf.d/01-nginx.conf
+
+# edit config files - URL, certificates
+sudo systemctl restart nginx.service
+
+cd /var/www/keychest
+sudo ./fix.sh
 ```
 
 Selinux
