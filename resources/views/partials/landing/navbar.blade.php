@@ -2,7 +2,7 @@
 
 <!-- Authentication Links -->
 @if (Auth::guest())
-    <li><a href="{{ route('register') }}"><b>My dashboard</b></a></li>
+    <li><a href="{{ route('login') }}"><b>My dashboard</b></a></li>
 @else
     <li><a
                 class="tc-rich-electric-blue"

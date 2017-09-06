@@ -36,12 +36,12 @@
                             'text-center': !Laravel.authGuest}">
                     <a class="btn btn-lg btn-rich-electric-blue" v-bind:class="{'pull-right' : Laravel.authGuest}"
                        id="btn-check-expire" v-on:click.stop="submitForm()">
-                        Spot check</a>
+                        Run spot check</a>
                 </div>
 
                 <div class="col-sm-6" v-if="Laravel.authGuest">
                     <a class="btn btn-lg pull-left btn-rich-electric-blue" v-bind:href="Laravel.urlRegister">
-                        Dashboard</a>
+                        Create dashboard</a>
                 </div>
             </div>
             <!-- End of buttons section -->
@@ -114,6 +114,7 @@
                 this.resultsLoaded = false;
             },
             submitForm(){
+                ga('send', 'event', 'spot-check', 'submit-main');
                 this.$refs.quicksearch.submitForm();
             }
         }
