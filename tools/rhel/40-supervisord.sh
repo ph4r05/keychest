@@ -14,8 +14,8 @@ then
     read -r -d '' TO_ADD <<- EOM
         [include]
         files = supervisord.d/*.conf
-    EOM
-    echo $TO_ADD | sudo tee /etc/supervisord.conf
+EOM
+    echo $TO_ADD | sudo tee -a /etc/supervisord.conf
 fi
 
 # supervisor config reload & start
