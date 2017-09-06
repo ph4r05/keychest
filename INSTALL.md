@@ -435,7 +435,7 @@ sudo semanage port -a -t http_port_t -p tcp 6001
 sudo semanage port -a -t http_port_t -p tcp 9000
 sudo setsebool -P httpd_can_network_connect_db 1
 
-cd tools/selinux
+cd /var/www/keychest/tools/selinux
 checkmodule -M -m -o httpd-to-redis-socket.mod httpd-to-redis-socket.te
 semodule_package -o httpd-to-redis-socket.pp -m httpd-to-redis-socket.mod
 sudo semodule -i httpd-to-redis-socket.pp
