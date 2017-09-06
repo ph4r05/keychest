@@ -180,12 +180,20 @@ for Github and Twitter there has to be a separate app for each
 new domain (test, dev, production).
 
 
+## RHEL 7.x
 
+Settings:
 
 ```bash
+export KC_SCANNER_VER=0.1.8
+export KC_VER=0.0.12
+export KC_USER=ec2-user
+export KC_DOMAIN=keychest.net
+export KC_CERT_BASE=/etc/letsencrypt/live/${KC_DOMAIN}
+export KC_CERT_CHAIN=/etc/letsencrypt/live/${KC_DOMAIN}/fullchain.pem
+export KC_CERT_PRIV=/etc/letsencrypt/live/${KC_DOMAIN}/privkey.pem
+export KC_MYSQL_ROOT_PASSWD=
 ```
-
-## RHEL 7.x
 
 Epel:
 
@@ -197,12 +205,6 @@ sudo yum install epel-release
 sudo yum install -y wget
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum install epel-release-latest-7.noarch.rpm
-```
-
-Settings:
-```bash
-export KC_SCANNER_VER=0.1.8
-export KC_VER=0.0.12
 ```
 
 Servers and tools:
@@ -295,9 +297,9 @@ sudo /usr/local/bin/python2.7 get-pip.py
 
 Self-signed - temporary!
 ```bash
-export MYDOMAIN=ec2-34-250-10-31.eu-west-1.compute.amazonaws.com
-sudo mkdir -p /etc/letsencrypt/live/${MYDOMAIN}/
-cd /etc/letsencrypt/live/${MYDOMAIN}/
+export KC_DOMAIN=ec2-34-250-10-31.eu-west-1.compute.amazonaws.com
+sudo mkdir -p /etc/letsencrypt/live/${KC_DOMAIN}/
+cd /etc/letsencrypt/live/${KC_DOMAIN}/
 
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out cert.pem
 ```
@@ -315,7 +317,7 @@ sudo mkdir keychest
 sudo chown nginx:nginx keychest
 
 # AWS only
-sudo usermod -a -G nginx ec2-user
+sudo usermod -a -G nginx ${KC_USER}
 
 cd /tmp
 
@@ -367,14 +369,14 @@ Keychest Configuration
 # Scanner config setup, DB setup
 
 cd ~/keychest-scanner
-sudo /usr/local/bin/keychest-setup --root-pass MYSQL_ROOT_PASS --init-db --init-alembic
+sudo /usr/local/bin/keychest-setup --root-pass "${KC_MYSQL_ROOT_PASSWD}" --init-db --init-alembic
 
 # KeyChest setup
 cd /var/www/keychest
 sudo php artisan app:setup --prod --db-config-auto && sudo ./fix.sh
 php artisan app:setupEcho --init-prod
 php artisan key:generate
-php artisan dotenv:set-key APP_URL https://${MYDOMAIN}
+php artisan dotenv:set-key APP_URL https://${KC_DOMAIN}
 php artisan down
 
 php artisan migrate
@@ -392,11 +394,11 @@ Nginx configuration
 cd /var/www/keychest
 sudo cp tools/nginx/conf.d/* /etc/nginx/conf.d/
 
+# long domain names can cause problems, this is the workaround
+echo 'server_names_hash_bucket_size 128;' | sudo tee /etc/nginx/conf.d/01-nginx.conf
+
 # edit config files - URL, certificates
 sudo systemctl restart nginx.service
-
-# in case of a problem add following line to the /etc/nginx/nginx.conf to the 'http' directive
-# server_names_hash_bucket_size 128;
 
 cd /var/www/keychest
 sudo ./fix.sh
@@ -406,7 +408,9 @@ Laravel Echo server
 
 ```bash
 sudo npm install -g node-pre-gyp gyp 
-sudo npm install -g --unsafe-perm node-sqlite3
+
+# Old version, not working anymore 
+# sudo npm install -g --unsafe-perm node-sqlite3
 
 # If the previous installation fails, try this:
 sudo npm install -g --unsafe-perm https://github.com/mapbox/node-sqlite3/tarball/master
@@ -452,14 +456,23 @@ sudo cp ~/keychest-scanner/assets/supervisord.d/keychest.conf /etc/supervisord.d
 sudo cp /var/www/keychest/tools/epiper.sh /usr/bin/epiper
 sudo chmod +x /usr/bin/epiper
 
+# Edit supervisor.d config so it also takes .conf files into account
+if ! grep -Fq "supervisord.d/*.conf" /etc/supervisord.conf
+then
+    read -r -d '' TO_ADD <<- EOM
+        [include]
+        files = supervisord.d/*.conf
+    EOM
+    echo $TO_ADD | sudo tee /etc/supervisord.conf
+fi
+
 # supervisor config reload & start
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl status
 
-# in case of a problem, add following lines to /etc/supervisord.conf
-# [include]
-# files = supervisord.d/*.conf
+# cron
+echo '* * * * * nginx php /var/www/keychest/artisan schedule:run >> /dev/null 2>&1' | sudo tee /etc/cron.d/keychest
 ```
 
 Start
