@@ -3,6 +3,9 @@ sudo yum install -y wget
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum install -y epel-release-latest-7.noarch.rpm
 
+wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+sudo yum install -y webtatic-release.rpm
+
 sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
 sudo yum install -y git rsync vim htop wget mlocate screen tcpdump
 sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
