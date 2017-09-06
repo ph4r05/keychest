@@ -332,6 +332,7 @@ cd /tmp
 git clone https://github.com/EnigmaBridge/keychest keychest
 cd keychest
 git checkout tags/v${KC_VER} -b rel_v${KC_VER}
+sudo rsync -av keychest/ /var/www/keychest/
 
 cd /var/www/keychest
 composer install
