@@ -55,6 +55,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Google Analytics property
+    |--------------------------------------------------------------------------
+    |
+    | This is the property identifying the website in Google Analytics. Please
+    | set the value according to the property setup in your Google Analytics
+    | account.
+    |
+    */
+
+    'ga_property' => env('GA_PROPERTY',''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
