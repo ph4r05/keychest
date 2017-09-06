@@ -12,7 +12,7 @@
                                 servers. It helps you monitor expiry of TLS certificates, the availability status of
                                 your servers, and their configuration. It will provide you with inventory summaries,
                                 as well as planning tasks for certificate renewals. You get all the information you need
-                                for operational teams, as well as for you managers if they ask for key performance
+                                for operational teams, as well as your managers if they ask for key performance
                                 indicators (KPIs).
                             </p>
                             <p>
