@@ -26,4 +26,27 @@ sudo supervisorctl status
 # cron
 echo '* * * * * nginx php /var/www/keychest/artisan schedule:run >> /dev/null 2>&1' | sudo tee /etc/cron.d/keychest
 
+#### END
+
+# Supervisor environment
+# Supervisord runs services undes custom environment. In order to transfer env vars to the
+# service you can add 'environment' config directive either main config file /etc/supervisord.conf
+# under [supervisord] directive or in the particular service.
+# example:
+#
+# environment=
+#   NODE_EXTRA_CA_CERTS=%(ENV_NODE_EXTRA_CA_CERTS)s,
+#   REQUESTS_CA_BUNDLE=%(ENV_REQUESTS_CA_BUNDLE)s,
+#   KC_TRUST_ROOTS_AUX=%(ENV_KC_TRUST_ROOTS_AUX)s
+
+
+# Supervisor running under systemd may have issues with environment variables set in /etc/environment
+# If that is the case look up systemd unit file supervisord.service, usually
+# /etc/systemd/system/multi-user.target.wants/supervisord.service
+# And add to the [Service] section:
+# EnvironmentFile=/etc/environment
+
+# Then call
+# sudo systemctl daemon-reload
+
 
