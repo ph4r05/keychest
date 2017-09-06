@@ -4,6 +4,11 @@
         <subdomain-info></subdomain-info>
 
         <h3>Domains for automatic server discovery <help-trigger id="subdomainsInfoModal"></help-trigger></h3>
+        <p class="tc-dark-green"><b>Note:</b> If there is a spinning wheel in the "Detected" column, try to refresh the
+            page by clicking the same in the top right corner. The initial scan can take from seconds to minutes if the
+            number of certificates is large.
+        </p>
+
         <subdomain-watchers></subdomain-watchers>
 
         <h3>Servers discovered in Active Domains</h3>
