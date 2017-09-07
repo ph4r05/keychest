@@ -2,7 +2,7 @@
     <div class="filter-bar">
       <form class="form-inline">
         <div class="form-group">
-          <label for="server-search-inp" >&nbsp</label>
+          <label for="server-search-inp" >&nbsp;</label>
           <input type="text" v-model="filterText" class="form-control input-sm"
                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                  @keyup.enter="doFilter" placeholder="filter string" id="server-search-inp">
