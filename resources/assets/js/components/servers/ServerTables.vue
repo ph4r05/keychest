@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <edit-server></edit-server>
+      <edit-server ref="editServer"></edit-server>
 
       <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
       <vuetable-my ref="vuetable"
@@ -112,7 +112,6 @@ import VuetablePagination from 'vuetable-2/src/components/VuetablePagination';
 import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
 import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-import CustomActions from './CustomActions';
 import FilterBar from '../partials/FilterBar.vue';
 import AddServer from './AddServer.vue';
 import EditServer from './EditServer.vue';
@@ -120,7 +119,6 @@ import ServerInfo from './ServerInfo.vue';
 
 Vue.use(VueEvents);
 Vue.use(Vue2Filters);
-Vue.component('custom-actions', CustomActions);
 Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
 Vue.component('edit-server', EditServer);
@@ -192,7 +190,7 @@ export default {
                     callback: 'formatDate|DD-MM-YYYY HH:mm'
                 },
                 {
-                    name: '__component:custom-actions',
+                    name: '__slot:actions',
                     title: 'Actions',
                     titleClass: 'text-center',
                     dataClass: 'text-center'
@@ -283,6 +281,9 @@ export default {
         },
         uncheckAll(){
             this.$refs.vuetable.uncheckAllPages();
+        },
+        onEditServer(data){
+            this.$refs.editServer.onEditServer(data);
         },
         onDeleteServer(data){
             swal({
@@ -381,9 +382,6 @@ export default {
         },
         'on-server-updated'(data) {
             Vue.nextTick(() => this.$refs.vuetable.refresh());
-        },
-        'on-delete-server'(data) {
-            this.onDeleteServer(data);
         },
         'on-manual-refresh'(){
             Vue.nextTick(() => this.$refs.vuetable.refresh());
