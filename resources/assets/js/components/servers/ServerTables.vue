@@ -15,7 +15,11 @@
           <add-server></add-server>
         </div>
         <div class="col-md-5">
-          <filter-bar></filter-bar>
+          <filter-bar
+                  :globalEvt="false"
+                  v-on:filter-set="onFilterSet"
+                  v-on:filter-reset="onFilterReset"
+          ></filter-bar>
         </div>
       </div>
 
@@ -53,6 +57,12 @@
             <span class="label label-success" title="IPv6">{{props.rowData.dns_num_ipv6}}</span>
           </div>
           <span v-else="">-</span>
+        </template>
+        <template slot="actions" scope="props">
+          <div class="custom-actions">
+            <button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>
+          </div>
         </template>
       </vuetable-my>
       </div>
@@ -103,8 +113,7 @@ import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePagination
 import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
 import CustomActions from './CustomActions';
-import DetailRow from './DetailRow';
-import FilterBar from './FilterBar';
+import FilterBar from '../partials/FilterBar.vue';
 import AddServer from './AddServer.vue';
 import EditServer from './EditServer.vue';
 import ServerInfo from './ServerInfo.vue';
@@ -112,7 +121,6 @@ import ServerInfo from './ServerInfo.vue';
 Vue.use(VueEvents);
 Vue.use(Vue2Filters);
 Vue.component('custom-actions', CustomActions);
-Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
 Vue.component('edit-server', EditServer);
@@ -161,14 +169,6 @@ export default {
                     dataClass: 'text-center',
                     callback: 'formatDate|DD-MM-YYYY'
                 },
-                // {
-                //     name: 'updated_at',
-                //     title: 'Update',
-                //     sortField: 'updated_at',
-                //     titleClass: 'text-center',
-                //     dataClass: 'text-center',
-                //     callback: 'formatDate|DD-MM-YYYY'
-                // },
                 {
                     name: '__slot:dns',
                     title: 'IP v4/v6',
@@ -253,7 +253,17 @@ export default {
             this.$refs.vuetable.changePage(page);
         },
         onCellClicked (data, field, event) {
-            this.$refs.vuetable.toggleDetailRow(data.id);
+            ;
+        },
+        onFilterSet(filterText){
+            this.moreParams = {
+                filter: filterText
+            };
+            Vue.nextTick(() => this.$refs.vuetable.refresh())
+        },
+        onFilterReset(){
+            this.moreParams = {};
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
         },
         onLoading(){
             if (this.loadingState != 0){
@@ -366,16 +376,6 @@ export default {
         },
     },
     events: {
-        'filter-set' (filterText) {
-            this.moreParams = {
-                filter: filterText
-            };
-            Vue.nextTick(() => this.$refs.vuetable.refresh())
-        },
-        'filter-reset' () {
-            this.moreParams = {};
-            Vue.nextTick(() => this.$refs.vuetable.refresh());
-        },
         'on-server-added' (data) {
             Vue.nextTick(() => this.$refs.vuetable.refresh());
         },

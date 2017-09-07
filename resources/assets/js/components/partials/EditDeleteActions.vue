@@ -19,13 +19,11 @@
         methods: {
             deleteItemAction (action, data, index) {
                 // Can be implemented here or by this.$emit('deleteServer', data); https://forum.vuejs.org/t/passing-data-back-to-parent/1201/2
-                this.$emit('onDeleteServer', data);
-                this.$events.fire('on-delete-server', data);
+                this.$events.fire('on-delete-item', data);
             },
             editItemAction (action, data, index) {
                 // Can be implemented here or by this.$emit('deleteServer', data); https://forum.vuejs.org/t/passing-data-back-to-parent/1201/2
-                this.$emit('onEditServer', data);
-                this.$events.fire('on-edit-server', data);
+                this.$events.fire('on-edit-item', data);
             }
         }
     }

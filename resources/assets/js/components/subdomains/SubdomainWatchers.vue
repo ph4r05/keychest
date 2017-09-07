@@ -100,7 +100,7 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-    import FilterBar from '../servers/FilterBar';
+    import FilterBar from '../partials/FilterBar';
     import AddSubWatch from './watch/AddSubWatch.vue';
 
     Vue.use(VueEvents);
