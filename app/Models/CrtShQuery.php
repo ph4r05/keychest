@@ -26,4 +26,12 @@ class CrtShQuery extends Model
     {
         return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
     }
+
+    /**
+     * Optional watch service
+     */
+    public function service()
+    {
+        return $this->belongsTo('App\WatchService', 'service_id');
+    }
 }

@@ -25,6 +25,14 @@ class SubdomainResultsEntry extends Model
         return $this->belongsTo('App\Models\SubdomainWatchTarget', 'watch_id');
     }
 
+    /**
+     * Optional watch service
+     */
+    public function service()
+    {
+        return $this->belongsTo('App\WatchService', 'service_id');
+    }
+
     public function getDates()
     {
         return array('created_at', 'updated_at', 'last_scan_at');
