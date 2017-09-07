@@ -14,6 +14,7 @@ use App\Models\DnsResult;
 use App\Models\HandshakeScan;
 use App\Models\LastScanCache;
 use App\Models\WatchAssoc;
+use App\Models\WatchService;
 use App\Models\WatchTarget;
 use App\User;
 use function foo\func;
@@ -24,6 +25,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ServerManager {
+
+    const FILTER_INCLUDE = 1;
+    const FILTER_EXCLUDE = 2;
+    const FILTER_ONLY = 3;
 
     /**
      * The application instance.
@@ -282,9 +287,10 @@ class ServerManager {
      *  - extract last tls scan info to a separate joinable table so no aggregation on MAX(last_scan_at) is needed
      *  - if tls_errors is not in the sort field, we can load all IDs by the side, cache it, match on it on the query.
      * @param null $userId
+     * @param bool $filterIpServers can exclude / include the IP servers
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadServerList($userId=null){
+    public function loadServerList($userId=null, $filterIpServers=self::FILTER_INCLUDE){
 //        The SQL built here is like this:
 //        ----------------------------------------------------------------------------
 //        SELECT `watch_target`.*,
@@ -335,6 +341,7 @@ class ServerManager {
         $watchTbl = (new WatchTarget())->getTable();
         $watchAssocTbl = (new WatchAssoc())->getTable();
         $dnsTable = (new DnsResult())->getTable();
+        $serviceTable = (new WatchService())->getTable();
 
         // Server error query
         $qsl = $this->loadServerErrorsQuery($userId);
@@ -343,6 +350,7 @@ class ServerManager {
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
             ->leftJoin($dnsTable, $dnsTable.'.id', '=', $watchTbl.'.last_dns_scan_id')
+            ->leftJoin($serviceTable, $serviceTable.'.id', '=', $watchTbl.'.service_id')
             ->select(
                 $watchTbl.'.*',
                 $watchAssocTbl.'.*',
@@ -369,6 +377,12 @@ class ServerManager {
                 ->where($watchAssocTbl.'.user_id', '=', $userId)
                 ->whereNull($watchAssocTbl.'.deleted_at')
                 ->whereNull($watchAssocTbl.'.disabled_at');
+        }
+
+        if ($filterIpServers == self::FILTER_EXCLUDE){
+            $query = $query->whereNull($watchTbl.'.ip_scan_id');
+        } elseif ($filterIpServers == self::FILTER_ONLY){
+            $query = $query->whereNotNull($watchTbl.'.ip_scan_id');
         }
 
         return $query;
