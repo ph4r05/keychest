@@ -6,7 +6,6 @@
  * Time: 20:09
  */
 
-
 namespace App\Models;
 
 use App\Keychest\Uuids;
@@ -29,7 +28,7 @@ class WatchService extends Model
     public function watchTargets()
     {
         return $this->hasMany(
-            'App\WatchTarget',
+            'App\Models\WatchTarget',
             'service_id');
     }
 

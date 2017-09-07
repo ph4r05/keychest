@@ -29,6 +29,6 @@ class DnsEntry extends Model
      */
     public function dnsScan()
     {
-        return $this->belongsTo('App\Model\DnsResult', 'scan_id');
+        return $this->belongsTo('App\Models\DnsResult', 'scan_id');
     }
 }

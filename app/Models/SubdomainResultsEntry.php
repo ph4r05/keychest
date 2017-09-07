@@ -30,7 +30,7 @@ class SubdomainResultsEntry extends Model
      */
     public function service()
     {
-        return $this->belongsTo('App\WatchService', 'service_id');
+        return $this->belongsTo('App\Models\WatchService', 'service_id');
     }
 
     public function getDates()

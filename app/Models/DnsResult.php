@@ -29,7 +29,7 @@ class DnsResult extends Model
      */
     public function watch_target()
     {
-        return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
+        return $this->belongsTo('App\Models\WatchTarget', 'watch_id');
     }
 
     /**
