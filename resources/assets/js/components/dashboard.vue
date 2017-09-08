@@ -115,7 +115,7 @@
                 <!-- HEADLINE: no of servers -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-green" v-if="1==1">
+                    <div class="small-box bg-aqua" v-if="dnsFailedLookups.length+ tlsErrors.length < 1 ">
                         <div class="inner">
                             <h3>{{ numWatches }}</h3>
                             <p>Watched servers</p>
@@ -127,9 +127,9 @@
                         <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                     </div>
 
-                    <div class="small-box bg-red" v-else="">
+                    <div class="small-box bg-yellow" v-else="">
                         <div class="inner">
-                            <h3>X of {{ numWatches }}</h3>
+                            <h3>{{dnsFailedLookups.length+ tlsErrors.length}} / {{ numWatches }}</h3>
                             <p>Watched servers DOWN</p>
                         </div>
 
