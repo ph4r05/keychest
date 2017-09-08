@@ -70,5 +70,37 @@ class NetworksController extends Controller
         return view('ipservers');
     }
 
+    /**
+     * Loads all scan definitions for the current user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ipScanList(){
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+        $sort = strtolower(trim(Input::get('sort')));
+        $filter = strtolower(trim(Input::get('filter')));
+        $per_page = intval(trim(Input::get('per_page')));
+        $sort_parsed = DataTools::vueSortToDb($sort);
+
+        $watchTbl = (new WatchTarget())->getTable();
+        $watchAssocTbl = (new WatchAssoc())->getTable();
+
+        $query = $this->ipScanManager->getRecords($userId);
+        if (!empty($filter)){
+            $query = $query->where('service_name', 'like', '%' . $filter . '%');
+        }
+
+        // sorting
+        $sort_parsed->transform(function($item, $key) use ($watchAssocTbl){
+            return (!in_array($item[0], ['created_at', 'updated_at'])) ?
+                $item : [$watchAssocTbl.'.'.$item[0], $item[1]];
+        });
+
+        $query = DbTools::sortQuery($query, $sort_parsed);
+
+        $ret = $query->paginate($per_page > 0  && $per_page < 1000 ? $per_page : 100); // type: \Illuminate\Pagination\LengthAwarePaginator
+        return response()->json($ret, 200);
+    }
 
 }

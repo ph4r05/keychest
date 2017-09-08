@@ -48,11 +48,10 @@ class IpScanManager {
      */
     public function getRecords($userId=null){
         $q = IpScanRecord::query()->whereHas('users', function($query) use ($userId) {
-            $query->where('users.id', '=' , $userId)
+            $query->where('user_id', '=' , $userId)
                 ->whereNull('deleted_at')
                 ->whereNull('disabled_at');
         });
-
-        return $q->get();
+        return $q;
     }
 }
