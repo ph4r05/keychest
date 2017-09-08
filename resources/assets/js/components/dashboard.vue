@@ -45,7 +45,8 @@
                 <!-- HEADLINE: certificates expire now -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-red">
+                    <div class="small-box"
+                         v-bind:class="{'bg-green': numExpiresNow < 1, 'bg-red': numExpiresNow > 0}" >
                         <div class="inner">
                             <h3>{{ numExpiresNow }}</h3>
 
@@ -70,7 +71,8 @@
                 <!-- HEADLINE: certificates expire soon -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-yellow">
+                    <div class="small-box"
+                        v-bind:class="{'bg-green': (numExpiresSoon - numExpiresNow) < 1, 'bg-yellow': (numExpiresSoon - numExpiresNow) > 0}" >
                         <div class="inner">
                             <h3>{{ numExpiresSoon - numExpiresNow }}</h3>
                             <p v-if="(numExpiresSoon - numExpiresNow) < 1">Certificates expire soon</p>
