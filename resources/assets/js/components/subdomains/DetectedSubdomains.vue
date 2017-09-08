@@ -62,6 +62,9 @@
                         <i class="glyphicon glyphicon-plus" title="Add to monitoring"></i></button>
                 </div>
                 <span>Selected {{numSelected}} {{ numSelected | pluralize('sub-domain') }} </span>
+                <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServerList('download-subdomains')" >
+                    Download all sub-domains
+                </button>
             </div>
 
             <div class="vuetable-pagination">
@@ -421,6 +424,45 @@
             onFilterReset(){
                 this.moreParams = {};
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
+            },
+            downloadServerList(action) {
+
+                var data = this.processedData;
+
+                // Building the CSV from the Data two-dimensional array
+                // Each column is separated by ";" and new line "\n" for next row
+                var csvContent = '';
+                var dataString = '';
+                data.forEach(function(infoArray, index) {
+                    dataString = infoArray.name + "," + infoArray.used.toString();
+                    csvContent += index < data.length ? dataString + '\n' : dataString;
+                });
+
+                // The download function takes a CSV string, the filename and mimeType as parameters
+                // Scroll/look down at the bottom of this snippet to see how download is called
+                var download = function(content, fileName, mimeType) {
+                    var a = document.createElement('a');
+                    mimeType = mimeType || 'application/octet-stream';
+
+                    if (navigator.msSaveBlob) { // IE10
+                        navigator.msSaveBlob(new Blob([content], {
+                            type: mimeType
+                        }), fileName);
+                    } else if (URL && 'download' in a) { //html5 A[download]
+                        var myURLcreate = window.URL.createObjectURL || window.webkitURL.createObjectURL;
+                        a.href = myURLcreate(new Blob([content], {
+                            type: mimeType
+                        }));
+                        a.setAttribute('download', fileName);
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+                    }
+                }
+
+                download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
             },
         },
         events: {
