@@ -8,7 +8,7 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
-
+                    <direct-tables></direct-tables>
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_2">
@@ -24,7 +24,10 @@
     import Vue from 'vue';
     import VueEvents from 'vue-events';
 
+    import DirectTables from './servers-direct/DirectTables.vue';
+
     Vue.use(VueEvents);
+    Vue.component('direct-tables', DirectTables);
 
     export default {
         data () {
