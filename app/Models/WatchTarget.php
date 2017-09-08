@@ -17,6 +17,11 @@ class WatchTarget extends Model
 
     protected $assoc = null;
 
+    public function getDates()
+    {
+        return array('created_at', 'updated_at', 'last_scan_at');
+    }
+
     /**
      * Get the user that owns the watch record.
      * @deprecated - converted to many-to-many relationship.
@@ -48,15 +53,29 @@ class WatchTarget extends Model
 
     /**
      * Optional watch service
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function service()
     {
         return $this->belongsTo('App\Models\WatchService', 'service_id');
     }
 
-    public function getDates()
+    /**
+     * Optional watch service
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function lastDnsScan()
     {
-        return array('created_at', 'updated_at', 'last_scan_at');
+        return $this->belongsTo('App\Models\DnsResult', 'last_dns_scan_id');
+    }
+
+    /**
+     * Optional IP scan record assignment
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function ipScan()
+    {
+        return $this->belongsTo('App\Models\IpScanRecord', 'ip_scan_id');
     }
 
     /**

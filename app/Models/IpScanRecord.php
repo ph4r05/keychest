@@ -36,7 +36,10 @@ class IpScanRecord extends Model
      */
     public function users()
     {
-        return $this->belongsToMany('App\User')->using('App\Models\UserIpScanRecord');
+        return $this->belongsToMany('App\User',
+            null,
+            'ip_scan_record_id',
+            'user_id')->using('App\Models\UserIpScanRecord');
     }
 
     /**

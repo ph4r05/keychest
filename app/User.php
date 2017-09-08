@@ -39,17 +39,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Watch targets that belongs to the user
+     * Associated watch targets
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function watchTargets()
     {
-        return $this->belongsToMany(
-            'App\Models\WatchTarget',
-            'user_watch_target',
+        return $this->belongsToMany('App\Models\WatchTarget',
+            null,
             'user_id',
-            'watch_id')
-            ->withTimestamps()
-            ->withPivot(['deleted_at', 'disabled_at', 'scan_periodicity', 'scan_type']);
+            'watch_id')->using('App\Models\UserWatchTarget');
     }
 
     /**
@@ -89,5 +87,14 @@ class User extends Authenticatable
             'user_id',
             'email_news_id')
             ->withTimestamps();
+    }
+
+    /**
+     * Associated IP scan records
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function ipScanRecords()
+    {
+        return $this->belongsToMany('App\Models\IpScanRecord')->using('App\Models\UserIpScanRecord');
     }
 }
