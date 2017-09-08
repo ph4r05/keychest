@@ -91,9 +91,9 @@
                         <strong v-else><span class="tc-dark-green">IPv4 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
                         <span v-if="tlsScanHostCert && tlsScanHostCert.issuerOrgNorm"> (by {{ tlsScanHostCert.issuerOrgNorm }})</span></td>
                     <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }}
-                        {{ pluralize("day", Math.round((-1)*tlsScanHostCert.valid_to_days)) }} ago</td>
+                        {{ pluralize('day', Math.round((-1)*tlsScanHostCert.valid_to_days)) }} ago</td>
                     <td v-else>expires in {{ Math.round(tlsScanHostCert.valid_to_days) }}
-                        {{pluralize('day',Math.round(tlsScanHostCert.valid_to_days))}}</td>
+                        {{ pluralize('day',Math.round(tlsScanHostCert.valid_to_days)) }}</td>
                     <td> {{ form.textStatus }} </td>
                 </tr>
 
@@ -192,7 +192,8 @@
                     'alert-danger': this.results.whois.expires_at_days <= 28,
                     'alert-warning': this.results.whois.expires_at_days > 28}" >
                 <strong>Warning</strong>: domain <u>{{ results.whois.domain }}</u> expires in
-                {{ Math.floor(results.whois.expires_at_days) }} {{pluralize('day', Math.floor(results.whois.expires_at_days)) }}.
+                {{ Math.floor(results.whois.expires_at_days) }}
+                {{ pluralize('day', Math.floor(results.whois.expires_at_days)) }}.
                 Consider domain renewal. <span v-if="!isMonitored">Start watching now.</span>
             </div>
 
@@ -201,9 +202,10 @@
                 <p><strong>Warning!</strong>
                     We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
                     uptime. You were "not secure" for at least {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
-                    pluralize('hour', Math.round(results.downtimeTls.downtime / 3600.0) )}}<span v-if="results.downtimeTls.downtime > 3600*24*3">
+                    {{ pluralize('hour', Math.round(results.downtimeTls.downtime / 3600.0)) }}
+                    <span v-if="results.downtimeTls.downtime > 3600*24*3">
                          ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }}
-                        {{pluralize('day',Math.round(results.downtimeTls.downtime / 24.0 / 3600.0))}})</span>.
+                        {{ pluralize('day',Math.round(results.downtimeTls.downtime / 24.0 / 3600.0)) }})</span>.
                     <span v-if="!isMonitored">Start watching now.</span>
                     </p>
             </div>
@@ -280,7 +282,7 @@
                                 danger: tlsScanHostCert.is_expired }">
                             <th scope="row">Validity</th>
                             <td>{{ tlsScanHostCert.valid_to }} ( {{ tlsScanHostCert.valid_to_days }}
-                                {{pluralize('day',tlsScanHostCert.valid_to_days)}} ) </td>
+                                {{ pluralize('day',tlsScanHostCert.valid_to_days) }} ) </td>
                         </tr>
                         </tbody>
                     </table>
@@ -324,12 +326,12 @@
                         <tr >
                             <th scope="row">Issued on</th>
                             <td>{{ tlsScanHostCert.valid_from }} ({{ tlsScanHostCert.valid_from_days }}
-                                {{pluralize('day', tlsScanHostCert.valid_from_days)}} ago)</td>
+                                {{ pluralize('day', tlsScanHostCert.valid_from_days) }} ago)</td>
                         </tr>
                         <tr v-bind:class="{danger: tlsScanHostCert.is_expired }">
                             <th scope="row">Expires on</th>
                             <td>{{ tlsScanHostCert.valid_to }} (in {{ tlsScanHostCert.valid_to_days }}
-                                {{pluralize('day', tlsScanHostCert.valid_to_days)}}) </td>
+                                {{ pluralize('day', tlsScanHostCert.valid_to_days) }}) </td>
                         </tr>
                         </tbody>
                     </table>
@@ -353,7 +355,7 @@
                     <tbody>
                     <tr v-for="cert in take(ctValid, 20)">
                         <td>{{ cert.matched_name }} </td>
-                        <td>{{ cert.valid_to }} ( {{ cert.valid_to_days }} {{pluralize('day', cert.valid_to_days)}} ) </td>
+                        <td>{{ cert.valid_to }} ( {{ cert.valid_to_days }} {{ pluralize('day', cert.valid_to_days) }} ) </td>
                     </tr>
                     </tbody>
                 </table>
@@ -373,7 +375,8 @@
                     <tbody>
                     <tr v-for="cert in take(ctExpired, 20)">
                         <td>{{ cert.matched_name }} </td>
-                        <td>{{ cert.valid_to }} ({{ -1*cert.valid_to_days }} {{pluralize('day', -1*cert.valid_to_days)}} ago) </td>
+                        <td>{{ cert.valid_to }} ({{ -1*cert.valid_to_days }}
+                            {{ pluralize('day', -1*cert.valid_to_days) }} ago) </td>
                     </tr>
                     </tbody>
                 </table>
