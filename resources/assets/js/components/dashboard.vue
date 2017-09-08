@@ -93,6 +93,23 @@
                 </div>
                 <!-- ./col -->
 
+                <!-- HEADLINE: certificate inventory -->
+                <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts+len(tlsCerts) }}</h3>
+
+                            <p>Active / All certificates</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-heartbeat"></i>
+                        </div>
+                        <a href="#certs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+
                 <!-- HEADLINE: no of servers -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
@@ -119,23 +136,6 @@
                         </div>
                         <!--suppress HtmlUnknownTarget -->
                         <a href="/home/servers" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-
-                <!-- HEADLINE: certificate inventory -->
-                <div class="col-lg-3 col-xs-6">
-                    <!-- small box -->
-                    <div class="small-box bg-aqua">
-                        <div class="inner">
-                            <h3>{{ len(tlsCerts) }} / {{ numHiddenCerts+len(tlsCerts) }}</h3>
-
-                            <p>Active / All certificates</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa fa-heartbeat"></i>
-                        </div>
-                        <a href="#certs" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <!-- ./col -->
