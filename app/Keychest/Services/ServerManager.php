@@ -347,8 +347,8 @@ class ServerManager {
         $qsl = $this->loadServerErrorsQuery($userId);
 
         // Basic loading query
-        $query = WatchAssoc::query()
-            ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
+        $query = WatchTarget::query()
+            ->join($watchAssocTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
             ->leftJoin($dnsTable, $dnsTable.'.id', '=', $watchTbl.'.last_dns_scan_id')
             ->leftJoin($serviceTable, $serviceTable.'.id', '=', $watchTbl.'.service_id')
             ->select(
@@ -385,6 +385,7 @@ class ServerManager {
             $query = $query->whereNotNull($watchTbl.'.ip_scan_id');
         }
 
+        $query = $query->with('service');
         return $query;
     }
 
