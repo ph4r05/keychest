@@ -42,6 +42,28 @@
         @vuetable:checkbox-toggled="onCheckboxToggled"
         @vuetable:checkbox-toggled-all="onCheckboxToggled"
       >
+        <template slot="host" scope="props">
+
+          <!-- IP scan host - special treating -->
+          <template v-if="props.rowData.is_ip_host">
+            <span v-if="props.rowData.service_id">
+              {{ props.rowData.service.service_name }}
+              <span> ({{ props.rowData.scan_host }})</span>
+            </span>
+            <span v-else="">{{ props.rowData.scan_host }}</span>
+          </template>
+
+          <!-- Not an IP scan host -->
+          <template v-else="">
+            <span v-if="props.rowData.service_id">{{ props.rowData.service.service_name }}</span>
+            <span v-else="">{{ props.rowData.scan_host }}</span>
+          </template>
+
+          <!-- Scan host flags -->
+          <span class="label label-primary" title="IP host" v-if="props.rowData.is_ip_host">IP</span>
+          <span class="label label-primary" title="Scanned" v-if="props.rowData.ip_scan_id">Scan</span>
+        </template>
+
         <template slot="errors" scope="props">
           <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
           <span class="label" v-bind:class="{
@@ -145,7 +167,7 @@ export default {
                     dataClass: 'text-right'
                 },
                 {
-                    name: 'scan_host',
+                    name: '__slot:host',
                     sortField: 'scan_host',
                     title: 'Domain name',
                 },
