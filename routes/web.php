@@ -115,6 +115,10 @@ Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
 
+Route::get('home/request', function () {
+    return view('request');
+})->name('request');
+
 Route::get('home/license', function () {
     return view('license');
 })->name('license');

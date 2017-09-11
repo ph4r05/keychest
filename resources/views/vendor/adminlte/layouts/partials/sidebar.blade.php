@@ -52,6 +52,7 @@
             <li class="{{ Request::path() ==  'home/license' ? 'active' : ''  }}">
                 <a href="{{ url('home/license') }}"><i class='fa fa-drivers-license'></i> <span>{{ trans('admin.license') }}</span></a>
             </li>
+
         </ul>
 
         <hr/>
@@ -60,15 +61,22 @@
             <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
                 <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
             </li>
-
-            <li class="{{ Request::path() ==  'home/enterprise' ? 'active' : ''  }}">
-                <a href="{{ url('home/enterprise') }}"><i class='fa fa-money'></i> <span>{{ trans('admin.enterprise') }}</span></a>
-            </li>
-
             <li class="{{ Request::path() ==  '/content' ? 'active' : ''  }}">
                 <a href="{{ url('/content') }}"><i class='fa fa-book'></i> <span>{{ trans('admin.content') }}</span></a>
             </li>
 
+        </ul>
+
+        <hr/>
+
+        <ul class="sidebar-menu">
+            <li class="{{ Request::path() ==  'home/enterprise' ? 'active' : ''  }}">
+                <a href="{{ url('home/enterprise') }}"><i class='fa fa-money'></i> <span>{{ trans('admin.enterprise') }}</span></a>
+            </li>
+
+            <li class="{{ Request::path() == 'home/request' ? 'active' : '' }}" >
+                <a href="{{url('home/request')}}"><i class='fa fa-handshake-o'></i><span>{{ trans('admin.request') }}</span></a>
+            </li>
 
 
             {{--<li class="{{ Request::path() ==  '/intro' ? 'active' : ''  }}">--}}
