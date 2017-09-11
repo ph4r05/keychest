@@ -16,7 +16,7 @@
             <div class="create-server-bar">
               <div class="pull-right-nope form-group">
                 <button type="button" class="btn btn-sm btn-success btn-block" v-on:click.prevent="onAddServer()">
-                  Add Server
+                  Add Direct Server
                 </button>
               </div>
             </div>
@@ -53,14 +53,8 @@
         <template slot="iprange" scope="props">
           {{ props.rowData.ip_beg }} - {{ props.rowData.ip_end }}
         </template>
-        <template slot="errors" scope="props">
-          <!--<span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>-->
-          <!--<span class="label" v-bind:class="{-->
-              <!--'label-danger': props.rowData.tls_errors == props.rowData.tls_all,-->
-              <!--'label-warning': props.rowData.tls_errors < props.rowData.tls_all-->
-              <!--}" v-if="props.rowData.tls_errors > 0"><abbr v-bind:title="tlsTitle(props.rowData)" class="initialism">TLS</abbr>-->
-          <!--</span>-->
-          <!--<span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">ON</span>-->
+        <template slot="range_size" scope="props">
+          {{ props.rowData.ip_end_int - props.rowData.ip_beg_int }}
         </template>
         <template slot="actions" scope="props">
           <div class="custom-actions">
@@ -153,7 +147,7 @@ export default {
                 },
                 {
                     name: '__slot:iprange',
-                    sortField: 'ip_beg',
+                    sortField: 'ip_beg_int',
                     title: 'Scan range',
                 },
                 {
@@ -163,13 +157,6 @@ export default {
                     titleClass: 'text-center',
                     dataClass: 'text-center',
                     callback: 'formatDate|DD-MM-YYYY'
-                },
-                {
-                    name: '__slot:errors',
-                    title: 'Errors',
-                    sortField: 'dns_error',
-                    titleClass: 'text-center',
-                    dataClass: 'text-center',
                 },
                 {
                     name: 'last_scan_at',

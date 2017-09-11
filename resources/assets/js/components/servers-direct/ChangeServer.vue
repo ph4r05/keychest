@@ -13,14 +13,23 @@
                         <div class="form-group">
                             <label for="server-add-title">Server:</label>
                             <input type="text" name="server" id="server-add-title" class="form-control"
-                                   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                   v-model="newItem.server" placeholder="e.g., https://enigmabridge.com:443"
+                                   autocorrect="off" autocapitalize="off" spellcheck="false"
+                                   v-model="scanRecord.server" placeholder="e.g., https://enigmabridge.com:443"
                                    autofocus="autofocus"/>
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
                         </div>
 
+                        <div class="form-group">
+                            <label for="scan-range">Scan range:</label>
+                            <input type="text" name="server" id="scan-range" class="form-control"
+                                   autocorrect="off" autocapitalize="off" spellcheck="false"
+                                   v-model="scanRecord.scan_range" placeholder="e.g., 192.168.0.1 - 192.168.0.255"
+                                   ref="scanRange" @input="sanitizeRange" @change="sanitizeRange"/>
+                            <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['scan_range'] }}</span>
+                        </div>
+
                         <div class="alert alert-info scan-alert" v-show="sentState == 2">
-                            <span id="info-text">Sending...</span>
+                            <span id="info-text">Saving...</span>
                         </div>
 
                         <transition name="fade">
@@ -48,24 +57,31 @@
     export default {
         data () {
             return {
-                newItem: {server: ''},
+                editMode: false,
+                scanRecord: {
+                    server: '',
+                    scan_range: ''
+                },
                 formErrors: {},
                 sentState: 0,
             }
         },
         methods: {
-            onAdd(){
-                this.showModal();
+            onAdd(data){
+                this.showModal(false);
             },
-            onEdit(){
+            onEdit(data){
+                _.assignIn(this.scanRecord, data);
+                this.scanRecord.server = window.Req.buildUrl('https', data.service_name, undefined);
+                this.scanRecord.scan_range = this.getTextRange(data.ip_beg, data.ip_end);
+                this.editMode = true;
 
+                this.showModal(false);
             },
-            showModal(){
-                ga('send', 'event', 'servers', 'add-modal');
+            showModal(edit){
+                ga('send', 'event', 'direct-servers', edit ? 'edit-modal' : 'add-modal');
                 $('#change-ip-server').modal();
-                setTimeout(()=>{
-                    $('#server-add-title').focus();
-                }, 500);
+                this.focusInput();
             },
             isWildcard(value){
                 const t = _.trim(value);
@@ -94,7 +110,7 @@
                 }).then(() => {
                     this.doWildcard(value);
                 }, (dismiss) => {
-                    this.newItem = {'server': Req.removeAllWildcards(this.newItem.server)};
+                    this.scanRecord = {'server': Req.removeAllWildcards(this.scanRecord.server)};
                     this.createItemInt();
                 });
             },
@@ -108,13 +124,21 @@
                 $("#change-ip-server").modal('hide');
             },
             resetInput(){
-                this.newItem = {'server':''};
+                this.scanRecord = {
+                    'server':'',
+                    'scan_range':''
+                };
+            },
+            focusInput(){
+                setTimeout(()=>{
+                    $('#server-add-title').focus();
+                }, 100);
             },
             createItem() {
                 ga('send', 'event', 'servers', 'add-server');
 
                 // Minor domain validation.
-                if (_.isEmpty(this.newItem.server) || this.newItem.server.split('.').length <= 1) {
+                if (_.isEmpty(this.scanRecord.server) || this.scanRecord.server.split('.').length <= 1) {
                     $('#add-server-wrapper').effect("shake");
                     toastr.error('Please enter correct domain.', 'Invalid input', {
                         timeOut: 2000,
@@ -124,7 +148,7 @@
                 }
 
                 // UX: Wildcard entered
-                this.checkWildcard(this.newItem.server);
+                this.checkWildcard(this.scanRecord.server);
             },
             createItemInt(){
                 const onFail = (function(){
@@ -156,7 +180,7 @@
                 }).bind(this);
 
                 this.sentState = 2;
-                axios.post('/home/servers/add', this.newItem)
+                axios.post('/home/servers/add', this.scanRecord)
                     .then(response => {
                         if (!response || !response.data) {
                             onFail();
@@ -180,6 +204,19 @@
                             onFail();
                         }
                     });
+            },
+            getTextRange(ip_start, ip_end){
+                return ip_start + ' - ' + ip_end;
+            },
+            sanitizeRange(input){
+                const oldVal = input.target.value;
+                let val = oldVal;
+
+                val = _.trimStart(val);
+                val = _.replace(val, new RegExp(/[^\s0-9.\-/]/, 'g'), '');
+                if (val !== oldVal){
+                    this.scanRecord.scan_range = val;
+                }
             }
         },
         events: {
