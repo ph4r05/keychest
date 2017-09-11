@@ -44,14 +44,17 @@
                of all watched servers or internet domains.
             </li>
          </ul>
-         If you want to monitor, you need to import some data into a monitoring system first. There are three options
+          <p class="tc-onyx">
+              If you want to monitor, you need to import some data into a monitoring system first. There are three options
          to add new servers into KeyChest and some more options, if you deploy it on-premise:
+          </p>
           <ul class="tc-onyx">
             <li>Serve name - you simply enter a server name you want to start watching.</li>
             <li>Active domain - you add a domain, for which you want to watch all the subdomains.</li>
             <li>Bulk import - you can paste a list of domain names - one per line, to speed up initial import.</li>
          </ul>
-         On-premise deployments and our enterprise version can also scan ranges of private IP addresses with standalone agents.
+          <p class="tc-onyx">
+          On-premise deployments and our enterprise version can also scan ranges of private IP addresses with standalone agents.
          </p>
       </div>
       <!-- /.tab-pane -->

@@ -9,7 +9,7 @@
             <div class="row">
 
                 <div class="col-sm-12">
-                    <img src="/images/logo2-rgb_keychest.png" alt="Certificate monitoring KeyChest logo" class="img-responsive center-block" width="300">
+                    <img src="/images/logo2-rgb_keychest.png" alt="Certificate expiry monitoring KeyChest logo" class="img-responsive center-block" width="300">
                     <h3 class="text-center mg-lg hero-bloc-text-sub  tc-rich-electric-blue">
                         Terms and conditions
                     </h3>

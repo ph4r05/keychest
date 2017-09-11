@@ -54,7 +54,7 @@
         <td class="tg-i218">✔</td>
     </tr>
     <tr>
-        <td class="tg-v4ss">Dashboard,information</td>
+        <td class="tg-v4ss">Dashboard information</td>
         <td class="tg-lvf8">✔</td>
         <td class="tg-lvf8">✔</td>
     </tr>
