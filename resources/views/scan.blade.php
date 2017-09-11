@@ -5,11 +5,11 @@
 @endsection
 
 @section('contentheader_title')
-    {{ trans('admin.scan') }} <help-trigger id="scanHelpModal"></help-trigger>
+    <span class="tc-rich-electric-blue">{{ trans('admin.scan') }} <help-trigger id="scanHelpModal"></help-trigger></span>
 @endsection
 
 @section('contentheader_description')
-    {{ trans('admin.scan_desc') }}
+    <span class="tc-onyx">{{ trans('admin.scan_desc') }}
 @endsection
 
 @section('main-content')

@@ -12,11 +12,11 @@
 @endsection
 
 @section('contentheader_title')
-    {{ trans('admin.license') }}
+    <span class="tc-rich-electric-blue">{{ trans('admin.license') }}</span>
 @endsection
 
 @section('contentheader_description')
-    {{ trans('admin.license_desc') }}
+            <span class="tc-onyx">{{ trans('admin.license_desc') }}</span>
 @endsection
 
 @section('main-content')
