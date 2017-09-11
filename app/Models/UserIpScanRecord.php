@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class UserIpScanRecord extends Pivot
 {
+    const TABLE = 'user_ip_scan_record';
+
     protected $guarded = array();
 
-    protected $table = 'user_ip_scan_record';
+    protected $table = self::TABLE;
 
     protected $foreignKey = 'ip_scan_record_id';
 

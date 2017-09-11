@@ -10,6 +10,7 @@ namespace App\Keychest\Services;
 
 use App\Models\DnsResult;
 use App\Models\IpScanRecord;
+use App\Models\UserIpScanRecord;
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use App\User;
@@ -47,11 +48,13 @@ class IpScanManager {
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
     public function getRecords($userId=null){
-        $q = IpScanRecord::query()->whereHas('users', function($query) use ($userId) {
-            $query->where('user_id', '=' , $userId)
-                ->whereNull('deleted_at')
-                ->whereNull('disabled_at');
-        });
+        $q = IpScanRecord::query()
+            ->join(UserIpScanRecord::TABLE, function(JoinClause $query) use ($userId) {
+                $query->on('ip_scan_record_id', '=', IpScanRecord::TABLE.'.id')
+                    ->where('user_id', '=', $userId)
+                    ->whereNull('deleted_at')
+                    ->whereNull('disabled_at');
+            })->with(['service', 'lastResult', 'watchTarget']);
         return $q;
     }
 }
