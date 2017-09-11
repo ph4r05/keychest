@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmailNews extends Model
 {
+    const TABLE = 'email_news';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'email_news';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CertificateAltName extends Model
 {
+    const TABLE = 'certificate_alt_names';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'certificate_alt_names';
+    protected $table = self::TABLE;
 }

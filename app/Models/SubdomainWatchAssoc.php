@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubdomainWatchAssoc extends Model
 {
+    const TABLE = 'user_subdomain_watch_target';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'user_subdomain_watch_target';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

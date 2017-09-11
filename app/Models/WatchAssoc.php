@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class WatchAssoc extends Model
 {
+    const TABLE = 'user_watch_target';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'user_watch_target';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

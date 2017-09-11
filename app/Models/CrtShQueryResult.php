@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CrtShQueryResult extends Model
 {
+    const TABLE = 'crtsh_query_results';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'crtsh_query_results';
+    protected $table = self::TABLE;
 }

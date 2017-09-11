@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class WhoisResult extends Model
 {
+    const TABLE = 'whois_result';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'whois_result';
+    protected $table = self::TABLE;
 
     /**
      * Get the top domain record for this result

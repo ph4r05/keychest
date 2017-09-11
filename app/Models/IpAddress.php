@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class IpAddress extends Model
 {
+    const TABLE = 'ip_address';
+
     protected $guarded = array();
 
-    protected $table = 'ip_address';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

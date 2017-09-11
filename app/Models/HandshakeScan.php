@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class HandshakeScan extends Model
 {
+    const TABLE = 'scan_handshakes';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'scan_handshakes';
+    protected $table = self::TABLE;
 
     /**
      * Get the watch_id record for this result

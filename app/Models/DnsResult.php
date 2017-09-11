@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class DnsResult extends Model
 {
+    const TABLE = 'scan_dns';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'scan_dns';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

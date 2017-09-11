@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubdomainWatchTarget extends Model
 {
+    const TABLE = 'subdomain_watch_target';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'subdomain_watch_target';
+    protected $table = self::TABLE;
 
     protected $hidden = ['assoc'];
 

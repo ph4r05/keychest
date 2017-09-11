@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class CrtShQuery extends Model
 {
+    const TABLE = 'crtsh_query';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'crtsh_query';
+    protected $table = self::TABLE;
 
     /**
      * Get the watch_id record for this result

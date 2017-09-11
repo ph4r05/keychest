@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class IpScanResult extends Model
 {
+    const TABLE = 'ip_scan_result';
+
     protected $guarded = array();
 
-    protected $table = 'ip_scan_result';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

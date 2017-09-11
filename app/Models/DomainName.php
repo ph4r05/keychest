@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class DomainName extends Model
 {
+    const TABLE = 'domain_name';
+
     protected $guarded = array();
 
-    protected $table = 'domain_name';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

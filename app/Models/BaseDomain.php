@@ -13,10 +13,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseDomain extends Model
 {
+    const TABLE = 'base_domain';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'base_domain';
+    protected $table = self::TABLE;
 
 }

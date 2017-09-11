@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class WatchService extends Model
 {
+    const TABLE = 'watch_service';
+
     protected $guarded = array();
 
-    protected $table = 'watch_service';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

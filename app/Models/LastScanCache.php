@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class LastScanCache extends Model
 {
+    const TABLE = 'last_scan_cache';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'last_scan_cache';
+    protected $table = self::TABLE;
 }

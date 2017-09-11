@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubdomainScanBlacklist extends Model
 {
+    const TABLE = 'subdomain_scan_blacklist';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'subdomain_scan_blacklist';
+    protected $table = self::TABLE;
 
     protected $assoc = null;
 

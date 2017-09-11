@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class UserWatchTarget extends Pivot
 {
+    const TABLE = 'user_watch_target';
+
     protected $guarded = array();
 
-    protected $table = 'user_watch_target';
+    protected $table = self::TABLE;
 
     protected $foreignKey = 'user_id';
 
