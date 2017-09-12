@@ -27,7 +27,7 @@
                                    autocorrect="off" autocapitalize="off" spellcheck="false"
                                    v-model="scanRecord.scan_range" placeholder="e.g., 192.168.0.1 - 192.168.0.255"
                                    ref="scanRange" @input="sanitizeRange" @change="sanitizeRange"
-                                   v-validate data-vv-rules="required|iprange"/>
+                                   v-validate data-vv-rules="required|iprange:256"/>
                             <span v-if="formErrors['scan-range']" class="error text-danger">@{{ formErrors['scan-range'] }}</span>
                             <i v-show="errors.has('scan-range')" class="fa fa-warning"></i>
                             <span v-show="errors.has('scan-range')" class="help is-danger">{{ errors.first('scan-range') }}</span>
