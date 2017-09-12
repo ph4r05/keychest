@@ -25,6 +25,7 @@
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4",
         "league/flysystem": "^1.0",
+        "mlocati/ip-lib": "^1.4",
         "predis/predis": "v1.1.1",
         "true/punycode": "~2.0",
         "webpatser/laravel-uuid": "^2.0"
