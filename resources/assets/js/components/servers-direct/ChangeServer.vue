@@ -15,17 +15,22 @@
                             <input type="text" name="server" id="server-add-title" class="form-control"
                                    autocorrect="off" autocapitalize="off" spellcheck="false"
                                    v-model="scanRecord.server" placeholder="e.g., https://enigmabridge.com:443"
-                                   autofocus="autofocus"/>
+                                   v-validate data-vv-rules="required|url"/>
                             <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['server'] }}</span>
+                            <i v-show="errors.has('server')" class="fa fa-warning"></i>
+                            <span v-show="errors.has('server')" class="help is-danger">{{ errors.first('server') }}</span>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error': errors.has('scan-range') }">
                             <label for="scan-range">Scan range:</label>
-                            <input type="text" name="server" id="scan-range" class="form-control"
+                            <input type="text" name="scan-range" id="scan-range" class="form-control"
                                    autocorrect="off" autocapitalize="off" spellcheck="false"
                                    v-model="scanRecord.scan_range" placeholder="e.g., 192.168.0.1 - 192.168.0.255"
-                                   ref="scanRange" @input="sanitizeRange" @change="sanitizeRange"/>
-                            <span v-if="formErrors['server']" class="error text-danger">@{{ formErrors['scan_range'] }}</span>
+                                   ref="scanRange" @input="sanitizeRange" @change="sanitizeRange"
+                                   v-validate data-vv-rules="required|iprange"/>
+                            <span v-if="formErrors['scan-range']" class="error text-danger">@{{ formErrors['scan-range'] }}</span>
+                            <i v-show="errors.has('scan-range')" class="fa fa-warning"></i>
+                            <span v-show="errors.has('scan-range')" class="help is-danger">{{ errors.first('scan-range') }}</span>
                         </div>
 
                         <div class="alert alert-info scan-alert" v-show="sentState == 2">
@@ -54,6 +59,13 @@
 
 <script>
     import axios from 'axios';
+
+    import Vue from 'vue';
+    import VeeValidate from 'vee-validate';
+    import ipValidator from '../../lib/validator/iprange';
+
+    Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+
     export default {
         data () {
             return {
@@ -64,9 +76,18 @@
                 },
                 formErrors: {},
                 sentState: 0,
+                validator: null
             }
         },
+        mounted() {
+            this.$nextTick(function () {
+                this.hookup();
+            })
+        },
         methods: {
+            hookup(){
+                VeeValidate.Validator.extend('iprange', ipValidator);
+            },
             onAdd(data){
                 this.showModal(false);
             },
@@ -130,9 +151,9 @@
                 };
             },
             focusInput(){
-                setTimeout(()=>{
-                    $('#server-add-title').focus();
-                }, 100);
+                 setTimeout(()=>{
+                     $('#server-add-title').focus();
+                 }, 1000);
             },
             createItem() {
                 ga('send', 'event', 'servers', 'add-server');
