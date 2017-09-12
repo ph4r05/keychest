@@ -118,28 +118,9 @@
                     return;
                 }
 
-                ga('send', 'event', 'servers', 'add-server-wildcard-entered');
-                swal({
-                    title: 'Did you mean Active-domain?',
-                    text: "You entered domain with a wildcard, it's not supported here. Did you mean Active-Domain?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No, continue'
-                }).then(() => {
-                    this.doWildcard(value);
-                }, (dismiss) => {
-                    this.scanRecord = {'server': Req.removeAllWildcards(this.scanRecord.server)};
-                    this.createItemInt();
-                });
-            },
-            doWildcard(value){
-                this.hideModal();
-                this.resetInput();
-                Req.switchTab('tab_2');
-                this.$events.fire('add-watcher-domain', value);
+                ga('send', 'event', 'direct-servers', 'add-server-wildcard-entered');
+                this.scanRecord.server = Req.removeAllWildcards(this.scanRecord.server);
+                this.createItemInt();
             },
             hideModal(){
                 $("#change-ip-server").modal('hide');
@@ -201,7 +182,7 @@
                 }).bind(this);
 
                 this.sentState = 2;
-                axios.post('/home/servers/add', this.scanRecord)
+                axios.post('/home/networks/add', this.scanRecord)
                     .then(response => {
                         if (!response || !response.data) {
                             onFail();

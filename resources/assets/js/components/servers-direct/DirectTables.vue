@@ -53,9 +53,6 @@
         <template slot="iprange" scope="props">
           {{ props.rowData.ip_beg }} - {{ props.rowData.ip_end }}
         </template>
-        <template slot="range_size" scope="props">
-          {{ props.rowData.ip_end_int - props.rowData.ip_beg_int }}
-        </template>
         <template slot="actions" scope="props">
           <div class="custom-actions">
             <button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>
@@ -312,7 +309,7 @@ export default {
             }).bind(this);
 
             this.moreParams.deleteState = 2;
-            axios.post('/home/servers/del' + (isMore ? 'More' : ''), data)
+            axios.post('/home/networks/del' + (isMore ? 'More' : ''), data)
                 .then(response => {
                     if (!response || !response.data || response.data['status'] !== 'success'){
                         onFail();
