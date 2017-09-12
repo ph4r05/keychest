@@ -53,6 +53,9 @@
         <template slot="iprange" scope="props">
           {{ props.rowData.ip_beg }} - {{ props.rowData.ip_end }}
         </template>
+        <template slot="range_size" scope="props">
+          {{ getRangeSize(props.rowData) }}
+        </template>
         <template slot="actions" scope="props">
           <div class="custom-actions">
             <button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>
@@ -97,6 +100,8 @@
 import accounting from 'accounting';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import _ from 'lodash';
+import ph4 from '../../lib/ph4';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';
@@ -146,6 +151,10 @@ export default {
                     name: '__slot:iprange',
                     sortField: 'ip_beg_int',
                     title: 'Scan range',
+                },
+                {
+                    name: '__slot:range_size',
+                    title: 'Range size',
                 },
                 {
                     name: 'created_at',
@@ -214,8 +223,8 @@ export default {
         formatDate (value, fmt = 'DD-MM-YYYY') {
             return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
         },
-        tlsTitle(rowData){
-            return `TLS checks failed for ${rowData.tls_errors} out of ${rowData.tls_all} IP addresses`;
+        getRangeSize(data){
+            return ph4.ip_range(data.ip_beg, data.ip_end);
         },
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData);
