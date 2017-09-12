@@ -10,12 +10,13 @@ namespace App\Models;
 
 use App\Keychest\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmailNews extends Model
 {
-    const TABLE = 'email_news';
+    use SoftDeletes;
 
-    public $incrementing = true;
+    const TABLE = 'email_news';
 
     protected $guarded = array();
 

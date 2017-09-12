@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Keychest\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SubdomainWatchAssoc extends Model
 {
-    const TABLE = 'user_subdomain_watch_target';
+    use SoftDeletes;
 
-    public $incrementing = true;
+    const TABLE = 'user_subdomain_watch_target';
 
     protected $guarded = array();
 
