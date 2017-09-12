@@ -78,6 +78,9 @@ Route::post('home/servers/canAdd', 'ServersController@canAddHost')->name('server
 Route::post('home/servers/import', 'ServersController@importServers')->name('servers/import');
 Route::get('home/networks', 'NetworksController@index')->name('networks');
 Route::get('home/networks/get', 'NetworksController@ipScanList')->name('networks/get');
+Route::post('home/networks/add', 'NetworksController@add')->name('networks/add');
+Route::post('home/networks/del', 'NetworksController@del')->name('networks/del');
+Route::post('home/networks/delMore', 'NetworksController@delMore')->name('networks/delMore');
 Route::get('home/scan', 'SearchController@showHome')->name('home/scan')->middleware('auth');
 
 Route::get('home/dashboard/data', 'DashboardController@loadActiveCerts')

@@ -4,6 +4,7 @@ return [
 
     'max_servers' => env('APP_MAX_SERVERS', 1000),
     'max_active_domains' => env('APP_ACTIVE_DOMAINS', 1000),
+    'max_scan_records' => env('APP_MAX_SCAN_RECORDS', 100),
 
     'wrk_weekly_report_conn' => env('WORK_WEEKLY_REPORT_CONN', 'database'),
     'wrk_weekly_report_queue' => env('WORK_WEEKLY_REPORT_QUEUE', 'default'),
