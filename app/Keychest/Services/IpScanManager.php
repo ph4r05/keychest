@@ -53,11 +53,22 @@ class IpScanManager {
     public function getRecords($userId=null, $withAll=true){
         $q = IpScanRecord::query()
             ->join(UserIpScanRecord::TABLE, function(JoinClause $query) use ($userId) {
-                $query->on('ip_scan_record_id', '=', IpScanRecord::TABLE.'.id')
-                    ->where('user_id', '=', $userId)
-                    ->whereNull('deleted_at')
+                $query->on('ip_scan_record_id', '=', IpScanRecord::TABLE.'.id');
+
+                if (!empty($userId)){
+                    $query->where('user_id', '=', $userId);
+                }
+
+                $query->whereNull('deleted_at')
                     ->whereNull('disabled_at');
-            });
+            })
+            ->select([
+                IpScanRecord::TABLE . '.*',
+                UserIpScanRecord::TABLE . '.*',
+                IpScanRecord::TABLE . '.id AS record_id',
+                UserIpScanRecord::TABLE . '.id as assoc_id',
+                UserIpScanRecord::TABLE . '.id as id'
+            ]);
 
         if ($withAll) {
             $q = $q->with(['service', 'lastResult', 'watchTarget']);
