@@ -52,7 +52,7 @@ export default {
 
             size += (ip_stop[i] - ip_start[i]) * (2**((3-i)*8));
         }
-        return size;
+        return size + 1;
     }
 
 
