@@ -154,9 +154,9 @@
                         <!-- TODO: fix: Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60) -->
                     </div>
                 </div>
-                This dashboard contains latest available information for your servers and certificates. If you've
+                <p class="tc-onyx">This dashboard contains latest available information for your servers and certificates. If you've
                 made recent changes to some of your servers and these are not yet reflected in the dashboard, please use
-                the Spot Check function to get the real-time status.<br><br>
+                    the Spot Check function to get the real-time status.<br><br></p>
 
             </div>
 
