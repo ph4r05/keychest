@@ -10,7 +10,7 @@
 
                     <form method="POST" id="new-server-form" enctype="multipart/form-data" v-on:submit.prevent="createItem">
 
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error': errors.has('server') }">
                             <label for="server-add-title">Server:</label>
                             <input type="text" name="server" id="server-add-title" class="form-control"
                                    autocorrect="off" autocapitalize="off" spellcheck="false"
