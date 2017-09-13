@@ -22,19 +22,29 @@ class IpRange
     const RANGE_RE2 = '/^\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*\/\s*([0-9]{1,2})\s*$/';
 
     /**
-     * @var
+     * @var string
      */
     protected $ipStart;
 
     /**
-     * @var
+     * @var string
      */
     protected $ipStop;
 
     /**
-     * @var
+     * @var int|null
      */
     protected $rangeSize;
+
+    /**
+     * @var
+     */
+    protected $ipStartObj;
+
+    /**
+     * @var
+     */
+    protected $ipStopObj;
 
     /**
      * IpRange constructor.
@@ -62,6 +72,7 @@ class IpRange
     {
         $this->ipStart = $ipStart;
         $this->rangeSize = null;
+        $this->ipStartObj = null;
     }
 
     /**
@@ -79,6 +90,7 @@ class IpRange
     {
         $this->ipStop = $ipStop;
         $this->rangeSize = null;
+        $this->ipStopObj = null;
     }
 
     /**
@@ -90,6 +102,58 @@ class IpRange
         }
 
         return $this->rangeSize;
+    }
+
+    /**
+     * Start address repr.
+     * @return \IPLib\Address\AddressInterface|null
+     */
+    public function getIpStartObj(){
+        if (empty($this->ipStartObj) && $this->getStartAddress()){
+            $this->ipStartObj = Factory::addressFromString($this->getStartAddress(), false);
+        }
+
+        return $this->ipStartObj;
+    }
+
+    /**
+     * End address repr.
+     * @return \IPLib\Address\AddressInterface|null
+     */
+    public function getIpStopObj(){
+        if (empty($this->ipStopObj) && $this->getEndAddress()){
+            $this->ipStopObj = Factory::addressFromString($this->getEndAddress(), false);
+        }
+
+        return $this->ipStopObj;
+
+    }
+
+    /**
+     * Returns true if there is an intersection with given range
+     * @param IpRange $range
+     * @return bool
+     */
+    public function hasIntersection(IpRange $range){
+        return !$this->isDisjoint($range);
+    }
+
+    /**
+     * Returns true if given range is disjoint with the current one.
+     * @param IpRange $range
+     * @return bool
+     */
+    public function isDisjoint(IpRange $range)
+    {
+        return DataTools::compareArrays(
+                $range->getIpStopObj()->getBytes(),
+                $this->getIpStartObj()->getBytes()
+            ) < 0
+            ||
+            DataTools::compareArrays(
+                $this->getIpStopObj()->getBytes(),
+                $range->getIpStartObj()->getBytes()
+            ) < 0;
     }
 
     public function __toString()
