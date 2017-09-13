@@ -197,6 +197,12 @@
                         'Get in touch at support@enigmabridge.com if you want bigger range.', 'Big IP range');
                 };
 
+                const onOverlap = () => {
+                    this.sentState = 0;
+                    $('#add-domain-wrapper-sub').effect("shake");
+                    toastr.error('The IP range overlaps another existing range for the same server', 'IP overlap');
+                };
+
                 const onSuccess = data => {
                     this.sentState = 1;
                     this.resetInput();
@@ -233,6 +239,8 @@
                             onInvalidRange(e.response.data);
                         } else if (e && e.response && e.response.status === 452){
                             onBigRange(e.response.data);
+                        }  else if (e && e.response && e.response.status === 453){
+                            onOverlap(e.response.data);
                         } else {
                             console.log("Add scan record failed: " + e);
                             onFail();
