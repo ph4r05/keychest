@@ -126,4 +126,19 @@ class IpScanManager {
 
         throw new CouldNotCreateException('Too many attempts');
     }
+
+    /**
+     * Builds criteria array for the IP range
+     * @param null $server
+     * @param null $beg_ip
+     * @param null $end_ip
+     * @return array
+     */
+    public static function ipScanRangeCriteria($server=null, $beg_ip=null, $end_ip=null){
+        return [
+            'service_name' => $server,
+            'ip_beg' => $beg_ip,
+            'ip_end' => $end_ip
+        ];
+    }
 }

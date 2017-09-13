@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use App\Keychest\Utils\IpRange\InvalidRangeException;
+use App\Keychest\Utils\IpRange;
 use Mockery\Exception;
 
 /**
@@ -137,6 +138,8 @@ class NetworksController extends Controller
                     return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
                 } elseif ($ret === -4){
                     return response()->json(['status' => 'blacklisted'], 450);
+                } elseif ($ret === -5){
+                    return response()->json(['status' => 'range-too-big'], 452);
                 } else {
                     return response()->json(['status' => 'unknown-fail'], 500);
                 }
@@ -146,9 +149,10 @@ class NetworksController extends Controller
 
         } catch(InvalidRangeException $e){
             Log::debug('Invalid range: '.$range);
-            return response()->json(['status' => 'invalid-range'], 500);
+            return response()->json(['status' => 'invalid-range'], 451);
         } catch(Exception $e){
-            return response()->json(['status' => 'unknown-fail'], 500);
+            Log::error($e);
+            return response()->json(['status' => 'exception'], 500);
         }
     }
 
@@ -204,6 +208,82 @@ class NetworksController extends Controller
     }
 
     /**
+     * Updates the scan record.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(){
+        $id = intval(Input::get('id'));
+        $range = trim(Input::get('scan_range'));
+        $server = strtolower(trim(Input::get('server')));
+        $server = DomainTools::normalizeUserDomainInput($server);
+        $parsed = parse_url($server);
+
+        if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
+            return response()->json(['status' => 'invalid-domain'], 422);
+        }
+
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+        // Load existing association being edited - will be modified, has to exist.
+        $curAssoc = UserIpScanRecordAssoc::query()->where('id', $id)->where('user_id', $userId)->first();
+        if (empty($curAssoc)){
+            return response()->json(['status' => 'not-found'], 404);
+        }
+
+        $rangeObj = null;
+        try {
+            $rangeObj = IpRange::rangeFromString($range);
+        } catch (InvalidRangeException $e){
+            return response()->json(['status' => 'invalid-range'], 451);
+        }
+
+        $criteria = IpScanManager::ipScanRangeCriteria(
+            $parsed['host'],
+            $rangeObj->getStartAddress(),
+            $rangeObj->getEndAddress());
+
+        // TODO: port
+        $curRecord = IpScanRecord::query()->where('id', $curAssoc->ip_scan_record_id)->first();
+        $curCriteria = IpScanManager::ipScanRangeCriteria(
+            $curRecord->service_name,
+            $curRecord->ip_beg,
+            $curRecord->ip_end);
+
+        if ($criteria === $curCriteria){
+            return response()->json(['status' => 'success', 'message' => 'nothing-changed'], 200);
+        }
+
+        // Delete & add new.
+        // Additional check - is not new edited record already present?
+        try {
+            $ret = $this->addScanRecord($server, $rangeObj);
+            if (is_numeric($ret)){
+                if ($ret === -1){
+                    return response()->json(['status' => 'fail'], 422);
+                } elseif ($ret === -2){
+                    return response()->json(['status' => 'already-present'], 410);
+                } elseif ($ret === -5){
+                    return response()->json(['status' => 'range-too-big'], 452);
+                } else {
+                    return response()->json(['status' => 'unknown-fail'], 500);
+                }
+            }
+
+            // Invalidate the old association - delete equivalent
+            $curAssoc->deleted_at = Carbon::now();
+            $curAssoc->updated_at = Carbon::now();
+            $curAssoc->save();
+
+        } catch(Exception $e){
+            Log::error($e);
+            return response()->json(['status' => 'exception'], 500);
+        }
+
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    /**
      * Helper scan record add function.
      * Used for individual addition and import.
      * @param $server
@@ -216,16 +296,21 @@ class NetworksController extends Controller
             return -1;
         }
 
-        // DB Job data
-        $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $rangeObj = ($range instanceof IpRange) ? $range : IpRange::rangeFromString($range);
+        $maxRange = config('keychest.max_scan_range');
+        if ($maxRange && $rangeObj->getSize() > $maxRange){
+            return -5;
+        }
 
-        $rangeObj = DomainTools::rangeFromString($range);
         $criteria = [
             'service_name' => $parsed['host'],
             'ip_beg' => $rangeObj->getStartAddress(),
             'ip_end' => $rangeObj->getEndAddress()
         ];
+
+        // DB Job data
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
 
         // Fetch or create
         list($scanRecord, $isNew) = $this->ipScanManager->fetchOrCreateRecord($criteria);
@@ -234,6 +319,7 @@ class NetworksController extends Controller
             $assoc = UserIpScanRecordAssoc::query()
                 ->where('user_id', '=', $userId)
                 ->where('ip_scan_record_id', '=', $scanRecord->id)
+                ->withTrashed()
                 ->first();
 
             if ($assoc && $assoc->deleted_at == null && $assoc->disabled_at == null){
@@ -244,7 +330,7 @@ class NetworksController extends Controller
                 $assoc->deleted_at = null;
                 $assoc->disabled_at = null;
                 $assoc->save();
-                return 1;
+                return $scanRecord;
             }
         }
 
