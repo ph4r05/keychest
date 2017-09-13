@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserWatchTarget extends Pivot
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     const TABLE = 'user_watch_target';
 

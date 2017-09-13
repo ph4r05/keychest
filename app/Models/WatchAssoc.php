@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WatchAssoc extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     const TABLE = 'user_watch_target';
 
