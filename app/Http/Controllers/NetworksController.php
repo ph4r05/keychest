@@ -240,6 +240,7 @@ class NetworksController extends Controller
 
         $criteria = IpScanManager::ipScanRangeCriteria(
             $parsed['host'],
+            $parsed['port'],
             $rangeObj->getStartAddress(),
             $rangeObj->getEndAddress());
 
@@ -247,6 +248,7 @@ class NetworksController extends Controller
         $curRecord = IpScanRecord::query()->where('id', $curAssoc->ip_scan_record_id)->first();
         $curCriteria = IpScanManager::ipScanRangeCriteria(
             $curRecord->service_name,
+            $curRecord->service_port,
             $curRecord->ip_beg,
             $curRecord->ip_end);
 
@@ -302,18 +304,26 @@ class NetworksController extends Controller
             return -5;
         }
 
-        $criteria = [
-            'service_name' => $parsed['host'],
-            'ip_beg' => $rangeObj->getStartAddress(),
-            'ip_end' => $rangeObj->getEndAddress()
-        ];
+        $criteria = IpScanManager::ipScanRangeCriteria(
+            $parsed['host'],
+            $parsed['port'],
+            $rangeObj->getStartAddress(),
+            $rangeObj->getEndAddress());
 
         // DB Job data
         $curUser = Auth::user();
         $userId = $curUser->getAuthIdentifier();
 
+        // TODO: already covered?
+
+
         // Fetch or create
-        list($scanRecord, $isNew) = $this->ipScanManager->fetchOrCreateRecord($criteria);
+        list($scanRecord, $isNew) = $this->ipScanManager->fetchOrCreateRecord($criteria,
+            function ($data) use ($rangeObj) {
+                $data['ip_beg_int'] = DomainTools::ipv4ToIdx($data['ip_beg']);
+                $data['ip_end_int'] = DomainTools::ipv4ToIdx($data['ip_end']);
+        });
+
         if(!$isNew){
             // Soft delete manipulation - fetch user association and reassoc if exists
             $assoc = UserIpScanRecordAssoc::query()

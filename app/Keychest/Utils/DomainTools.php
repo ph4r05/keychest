@@ -359,6 +359,25 @@ class DomainTools {
     }
 
     /**
+     * Tranforms IP address to 32bit int
+     * @param $ip
+     * @return int
+     */
+    public static function ipv4ToIdx($ip){
+        if (empty($ip)){
+            return -1;
+        }
+
+        $bytes = Factory::addressFromString($ip, false)->getBytes();
+        $ret = 0;
+        for ($i = 0; $i < 4; $i++) {
+            $ret += $bytes[$i] * (2 ** ((3 - $i) * 8));
+        }
+
+        return $ret;
+    }
+
+    /**
      * Sorts the collection by IPs
      * @param array|Collection $col
      * @param $callback

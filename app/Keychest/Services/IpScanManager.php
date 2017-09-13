@@ -95,12 +95,13 @@ class IpScanManager {
     /**
      * Tries to fetch the record or creates a new one
      * @param null $criteria
+     * @param null $onAddFnc
      * @param int $attempts
      * @return array
      * @throws CouldNotCreateException
      * @throws Exception
      */
-    public function fetchOrCreateRecord($criteria=null, $attempts=3){
+    public function fetchOrCreateRecord($criteria=null, $onAddFnc=null, $attempts=3){
         for($attempt = 0; $attempt < $attempts; $attempt++){
             // fetch attempt
             $q = $this->fetchRecord($criteria);
@@ -113,6 +114,11 @@ class IpScanManager {
             $newArr = array_merge([
                 'created_at' => Carbon::now()
             ], $criteria);
+
+            if (!empty($onAddFnc)){
+                /** @var callable $onAddFnc */
+                $onAddFnc($newArr);
+            }
 
             try {
                 return [IpScanRecord::create($newArr), 1];
@@ -130,13 +136,15 @@ class IpScanManager {
     /**
      * Builds criteria array for the IP range
      * @param null $server
+     * @param null $port
      * @param null $beg_ip
      * @param null $end_ip
      * @return array
      */
-    public static function ipScanRangeCriteria($server=null, $beg_ip=null, $end_ip=null){
+    public static function ipScanRangeCriteria($server=null, $port=null, $beg_ip=null, $end_ip=null){
         return [
             'service_name' => $server,
+            'service_port' => empty($port) ? 443 : $port,
             'ip_beg' => $beg_ip,
             'ip_end' => $end_ip
         ];
