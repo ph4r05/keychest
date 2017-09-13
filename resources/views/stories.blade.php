@@ -10,10 +10,13 @@
             <div class="row">
 
                 <div class="col-sm-12">
-                    <img src="/images/logo2-rgb_keychest.png" alt="Certificate expiry monitoring KeyChest logo" class="img-responsive center-block" width="300">
-                    <h3 class="text-center mg-lg hero-bloc-text-sub  tc-rich-electric-blue">
-                        Check, watch, and plan for 100% HTTPS uptime
+                    {{--<img src="/images/logo2-rgb_keychest.png" alt="Certificate expiry monitoring KeyChest logo" class="img-responsive center-block" width="300">--}}
+                    <h3 class="text-center mg-sm hero-bloc-text-sub  tc-rich-electric-blue">
+                        100% HTTPS uptime with KeyChest
                     </h3>
+                    <h4 class="text-center mg-lg tc-onyx">
+                        Expiry monitor that discovers your certificates
+                    </h4>
                     <p class="text-center">
                         We have created a few stories with information about using, managing, and auditing your certificates.&nbsp;
                     </p>
