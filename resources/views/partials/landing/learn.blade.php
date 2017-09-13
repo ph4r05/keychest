@@ -6,35 +6,31 @@
                     Welcome to KeyChest certificate monitoring
                 </h1>
                 <div class="row">
-                        <div class="col-sm-6" >
-                            <p>
-                                KeyChest of Enigma Bridge is the tool for certificate monitoring on your HTTPS and TLS
-                                servers. It helps you monitor expiry of TLS certificates, the availability status of
-                                your servers, and their configuration. It will provide you with inventory summaries,
-                                as well as planning tasks for certificate renewals. You get all the information you need
-                                for operational teams, as well as your managers if they ask for key performance
-                                indicators (KPIs).
-                            </p>
-                            <p>
-                                This free service running KeyChest Professional only imposes "fair-use" limits so you
-                                can use it to monitor small thousands of your certificates only. It can monitor HTTPS
-                                servers, but also web applications using TLS, email servers (not StartTLS though), and
-                                any other services with TLS protocol for secure communication.
-                            </p>
-                            <p>
-                                One of the unique features of KeyChest is the ability to enroll all your servers and
-                                domain names within minutes. You can set particular servers, import server names in
-                                bulk (100 at a time), and set "Active Domains" for auto-enrollment of all subdomains
-                                servers as soon as you issue the first certificate for them.
-                            </p>
-                        </div>
+                    <div class="col-sm-6">
+                        <p>
+                            KeyChest of Enigma Bridge is a certificate expiry monitoring service. It uses internet
+                            databases and checks configuration of your servers. KeyChest dashboard gives you all
+                            the information you need for operational teams, as well as performance charts (KPIs).
+                        </p>
+                        <p>
+                            KeyChest can enroll all your servers and domain names within minutes. It will
+                            also continuously discover new certificates within domain names you set as "Active Domain".
+                            It is how we believe monitoring should work - automatically.
+                        </p>
+                        <p><i>
+                                Note: This free service running KeyChest Professional only imposes "fair-use" limits so
+                                you
+                                can use it to monitor even thousands of your certificates. It will check status HTTPS
+                                servers, but also web applications using the TLS protocol.
+                            </i></p>
+                    </div>
 
-                        <div class="col-sm-6" style="height:100%;pointer-events: none;">
-                                <iframe style="width: 45vw; height: 26vw;"
-                                        src="https://www.youtube.com/embed/p8QVzU6X6oA?controls=1&showinfo=0&rel=0&autoplay=1&loop=0"
-                                        frameborder="0"></iframe>
-                            <!--                        <img src="/images/keychest_dashboard.png" class="img-responsive"/> -->
-                        </div>
+                    <div class="col-sm-6" style="height:100%;pointer-events: none;">
+                        <iframe style="width: 45vw; height: 26vw;"
+                                src="https://www.youtube.com/embed/p8QVzU6X6oA?controls=1&showinfo=0&rel=0&autoplay=1&loop=0"
+                                frameborder="0"></iframe>
+                        <!--                        <img src="/images/keychest_dashboard.png" class="img-responsive"/> -->
+                    </div>
                 </div>
                 <div class="divider-h">
                     <span class="divider"></span>
@@ -112,7 +108,8 @@
                                 <ul>
                                     <li>
                                         <h6 class=" mg-sm">
-                                            massive options for enrolment - single servers, bulk enrolment, fully automated enrolment of subdomain servers
+                                            massive options for enrolment - single servers, bulk enrolment, fully
+                                            automated enrolment of subdomain servers
                                         </h6>
                                     </li>
                                     <li>
@@ -160,50 +157,81 @@
                 <h2 class="mg-md tc-rich-electric-blue">Our vision</h2>
 
                 <p>
-                    Our main goal with KeyChest is to encourage use of HTTPS by improving operational experience. The single
-                most important downside of using certificates and HTTPS is that websites and web services become
-                unavailable once their certificates expire. The growing number of people using Let's Encrypt certificates with
-                just 3 months' validity makes the problem ever more visible. While we can discuss internet security,
-                when your service is down, you have no business.
+                    Our main goal with KeyChest is to encourage use of HTTPS by improving operational experience. The
+                    single
+                    most important downside of using certificates and HTTPS is that websites and web services become
+                    unavailable once their certificates expire. The growing number of people using Let's Encrypt
+                    certificates with
+                    just 3 months' validity makes the problem ever more visible.
                 </p>
+                <p><b>
+                    There is no point in discussing the security if your online business or service is not running.
+                    </b></p>
 
                 <p>
-                    While KeyChest doesn't solve (yet) the problem of certificate renewal, it helps its users to plan related
-                    operational tasks (certificate renewal, deployment, or application restarts). It also gives you piece
-                    of mind that you didn't forget any of your services by providing
+                    While KeyChest doesn't solve (yet) the problem of certificate renewal, it helps its users to plan
+                    related operational tasks (certificate renewal, deployment, or application restarts). It also gives
+                    you piece of mind that you didn't forget any of your services by providing
                     a dashboard with all the information in one place.
                 </p>
 
                 <p>
-                    We are now also working on the KeyChest Enterprise for use within large organizations, or where there is
-                    a team managing certificates. This version is going to be available as managed service instances hosted
-                    either in a public cloud, or within clients' networks. A natural progression is to start actively managing
-                    certificates from dedicated instances. We have already built our cloud encryption service with secure
-                    hardware to manage keys and our current task is to extend the capabilities to support different types of
+                    We are now also working on the KeyChest Enterprise for use within large organizations, or where
+                    there is
+                    a team managing certificates. This version is going to be available as managed service instances
+                    hosted
+                    either in a public cloud, or within clients' networks. A natural progression is to start actively
+                    managing
+                    certificates from dedicated instances. We have already built our cloud encryption service with
+                    secure
+                    hardware to manage keys and our current task is to extend the capabilities to support different
+                    types of
                     clients and environments.
+                <p></p>
+
+                <h2 class="mg-md tc-rich-electric-blue">
+                    Private instances and enterprise option
+                </h2>
+                <p>
+                    We want to help the community to use HTTPS so that the enhanced security also
+                    improves the quality of your business and our internet experience. Our free service
+                    at <a target="_blank" class="tc-rich-electric-blue" href="https://keychest.net">KeyChest.net</a>
+                    uses KeyChest Professional and our aim is to keep it free.
+                </p>
+                <p>Our business model is built around KeyChest Enterprise and dedicated instances of
+                    KeyChest Professional. They can be hosted in Amazon
+                    cloud, on your internal server(s), or elsewhere (needs prior agreement).
+                </p>
+                <p>
+                    <b>KeyChest Enterprise</b> adds features useful for teams, and large
+                    companies:
+                </p>
+                <ul>
+                    <li><p>API - essential API will be available in Professional version - see
+                            <a class="tc-rich-electric-blue" href="#roadmap">the roadmap</a>.</p></li>
+                    <li><p>Integration.</p></li>
+                    <li><p>User/role management.</p></li>
+                    <li><p>Enterprise networks scanning.</p></li>
+                    <li><p>Governance.</p></li>
+                </ul>
+                <p>We have a simple pricing structure based on the number of users and independent scanners only.</p>
+                <ul>
+                    <li><p>KeyChest Professional - $1,000/year or $100/month</p></li>
+                    <li><p>KeyChest Enterprise (with 2 users) - $2,000/year or $200/month, with each additional scanner at
+                            $100/month and user at $40/month</p>
+                    </li>
+                </ul>
+                <p>
+                    If you have a question, please get in touch with
+                    <a class="tc-rich-electric-blue" href="mailto:support@enigmabridge.com?Subject=KeyChest%20enquiry"
+                       target="_top">our support</a>.
                 </p>
 
-                <h2 id="roadmap" class="mg-md tc-rich-electric-blue">
-                    Road map
-                </h2>
-                <ul>
-                    <li><p>Dashboard launched - 27 Jun 2017</p></li>
-                    <li><p>Bulk import and auto discovery of sub-domains - 10 July 2017</p></li>
-                    <li><p>Strategy for enterprise version published - 14 July 2017</p></li>
-                    <li><p>Independent scanners (KeyChest Enterprise) - 7 August 2017</p></li>
-                    <li><p>Dashboard update according to feedback - 10 August 2017</p></li>
-                    <li><p><i>Integration with Slack (KeyChest Enterprise) - ?? August/September 2017</i></p></li>
-                    <li><p><i>IP address-based scanning (KeyChest Enterprise) - ?? August 2017</i></p></li>
-                    <li><p><i>Essential RESTful API - ?? August 2017</i></p></li>
-                    <li><p><i>User/roles (KeyChest Enterprise) - ?? August 2017</i></p></li>
-                </ul>
-
-                <p>&nbsp;</p>
                 <h2 class="mg-md tc-rich-electric-blue">
                     Here&rsquo;s how we compare
                 </h2>
                 <p>
-                    The following table compares features of KeyChest with Letsmonitor.org and certificatemonitor.org.
+                    The following table compares features of KeyChest Professional with Letsmonitor.org and certificatemonitor.org.
                 </p>
                 <div class="row bgc-capri">
                     <div class="col-sm-2">
@@ -473,51 +501,28 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="divider-h">
-                                    <span class="divider"></span>
-                                </div>
-                                <h2 class="mg-md tc-rich-electric-blue">
-                                    Will we ever charge you for this service?
-                                </h2>
-                                <p>
-                                    We are developing Professsional and Enterprise versions of KeyChest. This free
-                                    service at <a target="_blank" href="https://keychest.net">KeyChest.net</a> uses
-                                    KeyChest Professional and remains free. It is equal to KeyChest Enterprise in terms
-                                    of
-                                    the depth of spot checks, scanning, monitoring, dashboard information, and server
-                                    enrolment.
-                                </p>
-                                <h2 class="mg-md tc-rich-electric-blue">
-                                    Going private and enterprise - paid features
-                                </h2>
-                                <p>We offer dedicated KeyChest Professional instances. They can be hosted in Amazon
-                                    cloud, on your internal server(s), or elsewhere (needs prior agreement). Monthly
-                                    subscriptions start at $100 and minimum contract lengths apply.
-                                </p>
-                                <p>
-                                    <b>KeyChest Enterprise</b> adds features useful for teams, and large
-                                    companies:
-                                </p>
-                                <ul>
-                                    <li><p>API - essential API will be available in Professional version - see
-                                            <a href="#roadmap">the roadmap</a>.</p></li>
-                                    <li><p>Integration.</p></li>
-                                    <li><p>User/role management.</p></li>
-                                    <li><p>Enterprise networks scanning.</p></li>
-                                    <li><p>Governance.</p></li>
-                                </ul>
-                                <p>We can currently only provide instances as a fully managed service. Our pricing is based on the
-                                    number of users, sites, and independent scanners.
-                                    If you want to discuss your particular requirements, please get in touch with
-                                    <a href="mailto:support@enigmabridge.com?Subject=KeyChest%20enquiry" target="_top">our
-                                        support</a> or simple fill in the form below.
-                                </p>
-                            </div>
-                        </div>
+                        </p>
+
+                        <h2 id="roadmap" class="mg-md tc-rich-electric-blue">
+                            Road map
+                        </h2>
+                        <ul>
+                            <li>Dashboard launched - 27 Jun 2017</li>
+                            <li>Bulk import and auto discovery of sub-domains - 10 July 2017</li>
+                            <li>Strategy for enterprise version published - 14 July 2017</li>
+                            <li>Independent scanners (KeyChest Enterprise) - 7 August 2017</li>
+                            <li>Dashboard update according to feedback - 10 August 2017</li>
+                            <li><i>Integration with Slack (KeyChest Enterprise) - ?? September 2017</i>
+                            </li>
+                            <li><i>Detailed scanning results for each IP address - ?? September 2017</i></li>
+                            <li><i>IP address-based scanning (KeyChest Enterprise) - ?? August 2017</i></li>
+                            <li><i>Essential RESTful API - ?? September 2017</i></li>
+                            <li><i>User/roles (KeyChest Enterprise) - ?? September 2017</i></li>
+                        </ul>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
