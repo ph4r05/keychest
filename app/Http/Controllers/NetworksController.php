@@ -140,6 +140,8 @@ class NetworksController extends Controller
                     return response()->json(['status' => 'blacklisted'], 450);
                 } elseif ($ret === -5){
                     return response()->json(['status' => 'range-too-big'], 452);
+                } elseif ($ret === -6){
+                    return response()->json(['status' => 'range-overlap'], 453);
                 } else {
                     return response()->json(['status' => 'unknown-fail'], 500);
                 }
@@ -259,7 +261,7 @@ class NetworksController extends Controller
         // Delete & add new.
         // Additional check - is not new edited record already present?
         try {
-            $ret = $this->addScanRecord($server, $rangeObj);
+            $ret = $this->addScanRecord($server, $rangeObj, [$curAssoc->ip_scan_record_id]);
             if (is_numeric($ret)){
                 if ($ret === -1){
                     return response()->json(['status' => 'fail'], 422);
@@ -267,6 +269,8 @@ class NetworksController extends Controller
                     return response()->json(['status' => 'already-present'], 410);
                 } elseif ($ret === -5){
                     return response()->json(['status' => 'range-too-big'], 452);
+                } elseif ($ret === -6){
+                    return response()->json(['status' => 'range-overlap'], 453);
                 } else {
                     return response()->json(['status' => 'unknown-fail'], 500);
                 }
@@ -290,9 +294,10 @@ class NetworksController extends Controller
      * Used for individual addition and import.
      * @param $server
      * @param $range
+     * @param array $ignoreOverlaps
      * @return array|int
      */
-    protected function addScanRecord($server, $range){
+    protected function addScanRecord($server, $range, $ignoreOverlaps=[]){
         $parsed = parse_url($server);
         if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
             return -1;
@@ -314,8 +319,12 @@ class NetworksController extends Controller
         $curUser = Auth::user();
         $userId = $curUser->getAuthIdentifier();
 
-        // TODO: already covered?
-
+        // Already covered?
+        $overlaps = $this->ipScanManager->hasScanIntersection($criteria, $userId, false);
+        $overlaps = $overlaps->pluck('record_id')->whereNotIn(null, $ignoreOverlaps);
+        if ($overlaps->isNotEmpty()){
+            return -6;
+        }
 
         // Fetch or create
         list($scanRecord, $isNew) = $this->ipScanManager->fetchOrCreateRecord($criteria,

@@ -8,6 +8,7 @@
 
 namespace App\Keychest\Services;
 
+use App\Keychest\Utils\IpRange;
 use App\Models\DnsResult;
 use App\Models\IpScanRecord;
 use App\Models\UserIpScanRecord;
@@ -142,6 +143,36 @@ class IpScanManager {
         }
 
         throw new CouldNotCreateException('Too many attempts');
+    }
+
+    /**
+     * Returns matches that intersect the criteria for the given user
+     * @param $criteria
+     * @param null $userId
+     * @param bool $withAll
+     * @return Collection
+     */
+    public function hasScanIntersection($criteria, $userId=null, $withAll=false){
+        $q = $this->getRecords($userId, $withAll);
+
+        $criteria_fields = ['service_name', 'service_port'];
+        foreach ($criteria_fields as $fld){
+            if (!isset($criteria[$fld])){
+                continue;
+            }
+            $q->where($fld, '=', $criteria[$fld]);
+        }
+
+        $matches = $q->get();
+        if ($matches->isEmpty()){
+            return collect();
+        }
+
+        // Find IP intersections
+        $curRange = new IpRange($criteria['ip_beg'], $criteria['ip_end']);
+        return $matches->filter(function($value, $key) use ($curRange) {
+            return $curRange->hasIntersection(new IpRange($value['ip_beg'], $value['ip_end']));
+        });
     }
 
     /**
