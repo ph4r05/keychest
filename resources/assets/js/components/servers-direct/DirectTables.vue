@@ -50,6 +50,9 @@
         @vuetable:checkbox-toggled="onCheckboxToggled"
         @vuetable:checkbox-toggled-all="onCheckboxToggled"
       >
+        <template slot="service" scope="props">
+          {{ props.rowData.service_name }}<template v-if="props.rowData.service_port != 443">:{{ props.rowData.service_port }}</template>
+        </template>
         <template slot="iprange" scope="props">
           {{ props.rowData.ip_beg }} - {{ props.rowData.ip_end }}
         </template>
@@ -143,7 +146,7 @@ export default {
                     dataClass: 'text-right'
                 },
                 {
-                    name: 'service_name',
+                    name: '__slot:service',
                     sortField: 'service_name',
                     title: 'Domain name',
                 },

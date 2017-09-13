@@ -93,8 +93,13 @@
             },
             onEdit(data){
                 this.resetState();
+
                 _.assignIn(this.scanRecord, data);
-                this.scanRecord.server = window.Req.buildUrl('https', data.service_name, undefined);
+                this.scanRecord.server = window.Req.buildUrl(
+                    'https',
+                    data.service_name,
+                    data.service_port === 443 ? null : data.service_port);
+
                 this.scanRecord.scan_range = this.getTextRange(data.ip_beg, data.ip_end);
                 this.editMode = true;
 
