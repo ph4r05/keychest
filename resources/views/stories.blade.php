@@ -15,7 +15,7 @@
                         100% HTTPS uptime with KeyChest
                     </h3>
                     <h4 class="text-center mg-lg tc-onyx">
-                        Expiry monitor that discovers your certificates
+                        Expiry monitoring which discovers your certificates
                     </h4>
                     <p class="text-center">
                         We have created a few stories with information about using, managing, and auditing your certificates.&nbsp;
