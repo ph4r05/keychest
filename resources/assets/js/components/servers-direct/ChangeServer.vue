@@ -76,7 +76,6 @@
                 },
                 formErrors: {},
                 sentState: 0,
-                validator: null
             }
         },
         mounted() {
@@ -89,9 +88,11 @@
                 VeeValidate.Validator.extend('iprange', ipValidator);
             },
             onAdd(data){
+                this.resetState();
                 this.showModal(false);
             },
             onEdit(data){
+                this.resetState();
                 _.assignIn(this.scanRecord, data);
                 this.scanRecord.server = window.Req.buildUrl('https', data.service_name, undefined);
                 this.scanRecord.scan_range = this.getTextRange(data.ip_beg, data.ip_end);
@@ -111,6 +112,12 @@
                 }
 
                 return _.startsWith(t, '*') || _.startsWith(t, '%');
+            },
+            resetState(){
+                this.editMode = false;
+                this.sentState = 0;
+                this.scanRecord.server = '';
+                this.scanRecord.scan_range = '';
             },
             checkWildcard(value){
                 if (!this.isWildcard(value)) {
@@ -153,36 +160,52 @@
                 this.checkWildcard(this.scanRecord.server);
             },
             createItemInt(){
-                const onFail = (function(){
+                const onFail = () => {
                     this.sentState = -1;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('Error while adding the server, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     this.sentState = 0;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('This host is already being monitored.', 'Already present');
-                }).bind(this);
+                };
 
-                const onTooMany = (function(data){
+                const onTooMany = () => {
                     this.sentState = 0;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('We are sorry but you just reached maximum number of '
                         + data['max_limit'] + ' monitored servers.', 'Too many servers');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onInvalidRange = () => {
+                    this.sentState = 0;
+                    $('#add-domain-wrapper-sub').effect("shake");
+                    toastr.error('The entered IP range is invalid.', 'Invalid IP range');
+                };
+
+                const onBigRange = () => {
+                    this.sentState = 0;
+                    $('#add-domain-wrapper-sub').effect("shake");
+                    toastr.error('The IP range is too big. ' +
+                        'Get in touch at support@enigmabridge.com if you want bigger range.', 'Big IP range');
+                };
+
+                const onSuccess = data => {
                     this.sentState = 1;
                     this.resetInput();
-                    this.$emit('onServerAdded', data);
-                    this.$events.fire('on-server-added', data);
+                    this.$emit('onScanRecordChanged', data);
+                    this.$events.fire('on-scan-record-changed', data);
                     this.hideModal();
-                    toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
-                }).bind(this);
+
+                    toastr.success('The direct server has been '
+                        + (this.editMode ? 'updated' : 'added'),
+                        'Success', {preventDuplicates: true});
+                };
 
                 this.sentState = 2;
-                axios.post('/home/networks/add', this.scanRecord)
+                axios.post('/home/networks/' + (this.editMode ? 'update' : 'add'), this.scanRecord)
                     .then(response => {
                         if (!response || !response.data) {
                             onFail();
@@ -201,8 +224,12 @@
                             onDuplicate();
                         } else if (e && e.response && e.response.status === 429){
                             onTooMany(e.response.data);
+                        } else if (e && e.response && e.response.status === 451){
+                            onInvalidRange(e.response.data);
+                        } else if (e && e.response && e.response.status === 452){
+                            onBigRange(e.response.data);
                         } else {
-                            console.log("Add server failed: " + e);
+                            console.log("Add scan record failed: " + e);
                             onFail();
                         }
                     });
