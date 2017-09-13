@@ -157,7 +157,7 @@
                 <h2 class="mg-md tc-rich-electric-blue">Our vision</h2>
 
                 <p>
-                    Our main goal with KeyChest is to encourage use of HTTPS by improving operational experience. The
+                    Our main goal with KeyChest is to encourage the use of HTTPS by improving the management experience. The
                     single
                     most important downside of using certificates and HTTPS is that websites and web services become
                     unavailable once their certificates expire. The growing number of people using Let's Encrypt
