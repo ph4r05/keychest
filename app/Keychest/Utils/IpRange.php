@@ -13,6 +13,8 @@ use App\Keychest\Utils\DomainTools;
 use App\Keychest\Utils\IpRange\InvalidRangeException;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use IPLib\Address\AddressInterface;
+use IPLib\Address\IPv4;
 use IPLib\Factory;
 use IPLib\Range\RangeInterface;
 
@@ -110,7 +112,7 @@ class IpRange
      */
     public function getIpStartObj(){
         if (empty($this->ipStartObj) && $this->getStartAddress()){
-            $this->ipStartObj = Factory::addressFromString($this->getStartAddress(), false);
+            $this->ipStartObj = self::ensureObjIp($this->getStartAddress());
         }
 
         return $this->ipStartObj;
@@ -122,7 +124,7 @@ class IpRange
      */
     public function getIpStopObj(){
         if (empty($this->ipStopObj) && $this->getEndAddress()){
-            $this->ipStopObj = Factory::addressFromString($this->getEndAddress(), false);
+            $this->ipStopObj = self::ensureObjIp($this->getEndAddress());
         }
 
         return $this->ipStopObj;
@@ -191,7 +193,9 @@ class IpRange
             }
 
             $range = \IPLib\Factory::rangeFromString($str);
-            return new IpRange($range->getStartAddress(), $range->getEndAddress());
+            return new IpRange(
+                $range->getStartAddress()->toString(),
+                $range->getEndAddress()->toString());
 
         } catch (Exception $e) {
             throw new InvalidRangeException('Invalid range', 0, $e);
@@ -206,8 +210,8 @@ class IpRange
      */
     public static function rangeSize($ipBeg, $ipEnd)
     {
-        $ipBeg = Factory::addressFromString($ipBeg, false)->getBytes();
-        $ipEnd = Factory::addressFromString($ipEnd, false)->getBytes();
+        $ipBeg = self::ensureObjIp($ipBeg)->getBytes();
+        $ipEnd = self::ensureObjIp($ipEnd)->getBytes();
         $size = 0;
 
         for ($i = 0; $i < 4; $i++) {
@@ -218,5 +222,14 @@ class IpRange
             $size += ($ipBeg[$i] - $ipEnd[$i]) * (2 ** ((3 - $i) * 8));
         }
         return $size + 1;
+    }
+
+    /**
+     * Converts to object form if not already
+     * @param $ip
+     * @return AddressInterface|null
+     */
+    public static function ensureObjIp($ip){
+        return $ip instanceof AddressInterface ? $ip : Factory::addressFromString($ip, false);
     }
 }

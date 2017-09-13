@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use App\Keychest\Utils\IpRange;
 use App\Keychest\Utils\IpRange\InvalidRangeException;
 use Illuminate\Support\Facades\Log;
+use IPLib\Address\AddressInterface;
 use IPLib\Factory;
 use IPLib\Range\RangeInterface;
 use TrueBV\Punycode;
@@ -346,6 +347,15 @@ class DomainTools {
     }
 
     /**
+     * Converts IP to its object form if not already
+     * @param $ip
+     * @return AddressInterface|null
+     */
+    public static function ipEnsureObject($ip){
+        return $ip instanceof AddressInterface ? $ip : Factory::addressFromString($ip, false);
+    }
+
+    /**
      * Transforms IP to the octet array
      * @param $ip
      * @return array|null
@@ -355,7 +365,7 @@ class DomainTools {
             return null;
         }
 
-        return Factory::addressFromString($ip, false)->getBytes();
+        return self::ipEnsureObject($ip)->getBytes();
     }
 
     /**
@@ -368,7 +378,7 @@ class DomainTools {
             return -1;
         }
 
-        $bytes = Factory::addressFromString($ip, false)->getBytes();
+        $bytes = self::ipEnsureObject($ip)->getBytes();
         $ret = 0;
         for ($i = 0; $i < 4; $i++) {
             $ret += $bytes[$i] * (2 ** ((3 - $i) * 8));
