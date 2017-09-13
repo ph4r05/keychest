@@ -128,7 +128,7 @@ class IpScanManager {
 
             if (!empty($onAddFnc)){
                 /** @var callable $onAddFnc */
-                $onAddFnc($newArr);
+                $newArr = $onAddFnc($newArr);
             }
 
             try {

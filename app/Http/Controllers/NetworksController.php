@@ -322,6 +322,7 @@ class NetworksController extends Controller
             function ($data) use ($rangeObj) {
                 $data['ip_beg_int'] = DomainTools::ipv4ToIdx($data['ip_beg']);
                 $data['ip_end_int'] = DomainTools::ipv4ToIdx($data['ip_end']);
+                return $data;
         });
 
         if(!$isNew){
