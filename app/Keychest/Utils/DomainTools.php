@@ -10,8 +10,11 @@ namespace App\Keychest\Utils;
 
 use Exception;
 use Illuminate\Support\Collection;
+use App\Keychest\Utils\IpRange;
 use App\Keychest\Utils\IpRange\InvalidRangeException;
 use Illuminate\Support\Facades\Log;
+use IPLib\Factory;
+use IPLib\Range\RangeInterface;
 use TrueBV\Punycode;
 
 /**
@@ -21,9 +24,6 @@ use TrueBV\Punycode;
  * @package App\Keychest\Utils
  */
 class DomainTools {
-
-    const RANGE_RE1 = '/^\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*-\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*$/';
-    const RANGE_RE2 = '/^\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*\/\s*([0-9]{1,2})\s*$/';
 
     /**
      * Returns wildcard domain for the given one
@@ -346,6 +346,19 @@ class DomainTools {
     }
 
     /**
+     * Transforms IP to the octet array
+     * @param $ip
+     * @return array|null
+     */
+    public static function ipToOctets($ip){
+        if (empty($ip)){
+            return null;
+        }
+
+        return Factory::addressFromString($ip, false)->getBytes();
+    }
+
+    /**
      * Sorts the collection by IPs
      * @param array|Collection $col
      * @param $callback
@@ -461,32 +474,4 @@ class DomainTools {
         return DataTools::compareArrays($aOct, $bOct);
     }
 
-    /**
-     * Factory from the string
-     * Supports two range formats.
-     * @param $str
-     * @return \IPLib\Range\RangeInterface|null
-     * @throws InvalidRangeException
-     */
-    public static function rangeFromString($str){
-        $m1 = null;
-        $m2 = null;
-
-        $r1 = preg_match(self::RANGE_RE1, $str, $m1);
-        $r2 = preg_match(self::RANGE_RE2, $str, $m2);
-        if (!$r1 && !$r2){
-            throw new InvalidRangeException('Unrecognized range format');
-        }
-
-        try {
-            if ($r1) {
-                return \IPLib\Factory::rangeFromBoundaries($m1[1], $m1[2]);
-            }
-
-            return \IPLib\Factory::rangeFromString($str);
-
-        } catch (Exception $e){
-            throw new InvalidRangeException("Invalid range", 0, $e);
-        }
-    }
 }
