@@ -1,28 +1,30 @@
 @if($res->isTokenFound())
     <div class="alert alert-success">
-        <strong><i class="fa fa-check-circle"></i> Unsubscribe successful</strong>
+        <strong><i class="fa fa-check-circle"></i> We have successfully completed your request</strong>
     </div>
 
     <p>
-        Email address {{ $res->getUser()->email }} won't receive any more email reports.
-    </p>
+        We have successfully disabled weekly email updates to your address {{ $res->getUser()->email }}.
 
+    </p>
     <p>
-        To manage more KeyChest settings go to the <a href="{{ url('home/license') }}">account settings</a> in KeyChest.
+        You can change this and other options on the <b>Account</b> page of your <a href="{{ url('/login')}}"> KeyChest
+            dashboard</a>.
     </p>
 
 @else
     <div class="alert alert-warning">
-        <strong><i class="fa fa-exclamation-circle"></i> Token not found</strong>
+        <strong><i class="fa fa-exclamation-circle"></i>We can't complete your request</strong>
     </div>
 
     <p>
-        Unfortunately the given token was not found. It may expired or is invalid.
+        The request you submitted contained an expired or invalid authorization token.
     </p>
 
     <p>
-        In order to unsubscribe, please send an email from your email address at <i>keychest AT enigmabridge.com</i>
-        with "UNSUNBSCRIBE" as a subject or alternatively <a href="{{ url('/login') }}">login</a> to the KeyChest
-        and unsubscribe in your <a href="{{ url('home/license') }}">account settings</a>.
+        If you used a correct link, please let us know via email
+        at <i>support@enigmabridge.com</i> and we will get back to you shortly. You can also change your
+        account settings on the <b>Account</b> page of your <a href="{{ url('/login')}}"> KeyChest
+            dashboard</a>.
     </p>
 @endif
