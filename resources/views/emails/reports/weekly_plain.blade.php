@@ -30,18 +30,15 @@ At the moment, KeyChest monitors: {{ $md->getNumActiveWatches() }} {{ trans_choi
 Please note all times are in GMT timezone.
 @endif
 
-{{--”“--}}
-{{--We have also detected XXX incidents related to HTTPS/TLS configuration on your servers.--}}
-
 You can see more details about incidents when you login to your dashboard at:
 {{ url('/login') }}
 
-@component('emails.partials.unsubscribe')
+@component('emails.partials.unsubscribe_plain', ['user' => $md->user])
 @endcomponent
 
 Kind regards
   {{ config('app.name') }} & Enigma Bridge
 
-@component('emails.partials.news_footer_plain', ['news'=>$news])
+@component('emails.partials.news_footer_plain', ['news' => $news])
 @endcomponent
 

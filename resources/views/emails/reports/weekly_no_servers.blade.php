@@ -7,12 +7,12 @@
         Please log in to your dashboard and add some of your servers or registered domains to enjoy
         the power and simplicity of KeyChest.
 
-        You will have to visit <a href="{{ url('/login') }}">{{ url('/login') }}</a> and use the recipient
+        You will have to visit <a href="{{ url('/home') }}">{{ url('/home') }}</a> and use the recipient
         address of this email.
     </p>
 
     <p>
-        @component('emails.partials.unsubscribe')
+        @component('emails.partials.unsubscribe', ['user' => $md->user])
         @endcomponent
     </p>
 
@@ -21,6 +21,6 @@
           <i>{{ config('app.name') }} &amp; Enigma Bridge</i>
     </p>
 
-    @component('emails.partials.news_footer', ['news'=>$news])
+    @component('emails.partials.news_footer', ['news' => $news])
     @endcomponent
 @endsection

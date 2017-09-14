@@ -27,6 +27,8 @@ Route::post('submitJob', 'SearchController@restSubmitJob');
 Route::get('jobState', 'SearchController@restGetJobState');
 Route::get('jobResult', 'SearchController@restJobResults');
 
+Route::get('unsubscribe/{token}', 'EmailController@unsubscribe');
+
 // Auth routes
 Route::auth();
 Auth::routes();
@@ -84,10 +86,13 @@ Route::post('home/networks/del', 'NetworksController@del')->name('networks/del')
 Route::post('home/networks/delMore', 'NetworksController@delMore')->name('networks/delMore');
 Route::post('home/networks/update', 'NetworksController@update')->name('networks/update');
 
-Route::get('home/scan', 'SearchController@showHome')->name('home/scan')->middleware('auth');
+Route::get('home/scan', 'SearchController@showHome')
+    ->name('home/scan')
+    ->middleware('auth');
 
 Route::get('home/dashboard/data', 'DashboardController@loadActiveCerts')
-    ->name('dashboard/data')->middleware('auth');
+    ->name('dashboard/data')
+    ->middleware('auth');
 
 Route::get('home/subs/get', 'SubdomainsController@getList')->name('subs/get');
 Route::get('home/subs/getDomains', 'SubdomainsController@getDomains')->name('subs/getDomains');

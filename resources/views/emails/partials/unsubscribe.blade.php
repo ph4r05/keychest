@@ -1,5 +1,2 @@
-We apologize the unsubscribe/email management functions (preferred date/time,
-frequency, alerts, and so on) are not yet available within your KeyChest account,
-they are coming soon. Meantime, if you want to stop receiving these emails
-immediately, simply reply to this email and add "UNSUBSCRIBE" to the
-beginning of the email.
+Click for <a href="{{ url('unsubscribe/' . $user->weekly_unsubscribe_token) }}">unsubscribe</a>. <br/>
+To manage more KeyChest settings go to the <a href="{{ url('home/license') }}">account settings</a> in KeyChest.
