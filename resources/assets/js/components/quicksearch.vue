@@ -392,7 +392,7 @@
     import axios from 'axios';
     import moment from 'moment';
     import pluralize from 'pluralize';
-    import Req from '../req';
+    import Req from 'req';
 
     export default {
         props: {

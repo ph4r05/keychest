@@ -121,9 +121,11 @@
   </div>
 </template>
 <script>
+import _ from 'lodash';
 import accounting from 'accounting';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import Req from 'req';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';

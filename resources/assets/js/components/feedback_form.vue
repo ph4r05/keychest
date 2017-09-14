@@ -47,7 +47,6 @@
             return {
                 sentState: 0,
 
-                Req: window.Req,
                 Laravel: window.Laravel
             };
         },

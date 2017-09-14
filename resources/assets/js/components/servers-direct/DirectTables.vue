@@ -104,7 +104,8 @@ import accounting from 'accounting';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import _ from 'lodash';
-import ph4 from '../../lib/ph4';
+import Req from 'req';
+import ph4 from 'ph4';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';

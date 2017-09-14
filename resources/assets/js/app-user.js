@@ -10,7 +10,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.URL = require('url-parse');
-window.Req = require('./req.js');
+window.Req = require('req').default;
 window.Psl = require('./lib/psl');
 window.Moment = require('moment');
 window.toastr = require('toastr');

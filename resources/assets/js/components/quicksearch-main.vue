@@ -62,13 +62,14 @@
 </template>
 
 <script>
+    import Req from 'req';
+
     export default {
         data: function() {
             return {
                 resultsLoaded: false,
                 searchEnabled: true,
 
-                Req: window.Req,
                 Laravel: window.Laravel
             };
         },

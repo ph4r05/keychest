@@ -55,7 +55,10 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import axios from 'axios';
+    import Req from 'req';
+
     export default {
         data () {
             return {

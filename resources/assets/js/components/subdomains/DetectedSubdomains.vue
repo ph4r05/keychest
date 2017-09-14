@@ -82,6 +82,7 @@
     import moment from 'moment';
     import pluralize from 'pluralize';
     import _ from 'lodash';
+    import Req from 'req';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';

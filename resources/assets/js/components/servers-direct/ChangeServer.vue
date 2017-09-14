@@ -58,7 +58,9 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import axios from 'axios';
+    import Req from 'req';
 
     import Vue from 'vue';
     import VeeValidate from 'vee-validate';
@@ -95,7 +97,7 @@
                 this.resetState();
 
                 _.assignIn(this.scanRecord, data);
-                this.scanRecord.server = window.Req.buildUrl(
+                this.scanRecord.server = Req.buildUrl(
                     'https',
                     data.service_name,
                     data.service_port === 443 ? null : data.service_port);
