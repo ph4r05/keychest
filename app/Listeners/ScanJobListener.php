@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ScanJobProgress;
+use App\Events\ScanJobProgressNotif;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -17,13 +18,6 @@ class ScanJobListener implements ShouldQueue
      * @var string|null
      */
     public $connection = 'ph4redis';
-
-    /**
-     * The name of the queue the job should be sent to.
-     *
-     * @var string|null
-     */
-    //public $queue = null;
 
     /**
      * Create the event listener.
@@ -43,7 +37,10 @@ class ScanJobListener implements ShouldQueue
      */
     public function handle(ScanJobProgress $event)
     {
-        Log::info('New event: ' . var_export($event, true));
         Log::info('New event: ' . var_export($event->getJsonData(), true));
+
+        // Rewrap and rebroadcast to the socket server
+        $e = ScanJobProgressNotif::fromEvent($event);
+        event($e);
     }
 }
