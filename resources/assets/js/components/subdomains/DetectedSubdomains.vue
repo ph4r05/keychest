@@ -85,7 +85,10 @@
     import moment from 'moment';
     import pluralize from 'pluralize';
     import _ from 'lodash';
+    import axios from 'axios';
     import Req from 'req';
+    import Blob from 'w3c-blob';
+    import FileSaver from 'file-saver';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -426,43 +429,19 @@
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
             },
             downloadServerList(action) {
-
-                var data = this.processedData;
+                const data = this.processedData;
 
                 // Building the CSV from the Data two-dimensional array
-                // Each column is separated by ";" and new line "\n" for next row
-                var csvContent = '';
-                var dataString = '';
-                data.forEach(function(infoArray, index) {
-                    dataString = infoArray.name + "," + infoArray.used.toString();
-                    csvContent += index < data.length ? dataString + '\n' : dataString;
-                });
-
-                // The download function takes a CSV string, the filename and mimeType as parameters
-                // Scroll/look down at the bottom of this snippet to see how download is called
-                var download = function(content, fileName, mimeType) {
-                    var a = document.createElement('a');
-                    mimeType = mimeType || 'application/octet-stream';
-
-                    if (navigator.msSaveBlob) { // IE10
-                        navigator.msSaveBlob(new Blob([content], {
-                            type: mimeType
-                        }), fileName);
-                    } else if (URL && 'download' in a) { //html5 A[download]
-                        var myURLcreate = window.URL.createObjectURL || window.webkitURL.createObjectURL;
-                        a.href = myURLcreate(new Blob([content], {
-                            type: mimeType
-                        }));
-                        a.setAttribute('download', fileName);
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    } else {
-                        location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-                    }
+                // Each column is separated by "," and new line "\n" for next row
+                let acc = ['domain,added'];
+                for (let cur of data) {
+                    const dataString = _.join([cur.name, +cur.used]);
+                    acc.push(dataString);
                 }
 
-                download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
+                const csvContent = _.join(acc, '\n');
+                const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
+                FileSaver.saveAs(blob, "sub-domains.csv");
             },
         },
         events: {

@@ -128,7 +128,10 @@ import _ from 'lodash';
 import accounting from 'accounting';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import axios from 'axios';
 import Req from 'req';
+import Blob from 'w3c-blob';
+import FileSaver from 'file-saver';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';
@@ -278,7 +281,7 @@ export default {
             this.$refs.vuetable.changePage(page);
         },
         onCellClicked (data, field, event) {
-            ;
+
         },
         onFilterSet(filterText){
             this.moreParams = {
@@ -313,52 +316,36 @@ export default {
             this.$refs.editServer.onEditServer(data);
         },
         serversLoaded(response) {
-            var data = response.data;
+            Req.bodyProgress(false);
+            const data = response.data;
 
             // Building the CSV from the Data two-dimensional array
-            // Each column is separated by ";" and new line "\n" for next row
-            var csvContent = '';
-            var dataString = '';
-            data.forEach(function (infoArray, index) {
-                dataString = infoArray.scan_host + "," + infoArray.scan_port;
-                csvContent += index < data.length ? dataString + '\n' : dataString;
-            });
-
-            // The download function takes a CSV string, the filename and mimeType as parameters
-            // Scroll/look down at the bottom of this snippet to see how download is called
-            var download = function (content, fileName, mimeType) {
-                var a = document.createElement('a');
-                mimeType = mimeType || 'application/octet-stream';
-
-                if (navigator.msSaveBlob) { // IE10
-                    navigator.msSaveBlob(new Blob([content], {
-                        type: mimeType
-                    }), fileName);
-                } else if (URL && 'download' in a) { //html5 A[download]
-                    var myURLcreate = window.URL.createObjectURL || window.webkitURL.createObjectURL;
-                    a.href = myURLcreate(new Blob([content], {
-                        type: mimeType
-                    }));
-                    a.setAttribute('download', fileName);
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                } else {
-                    location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-                }
+            // Each column is separated by "," and new line "\n" for next row
+            let acc = ['host,port'];
+            for (let cur of data) {
+                const dataString = _.join([cur.scan_host, cur.scan_port]);
+                acc.push(dataString);
             }
 
-            download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
+            const csvContent = _.join(acc, '\n');
+            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
+            FileSaver.saveAs(blob, "servers.csv");
         },
-
         downloadServers() {
-            axios.get(this.$refs.vuetable.apiUrl, {params: {return_all: 1}})
+            Req.bodyProgress(true);
+            const params = {
+                return_all: 1,
+                sort: 'scan_host,scan_port'
+            };
+
+            axios.get(this.$refs.vuetable.apiUrl, {params: params})
                 .then(response => {
                     this.serversLoaded(response.data);
                 })
                 .catch(e => {
-                    console.log(e);
-                })
+                    Req.bodyProgress(false);
+                    console.warn(e);
+                });
         },
         onDeleteServer(data){
             swal({
