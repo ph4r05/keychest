@@ -10,14 +10,17 @@ namespace App\Models;
 
 use App\Keychest\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmailNews extends Model
 {
-    public $incrementing = true;
+    use SoftDeletes;
+
+    const TABLE = 'email_news';
 
     protected $guarded = array();
 
-    protected $table = 'email_news';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

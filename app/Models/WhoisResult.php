@@ -13,18 +13,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class WhoisResult extends Model
 {
+    const TABLE = 'whois_result';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'whois_result';
+    protected $table = self::TABLE;
 
     /**
      * Get the top domain record for this result
      */
     public function domain()
     {
-        return $this->belongsTo('App\Model\BaseDomain', 'domain_id');
+        return $this->belongsTo('App\Models\BaseDomain', 'domain_id');
     }
 
     /**
@@ -32,7 +34,7 @@ class WhoisResult extends Model
      */
     public function watch_target()
     {
-        return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
+        return $this->belongsTo('App\Models\WatchTarget', 'watch_id');
     }
 
 }

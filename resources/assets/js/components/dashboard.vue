@@ -801,12 +801,14 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import axios from 'axios';
     import moment from 'moment';
     import sprintf from 'sprintf-js';
     import VueCharts from 'vue-chartjs';
     import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
+    import Req from 'req';
 
     export default {
         data: function() {
@@ -823,7 +825,6 @@
                 includeExpired: false,
 
                 Laravel: window.Laravel,
-                _: window._,
 
                 chartColors: [
                     '#00c0ef',

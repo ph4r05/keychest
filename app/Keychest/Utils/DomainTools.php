@@ -8,7 +8,14 @@
 
 namespace App\Keychest\Utils;
 
+use Exception;
 use Illuminate\Support\Collection;
+use App\Keychest\Utils\IpRange;
+use App\Keychest\Utils\IpRange\InvalidRangeException;
+use Illuminate\Support\Facades\Log;
+use IPLib\Address\AddressInterface;
+use IPLib\Factory;
+use IPLib\Range\RangeInterface;
 use TrueBV\Punycode;
 
 /**
@@ -340,6 +347,47 @@ class DomainTools {
     }
 
     /**
+     * Converts IP to its object form if not already
+     * @param $ip
+     * @return AddressInterface|null
+     */
+    public static function ipEnsureObject($ip){
+        return $ip instanceof AddressInterface ? $ip : Factory::addressFromString($ip, false);
+    }
+
+    /**
+     * Transforms IP to the octet array
+     * @param $ip
+     * @return array|null
+     */
+    public static function ipToOctets($ip){
+        if (empty($ip)){
+            return null;
+        }
+
+        return self::ipEnsureObject($ip)->getBytes();
+    }
+
+    /**
+     * Tranforms IP address to 32bit int
+     * @param $ip
+     * @return int
+     */
+    public static function ipv4ToIdx($ip){
+        if (empty($ip)){
+            return -1;
+        }
+
+        $bytes = self::ipEnsureObject($ip)->getBytes();
+        $ret = 0;
+        for ($i = 0; $i < 4; $i++) {
+            $ret += $bytes[$i] * (2 ** ((3 - $i) * 8));
+        }
+
+        return $ret;
+    }
+
+    /**
      * Sorts the collection by IPs
      * @param array|Collection $col
      * @param $callback
@@ -409,7 +457,7 @@ class DomainTools {
     }
 
     /**
-     * Quick & unreliable IP address caregorization. IPv4 vs IPv6
+     * Quick & unreliable IP address categorization. IPv4 vs IPv6
      * @param $ip
      * @return int 10 for IPv6, 2 for IPv4
      */
@@ -454,4 +502,5 @@ class DomainTools {
         $bOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $b));
         return DataTools::compareArrays($aOct, $bOct);
     }
+
 }

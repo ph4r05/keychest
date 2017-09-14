@@ -8,6 +8,7 @@
 
 namespace App\Keychest\Services;
 
+use App\Keychest\DataClasses\UnsubscribeResult;
 use App\Models\EmailNews;
 use App\User;
 use Carbon\Carbon;
@@ -79,5 +80,25 @@ class EmailManager {
                 array_fill(0, $news->count(), ['created_at' => Carbon::now()])
             )
         );
+    }
+
+    /**
+     * Returns the user of the unsubscribe action
+     * @param $token
+     * @return UnsubscribeResult
+     */
+    public function unsubscribe($token){
+        $res = new UnsubscribeResult();
+
+        $u = User::query()->where('weekly_unsubscribe_token', '=', $token)->first();
+        $res->setUser($u)->setTokenFound(!!$u);
+        if (!$u){
+            return $res;
+        }
+
+        $u->weekly_emails_disabled = 1;
+        $u->save();
+
+        return $res;
     }
 }

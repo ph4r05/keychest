@@ -4,14 +4,17 @@ namespace App\Models;
 
 use App\Keychest\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WatchAssoc extends Model
 {
-    public $incrementing = true;
+    // use SoftDeletes;
+
+    const TABLE = 'user_watch_target';
 
     protected $guarded = array();
 
-    protected $table = 'user_watch_target';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Certificate extends Model
 {
+    const TABLE = 'certificates';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'certificates';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

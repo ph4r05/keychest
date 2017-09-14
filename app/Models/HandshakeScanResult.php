@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class HandshakeScanResult extends Model
 {
+    const TABLE = 'scan_handshake_results';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'scan_handshake_results';
+    protected $table = self::TABLE;
 }

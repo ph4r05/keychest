@@ -10,7 +10,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 window.URL = require('url-parse');
-window.Req = require('./req.js');
+window.Req = require('req').default;
 window.Psl = require('./lib/psl');
 window.Moment = require('moment');
 window.toastr = require('toastr');
@@ -51,14 +51,6 @@ Vue.component('login-form', require('./components/auth/LoginForm.vue'));
 Vue.component('email-reset-password-form', require('./components/auth/EmailResetPasswordForm.vue'));
 Vue.component('reset-password-form', require('./components/auth/ResetPasswordForm.vue'));
 
-// Vue.component('quicksearch', require('./components/quicksearch.vue'));
-// Vue.component('dashboard', require('./components/dashboard.vue'));
-// Vue.component('subdomains', require('./components/subdomains/Subdomains.vue'));
-// Vue.component('servers', require('./components/servers.vue'));
-// Vue.component('servers-import', require('./components/servers-import/server-import.vue'));
-
-// another async load: Vue.component('dashboard', resolve => require(['./components/dashboard.vue'], resolve));
-
 Vue.component('quicksearch', resolve => {
     require.ensure([], require => resolve(require('./components/quicksearch.vue')), 'quicksearch');
 });
@@ -69,6 +61,9 @@ Vue.component('dashboard', resolve => {
 
 Vue.component('servers', resolve => {
     require.ensure([], require => resolve(require('./components/servers.vue')), 'servers');
+});
+Vue.component('ip_servers', resolve => {
+    require.ensure([], require => resolve(require('./components/ip_servers.vue')), 'ip_servers');
 });
 Vue.component('subdomains', resolve => {
     require.ensure([], require => resolve(require('./components/subdomains/Subdomains.vue')), 'subdomains');

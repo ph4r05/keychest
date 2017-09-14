@@ -3,6 +3,11 @@
  */
 'use strict';
 
+import _ from 'lodash';
+import axios from 'axios';
+import moment from 'moment';
+import 'moment-timezone';
+
 /**
  * Returns GET parameter
  * @param parameterName
@@ -103,8 +108,8 @@ function doTimezoneCheck(){
     }
 
     const data = {
-        'timezone': Moment.tz.guess(),
-        'utcOffset': Moment().utcOffset()
+        'timezone': moment.tz.guess(),
+        'utcOffset': moment().utcOffset()
     };
 
     axios.post('/timezoneSet', data)
@@ -611,7 +616,7 @@ function switchTabPath(path){
 //
 // Export
 //
-module.exports = {
+export default {
     bodyProgress: bodyProgress,
     findGetParameter: findGetParameter,
     submitJob: submitJob,
@@ -645,6 +650,4 @@ module.exports = {
     switchTab: switchTab,
     switchTabPath: switchTabPath,
 };
-
-
 

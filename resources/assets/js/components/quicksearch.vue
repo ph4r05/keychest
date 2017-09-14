@@ -31,8 +31,8 @@
         </div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-            <span v-if="jobSubmittedNow">Waiting for spot check to finish ...</span>
-            <span v-else="">Loading test results ...</span>
+            <span v-if="jobSubmittedNow && !wsFinished">Waiting for spot check to finish ...</span>
+            <span v-else-if="!jobSubmittedNow || wsFinished">Loading test results</span>
         </div>
 
         <div class="alert alert-default scan-alert" id="search-success" style="display: none">
@@ -235,7 +235,7 @@
                     allowed to use the same private key:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">
-                        <span v-if="!Req.isWildcard(domain)"><a v-bind:href="newScanUrl(domain)">{{ domain }}</a></span
+                        <span v-if="!isWildcard(domain)"><a v-bind:href="newScanUrl(domain)">{{ domain }}</a></span
                         ><span v-else="">{{ domain }}</span
                     ></li>
                 </ul>
@@ -401,6 +401,7 @@
     import axios from 'axios';
     import moment from 'moment';
     import pluralize from 'pluralize';
+    import Req from 'req';
 
     export default {
         props: {
@@ -417,12 +418,15 @@
                 curJob: {},
                 curUrl: null,
                 curIp: null,
+                curChannel: null,
                 form: {
                     defcon: 5,
                     textStatus: 'OK'
                 },
                 jobSubmittedNow: false,
                 resultsLoaded: false,
+                wsStarted: false,
+                wsFinished: false,
                 results: { },
                 searchEnabled: true,
                 showExpertStats: false,
@@ -446,7 +450,7 @@
                 ctExpired: [],
                 ctValid: [],
 
-                Req: window.Req,
+                pollTimer: null,
                 Laravel: window.Laravel
             };
         },
@@ -578,6 +582,10 @@
                 return pluralize(str, num, disp);
             },
 
+            isWildcard(domain){
+                return Req.isWildcard(domain);
+            },
+
             recomp(){
                 this.$emit('onRecompNeeded');
             },
@@ -656,34 +664,83 @@
                 this.curUuid = uuid;
                 this.searchStarted();
                 ga('send', 'event', 'spot-check', 'uuid-provided');
-                setTimeout(this.pollFinish, 10);
+                this.schedPoll(10);
             },
 
             pollFinish() {
-                Req.getJobState(this.curUuid, (function(json){
+                if (this.wsFinished){
+                    return;
+                }
+
+                Req.getJobState(this.curUuid, json => {
                     console.log(json);
+
+                    if (this.wsFinished){
+                        return;
+                    }
 
                     if (json.status !== 'success'){
                         this.errMsg('Job state fail, retry...');
-                        setTimeout(this.pollFinish, 1000);
+                        this.schedPoll();
                         return;
                     }
 
                     this.curJob = json.job;
                     this.curJob.port = Req.defval(this.curJob.scan_port, 443);
                     if (this.curJob.state !== 'finished'){
-                        setTimeout(this.pollFinish, 1000);
+                        this.schedPoll();
                     } else {
                         this.getResults();
                     }
 
-                }).bind(this), (function(jqxhr, textStatus, error){
+                }, (jqxhr, textStatus, error) => {
                     this.errMsg('Could not load scan with given ID');
-                }).bind(this));
+                });
+            },
+
+            schedPoll(timerVal){
+                this.pollTimer = setTimeout(this.pollFinish, timerVal || (this.wsStarted ? 7000 : 1000));
+            },
+
+            cancelPoll(){
+                try {
+                    if (this.pollTimer) {
+                        clearTimeout(this.pollTimer);
+                        this.pollTimer = null;
+                    }
+                } catch(e){
+                    console.warn(e);
+                }
+            },
+
+            onWsEvent(event){
+                try {
+                    // First websocket event received.
+                    // Changes status polling timeouts.
+                    this.wsStarted = true;
+                    console.log('Scan State: ' + event.data.state);
+
+                    // Poll is not needed for now.
+                    // Either it is finished and we are done completelly or
+                    // the connection is still living and we can drop it.
+                    this.cancelPoll();
+
+                    // Finished event is terminating, load results directly.
+                    if (event.data.state === 'finished'){
+                        this.wsFinished = true;
+                        this.getResults();
+                    } else {
+                        // Cancel scheduled poll request and re-schedule it in the future.
+                        // New event came so the connection is live. No need for poll.
+                        this.schedPoll();
+                    }
+                } catch(e){
+                    console.warn(e);
+                }
             },
 
             getResults() {
-                Req.getJobResult(this.curUuid, (function(json){
+                Req.getJobResult(this.curUuid, json => {
                     if (json.status !== 'success'){
                         this.errMsg('Job results fail, retry...');
                         setTimeout(this.getResults, 1000);
@@ -692,13 +749,15 @@
 
                     this.showResults(json);
 
-                }).bind(this), (function(jqxhr, textStatus, error){
+                }, (jqxhr, textStatus, error) => {
                     this.errMsg('Could not get job results');
-                }).bind(this));
+                });
             },
 
             showResults(json){
                 this.results = json;
+                this.curJob = json.job;
+                this.curJob.port = Req.defval(this.curJob.scan_port, 443);
 
                 $('#search-info').hide();
                 if (this.jobSubmittedNow) {
@@ -719,6 +778,7 @@
                 this.recomp();
 
                 // Process, show...
+                this.unlistenWebsocket();
                 this.processResults();
                 this.processTlsScan();
                 this.processCtScan();
@@ -898,10 +958,13 @@
             cleanResults(){
                 this.curUuid = {};
                 this.curJob = {};
+                this.curChannel = '';
                 this.form.defcon = 5;
                 this.form.textStatus = 'OK';
                 this.jobSubmittedNow = false;
                 this.resultsLoaded = false;
+                this.wsStarted = false;
+                this.wsFinished = false;
                 this.results = null;
                 this.showExpertStats = false;
                 this.addingStatus = 0;
@@ -921,6 +984,7 @@
 
                 this.ctExpired = [];
                 this.ctValid = [];
+                this.pollTimer = null;
                 this.$emit('onReset');
             },
 
@@ -950,6 +1014,10 @@
 
                     this.$emit('onjobSubmitted', json);
 
+                    // Install websocket listener
+                    this.curChannel = 'spotcheck.' + json.uuid;
+                    this.listenWebsocket();
+
                     // Update URL so it contains params - job ID & url
                     let new_url = window.location.pathname + "?uuid=" + json.uuid
                         + '&url=' + encodeURIComponent(targetUri);
@@ -962,7 +1030,7 @@
                         history.replaceState(null, null, new_url); // replace the existing
 
                         this.curUuid = json.uuid;
-                        setTimeout(this.pollFinish, 500);
+                        this.schedPoll(2500);
 
                     } catch(e) {
                         window.location.replace(new_url + '&new=1');
@@ -971,6 +1039,25 @@
                 }, (jqxhr, textStatus, error) => {
                     this.errMsg(error);
                 });
+            },
+
+            listenWebsocket(){
+                try {
+                    window.Echo
+                        .channel(this.curChannel)
+                        .listen('.spotcheck.event', this.onWsEvent);
+
+                } catch(e){
+                    console.warn(e);
+                }
+            },
+
+            unlistenWebsocket(){
+                try{
+                    Echo.leave(this.curChannel);
+                } catch(e){
+                    console.warn(e);
+                }
             },
 
             startTracking(){
@@ -986,25 +1073,25 @@
 
                 Req.bodyProgress(true);
 
-                const onFail = (function(){
+                const onFail = () => {
                     Req.bodyProgress(false);
                     this.addingStatus = -1;
                     $('#start-tracking-wrapper').effect( "shake" );
                     toastr.error('Error while adding the server, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     Req.bodyProgress(false);
                     this.addingStatus = 3;
                     toastr.success('This host is already being monitored.', 'Already present');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     Req.bodyProgress(false);
                     this.addingStatus = 1;
                     this.$emit('onServerAdded', data);
                     toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
-                }).bind(this);
+                };
 
                 this.addingStatus = 2;
                 axios.post('/home/servers/add', {'server': server2monitor})

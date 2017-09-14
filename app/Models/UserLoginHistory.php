@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserLoginHistory extends Model
 {
+    const TABLE = 'user_login_history';
+
     protected $guarded = array();
 
-    protected $table = 'user_login_history';
+    protected $table = self::TABLE;
 
     public function getDates()
     {

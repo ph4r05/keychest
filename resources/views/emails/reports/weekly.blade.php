@@ -44,16 +44,13 @@
     </p>
     @endif
 
-    {{--”“--}}
-    {{--We have also detected XXX incidents related to HTTPS/TLS configuration on your servers.--}}
-
     <p>
         You can see more details about incidents when you login to your dashboard at:
-        <a href="{{ url('/login') }}">{{ url('/login') }}</a>
+        <a href="{{ url('/home') }}">{{ url('/home') }}</a>
     </p>
 
     <p>
-        @component('emails.partials.unsubscribe')
+        @component('emails.partials.unsubscribe', ['user' => $md->user])
         @endcomponent
     </p>
 
@@ -62,6 +59,6 @@
           <i>{{ config('app.name') }} &amp; Enigma Bridge</i>
     </p>
 
-    @component('emails.partials.news_footer', ['news'=>$news])
+    @component('emails.partials.news_footer', ['news' => $news])
     @endcomponent
 @endsection

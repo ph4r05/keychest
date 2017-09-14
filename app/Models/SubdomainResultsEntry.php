@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubdomainResultsEntry extends Model
 {
+    const TABLE = 'subdomain_watch_result_entry';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'subdomain_watch_result_entry';
+    protected $table = self::TABLE;
 
     protected $hidden = ['assoc'];
 
@@ -23,6 +25,14 @@ class SubdomainResultsEntry extends Model
     public function watch()
     {
         return $this->belongsTo('App\Models\SubdomainWatchTarget', 'watch_id');
+    }
+
+    /**
+     * Optional watch service
+     */
+    public function service()
+    {
+        return $this->belongsTo('App\Models\WatchService', 'service_id');
     }
 
     public function getDates()

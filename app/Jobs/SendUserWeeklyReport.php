@@ -175,12 +175,20 @@ class SendUserWeeklyReport implements ShouldQueue
     }
 
     /**
+     * Returns true if the report is empty - could bother the user.
+     * @param ReportDataModel $mm
+     * @return bool
+     */
+    protected function isReportEmpty(ReportDataModel $mm){
+        return $mm->getCertExpire28days()->isEmpty()
+            && $mm->getCertExpire7days()->isEmpty();
+    }
+
+    /**
      * Stub function for sending a report
      * @param ValidityDataModel $md
      */
     protected function sendReport(ValidityDataModel $md){
-        Log::debug('Sending email...');
-
         $news = $this->emailManager->loadEmailNewsToSend($md->getUser());
 
         // No watched servers?
@@ -190,6 +198,14 @@ class SendUserWeeklyReport implements ShouldQueue
         }
 
         $mm = $this->translateModel($md);
+
+        // If report is empty, do not send it
+        if ($this->isReportEmpty($mm)){
+            Log::debug('Report is empty, not sending to:' . $this->user->id);
+            return;
+        }
+
+        Log::debug('Sending email to: ' . $this->user->id);
         $this->sendMail($md->getUser(), new WeeklyReport($mm, $news), false);
         $this->onReportSent($md, $news);
     }
@@ -202,7 +218,7 @@ class SendUserWeeklyReport implements ShouldQueue
     protected function sendNoServers(ValidityDataModel $md, Collection $news){
         // Check if the last report is not too recent
         if ($md->getUser()->last_email_no_servers_sent_at &&
-            Carbon::now()->subDays(28)->lessThanOrEqualTo($md->getUser()->last_email_no_servers_sent_at)) {
+            Carbon::now()->subDays(28 * 3)->lessThanOrEqualTo($md->getUser()->last_email_no_servers_sent_at)) {
             return;
         }
 
@@ -220,7 +236,14 @@ class SendUserWeeklyReport implements ShouldQueue
      * @param bool $enqueue
      */
     protected function sendMail(User $user, Mailable $mailable, $enqueue=false){
-        $s = Mail::to($user);
+        $userObj = $user;
+        if (!empty($user->notification_email)){
+            $userObj = new \stdClass();
+            $userObj->email = $user->notification_email;
+            $userObj->name = $user->name;
+        }
+
+        $s = Mail::to($userObj);
         if ($enqueue){
             $s->queue($mailable
                 ->onConnection(config('keychest.wrk_weekly_emails_conn'))

@@ -26,6 +26,9 @@ class OnUserRegistered
     public function handle(Registered $event)
     {
         $event->user->accredit_own = UserTools::accredit($event->user);
+        $event->user->email_verify_token = UserTools::generateVerifyToken($event->user);
+        $event->user->weekly_unsubscribe_token = UserTools::generateUnsubscribeToken($event->user);
+        $event->user->cert_notif_unsubscribe_token = UserTools::generateUnsubscribeToken($event->user);
         $event->user->save();
     }
 }

@@ -82,6 +82,7 @@
     import moment from 'moment';
     import pluralize from 'pluralize';
     import _ from 'lodash';
+    import Req from 'req';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -91,13 +92,11 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-    import CustomActions from '../servers/CustomActions';
-    import DetailRow from '../servers/DetailRow';
-    import FilterBar from '../servers/FilterBar';
+    import CustomActions from '../partials/EditDeleteActions.vue';
+    import FilterBar from '../partials/FilterBar';
 
     Vue.use(VueEvents);
     Vue.component('custom-actions', CustomActions);
-    Vue.component('my-detail-row', DetailRow);
     Vue.component('filter-bar', FilterBar);
 
     export default {
@@ -198,7 +197,7 @@
                 this.$refs.vuetable.changePage(page);
             },
             onCellClicked (data, field, event) {
-                this.$refs.vuetable.toggleDetailRow(data.id);
+                ;
             },
             onLoading(){
                 if (this.tblLoadingState !== 0){
@@ -429,9 +428,6 @@
                 Vue.nextTick(() => this.needRefresh());
             },
             'on-server-updated'(data) {
-                Vue.nextTick(() => this.needRefresh());
-            },
-            'on-delete-server'(data) {
                 Vue.nextTick(() => this.needRefresh());
             },
             'on-server-deleted'(data) {

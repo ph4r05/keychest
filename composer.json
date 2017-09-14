@@ -17,6 +17,7 @@
         "graham-campbell/markdown": "^7.1",
         "icanboogie/inflector": "^1.4",
         "influendo/laravel-survivor": "^1.0",
+        "ircmaxell/random-lib": "^1.2",
         "jackiedo/dotenv-editor": "^1.0",
         "laracasts/utilities": "~2.0",
         "laravel/browser-kit-testing": "^1.0.2",
@@ -25,6 +26,8 @@
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4",
         "league/flysystem": "^1.0",
+        "mlocati/ip-lib": "^1.4",
+        "php-di/invoker": "^2.0",
         "predis/predis": "v1.1.1",
         "true/punycode": "~2.0",
         "webpatser/laravel-uuid": "^2.0"

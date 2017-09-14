@@ -44,9 +44,11 @@
     </div>
 </template>
 <script>
+    import _ from 'lodash';
     import toastr from 'toastr';
     import Vue from 'vue';
     import VueEvents from 'vue-events';
+    import Req from 'req';
 
     Vue.use(VueEvents);
 

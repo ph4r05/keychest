@@ -13,17 +13,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class CrtShQuery extends Model
 {
+    const TABLE = 'crtsh_query';
+
     public $incrementing = true;
 
     protected $guarded = array();
 
-    protected $table = 'crtsh_query';
+    protected $table = self::TABLE;
 
     /**
      * Get the watch_id record for this result
      */
     public function watch_target()
     {
-        return $this->belongsTo('App\Model\WatchTarget', 'watch_id');
+        return $this->belongsTo('App\Models\WatchTarget', 'watch_id');
+    }
+
+    /**
+     * Optional watch service
+     */
+    public function service()
+    {
+        return $this->belongsTo('App\Models\WatchService', 'service_id');
     }
 }

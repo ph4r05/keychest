@@ -88,6 +88,7 @@
     </div>
 </template>
 <script>
+    import _ from 'lodash';
     import accounting from 'accounting';
     import moment from 'moment';
     import pluralize from 'pluralize';
@@ -100,7 +101,7 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-    import FilterBar from '../servers/FilterBar';
+    import FilterBar from '../partials/FilterBar';
     import AddSubWatch from './watch/AddSubWatch.vue';
 
     Vue.use(VueEvents);

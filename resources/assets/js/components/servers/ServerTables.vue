@@ -15,11 +15,15 @@
           <add-server></add-server>
         </div>
         <div class="col-md-5">
-          <filter-bar></filter-bar>
+          <filter-bar
+                  :globalEvt="false"
+                  v-on:filter-set="onFilterSet"
+                  v-on:filter-reset="onFilterReset"
+          ></filter-bar>
         </div>
       </div>
 
-      <edit-server></edit-server>
+      <edit-server ref="editServer"></edit-server>
 
       <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
       <vuetable-my ref="vuetable"
@@ -38,6 +42,28 @@
         @vuetable:checkbox-toggled="onCheckboxToggled"
         @vuetable:checkbox-toggled-all="onCheckboxToggled"
       >
+        <template slot="host" scope="props">
+
+          <!-- IP scan host - special treating -->
+          <template v-if="props.rowData.is_ip_host">
+            <span v-if="props.rowData.service_id">
+              {{ props.rowData.service.service_name }}
+              <span> ({{ props.rowData.scan_host }})</span>
+            </span>
+            <span v-else="">{{ props.rowData.scan_host }}</span>
+          </template>
+
+          <!-- Not an IP scan host -->
+          <template v-else="">
+            <span v-if="props.rowData.service_id">{{ props.rowData.service.service_name }}</span>
+            <span v-else="">{{ props.rowData.scan_host }}</span>
+          </template>
+
+          <!-- Scan host flags -->
+          <span class="label label-primary" title="IP host" v-if="props.rowData.is_ip_host">IP</span>
+          <span class="label label-primary" title="Scanned" v-if="props.rowData.ip_scan_id">Scan</span>
+        </template>
+
         <template slot="errors" scope="props">
           <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
           <span class="label" v-bind:class="{
@@ -53,6 +79,12 @@
             <span class="label label-success" title="IPv6">{{props.rowData.dns_num_ipv6}}</span>
           </div>
           <span v-else="">-</span>
+        </template>
+        <template slot="actions" scope="props">
+          <div class="custom-actions">
+            <button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>
+          </div>
         </template>
       </vuetable-my>
       </div>
@@ -89,9 +121,11 @@
   </div>
 </template>
 <script>
+import _ from 'lodash';
 import accounting from 'accounting';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import Req from 'req';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';
@@ -102,17 +136,13 @@ import VuetablePagination from 'vuetable-2/src/components/VuetablePagination';
 import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
 import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-import CustomActions from './CustomActions';
-import DetailRow from './DetailRow';
-import FilterBar from './FilterBar';
+import FilterBar from '../partials/FilterBar.vue';
 import AddServer from './AddServer.vue';
 import EditServer from './EditServer.vue';
 import ServerInfo from './ServerInfo.vue';
 
 Vue.use(VueEvents);
 Vue.use(Vue2Filters);
-Vue.component('custom-actions', CustomActions);
-Vue.component('my-detail-row', DetailRow);
 Vue.component('filter-bar', FilterBar);
 Vue.component('add-server', AddServer);
 Vue.component('edit-server', EditServer);
@@ -139,7 +169,7 @@ export default {
                     dataClass: 'text-right'
                 },
                 {
-                    name: 'scan_host',
+                    name: '__slot:host',
                     sortField: 'scan_host',
                     title: 'Domain name',
                 },
@@ -161,14 +191,6 @@ export default {
                     dataClass: 'text-center',
                     callback: 'formatDate|DD-MM-YYYY'
                 },
-                // {
-                //     name: 'updated_at',
-                //     title: 'Update',
-                //     sortField: 'updated_at',
-                //     titleClass: 'text-center',
-                //     dataClass: 'text-center',
-                //     callback: 'formatDate|DD-MM-YYYY'
-                // },
                 {
                     name: '__slot:dns',
                     title: 'IP v4/v6',
@@ -192,7 +214,7 @@ export default {
                     callback: 'formatDate|DD-MM-YYYY HH:mm'
                 },
                 {
-                    name: '__component:custom-actions',
+                    name: '__slot:actions',
                     title: 'Actions',
                     titleClass: 'text-center',
                     dataClass: 'text-center'
@@ -253,7 +275,17 @@ export default {
             this.$refs.vuetable.changePage(page);
         },
         onCellClicked (data, field, event) {
-            this.$refs.vuetable.toggleDetailRow(data.id);
+            ;
+        },
+        onFilterSet(filterText){
+            this.moreParams = {
+                filter: filterText
+            };
+            Vue.nextTick(() => this.$refs.vuetable.refresh())
+        },
+        onFilterReset(){
+            this.moreParams = {};
+            Vue.nextTick(() => this.$refs.vuetable.refresh());
         },
         onLoading(){
             if (this.loadingState != 0){
@@ -273,6 +305,9 @@ export default {
         },
         uncheckAll(){
             this.$refs.vuetable.uncheckAllPages();
+        },
+        onEditServer(data){
+            this.$refs.editServer.onEditServer(data);
         },
         onDeleteServer(data){
             swal({
@@ -366,24 +401,11 @@ export default {
         },
     },
     events: {
-        'filter-set' (filterText) {
-            this.moreParams = {
-                filter: filterText
-            };
-            Vue.nextTick(() => this.$refs.vuetable.refresh())
-        },
-        'filter-reset' () {
-            this.moreParams = {};
-            Vue.nextTick(() => this.$refs.vuetable.refresh());
-        },
         'on-server-added' (data) {
             Vue.nextTick(() => this.$refs.vuetable.refresh());
         },
         'on-server-updated'(data) {
             Vue.nextTick(() => this.$refs.vuetable.refresh());
-        },
-        'on-delete-server'(data) {
-            this.onDeleteServer(data);
         },
         'on-manual-refresh'(){
             Vue.nextTick(() => this.$refs.vuetable.refresh());

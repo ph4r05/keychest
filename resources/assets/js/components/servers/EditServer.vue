@@ -48,7 +48,10 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import axios from 'axios';
+    import Req from 'req';
+
     export default {
         data () {
             return {
@@ -58,6 +61,16 @@
             }
         },
         methods: {
+            onEditServer(data){
+                Vue.nextTick(() => {
+                    this.serverItem = data;
+                    this.serverItem.server = Req.buildUrl(data.scan_scheme, data.scan_host, data.scan_port);
+                    $("#update-item").modal('show');
+                    setTimeout(()=>{
+                        $("#upd-server-name").focus();
+                    }, 500);
+                });
+            },
             createItem() {
                 // Minor domain validation.
                 if (_.isEmpty(this.serverItem.server) || this.serverItem.server.split('.').length <= 1){
@@ -108,16 +121,6 @@
                     });
             }
         },
-        events: {
-            'on-edit-server'(data) {
-                this.serverItem = data;
-                this.serverItem.server = window.Req.buildUrl(data.scan_scheme, data.scan_host, data.scan_port);
-                $("#update-item").modal('show');
-                setTimeout(()=>{
-                    $("#upd-server-name").focus();
-                }, 500);
-            },
-        }
     }
 </script>
 <style>
