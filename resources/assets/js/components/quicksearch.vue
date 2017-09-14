@@ -31,8 +31,8 @@
         </div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-            <span v-if="jobSubmittedNow">Waiting for spot check to finish ...</span>
-            <span v-else="">Loading test results ...</span>
+            <span v-if="jobSubmittedNow && !wsFinished">Waiting for spot check to finish ...</span>
+            <span v-else-if="!jobSubmittedNow || wsFinished">Loading test results</span>
         </div>
 
         <div class="alert alert-default scan-alert" id="search-success" style="display: none">
@@ -408,12 +408,15 @@
                 curJob: {},
                 curUrl: null,
                 curIp: null,
+                curChannel: null,
                 form: {
                     defcon: 5,
                     textStatus: 'OK'
                 },
                 jobSubmittedNow: false,
                 resultsLoaded: false,
+                wsStarted: false,
+                wsFinished: false,
                 results: { },
                 searchEnabled: true,
                 showExpertStats: false,
@@ -437,6 +440,7 @@
                 ctExpired: [],
                 ctValid: [],
 
+                pollTimer: null,
                 Req: window.Req,
                 Laravel: window.Laravel
             };
@@ -647,34 +651,66 @@
                 this.curUuid = uuid;
                 this.searchStarted();
                 ga('send', 'event', 'spot-check', 'uuid-provided');
-                setTimeout(this.pollFinish, 10);
+                this.pollTimer = setTimeout(this.pollFinish, 10);
             },
 
             pollFinish() {
-                Req.getJobState(this.curUuid, (function(json){
+                if (this.wsFinished){
+                    return;
+                }
+
+                Req.getJobState(this.curUuid, json => {
                     console.log(json);
+
+                    if (this.wsFinished){
+                        return;
+                    }
 
                     if (json.status !== 'success'){
                         this.errMsg('Job state fail, retry...');
-                        setTimeout(this.pollFinish, 1000);
+                        this.pollTimer = setTimeout(this.pollFinish, this.wsStarted ? 7000 : 1000);
                         return;
                     }
 
                     this.curJob = json.job;
                     this.curJob.port = Req.defval(this.curJob.scan_port, 443);
                     if (this.curJob.state !== 'finished'){
-                        setTimeout(this.pollFinish, 1000);
+                        this.pollTimer = setTimeout(this.pollFinish, this.wsStarted ? 7000 : 1000);
                     } else {
                         this.getResults();
                     }
 
-                }).bind(this), (function(jqxhr, textStatus, error){
+                }, (jqxhr, textStatus, error) => {
                     this.errMsg('Could not load scan with given ID');
-                }).bind(this));
+                });
+            },
+
+            onWsEvent(event){
+                try {
+                    // First websocket event received.
+                    // Changes status polling timeouts.
+                    this.wsStarted = true;
+                    console.log('Scan State: ' + event.data.state);
+
+                    // Finished event is terminating, load results directly.
+                    if (event.data.state === 'finished'){
+                        this.wsFinished = true;
+
+                        // Cancel poll timer, load data directly
+                        if (this.pollTimer){
+                            clearTimeout(this.pollTimer);
+                            this.pollTimer = null;
+                        }
+
+                        this.getResults();
+                    }
+                } catch(e){
+                    console.warn(e);
+                }
             },
 
             getResults() {
-                Req.getJobResult(this.curUuid, (function(json){
+                Req.getJobResult(this.curUuid, json => {
                     if (json.status !== 'success'){
                         this.errMsg('Job results fail, retry...');
                         setTimeout(this.getResults, 1000);
@@ -683,13 +719,15 @@
 
                     this.showResults(json);
 
-                }).bind(this), (function(jqxhr, textStatus, error){
+                }, (jqxhr, textStatus, error) => {
                     this.errMsg('Could not get job results');
-                }).bind(this));
+                });
             },
 
             showResults(json){
                 this.results = json;
+                this.curJob = json.job;
+                this.curJob.port = Req.defval(this.curJob.scan_port, 443);
 
                 $('#search-info').hide();
                 if (this.jobSubmittedNow) {
@@ -710,6 +748,7 @@
                 this.recomp();
 
                 // Process, show...
+                this.unlistenWebsocket();
                 this.processResults();
                 this.processTlsScan();
                 this.processCtScan();
@@ -889,10 +928,13 @@
             cleanResults(){
                 this.curUuid = {};
                 this.curJob = {};
+                this.curChannel = '';
                 this.form.defcon = 5;
                 this.form.textStatus = 'OK';
                 this.jobSubmittedNow = false;
                 this.resultsLoaded = false;
+                this.wsStarted = false;
+                this.wsFinished = false;
                 this.results = null;
                 this.showExpertStats = false;
                 this.addingStatus = 0;
@@ -912,6 +954,7 @@
 
                 this.ctExpired = [];
                 this.ctValid = [];
+                this.pollTimer = null;
                 this.$emit('onReset');
             },
 
@@ -941,6 +984,10 @@
 
                     this.$emit('onjobSubmitted', json);
 
+                    // Install websocket listener
+                    this.curChannel = 'spotcheck.' + json.uuid;
+                    this.listenWebsocket();
+
                     // Update URL so it contains params - job ID & url
                     let new_url = window.location.pathname + "?uuid=" + json.uuid
                         + '&url=' + encodeURIComponent(targetUri);
@@ -953,7 +1000,7 @@
                         history.replaceState(null, null, new_url); // replace the existing
 
                         this.curUuid = json.uuid;
-                        setTimeout(this.pollFinish, 500);
+                        this.pollTimer = setTimeout(this.pollFinish, 2500);
 
                     } catch(e) {
                         window.location.replace(new_url + '&new=1');
@@ -962,6 +1009,25 @@
                 }, (jqxhr, textStatus, error) => {
                     this.errMsg(error);
                 });
+            },
+
+            listenWebsocket(){
+                try {
+                    window.Echo
+                        .channel(this.curChannel)
+                        .listen('.spotcheck.event', this.onWsEvent);
+
+                } catch(e){
+                    console.warn(e);
+                }
+            },
+
+            unlistenWebsocket(){
+                try{
+                    Echo.leave(this.curChannel);
+                } catch(e){
+                    console.warn(e);
+                }
             },
 
             startTracking(){
