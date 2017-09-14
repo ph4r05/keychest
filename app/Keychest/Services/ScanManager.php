@@ -8,7 +8,7 @@
 
 namespace App\Keychest\Services;
 
-use App\Keychest\Utils\DomainTools;
+
 use App\Models\BaseDomain;
 use App\Models\Certificate;
 use App\Models\CrtShQuery;
@@ -16,18 +16,18 @@ use App\Models\DnsEntry;
 use App\Models\DnsResult;
 use App\Models\HandshakeScan;
 use App\Models\LastScanCache;
-use App\Models\SubdomainWatchAssoc;
-use App\Models\SubdomainWatchTarget;
+
+
 use App\Models\WatchAssoc;
 use App\Models\WatchTarget;
 use App\Models\WhoisResult;
-use App\User;
+
 use Exception;
-use function foo\func;
-use Illuminate\Contracts\Auth\Factory as FactoryContract;
+
+
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\DB;
 
 class ScanManager {

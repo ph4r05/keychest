@@ -10,8 +10,8 @@ namespace App\Keychest\DataClasses;
 
 use App\Keychest\Utils\AnalysisTools;
 use App\User;
-use Carbon\Carbon;
-use Illuminate\Queue\SerializesModels;
+
+
 use Illuminate\Support\Collection;
 
 class ValidityDataModel {

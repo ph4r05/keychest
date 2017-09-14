@@ -7,7 +7,7 @@ use App\Keychest\DataClasses\ValidityDataModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
+
 use Illuminate\Support\Collection;
 
 class WeeklyReport extends Mailable
@@ -28,6 +28,7 @@ class WeeklyReport extends Mailable
      * Create a new message instance.
      *
      * @param ReportDataModel $md
+     * @param Collection $news
      */
     public function __construct(ReportDataModel $md, Collection $news)
     {

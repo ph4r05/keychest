@@ -9,7 +9,7 @@
 namespace App\Keychest\Utils;
 
 use App\User;
-use Illuminate\Support\Collection;
+
 use RandomLib\Factory;
 
 /**

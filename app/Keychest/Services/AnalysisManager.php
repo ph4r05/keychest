@@ -13,10 +13,10 @@ use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
 use App\User;
 use Carbon\Carbon;
-use Exception;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
+
 
 class AnalysisManager
 {

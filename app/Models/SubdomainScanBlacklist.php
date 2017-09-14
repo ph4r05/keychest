@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Keychest\Uuids;
+
 use Illuminate\Database\Eloquent\Model;
 
 class SubdomainScanBlacklist extends Model

@@ -3,10 +3,9 @@
 namespace App\Keychest\Queue;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+
 use Illuminate\Broadcasting\Broadcasters\RedisBroadcaster;
-use Illuminate\Contracts\Redis\Factory as Redis;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+
 
 class Ph4RedisBroadcaster extends RedisBroadcaster
 {

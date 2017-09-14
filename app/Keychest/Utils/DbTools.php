@@ -8,8 +8,7 @@
 
 namespace App\Keychest\Utils;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
-use Traversable;
+
 
 /**
  * Minor static collection of DB utilities.

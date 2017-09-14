@@ -2,10 +2,10 @@
 
 namespace App\Keychest\Queue;
 
-use App\Keychest\Queue\Ph4RedisQueue;
+
 use Illuminate\Support\Arr;
 use Illuminate\Queue\Connectors\RedisConnector;
-use Illuminate\Contracts\Redis\Factory as Redis;
+
 
 class Ph4RedisConnector extends RedisConnector
 {

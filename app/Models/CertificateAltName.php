@@ -8,7 +8,7 @@
 
 namespace App\Models;
 
-use App\Keychest\Uuids;
+
 use Illuminate\Database\Eloquent\Model;
 
 class CertificateAltName extends Model

@@ -9,24 +9,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Utils\DataTools;
-use App\Keychest\Utils\DomainTools;
-use App\Models\BaseDomain;
-use App\Models\Certificate;
-use App\Models\CrtShQuery;
-use App\Models\DnsResult;
-use App\Models\HandshakeScan;
-use App\Models\WatchAssoc;
-use App\Models\WatchTarget;
-use App\Models\WhoisResult;
+
+
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Http\Request;
+
+
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Log;
-use Traversable;
+
 
 /**
  * Class DashboardController

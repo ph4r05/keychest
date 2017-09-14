@@ -17,11 +17,11 @@ use App\Models\WatchAssoc;
 use App\Models\WatchService;
 use App\Models\WatchTarget;
 use App\User;
-use function foo\func;
-use Illuminate\Contracts\Auth\Factory as FactoryContract;
+
+
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\DB;
 
 class ServerManager {
@@ -287,7 +287,7 @@ class ServerManager {
      *  - extract last tls scan info to a separate joinable table so no aggregation on MAX(last_scan_at) is needed
      *  - if tls_errors is not in the sort field, we can load all IDs by the side, cache it, match on it on the query.
      * @param null $userId
-     * @param bool $filterIpServers can exclude / include the IP servers
+     * @param int $filterIpServers can exclude / include the IP servers
      * @return \Illuminate\Database\Query\Builder|static
      */
     public function loadServerList($userId=null, $filterIpServers=self::FILTER_INCLUDE){

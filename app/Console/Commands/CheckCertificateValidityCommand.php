@@ -3,16 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Jobs\SendUserWeeklyReport;
-use App\Keychest\Services\AnalysisManager;
-use App\Keychest\Services\EmailManager;
-use App\Keychest\Services\ScanManager;
-use App\Keychest\Services\ServerManager;
+
+
 use App\Keychest\Utils\DataTools;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Mockery\Exception;
 
 
 class CheckCertificateValidityCommand extends Command

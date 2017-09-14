@@ -3,8 +3,8 @@
 namespace App\Keychest\Events;
 
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Queue\Job;
-use Illuminate\Queue\InteractsWithQueue;
+
+
 use Illuminate\Events\CallQueuedListener;
 
 class Ph4CallQueuedListener extends CallQueuedListener

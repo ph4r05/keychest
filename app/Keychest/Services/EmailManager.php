@@ -12,7 +12,7 @@ use App\Keychest\DataClasses\UnsubscribeResult;
 use App\Models\EmailNews;
 use App\User;
 use Carbon\Carbon;
-use Exception;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

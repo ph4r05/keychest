@@ -9,21 +9,19 @@
 namespace App\Keychest\Services;
 
 use App\Keychest\Utils\IpRange;
-use App\Models\DnsResult;
+
 use App\Models\IpScanRecord;
 use App\Models\UserIpScanRecord;
-use App\Models\WatchAssoc;
-use App\Models\WatchTarget;
-use App\User;
+
+
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Contracts\Auth\Factory as FactoryContract;
+
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
+
 use Keychest\Services\Exceptions\CouldNotCreateException;
 
 class IpScanManager {

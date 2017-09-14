@@ -8,14 +8,13 @@
 
 namespace App\Keychest\Utils;
 
-use Exception;
+
 use Illuminate\Support\Collection;
-use App\Keychest\Utils\IpRange;
-use App\Keychest\Utils\IpRange\InvalidRangeException;
-use Illuminate\Support\Facades\Log;
+
+
 use IPLib\Address\AddressInterface;
 use IPLib\Factory;
-use IPLib\Range\RangeInterface;
+
 use TrueBV\Punycode;
 
 /**
@@ -246,6 +245,8 @@ class DomainTools {
 
     /**
      * Tests IPv4 for validity
+     * @param $inp
+     * @return bool
      */
     public static function isIpv4Valid($inp){
         return filter_var($inp, FILTER_VALIDATE_IP,

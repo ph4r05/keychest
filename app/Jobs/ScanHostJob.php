@@ -22,6 +22,7 @@ class ScanHostJob implements ShouldQueue, JsonJob
      * Create a new job instance.
      *
      * @param ScanJob $elDb
+     * @param $elJson
      */
     public function __construct(ScanJob $elDb, $elJson)
     {

@@ -12,15 +12,15 @@ use App\Keychest\Utils\DomainTools;
 use App\Models\SubdomainScanBlacklist;
 use App\Models\SubdomainWatchAssoc;
 use App\Models\SubdomainWatchTarget;
-use App\Models\WatchAssoc;
-use App\Models\WatchTarget;
+
+
 use App\User;
-use function foo\func;
-use Illuminate\Contracts\Auth\Factory as FactoryContract;
+
+
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
 
 class SubdomainManager {
 

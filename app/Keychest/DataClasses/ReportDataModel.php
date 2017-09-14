@@ -8,8 +8,8 @@
 namespace App\Keychest\DataClasses;
 
 use App\User;
-use Carbon\Carbon;
-use Illuminate\Queue\SerializesModels;
+
+
 use Illuminate\Support\Collection;
 
 class ReportDataModel

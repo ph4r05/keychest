@@ -4,8 +4,7 @@ namespace App\Listeners;
 
 use App\Keychest\Utils\UserTools;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+
 
 class OnUserRegistered
 {

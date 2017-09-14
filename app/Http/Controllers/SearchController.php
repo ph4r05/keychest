@@ -7,7 +7,7 @@
  */
 namespace App\Http\Controllers;
 
-use App\Events\ScanJobProgress;
+
 use App\Jobs\ScanHostJob;
 use App\Keychest\Coverage\Interval;
 use App\Keychest\Services\ServerManager;
@@ -25,14 +25,11 @@ use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Gate;
+
+
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
+
 use Webpatser\Uuid\Uuid;
 
 class SearchController extends Controller

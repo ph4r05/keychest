@@ -13,12 +13,12 @@ use App\Models\LastScanCache;
 use App\Models\SubdomainResults;
 use App\Models\SubdomainWatchAssoc;
 use App\Models\SubdomainWatchTarget;
-use App\Models\WatchAssoc;
-use App\Models\WatchTarget;
+
+
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Http\Request;
+
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -486,6 +486,7 @@ class SubdomainsController extends Controller
 
     /**
      * Submits job to check for auto-add once user changes this setting.
+     * @param $assocId
      */
     protected function autoAddCheck($assocId){
         // Queue entry to the scanner queue
