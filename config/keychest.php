@@ -12,5 +12,6 @@ return [
     'wrk_weekly_emails_conn' => env('WORK_WEEKLY_EMAILS_CONN', 'database'),
     'wrk_weekly_emails_queue' => env('WORK_WEEKLY_EMAILS_QUEUE', 'emails'),
 
+    'enabled_ip_scanning' => env('APP_ENABLED_IP_SCANNING', false),
 ];
 

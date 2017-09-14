@@ -79,12 +79,14 @@ Route::post('home/servers/update', 'ServersController@update')->name('servers/up
 Route::post('home/servers/canAdd', 'ServersController@canAddHost')->name('servers/canAdd');
 Route::post('home/servers/import', 'ServersController@importServers')->name('servers/import');
 
-Route::get('home/networks', 'NetworksController@index')->name('networks');
-Route::get('home/networks/get', 'NetworksController@ipScanList')->name('networks/get');
-Route::post('home/networks/add', 'NetworksController@add')->name('networks/add');
-Route::post('home/networks/del', 'NetworksController@del')->name('networks/del');
-Route::post('home/networks/delMore', 'NetworksController@delMore')->name('networks/delMore');
-Route::post('home/networks/update', 'NetworksController@update')->name('networks/update');
+if (config('keychest.enabled_ip_scanning')) {
+    Route::get('home/networks', 'NetworksController@index')->name('networks');
+    Route::get('home/networks/get', 'NetworksController@ipScanList')->name('networks/get');
+    Route::post('home/networks/add', 'NetworksController@add')->name('networks/add');
+    Route::post('home/networks/del', 'NetworksController@del')->name('networks/del');
+    Route::post('home/networks/delMore', 'NetworksController@delMore')->name('networks/delMore');
+    Route::post('home/networks/update', 'NetworksController@update')->name('networks/update');
+}
 
 Route::get('home/scan', 'SearchController@showHome')
     ->name('home/scan')
