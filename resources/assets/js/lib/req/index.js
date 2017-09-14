@@ -7,6 +7,7 @@ import _ from 'lodash';
 import axios from 'axios';
 import moment from 'moment';
 import 'moment-timezone';
+import URLp from 'url-parse';
 
 /**
  * Returns GET parameter
@@ -243,7 +244,7 @@ function parseUrl(url, defaultScheme='https'){
         url = defaultScheme + '://' + url;
     }
 
-    return URL(url, true);
+    return URLp(url, true);
 }
 
 /**
@@ -261,7 +262,7 @@ function normalizeUrl(url, defaultScheme='https', defaultPort=443){
         url = defaultScheme + '://' + url;
     }
 
-    const urlp = URL(url, true);
+    const urlp = URLp(url, true);
     const comps = autoFillSchemePort(protocolFixTrailingColon(urlp.protocol), urlp.port);
     return comps[0] + '://' + urlp.host + comps[1];
 }
