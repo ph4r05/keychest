@@ -45,9 +45,11 @@
                 <a href="{{ url('home/servers') }}"><i class='fa fa-server'></i> <span>{{ trans('admin.servers') }}</span></a>
             </li>
 
+            @if(config('keychest.enabled_ip_scanning'))
             <li class="{{ Request::path() ==  'home/networks' ? 'active' : ''  }}">
                 <a href="{{ url('home/networks') }}"><i class='fa fa-cogs'></i> <span>{{ trans('admin.ip_servers') }}</span></a>
             </li>
+            @endif
 
             <li class="{{ Request::path() ==  'home/license' ? 'active' : ''  }}">
                 <a href="{{ url('home/license') }}"><i class='fa fa-drivers-license'></i> <span>{{ trans('admin.license') }}</span></a>

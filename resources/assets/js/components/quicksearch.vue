@@ -402,6 +402,7 @@
     import moment from 'moment';
     import pluralize from 'pluralize';
     import Req from 'req';
+    import URLp from 'url-parse';
 
     export default {
         props: {
@@ -878,7 +879,7 @@
 
                 this.tlsScan = this.results.tlsScans[0];
                 if (this.tlsScan.follow_http_url){
-                    const urlp = URL(this.tlsScan.follow_http_url, true);
+                    const urlp = URLp(this.tlsScan.follow_http_url, true);
                     if (!Req.isSameUrl(
                             'https', urlp.hostname, urlp.port || 443,
                             this.curJob.scan_scheme || 'https', this.curJob.scan_host, this.curJob.scan_port || 443)) {
@@ -887,7 +888,7 @@
                 }
 
                 if (!this.didYouMeanUrl && this.tlsScan.follow_https_url){
-                    const urlp = URL(this.tlsScan.follow_https_url, true);
+                    const urlp = URLp(this.tlsScan.follow_https_url, true);
                     if (!Req.isSameUrl(
                             'https', urlp.hostname, urlp.port || 443,
                             this.curJob.scan_scheme || 'https', this.curJob.scan_host, this.curJob.scan_port || 443)) {

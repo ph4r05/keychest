@@ -8,7 +8,6 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-window.URL = require('url-parse');
 window.Req = require('req').default;
 window.toastr = require('toastr');
 window.Moment = require('moment');

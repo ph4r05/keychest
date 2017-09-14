@@ -104,6 +104,9 @@
             <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
         </div>
         <span>Selected {{numSelected}} {{ numSelected | pluralize('server') }} </span>
+        <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServers('download-servers')" >
+          Download all servers
+        </button>
       </div>
 
       <div class="vuetable-pagination form-group">
@@ -125,7 +128,10 @@ import _ from 'lodash';
 import accounting from 'accounting';
 import moment from 'moment';
 import pluralize from 'pluralize';
+import axios from 'axios';
 import Req from 'req';
+import Blob from 'w3c-blob';
+import FileSaver from 'file-saver';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';
@@ -275,7 +281,7 @@ export default {
             this.$refs.vuetable.changePage(page);
         },
         onCellClicked (data, field, event) {
-            ;
+
         },
         onFilterSet(filterText){
             this.moreParams = {
@@ -306,8 +312,40 @@ export default {
         uncheckAll(){
             this.$refs.vuetable.uncheckAllPages();
         },
-        onEditServer(data){
+        onEditServer(data) {
             this.$refs.editServer.onEditServer(data);
+        },
+        serversLoaded(response) {
+            Req.bodyProgress(false);
+            const data = response.data;
+
+            // Building the CSV from the Data two-dimensional array
+            // Each column is separated by "," and new line "\n" for next row
+            let acc = ['host,port'];
+            for (let cur of data) {
+                const dataString = _.join([cur.scan_host, cur.scan_port]);
+                acc.push(dataString);
+            }
+
+            const csvContent = _.join(acc, '\n');
+            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
+            FileSaver.saveAs(blob, "servers.csv");
+        },
+        downloadServers() {
+            Req.bodyProgress(true);
+            const params = {
+                return_all: 1,
+                sort: 'scan_host,scan_port'
+            };
+
+            axios.get(this.$refs.vuetable.apiUrl, {params: params})
+                .then(response => {
+                    this.serversLoaded(response.data);
+                })
+                .catch(e => {
+                    Req.bodyProgress(false);
+                    console.warn(e);
+                });
         },
         onDeleteServer(data){
             swal({

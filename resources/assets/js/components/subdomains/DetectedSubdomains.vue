@@ -62,6 +62,9 @@
                         <i class="glyphicon glyphicon-plus" title="Add to monitoring"></i></button>
                 </div>
                 <span>Selected {{numSelected}} {{ numSelected | pluralize('sub-domain') }} </span>
+                <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServerList('download-subdomains')" >
+                    Download all sub-domains
+                </button>
             </div>
 
             <div class="vuetable-pagination">
@@ -82,7 +85,10 @@
     import moment from 'moment';
     import pluralize from 'pluralize';
     import _ from 'lodash';
+    import axios from 'axios';
     import Req from 'req';
+    import Blob from 'w3c-blob';
+    import FileSaver from 'file-saver';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -421,6 +427,21 @@
             onFilterReset(){
                 this.moreParams = {};
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
+            },
+            downloadServerList(action) {
+                const data = this.processedData;
+
+                // Building the CSV from the Data two-dimensional array
+                // Each column is separated by "," and new line "\n" for next row
+                let acc = ['domain,added'];
+                for (let cur of data) {
+                    const dataString = _.join([cur.name, +cur.used]);
+                    acc.push(dataString);
+                }
+
+                const csvContent = _.join(acc, '\n');
+                const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
+                FileSaver.saveAs(blob, "sub-domains.csv");
             },
         },
         events: {
