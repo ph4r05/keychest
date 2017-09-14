@@ -89,6 +89,7 @@
 </template>
 <script>
     import _ from 'lodash';
+    import axios from 'axios';
     import accounting from 'accounting';
     import moment from 'moment';
     import pluralize from 'pluralize';

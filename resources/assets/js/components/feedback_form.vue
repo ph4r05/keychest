@@ -42,6 +42,9 @@
 
 <script>
     import axios from 'axios';
+    import _ from 'lodash';
+    import toastr from 'toastr';
+
     export default {
         data: function() {
             return {

@@ -90,6 +90,7 @@
     import axios from 'axios';
     import pluralize from 'pluralize';
     import Req from 'req';
+    import toastr from 'toastr';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';

@@ -809,6 +809,7 @@
     import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
     import Req from 'req';
+    import toastr from 'toastr';
 
     export default {
         data: function() {

@@ -7,6 +7,7 @@
 
 // __webpack_public_path__ = '/';  // quick hack for Vue2 lazy loaded components. Not needed now.
 require('./bootstrap');
+import _ from 'lodash';
 
 window.Vue = require('vue');
 window.Req = require('req').default;

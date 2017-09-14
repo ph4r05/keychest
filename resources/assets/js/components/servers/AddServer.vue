@@ -58,6 +58,7 @@
     import _ from 'lodash';
     import axios from 'axios';
     import Req from 'req';
+    import toastr from 'toastr';
 
     export default {
         data () {

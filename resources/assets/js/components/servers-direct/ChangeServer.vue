@@ -61,6 +61,7 @@
     import _ from 'lodash';
     import axios from 'axios';
     import Req from 'req';
+    import toastr from 'toastr';
 
     import Vue from 'vue';
     import VeeValidate from 'vee-validate';
