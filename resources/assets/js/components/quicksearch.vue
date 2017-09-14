@@ -652,7 +652,7 @@
                 this.curUuid = uuid;
                 this.searchStarted();
                 ga('send', 'event', 'spot-check', 'uuid-provided');
-                this.pollTimer = setTimeout(this.pollFinish, 10);
+                this.schedPoll(10);
             },
 
             pollFinish() {
@@ -669,14 +669,14 @@
 
                     if (json.status !== 'success'){
                         this.errMsg('Job state fail, retry...');
-                        this.pollTimer = setTimeout(this.pollFinish, this.wsStarted ? 7000 : 1000);
+                        this.schedPoll();
                         return;
                     }
 
                     this.curJob = json.job;
                     this.curJob.port = Req.defval(this.curJob.scan_port, 443);
                     if (this.curJob.state !== 'finished'){
-                        this.pollTimer = setTimeout(this.pollFinish, this.wsStarted ? 7000 : 1000);
+                        this.schedPoll();
                     } else {
                         this.getResults();
                     }
@@ -686,6 +686,21 @@
                 });
             },
 
+            schedPoll(timerVal){
+                this.pollTimer = setTimeout(this.pollFinish, timerVal || (this.wsStarted ? 7000 : 1000));
+            },
+
+            cancelPoll(){
+                try {
+                    if (this.pollTimer) {
+                        clearTimeout(this.pollTimer);
+                        this.pollTimer = null;
+                    }
+                } catch(e){
+                    console.warn(e);
+                }
+            },
+
             onWsEvent(event){
                 try {
                     // First websocket event received.
@@ -693,17 +708,19 @@
                     this.wsStarted = true;
                     console.log('Scan State: ' + event.data.state);
 
+                    // Poll is not needed for now.
+                    // Either it is finished and we are done completelly or
+                    // the connection is still living and we can drop it.
+                    this.cancelPoll();
+
                     // Finished event is terminating, load results directly.
                     if (event.data.state === 'finished'){
                         this.wsFinished = true;
-
-                        // Cancel poll timer, load data directly
-                        if (this.pollTimer){
-                            clearTimeout(this.pollTimer);
-                            this.pollTimer = null;
-                        }
-
                         this.getResults();
+                    } else {
+                        // Cancel scheduled poll request and re-schedule it in the future.
+                        // New event came so the connection is live. No need for poll.
+                        this.schedPoll();
                     }
                 } catch(e){
                     console.warn(e);
@@ -1001,7 +1018,7 @@
                         history.replaceState(null, null, new_url); // replace the existing
 
                         this.curUuid = json.uuid;
-                        this.pollTimer = setTimeout(this.pollFinish, 2500);
+                        this.schedPoll(2500);
 
                     } catch(e) {
                         window.location.replace(new_url + '&new=1');
