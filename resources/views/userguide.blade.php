@@ -5,11 +5,11 @@
 @endsection
 
 @section('contentheader_title')
-    <span class="tc-rich-electric-blue">{{ trans('admin.userguide') }}</span>
+    {{ trans('admin.userguide') }}
 @endsection
 
 @section('contentheader_description')
-    <span class="tc-onyx">{{ trans('admin.userguide_desc') }}</span>
+    {{ trans('admin.userguide_desc') }}
 @endsection
 
 @section('main-content')
