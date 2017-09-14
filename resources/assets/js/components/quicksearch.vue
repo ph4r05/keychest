@@ -392,6 +392,7 @@
     import axios from 'axios';
     import moment from 'moment';
     import pluralize from 'pluralize';
+    import Req from '../req';
 
     export default {
         props: {
@@ -1043,25 +1044,25 @@
 
                 Req.bodyProgress(true);
 
-                const onFail = (function(){
+                const onFail = () => {
                     Req.bodyProgress(false);
                     this.addingStatus = -1;
                     $('#start-tracking-wrapper').effect( "shake" );
                     toastr.error('Error while adding the server, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     Req.bodyProgress(false);
                     this.addingStatus = 3;
                     toastr.success('This host is already being monitored.', 'Already present');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     Req.bodyProgress(false);
                     this.addingStatus = 1;
                     this.$emit('onServerAdded', data);
                     toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
-                }).bind(this);
+                };
 
                 this.addingStatus = 2;
                 axios.post('/home/servers/add', {'server': server2monitor})
