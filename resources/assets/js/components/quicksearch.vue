@@ -230,7 +230,7 @@
                     allowed to use the same private key:</p>
                 <ul class="domain-neighbours">
                     <li v-for="domain in neighbourhood">
-                        <span v-if="!Req.isWildcard(domain)"><a v-bind:href="newScanUrl(domain)">{{ domain }}</a></span
+                        <span v-if="!isWildcard(domain)"><a v-bind:href="newScanUrl(domain)">{{ domain }}</a></span
                         ><span v-else="">{{ domain }}</span
                     ></li>
                 </ul>
@@ -442,7 +442,6 @@
                 ctValid: [],
 
                 pollTimer: null,
-                Req: window.Req,
                 Laravel: window.Laravel
             };
         },
@@ -572,6 +571,10 @@
 
             pluralize(str, num, disp){
                 return pluralize(str, num, disp);
+            },
+
+            isWildcard(domain){
+                return Req.isWildcard(domain);
             },
 
             recomp(){
