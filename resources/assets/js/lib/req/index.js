@@ -7,6 +7,7 @@ import _ from 'lodash';
 import axios from 'axios';
 import moment from 'moment';
 import 'moment-timezone';
+import Blob from 'w3c-blob';
 import URLp from 'url-parse';
 
 /**
@@ -604,6 +605,37 @@ function vuePagination(data, pagination){
     return [data, pagination];
 }
 
+/**
+ * The download function takes a CSV string, the filename and mimeType as parameters
+ * Scroll/look down at the bottom of this snippet to see how download is called
+ * @param content
+ * @param fileName
+ * @param mimeType
+ */
+function download(content, fileName, mimeType) {
+    const a = document.createElement('a');
+    mimeType = mimeType || 'application/octet-stream';
+
+    if (navigator.msSaveBlob) { // IE10
+        navigator.msSaveBlob(new Blob([content], {
+            type: mimeType
+        }), fileName);
+
+    } else if ('URL' in window && 'download' in a) { //html5 A[download]
+        const myURLcreate = window.URL.createObjectURL || window.webkitURL.createObjectURL;
+        a.href = myURLcreate(new Blob([content], {
+            type: mimeType
+        }));
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+    } else {
+        location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+    }
+}
+
 //
 // Hacks & minor functions
 //
@@ -647,6 +679,7 @@ export default {
     vueSortToOrderBy: vueSortToOrderBy,
     vueOrderBy: vueOrderBy,
     vuePagination: vuePagination,
+    download: download,
 
     switchTab: switchTab,
     switchTabPath: switchTabPath,
