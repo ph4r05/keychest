@@ -581,9 +581,7 @@
                 obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
             },
 
-            pluralize(str, num, disp){
-                return pluralize(str, num, disp);
-            },
+            pluralize,
 
             isWildcard(domain){
                 return Req.isWildcard(domain);
