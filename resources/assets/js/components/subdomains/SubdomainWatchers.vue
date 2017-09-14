@@ -71,7 +71,7 @@
                             @click="deleteChecked()">
                         <i class="glyphicon glyphicon-trash" title="Remove"></i></button>
                 </div>
-                <span>Selected {{numSelected}} active {{ numSelected | pluralize('domain') }} </span>
+                <span>Selected {{numSelected}} active {{ pluralize('domain', numSelected) }} </span>
             </div>
 
             <div class="vuetable-pagination">
@@ -228,6 +228,7 @@
 
                 return value;
             },
+            pluralize,
             onPaginationData (paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);
                 this.$refs.paginationInfo.setPaginationData(paginationData);

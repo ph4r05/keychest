@@ -61,7 +61,7 @@
                             @click="addToMonitoringChecked()">
                         <i class="glyphicon glyphicon-plus" title="Add to monitoring"></i></button>
                 </div>
-                <span>Selected {{numSelected}} {{ numSelected | pluralize('sub-domain') }} </span>
+                <span>Selected {{numSelected}} {{ pluralize('sub-domain', numSelected) }} </span>
                 <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServerList('download-subdomains')" >
                     Download all sub-domains
                 </button>
@@ -196,6 +196,7 @@
             formatDate (value, fmt = 'DD-MM-YYYY') {
                 return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
             },
+            pluralize,
             onPaginationData (paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);
                 this.$refs.paginationInfo.setPaginationData(paginationData);

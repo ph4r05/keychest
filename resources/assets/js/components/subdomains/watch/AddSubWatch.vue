@@ -50,7 +50,7 @@
 
                         <div class="alert alert-info" v-if="!addMore && suffixResp.length > 0">
                             Domain <i>{{ getInputDomain() }}</i> is already covered with existing
-                            {{ suffixResp.length | pluralize('record') }}: <i>{{ suffixes() }}</i>
+                            {{ pluralize('record', suffixResp.length) }}: <i>{{ suffixes() }}</i>
                         </div>
                         <div class="alert alert-info" v-else-if="!addMore && sldTestRes == 1">
                             This active domain will monitor all sub-domains of <i>{{ getInputDomain() }}</i>.
@@ -148,6 +148,7 @@
 
                 return _.startsWith(t, '*') || _.startsWith(t, '%');
             },
+            pluralize,
 
             onAddDomain(domain){
                 const newDomain = Req.removeAllWildcards(domain);

@@ -103,7 +103,7 @@
                   @click="onDeleteServers()">
             <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
         </div>
-        <span>Selected {{numSelected}} {{ numSelected | pluralize('server') }} </span>
+        <span>Selected {{numSelected}} {{ pluralize('server', numSelected) }} </span>
         <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServers('download-servers')" >
           Download all servers
         </button>
@@ -273,6 +273,7 @@ export default {
         tlsTitle(rowData){
             return `TLS checks failed for ${rowData.tls_errors} out of ${rowData.tls_all} IP addresses`;
         },
+        pluralize,
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData);
             this.$refs.paginationInfo.setPaginationData(paginationData);

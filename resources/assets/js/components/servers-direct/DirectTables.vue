@@ -82,7 +82,7 @@
                   @click="onDeleteServers()">
             <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
         </div>
-        <span>Selected {{numSelected}} {{ numSelected | pluralize('server') }} </span>
+        <span>Selected {{numSelected}} {{ pluralize('server', numSelected) }} </span>
       </div>
 
       <div class="vuetable-pagination form-group">
@@ -230,6 +230,7 @@ export default {
         getRangeSize(data){
             return ph4.ip_range(data.ip_beg, data.ip_end);
         },
+        pluralize,
         onPaginationData (paginationData) {
             this.$refs.pagination.setPaginationData(paginationData);
             this.$refs.paginationInfo.setPaginationData(paginationData);
