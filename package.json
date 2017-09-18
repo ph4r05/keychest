@@ -65,6 +65,9 @@
     "vue": "^2.4.2",
     "vue-chartjs": "^2.8.1",
     "vue-events": "^3.0.1",
+    "vue-js-toggle-button": "^1.1.5",
+    "vue-select": "^2.2.0",
+    "vue-switches": "^2.0.1",
     "vue2-filters": "^0.1.9",
     "vuetable-2": "^1.6.5",
     "w3c-blob": "0.0.1"
