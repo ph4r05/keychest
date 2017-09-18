@@ -8,9 +8,10 @@
 <body class="hold-transition login-page">
     <div id="app" v-cloak>
         <div class="login-box">
-            <div class="login-logo">
-                <a href="{{ url('/home') }}"><b>KeyChest</b> Dashboard</a>
-            </div><!-- /.login-logo -->
+            <div class="register-logo" style="background: #fff; opacity: 0.6;" >
+                <a href="{{ url('/') }}"><b>KeyChest</b> Dashboard</a></br>
+                <div style="color:#00a7d7;font-size:18px"><b>Discovers your TLS/HTTPS Certificates</b></div>
+            </div> <!-- end of register-logo -->
 
         @if (count($errors) > 0)
             <div class="alert alert-danger">
