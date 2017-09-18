@@ -74,6 +74,9 @@ Vue.component('server-tables', resolve => {
 Vue.component('servers-import', resolve => {
     require.ensure([], require => resolve(require('./components/servers-import/server-import.vue')), 'servers-import');
 });
+Vue.component('account', resolve => {
+    require.ensure([], require => resolve(require('./components/license/account.vue')), 'account');
+});
 
 
 console.log('Vue.js init');
