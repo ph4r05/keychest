@@ -35,16 +35,5 @@ class LicenseController extends Controller
         $this->emailManager = $eManager;
     }
 
-    /**
-     * Unsubscribe from email report
-     * @param $token
-     * @return $this
-     */
-    public function unsubscribe($token){
-        $res = $this->emailManager->unsubscribe($token);
 
-        return view('unsubscribe')->with(
-            ['token' => $token, 'res' => $res]
-        );
-    }
 }
