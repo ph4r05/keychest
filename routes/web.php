@@ -111,6 +111,7 @@ Route::get('home/subs/suffix', 'SubdomainsController@watchingDomainWithSuffix')-
 
 Route::get('home/license', 'LicenseController@index')->name('license');
 Route::post('home/account/update', 'LicenseController@updateAccount')->name('update-account');
+Route::post('home/account/close', 'LicenseController@closeAccount')->name('close-account');
 
 Route::get('home/user-guide', function () {
     return view('userguide');

@@ -6,6 +6,7 @@ use App\Http\Requests;
 
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\LicenseManager;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +84,17 @@ class LicenseController extends Controller
         foreach ($data as $key => $value){
             $curUser->$key = $value;
         }
+        $curUser->save();
+
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    /**
+     * Close account request
+     */
+    public function closeAccount(){
+        $curUser = Auth::user();
+        $curUser->closed_at = Carbon::now();
         $curUser->save();
 
         return response()->json(['status' => 'success'], 200);

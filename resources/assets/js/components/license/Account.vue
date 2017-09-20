@@ -102,9 +102,15 @@
                     <th>Created</th>
                     <td>{{ createdAtStr }} GMT</td>
                     <td>
-                        <button type="button" disabled="disabled" class="btn btn-sm btn-warning btn-block">
-                            Close account (coming soon)
+                        <button type="button"
+                                class="btn btn-sm btn-warning btn-block"
+                                @click.prevent="onCloseAccountClick()"
+                                v-if="!closedAt">
+                            Close account
                         </button>
+                        <template v-else="">
+                            Closing on {{ closingAtStr }}
+                        </template>
                     </td>
                 </tr>
                 </tbody>
@@ -122,6 +128,7 @@
     import axios from 'axios';
     import Req from 'req';
     import toastr from 'toastr';
+    import swal from 'sweetalert2';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -171,6 +178,10 @@
                 required: false,
                 default: 0
             },
+            initClosedAt: {
+                type: Number,
+                required: false,
+            },
         },
         data () {
             return {
@@ -186,6 +197,7 @@
                 createdAt: this.initCreated * 1000,
                 notifType: this.initNotifType ? this.initNotifType : 0,
                 notifTypeVal: null,
+                closedAt: this.initClosedAt ? this.initClosedAt * 1000 : undefined,
 
                 changes: {},
                 editMode: {
@@ -207,6 +219,11 @@
         computed: {
             createdAtStr(){
                 return moment.utc(this.createdAt).format("MMM Do YYYY, HH:mm");
+            },
+            closingAtStr(){
+                return this.closedAt && this.closedAt > 10 ?
+                    moment.utc(this.closedAt).add(1, 'month').format("MMM Do YYYY, HH:mm") :
+                    '';
             },
             allTzs(){
                 return moment.tz.names();
@@ -324,7 +341,68 @@
                         if (e && e.response && e.response.status === 410){
                             onInvalidInput();
                         } else {
-                            console.log("Add server failed: " + e);
+                            console.log("Update account failed: " + e);
+                            onFail();
+                        }
+                    });
+            },
+            onCloseAccountClick(){
+                swal({
+                    title: 'Please confirm account close',
+                    text: "The account will be deleted permanently. This action cannot be undone",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Close account'
+                }).then(() => {
+                    this.onCloseAccountConfirm();
+                }).catch(() => {});
+            },
+            onCloseAccountConfirm(){
+                swal({
+                    title: 'Please confirm account close',
+                    text: "Are you really sure? This is the last chance to call it off.",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes'
+                }).then(() => {
+                    this.onCloseAccountConfirm2();
+                }).catch(() => {});
+            },
+            onCloseAccountConfirm2(){
+                const onFail = () => {
+                    Vue.nextTick(() => {
+                        Req.bodyProgress(false);
+                        toastr.error('Could not close the account. Please, try again later', 'Close failed',
+                            {timeOut: 2000, preventDuplicates: true});
+                    });
+                };
+
+                const onSuccess = (data) => {
+                    Vue.nextTick(() => {
+                        Req.bodyProgress(false);
+                        this.closedAt = moment().utc();
+                        this.$emit('onAccountClosed', data);
+                        this.$events.fire('on-account-closed', data);
+                        toastr.success('Account close request submitted.', 'Success');
+                    });
+                };
+
+                Req.bodyProgress(true);
+                axios.post('/home/account/close', {})
+                    .then(response => {
+                        if (!response || !response.data) {
+                            onFail();
+                        } else if (response.data['status'] === 'success') {
+                            onSuccess(response.data);
+                        } else {
+                            onFail();
+                        }
+                    })
+                    .catch(e => {
+                        if (e && e.response && e.response.status === 410){
+                            onFail();
+                        } else {
+                            console.log("Close account failed: " + e);
                             onFail();
                         }
                     });

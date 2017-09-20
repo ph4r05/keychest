@@ -19,6 +19,7 @@
                     :init-weekly-disabled="{{ Auth::user()->weekly_emails_disabled }}"
                     :init-created="{{ strtotime(Auth::user()->created_at) }}"
                     :init-notif-type="{{ Auth::user()->cert_notif_state }}"
+                    :init-closed-at="{{ (Auth::user()->closed_at ? strtotime(Auth::user()->closed_at) : 0) }}"
             ></account>
 
             <p class="tc-onyx">
