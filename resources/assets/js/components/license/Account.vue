@@ -120,6 +120,7 @@
     import pluralize from 'pluralize';
     import axios from 'axios';
     import Req from 'req';
+    import toastr from 'toastr';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -167,6 +168,7 @@
             return {
                 loadingState: 0,
                 numSelected: 0,
+                sentState: 0,
 
                 username: Laravel.authUserName,
                 email: this.initEmail,
@@ -181,7 +183,7 @@
                     email: false,
                     notifEmail: false,
                     tz: false,
-                    weeklyEnabled: true
+                    weeklyEnabled: false
                 },
                 initialValues: {
 
@@ -215,10 +217,79 @@
                 {
                     return;
                 }
-                this.editMode[field] = field in this.editMode ? !this.editMode[field] : true;
+
+                const newEditValue = field in this.editMode ? !this.editMode[field] : true;
+                if (newEditValue){
+                    // was non-edit before -> save initial value
+                    this.initialValues[field] = this[field];
+                    this.editMode[field] = newEditValue;
+
+                } else {
+                    if (this.initialValues[field] === this[field]){
+                        this.editMode[field] = newEditValue;
+                        return; // nothing has changed
+                    }
+                    this.updateChanges(field);
+                }
             },
             isEdit(field){
                 return field in this.editMode ? this.editMode[field] : false;
+            },
+            updateChanges(field){
+                const onFail = () => {
+                    this.sentState = -1;
+                    Vue.nextTick(() => {
+                        Req.bodyProgress(false);
+                        toastr.error('Could not update settings. Please, try again later', 'Update failed',
+                            {timeOut: 2000, preventDuplicates: true});
+                    });
+                };
+
+                const onInvalidInput = () => {
+                    this.sentState = 0;
+                    Vue.nextTick(() => {
+                        Req.bodyProgress(false);
+                        toastr.error('Could not update settings. Please check the input data', 'Update failed',
+                            {timeOut: 2000, preventDuplicates: true});
+                    });
+                };
+
+                const onSuccess = (data) => {
+                    this.sentState = 1;
+                    Vue.nextTick(() => {
+                        Req.bodyProgress(false);
+
+                        if (field) {
+                            this.editMode[field] = false;
+                        }
+                        this.$emit('onAccountUpdated', data);
+                        this.$events.fire('on-account-updated', data);
+                        toastr.success('Account Updated Successfully.', 'Success');
+                    });
+                };
+
+                const data = _.pick(this, field ? field : _.keys(this.initialValues));
+
+                this.sentState = 2;
+                Req.bodyProgress(true);
+                axios.post('/home/account/update', data)
+                    .then(response => {
+                        if (!response || !response.data) {
+                            onFail();
+                        } else if (response.data['status'] === 'success') {
+                            onSuccess(response.data);
+                        } else {
+                            onFail();
+                        }
+                    })
+                    .catch(e => {
+                        if (e && e.response && e.response.status === 410){
+                            onInvalidInput();
+                        } else {
+                            console.log("Add server failed: " + e);
+                            onFail();
+                        }
+                    });
             }
         },
         events: {

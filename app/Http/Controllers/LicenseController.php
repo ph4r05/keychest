@@ -6,6 +6,9 @@ use App\Http\Requests;
 
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\LicenseManager;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 
 
 /**
@@ -35,5 +38,52 @@ class LicenseController extends Controller
         $this->emailManager = $eManager;
     }
 
+    /**
+     * Main index view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index(){
+        return view('license');
+    }
 
+    /**
+     * Update current account settings
+     */
+    public function updateAccount(){
+        $allowedInputs = collect(['username', 'notifEmail', 'tz', 'weeklyEnabled']);
+        $fieldNames = collect([
+            'username' => 'name',
+            'notifEmail' => 'notification_email',
+            'tz' => 'timezone'
+        ]);
+
+        $data = $allowedInputs->mapWithKeys(function($item){
+            $val = trim(Input::get($item));
+            if (empty($val)){
+                return [];
+            }
+
+            return [$item => $val];
+        });
+
+        $data = $data->mapWithKeys(function($item, $key) use ($fieldNames) {
+            if ($key == 'weeklyEnabled'){
+                return ['weekly_emails_disabled' => !intval($item)];
+            }
+
+            return [$fieldNames->get($key, $key) => $item];
+        });
+
+        if (empty($data)){
+            return response()->json(['status' => 'success'], 200);
+        }
+
+        $curUser = Auth::user();
+        foreach ($data as $key => $value){
+            $curUser->$key = $value;
+        }
+        $curUser->save();
+
+        return response()->json(['status' => 'success'], 200);
+    }
 }

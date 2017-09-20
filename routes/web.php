@@ -109,6 +109,9 @@ Route::post('home/subs/import', 'SubdomainsController@importDomains')->name('sub
 Route::get('home/subs/res', 'SubdomainsController@getDiscoveredSubdomainsList')->name('subs/res');
 Route::get('home/subs/suffix', 'SubdomainsController@watchingDomainWithSuffix')->name('subs/suffix');
 
+Route::get('home/license', 'LicenseController@index')->name('license');
+Route::post('home/account/update', 'LicenseController@updateAccount')->name('update-account');
+
 Route::get('home/user-guide', function () {
     return view('userguide');
 })->name('user-guide');
@@ -117,9 +120,6 @@ Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
 
-Route::get('home/license', function () {
-    return view('license');
-})->name('license');
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
