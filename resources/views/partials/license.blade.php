@@ -88,7 +88,7 @@
             </table>
 
             <p class="tc-onyx">
-            Please use the following form, if you have any question, comment, or request for a new feature or change.
+            Please use the following form, if you have any question, comment, or a suggestion for a new feature or change.
             </p>
             <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form-1"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&submitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
