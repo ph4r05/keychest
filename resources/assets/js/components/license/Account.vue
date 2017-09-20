@@ -66,7 +66,7 @@
                 </tr>
                 <tr>
                     <th>Email weekly updates</th>
-                    <td v-if="!isEdit('weeklyDisabled')">{{ !weeklyEnabled ? "disabled" : "Monday, 8:00am" }}</td>
+                    <td v-if="!isEdit('weeklyEnabled')">{{ !weeklyEnabled ? "disabled" : "Monday, 8:00am" }}</td>
                     <td v-else="">
                         <!--<toggle-button v-model="weeklyDisabled" theme="bootstrap" color="primary"></toggle-button>-->
                         <toggle-button v-model="weeklyEnabled"></toggle-button>
@@ -74,7 +74,7 @@
                     <td>
                         <button type="button"
                                 class="btn btn-sm btn-default btn-block"
-                                v-on:click="switchEdit('weeklyDisabled')">
+                                v-on:click="switchEdit('weeklyEnabled')">
                             Change
                         </button>
                     </td>
@@ -181,7 +181,7 @@
                     email: false,
                     notifEmail: false,
                     tz: false,
-                    weeklyDisabled: false
+                    weeklyEnabled: true
                 },
                 initialValues: {
 

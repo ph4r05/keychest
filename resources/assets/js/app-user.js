@@ -75,7 +75,7 @@ Vue.component('servers-import', resolve => {
     require.ensure([], require => resolve(require('./components/servers-import/server-import.vue')), 'servers-import');
 });
 Vue.component('account', resolve => {
-    require.ensure([], require => resolve(require('./components/license/account.vue')), 'account');
+    require.ensure([], require => resolve(require('./components/license/Account.vue')), 'account');
 });
 
 
