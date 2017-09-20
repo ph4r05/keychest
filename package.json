@@ -67,6 +67,7 @@
     "vue-events": "^3.0.1",
     "vue-js-toggle-button": "^1.1.5",
     "vue-select": "^2.2.0",
+    "vue-slider-component": "^2.4.1",
     "vue-switches": "^2.0.1",
     "vue2-filters": "^0.1.9",
     "vuetable-2": "^1.6.5",
