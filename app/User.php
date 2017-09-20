@@ -2,12 +2,13 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -33,7 +34,7 @@ class User extends Authenticatable
      */
     public function getDates()
     {
-        return array('created_at', 'updated_at', 'last_email_report_sent_at',
+        return array('created_at', 'updated_at', 'deleted_at', 'closed_at', 'last_email_report_sent_at',
             'last_email_no_servers_sent_at', 'last_email_report_enqueued_at',
             'last_login_at', 'cur_login_at', 'last_action_at');
     }
