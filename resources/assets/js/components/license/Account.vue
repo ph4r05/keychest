@@ -28,9 +28,9 @@
                     <th>Email address</th>
                     <td>{{ email }}</td>
                     <td>
-                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
-                            Verify (coming soon)
-                        </button>
+                        <!--<button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">-->
+                            <!--Verify (coming soon)-->
+                        <!--</button>-->
                     </td>
                 </tr>
                 <tr>
@@ -68,7 +68,6 @@
                     <th>Email weekly updates</th>
                     <td v-if="!isEdit('weeklyEnabled')">{{ !weeklyEnabled ? "disabled" : "Monday, 8:00am" }}</td>
                     <td v-else="">
-                        <!--<toggle-button v-model="weeklyDisabled" theme="bootstrap" color="primary"></toggle-button>-->
                         <toggle-button v-model="weeklyEnabled"></toggle-button>
                     </td>
                     <td>
@@ -81,10 +80,12 @@
                 </tr>
                 <tr>
                     <th>Notifications</th>
-                    <td>none</td>
+                    <td><vue-slider ref="slider" v-model="notifTypeVal" v-bind="notifTypeData"></vue-slider></td>
                     <td>
-                        <button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
-                            Change (coming soon) - all certs/suspicious/none
+                        <button type="button"
+                                class="btn btn-sm btn-default btn-block"
+                                v-on:click="switchEdit('notifType')">
+                            Change
                         </button>
                     </td>
                 </tr>
@@ -129,7 +130,8 @@
     import Switches from 'vue-switches';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
-    import ToggleButton from 'vue-js-toggle-button'
+    import ToggleButton from 'vue-js-toggle-button';
+    import VueSlider from 'vue-slider-component';
 
     Vue.use(VueEvents);
     Vue.use(Vue2Filters);
@@ -137,6 +139,7 @@
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
     Vue.component('v-select', vSelect);
     Vue.component('switches', Switches);
+    Vue.component('vue-slider', VueSlider);
 
     export default {
         components: {
@@ -163,6 +166,11 @@
                 type: Number,
                 required: true
             },
+            initNotifType: {
+                type: Number,
+                required: false,
+                default: 0
+            },
         },
         data () {
             return {
@@ -176,6 +184,8 @@
                 tz: this.initTz,
                 weeklyEnabled: !this.initWeeklyDisabled,
                 createdAt: this.initCreated * 1000,
+                notifType: this.initNotifType ? this.initNotifType : 0,
+                notifTypeVal: null,
 
                 changes: {},
                 editMode: {
@@ -183,7 +193,8 @@
                     email: false,
                     notifEmail: false,
                     tz: false,
-                    weeklyEnabled: false
+                    weeklyEnabled: false,
+                    notifType: false,
                 },
                 initialValues: {
 
@@ -200,6 +211,24 @@
             allTzs(){
                 return moment.tz.names();
             },
+            notifTypeLabels(){
+                return [
+                    'None',
+                    'One a day - untrusted certs',
+                    'One a day - new certs',
+                ];
+            },
+            notifTypeData() {
+                return {
+                    value: [0, 3],
+                    width: '80%',
+                    tooltip: 'hover',
+                    disabled: !this.isEdit('notifType'),
+                    piecewise: true,
+                    piecewiseLabel: true,
+                    data: this.notifTypeLabels
+                };
+            }
         },
         mounted() {
             this.$nextTick(function () {
@@ -208,7 +237,14 @@
         },
         methods: {
             hookup(){
-
+                this.notifTypeVal = this.notifTypeLabels[this.notifType];
+            },
+            getFieldvalue(field){
+                if (field === 'notifType'){
+                    this.notifType = this.$refs.slider.getIndex();
+                    return this.notifType;
+                }
+                return this[field];
             },
             switchEdit(field){
                 if (field==='notifEmail'
@@ -219,13 +255,15 @@
                 }
 
                 const newEditValue = field in this.editMode ? !this.editMode[field] : true;
+                const newValue = this.getFieldvalue(field);
+
                 if (newEditValue){
                     // was non-edit before -> save initial value
-                    this.initialValues[field] = this[field];
+                    this.initialValues[field] = newValue;
                     this.editMode[field] = newEditValue;
 
                 } else {
-                    if (this.initialValues[field] === this[field]){
+                    if (this.initialValues[field] === newValue){
                         this.editMode[field] = newEditValue;
                         return; // nothing has changed
                     }

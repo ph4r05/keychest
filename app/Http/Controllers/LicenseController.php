@@ -50,11 +50,12 @@ class LicenseController extends Controller
      * Update current account settings
      */
     public function updateAccount(){
-        $allowedInputs = collect(['username', 'notifEmail', 'tz', 'weeklyEnabled']);
+        $allowedInputs = collect(['username', 'notifEmail', 'tz', 'weeklyEnabled', 'notifType']);
         $fieldNames = collect([
             'username' => 'name',
             'notifEmail' => 'notification_email',
-            'tz' => 'timezone'
+            'tz' => 'timezone',
+            'notifType' => 'cert_notif_state',
         ]);
 
         $data = $allowedInputs->mapWithKeys(function($item){

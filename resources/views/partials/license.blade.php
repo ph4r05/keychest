@@ -18,6 +18,7 @@
                     init-tz="{{ Auth::user()->timezone }}"
                     :init-weekly-disabled="{{ Auth::user()->weekly_emails_disabled }}"
                     :init-created="{{ strtotime(Auth::user()->created_at) }}"
+                    :init-notif-type="{{ Auth::user()->cert_notif_state }}"
             ></account>
 
             <p class="tc-onyx">
