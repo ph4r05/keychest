@@ -42,7 +42,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'ph4-token',
+            'driver' => 'token',
             'provider' => 'users',
         ],
 
