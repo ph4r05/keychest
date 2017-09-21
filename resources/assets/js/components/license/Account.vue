@@ -19,8 +19,15 @@
                     <td>
                         <button type="button"
                                 class="btn btn-sm btn-default btn-block"
+                                v-if="!isEdit('username')"
                                 v-on:click="switchEdit('username')">
-                            Change
+                            <span>Change</span>
+                        </button>
+                        <button type="button"
+                                class="btn btn-sm btn-success btn-block"
+                                v-else=""
+                                v-on:click="switchEdit('username')">
+                            <span>Confirm</span>
                         </button>
                     </td>
                 </tr>
@@ -47,25 +54,39 @@
                     <td>
                         <button type="button"
                                 class="btn btn-sm btn-default btn-block"
+                                v-if="!isEdit('notifEmail')"
                                 v-on:click="switchEdit('notifEmail')">
                             Change
+                        </button>
+                        <button type="button"
+                                class="btn btn-sm btn-success btn-block"
+                                v-else=""
+                                v-on:click="switchEdit('notifEmail')">
+                            Confirm
                         </button>
                     </td>
                 </tr>
                 <tr>
-                    <th>User timezone</th>
+                    <th>Your timezone</th>
                     <td v-if="!isEdit('tz')">{{ tz }}</td>
                     <td v-else="">
                         <v-select v-model="tz" :options="allTzs"></v-select>
                     </td>
                     <td><button type="button"
+                                v-if="!isEdit('tz')"
                                 class="btn btn-sm btn-default btn-block"
                                 v-on:click="switchEdit('tz')">
                         Change
+                    </button>
+                        <button type="button"
+                                v-else=""
+                                class="btn btn-sm btn-success btn-block"
+                                v-on:click="switchEdit('tz')">
+                        Confirm
                     </button></td>
                 </tr>
                 <tr>
-                    <th>Email weekly updates</th>
+                    <th>Weekly emails for renewals due in 28 days</th>
                     <td v-if="!isEdit('weeklyEnabled')">{{ !weeklyEnabled ? "disabled" : "Monday, 8:00am" }}</td>
                     <td v-else="">
                         <toggle-button v-model="weeklyEnabled"></toggle-button>
@@ -73,8 +94,15 @@
                     <td>
                         <button type="button"
                                 class="btn btn-sm btn-default btn-block"
+                                v-if="!isEdit('weeklyEnabled')"
                                 v-on:click="switchEdit('weeklyEnabled')">
                             Change
+                        </button>
+                        <button type="button"
+                                class="btn btn-sm btn-success btn-block"
+                                v-else=""
+                                v-on:click="switchEdit('weeklyEnabled')">
+                            Confirm
                         </button>
                     </td>
                 </tr>
@@ -84,8 +112,15 @@
                     <td>
                         <button type="button"
                                 class="btn btn-sm btn-default btn-block"
+                                v-if="!isEdit('notifType')"
                                 v-on:click="switchEdit('notifType')">
                             Change
+                        </button>
+                        <button type="button"
+                                class="btn btn-sm btn-success btn-block"
+                                v-else=""
+                                v-on:click="switchEdit('notifType')">
+                            Confirm
                         </button>
                     </td>
                 </tr>
@@ -231,8 +266,8 @@
             notifTypeLabels(){
                 return [
                     'None',
-                    'One a day - untrusted certs',
-                    'One a day - new certs',
+                    'Daily',
+                    'As it happens',
                 ];
             },
             notifTypeData() {
@@ -240,9 +275,20 @@
                     value: [0, 3],
                     width: '80%',
                     tooltip: 'hover',
+                    background: '#00a7d7', /*this could be light-blue */
+                    height: 10,
                     disabled: !this.isEdit('notifType'),
                     piecewise: true,
                     piecewiseLabel: true,
+                    piecewiseStyle: {
+                        "background": "#d2d6de", /*this could be gray-lte */
+                        "visibility": "visible",
+                        "width": "18px",
+                        "height": "18px"
+                    },
+                    piecewiseActiveStyle: {
+                        "backgroundColor": "#00a7d7", /*this could be light-blue */
+                    },
                     data: this.notifTypeLabels
                 };
             }
