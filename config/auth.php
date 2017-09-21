@@ -42,9 +42,14 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'ph4-token',
             'provider' => 'users',
         ],
+
+        'ph4-token' => [
+            'driver' => 'ph4-token',
+            'provider' => 'users'
+        ]
     ],
 
     /*
@@ -66,7 +71,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'ph4-eloquent',
             'model' => App\User::class,
         ],
 

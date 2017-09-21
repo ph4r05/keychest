@@ -14,13 +14,22 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    return  ['test']; // $request->user();
 });
-//
-//Route::post('/submitJob', 'SearchController@restSubmitJob');
-//Route::post('/jobState', 'SearchController@restGetJobState');
-//Route::post('/jobResult', 'SearchController@restJobResults');
 
+Route::get('user0', function(Request $request){
+    return  ['test']; // $request->user();
+});
+
+Route::prefix('v1.0')->group(function () {
+    Route::get('user', function(Request $request){
+        return ['test']; //  $request->user();
+    })->middleware('auth:ph4-token');
+
+    Route::get('user1', function(Request $request){
+        return $request->user();
+    });
+});
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:api'], function () {
     //    Route::resource('task', 'TasksController');
