@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\UserManager;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -96,6 +95,23 @@ class UserController extends Controller
         $curUser = Auth::user();
         $curUser->closed_at = Carbon::now();
         $curUser->save();
+
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    /**
+     * Claim new API key access - limited functionality until verified / confirmed.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function claimAccess(Request $request){
+        $this->validate($request, [
+            'email' => 'bail|required|email',
+            'api_key' => 'bail|required|max:64'
+        ]);
+
+        
 
         return response()->json(['status' => 'success'], 200);
     }

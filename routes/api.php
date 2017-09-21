@@ -13,21 +13,28 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return  ['test']; // $request->user();
+// Unauthenticated API ping
+Route::get('ping', function (Request $request) {
+    return ['status' => 'success'];
 });
 
-Route::get('user0', function(Request $request){
-    return  ['test']; // $request->user();
+// Current user auth check call
+Route::middleware('auth:api')->get('user', function (Request $request) {
+    return $request->user();
 });
 
+// Main API URL namespace
 Route::prefix('v1.0')->group(function () {
-    Route::get('user', function(Request $request){
-        return ['test']; //  $request->user();
-    })->middleware('auth:ph4-token');
+    // Easy client registration.
+    Route::get('access/claim', 'UserController@claimAccess');
 
-    Route::get('user1', function(Request $request){
-        return $request->user();
+    // All API methods accessible
+    Route::group(['middleware' => 'auth:ph4-token'], function(){
+
+        Route::get('user', function(Request $request){
+            return $request->user();
+        });
+
     });
 });
 

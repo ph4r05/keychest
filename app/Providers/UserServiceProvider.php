@@ -38,7 +38,6 @@ class UserServiceProvider extends EloquentUserProvider
      */
     public function retrieveByCredentials(array $credentials)
     {
-        Log::info('retrieveByCredentials: ');
         if (empty($credentials)) {
             return;
         }
@@ -91,7 +90,6 @@ class UserServiceProvider extends EloquentUserProvider
      */
     public function validateCredentials(UserContract $user, array $credentials)
     {
-        Log::info('validateCredentials: ');
         if (isset($credentials[self::API_KEY])){
             return $this->validateApiKey($user, $credentials);
         }
@@ -103,10 +101,14 @@ class UserServiceProvider extends EloquentUserProvider
     /**
      * @param UserContract $user
      * @param array $credentials
+     * @return bool
      */
     public function validateApiKey(UserContract $user, array $credentials)
     {
-
+        return $user
+            && $user->apiKey
+            && $credentials[self::API_KEY]
+            && $user->apiKey == $credentials[self::API_KEY];
     }
 
 }
