@@ -275,7 +275,7 @@
             notifTypeData() {
                 return {
                     value: [0, 3],
-                    width: '80%',
+                    width: '95%',
                     tooltip: 'hover',
                     background: '#00a7d7', /*this could be light-blue */
                     height: 10,
