@@ -9,6 +9,7 @@ use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
+use App\Keychest\Services\UserManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -58,6 +59,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(AnalysisManager::class, function(Application $app){
             return new AnalysisManager($app);
+        });
+        $this->app->bind(UserManager::class, function(Application $app){
+            return new UserManager($app);
         });
     }
 }

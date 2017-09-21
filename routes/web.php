@@ -110,8 +110,8 @@ Route::get('home/subs/res', 'SubdomainsController@getDiscoveredSubdomainsList')-
 Route::get('home/subs/suffix', 'SubdomainsController@watchingDomainWithSuffix')->name('subs/suffix');
 
 Route::get('home/license', 'LicenseController@index')->name('license');
-Route::post('home/account/update', 'LicenseController@updateAccount')->name('update-account');
-Route::post('home/account/close', 'LicenseController@closeAccount')->name('close-account');
+Route::post('home/account/update', 'UserController@updateAccount')->name('update-account');
+Route::post('home/account/close', 'UserController@closeAccount')->name('close-account');
 
 Route::get('home/user-guide', function () {
     return view('userguide');
