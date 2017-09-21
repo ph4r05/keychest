@@ -34,8 +34,6 @@ class AuthServiceProvider extends ServiceProvider
             return new UserServiceProvider($this->app['hash'], $config['model']);
         });
 
-        Log::info('booting auth');
-
         // New guard for api keys
         Auth::extend('ph4-token', function($app, $name, array $config){
             Log::info('creating guard');

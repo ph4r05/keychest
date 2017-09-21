@@ -131,7 +131,7 @@ class UserController extends Controller
         // If the code is revoked, return not-allowed.
         $apiKeyObj = $user->apiKeys()->where('api_key', '=', $apiKey)->first();
         if ($apiKeyObj){
-            Log::debug('User ${email} has existing api key ${apiKey}');
+            Log::debug("User ${email} has existing api key ${apiKey}");
             return empty($apiKeyObj->revoked_at) ? $successResponse : $bailResponse;
         }
 
