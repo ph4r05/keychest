@@ -30,6 +30,10 @@ class ApiKey extends Model
         return ['created_at', 'updated_at', 'last_seen_active_at', 'verified_at', 'revoked_at'];
     }
 
+    /**
+     * Associated user
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user(){
         return $this->belongsTo('App\User', 'user_id');
     }

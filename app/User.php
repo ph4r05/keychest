@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\ApiKey;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +28,13 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * ApiKey used for auth.
+     * Transient variable initialized by the user provider, if applicable.
+     * @var ApiKey
+     */
+    public $apiKey;
 
     /**
      * Carbon converted date fields
@@ -97,5 +105,14 @@ class User extends Authenticatable
     public function ipScanRecords()
     {
         return $this->belongsToMany('App\Models\IpScanRecord')->using('App\Models\UserIpScanRecord');
+    }
+
+    /**
+     * All api keys
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function apiKeys()
+    {
+        return $this->hasMany('App\Models\ApiKey', 'user_id');
     }
 }
