@@ -108,7 +108,9 @@
                 </tr>
                 <tr>
                     <th>Notifications</th>
-                    <td><vue-slider ref="slider" v-model="notifTypeVal" v-bind="notifTypeData"></vue-slider></td>
+                    <td><vue-slider ref="slider" v-model="notifTypeVal" v-bind="notifTypeData"
+                        :real-time="true"
+                    ></vue-slider></td>
                     <td>
                         <button type="button"
                                 class="btn btn-sm btn-default btn-block"
@@ -328,10 +330,14 @@
                 } else {
                     if (this.initialValues[field] === newValue){
                         this.editMode[field] = newEditValue;
-                        return; // nothing has changed
+                    } else {
+                        this.updateChanges(field);
                     }
-                    this.updateChanges(field);
                 }
+
+                Vue.nextTick(()=>{
+                    this.$refs.slider.refresh();
+                });
             },
             isEdit(field){
                 return field in this.editMode ? this.editMode[field] : false;
