@@ -1756,8 +1756,7 @@
                 // certificate type aggregation
                 const certTypes = [0, 0, 0];  // LE, Cloudflare, Public / other
 
-                for(const crtIdx in certSet){
-                    const ccrt = certSet[crtIdx];
+                for(const [crtIdx, ccrt] of Object.entries(certSet)){
                     if (ccrt.is_le){
                         certTypes[0] += 1
                     } else if (ccrt.is_cloudflare){
@@ -1825,8 +1824,7 @@
                 const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
                 const ret = [];
                 let lastGrp = moment().utc().subtract(1, 'month');
-                for(const idx in sorted){
-                    const grp = sorted[idx];
+                for(const [idx, grp] of Object.entries(sorted)){
                     const crt = grp[0];
                     const curMoment = moment.utc(crt.valid_to_utc * 1000.0);
                     const label = curMoment.format('MM/YY');
@@ -1880,8 +1878,8 @@
             groupStats(grouped, sort){
                 // processes groupBy result and returns [[key1, size1], [key2, size2], ...]
                 const agg = [];
-                for(const curLabel in grouped){
-                    agg.push([curLabel, grouped[curLabel].length]);  // zip
+                for(const [curLabel, val] of Object.entries(grouped)){
+                    agg.push([curLabel, val.length]);  // zip
                 }
 
                 let sorted = agg;
