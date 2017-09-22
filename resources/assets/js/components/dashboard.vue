@@ -1203,7 +1203,7 @@
                         }
                     })
                     .catch(e => {
-                        console.log("Add server failed: " + e);
+                        console.log('Add server failed: ' + e);
                         onFail();
                     });
 
@@ -1310,8 +1310,7 @@
                     normalizer: Req.normalizeIssuer
                 });
 
-                for(const whois_id in this.results.whois){
-                    const whois = this.results.whois[whois_id];
+                for(const [whois_id, whois] of Object.entries(this.results.whois)){
                     this.extendDateField(whois, 'expires_at');
                     this.extendDateField(whois, 'registered_at');
                     this.extendDateField(whois, 'rec_updated_at');
@@ -1324,15 +1323,13 @@
                     }};
                 }
 
-                for(const dns_id in this.results.dns){
-                    const dns = this.results.dns[dns_id];
+                for(const [dns_id, dns] of Object.entries(this.results.dns)){
                     this.extendDateField(dns, 'last_scan_at');
                     dns.domain = this.results.watches && dns.watch_id in this.results.watches ?
                         this.results.watches[dns.watch_id].scan_host : undefined;
                 }
 
-                for(const tls_id in this.results.tls){
-                    const tls = this.results.tls[tls_id];
+                for(const [tls_id, tls] of Object.entries(this.results.tls)){
                     this.extendDateField(tls, 'last_scan_at');
                     this.extendDateField(tls, 'created_at');
                     this.extendDateField(tls, 'updated_at');
