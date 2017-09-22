@@ -854,7 +854,7 @@
         },
 
         mounted() {
-            this.$nextTick(function () {
+            this.$nextTick(() => {
                 this.hookup();
             })
         },
@@ -1225,7 +1225,7 @@
             },
 
             processData(){
-                this.$nextTick(function () {
+                this.$nextTick(() => {
                     console.log('Data loaded');
                     this.dataProcessStart = moment();
                     this.processResults();
@@ -1357,7 +1357,7 @@
                 this.$emit('onProcessed');
                 this.loadingState = 10;
 
-                this.$nextTick(function () {
+                this.$nextTick(() => {
                     this.graphDataReady = true;
                     this.graphLibLoaded = true;
                     this.renderCharts();
@@ -1740,7 +1740,7 @@
                     });
                 }
 
-                _.forEach(data, function(value, idx){
+                _.forEach(data, (value, idx) => {
                     if (idx===0){
                         return;
                     }
