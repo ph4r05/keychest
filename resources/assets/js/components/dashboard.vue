@@ -871,7 +871,6 @@
             },
 
             tlsCerts(){
-                // return _.filter(this.certs, o => { return o.found_tls_scan; });
                 return _.map(_.keys(this.tlsCertsIdsMap), x => {
                     return this.results.certificates[x];
                 });
@@ -1181,16 +1180,16 @@
             //
 
             loadData(){
-                const onFail = (function(){
+                const onFail = () => {
                     this.loadingState = -1;
                     toastr.error('Error while loading, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     this.loadingState = 1;
                     this.results = data;
                     setTimeout(this.processData, 0);
-                }).bind(this);
+                };
 
                 this.loadingState = 0;
                 axios.get('/home/dashboard/data')
@@ -1229,7 +1228,7 @@
 
             processResults() {
                 const curTime = moment().valueOf() / 1000.0;
-                for(const watch_id in this.results.watches){
+                for(const watch_id of Object.keys(this.results.watches)){
                     const watch = this.results.watches[watch_id];
                     this.extendDateField(watch, 'last_scan_at');
                     this.extendDateField(watch, 'created_at');
@@ -1243,8 +1242,7 @@
 
                 const fqdnResolver = _.memoize(Psl.get);
                 const wildcardRemover = _.memoize(Req.removeWildcard);
-                for(const certId in this.results.certificates){
-                    const cert = this.results.certificates[certId];
+                for(const [certId, cert] of Object.entries(this.results.certificates)){
                     cert.valid_to_dayfmt = moment.utc(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
