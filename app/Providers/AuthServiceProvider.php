@@ -36,7 +36,6 @@ class AuthServiceProvider extends ServiceProvider
 
         // New guard for api keys
         Auth::extend('ph4-token', function($app, $name, array $config){
-            Log::info('creating guard');
             $guard = new ApiKeyGuard(
                 $this->app['auth']->createUserProvider($config['provider']),
                 $this->app['request']
