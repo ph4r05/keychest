@@ -307,6 +307,7 @@
                                 <thead>
                                 <tr>
                                     <th>Server name</th>
+                                    <th>Address</th>
                                     <th>Cause</th>
                                     <th>Time of detection</th>
                                     <th>Last failure</th>
@@ -314,7 +315,8 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in tlsErrors" class="danger">
-                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ tls.url_short }}</td>
+                                    <td>{{ tls.ip_scanned }}</td>
                                     <td>
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
                                         <span v-else-if="tls.err_code == 2">No server detected</span>
@@ -351,7 +353,7 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
-                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ tls.url_short }}</td>
                                     <td>
                                         <ul class="domain-list">
                                             <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
@@ -392,7 +394,7 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
-                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ tls.url_short }}</td>
                                     <td>
                                         <ul class="coma-list" v-if="tls.host_cert">
                                             <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
@@ -867,7 +869,7 @@
                     return {};
                 }
 
-                return this.listToSet(_.uniq(_.values(this.results.tls_cert_map)));
+                return this.listToSet(_.uniq(_.flattenDeep(_.values(this.results.tls_cert_map))));
             },
 
             tlsCerts(){
@@ -987,9 +989,13 @@
             },
 
             tlsErrors(){
-                return _.filter(this.tls, x => {
+                return _.sortBy(_.filter(this.tls, x => {
                     return x && x.status !== 1;
-                });
+                }),
+                    [
+                        x => { return x.url_short; },
+                        x => { return x.ip_scanned; }
+                    ]);
             },
 
             expiredCertificates(){
@@ -1233,11 +1239,6 @@
                     this.extendDateField(watch, 'last_scan_at');
                     this.extendDateField(watch, 'created_at');
                     this.extendDateField(watch, 'updated_at');
-
-                    const strPort = parseInt(watch.scan_port) || 443;
-                    watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort);
-                    watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
-                    watch.hostport = watch.scan_host + (strPort === 443 ? '' : ':' + strPort);
                 }
 
                 const fqdnResolver = _.memoize(Psl.get);
@@ -1259,27 +1260,31 @@
                         return fqdnResolver(x);  // too expensive now. 10 seconds for 150 certs. invoke later
                     })));
 
-                    _.forEach(cert.tls_watches, watch_id => {
+                    _.forEach(cert.tls_watches_ids, watch_id => {
                         if (watch_id in this.results.watches){
-                            cert.watch_hostports.push(this.results.watches[watch_id].hostport);
+                            cert.watch_hostports.push(this.results.watches[watch_id].host_port);
                             cert.watch_hosts.push(this.results.watches[watch_id].scan_host);
                             cert.watch_urls.push(this.results.watches[watch_id].url);
                         }
                     });
 
-                    _.forEach(_.uniq(_.union(cert.tls_watches, cert.crtsh_watches)), watch_id=>{
-                        if (watch_id in this.results.watches){
-                            cert.watch_hosts_ct.push(this.results.watches[watch_id].scan_host);
-                            cert.watch_urls_ct.push(this.results.watches[watch_id].url);
-                        }
-                    });
+                    _.forEach(
+                        _.uniq(_.union(
+                            cert.tls_watches_ids,
+                            cert.crtsh_watches_ids)), watch_id =>
+                        {
+                            if (watch_id in this.results.watches) {
+                                cert.watch_hosts_ct.push(this.results.watches[watch_id].scan_host);
+                                cert.watch_urls_ct.push(this.results.watches[watch_id].url);
+                            }
+                        });
 
                     cert.watch_hostports = _.uniq(cert.watch_hostports.sort());
                     cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
                     cert.watch_urls = _.uniq(cert.watch_urls.sort());
                     cert.watch_hosts_ct = _.uniq(cert.watch_hosts_ct.sort());
                     cert.watch_urls_ct = _.uniq(cert.watch_urls_ct.sort());
-                    cert.last_scan_at_utc = _.reduce(cert.tls_watches, (acc, val) => {
+                    cert.last_scan_at_utc = _.reduce(cert.tls_watches_ids, (acc, val) => {
                         if (!this.results.watches || !(val in this.results.watches)){
                             return acc;
                         }
@@ -1335,7 +1340,7 @@
                     this.extendDateField(tls, 'updated_at');
                     if (this.results.watches && tls.watch_id in this.results.watches){
                         tls.domain = this.results.watches[tls.watch_id].scan_host;
-                        tls.urlShort = this.results.watches[tls.watch_id].urlShort;
+                        tls.url_short = this.results.watches[tls.watch_id].url_short;
                     }
 
                     tls.leaf_cert = tls.cert_id_leaf && tls.cert_id_leaf in this.results.certificates ?

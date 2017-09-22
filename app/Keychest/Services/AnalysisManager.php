@@ -16,6 +16,7 @@ use Carbon\Carbon;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 
 class AnalysisManager
