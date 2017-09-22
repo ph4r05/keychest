@@ -53,6 +53,7 @@
     "moment-timezone": "^0.5.13",
     "numeral": "^2.0.6",
     "ph4": "file:resources/assets/js/lib/ph4",
+    "ph4-psl": "file:resources/assets/js/lib/psl",
     "pluralize": "^6.0.0",
     "psl": "^1.1.19",
     "req": "file:resources/assets/js/lib/req",
