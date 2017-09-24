@@ -120,14 +120,14 @@ class AnalysisManager
         }));
 
         $md->setCrtshCertIds($md->getCrtshScans()->reduce(function($carry, $item){
-            return $carry->union(collect($item->certs_ids));
-        }, collect())->unique()->sort()->reverse()->take(300));
+            return $carry->merge(collect($item->certs_ids)->values());
+        }, collect())->values()->unique()->sort()->reverse()->take(2000)->values());
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
         $md->setCert2watchTls(DataTools::invertMap($md->getWatch2certsTls()));
         $md->setCert2watchCrtsh(DataTools::invertMap($md->getWatch2certsCrtsh()));
 
-        $md->setCertsToLoad($md->getTlsCertsIds()->union($md->getCrtshCertIds())->values()->unique()->values());
+        $md->setCertsToLoad($md->getTlsCertsIds()->merge($md->getCrtshCertIds())->values()->unique()->values());
         $md->setCerts($this->scanManager->loadCertificates($md->getCertsToLoad())->get());
         $md->setCerts($md->getCerts()->transform(
             function ($item, $key) use ($md, $expandScans)
