@@ -768,7 +768,7 @@
                                            color="#00a7d7"
                                            :labels="{checked: 'On', unchecked: 'Off'}"
                             ></toggle-button>
-                            <label for="chk-include-expired">Include expired certificates</label>
+                            <label for="chk-include-expired">Include expired CT certificates</label>
                         </div>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
