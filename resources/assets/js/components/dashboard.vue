@@ -718,7 +718,6 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <!--<th>ID</th>-->
                                     <th>Server names</th>
                                     <th>Issuer</th>
                                     <th colspan="2">Renew / plan renewal</th>
@@ -727,8 +726,10 @@
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                                    <!--<td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
+                                        <span class="hidden">
+                                            {{ cert.id }}
+                                        </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
                                                 {{ domain }}
@@ -771,7 +772,6 @@
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <!--<th>ID</th>-->
                                     <th>Domain name(s)</th>
                                     <th>Issuer</th>
                                     <th colspan="2">Certificate expiration date</th>
@@ -781,8 +781,10 @@
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
-                                    <!--<td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
+                                        <span class="hidden">
+                                            {{ cert.id }}
+                                        </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
                                                 {{ domain }}
