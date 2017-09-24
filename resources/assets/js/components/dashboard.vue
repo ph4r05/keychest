@@ -339,13 +339,14 @@
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" >
-                        <template slot="title">Servers with configuration errors ({{len(tlsInvalidTrust)}})</template>
+                        <template slot="title">Servers with configuration errors ({{ len(tlsInvalidTrust) }})</template>
                         <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
                                     <th>Server name</th>
+                                    <th>Address</th>
                                     <th>Cause</th>
                                     <th>Time of detection</th>
                                     <th>Last failure</th>
@@ -354,6 +355,7 @@
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
                                     <td>{{ tls.url_short }}</td>
+                                    <td>{{ tls.ip_scanned }}</td>
                                     <td>
                                         <ul class="domain-list">
                                             <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
