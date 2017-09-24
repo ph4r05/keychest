@@ -84,7 +84,7 @@ class AnalysisManager
      * Loads Scans & certificate related data
      * @param ValidityDataModel $md
      */
-    public function loadCerts(ValidityDataModel $md){
+    public function loadCerts(ValidityDataModel $md, $expandScans = true){
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->scanManager->getNewestTlsScansOptim($md->getActiveWatchesIds());
         $md->setTlsScans($this->scanManager->processTlsScans($q->get())->keyBy('id'));
@@ -130,7 +130,7 @@ class AnalysisManager
         $md->setCertsToLoad($md->getTlsCertsIds()->union($md->getCrtshCertIds())->values()->unique()->values());
         $md->setCerts($this->scanManager->loadCertificates($md->getCertsToLoad())->get());
         $md->setCerts($md->getCerts()->transform(
-            function ($item, $key) use ($md)
+            function ($item, $key) use ($md, $expandScans)
             {
                 $this->attributeCertificate($item, $md->tlsCertsIds->values(), 'found_tls_scan');
                 $this->attributeCertificate($item, $md->certsToLoad->values(), 'found_crt_sh');
@@ -140,7 +140,9 @@ class AnalysisManager
                 $item->tls_watches = DataTools::pick($md->activeWatches, $md->cert2watchTls->get($item->id, []));
                 $item->crtsh_watches = DataTools::pick($md->activeWatches, $md->cert2watchCrtsh->get($item->id, []));
 
-                $this->addTlsScanIpsInfo($item, $md->tlsScans, $md->cert2tls);
+                if ($expandScans) {
+                    $this->addTlsScanIpsInfo($item, $md->tlsScans, $md->cert2tls);
+                }
 
                 return $item;
             })->mapWithKeys(function ($item){

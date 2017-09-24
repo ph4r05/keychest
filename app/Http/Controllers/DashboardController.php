@@ -63,7 +63,7 @@ class DashboardController extends Controller
         $this->analysisManager->loadHosts($curUser, $md);
 
         // Cert loading and processing, tls scan, crtsh scan load
-        $this->analysisManager->loadCerts($md);
+        $this->analysisManager->loadCerts($md, false);
 
         Log::info(var_export($md->getCerts()->count(), true));
         $this->analysisManager->loadWhois($md);
