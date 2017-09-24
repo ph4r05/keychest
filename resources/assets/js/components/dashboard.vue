@@ -707,7 +707,11 @@
                         <p>This is a list of all certificates that you control and are responsible for renewals.
                             You can choose to see only certificates correctly installed on your server,
                             or all certificates issued to your servers.</p>
-                        <input type="checkbox" id="chk-include-notverified" disabled="disabled">
+                            <toggle-button v-model="includeNotVerified" id="chk-include-notverified"
+                                           color="#00a7d7"
+                                           disabled="disabled"
+                                           :labels="{checked: 'On', unchecked: 'Off'}"
+                            ></toggle-button>
                         <label for="chk-include-notverified">Include certificates not verified from your servers</label>
                         </div>
                         <div class="table-responsive table-xfull">
@@ -757,7 +761,10 @@
                         <template slot="title">All certificates of your servers</template>
                         <div class="form-group">
                             <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
-                            <input type="checkbox" id="chk-include-expired">
+                            <toggle-button v-model="includeExpired" id="chk-include-expired"
+                                           color="#00a7d7"
+                                           :labels="{checked: 'On', unchecked: 'Off'}"
+                            ></toggle-button>
                             <label for="chk-include-expired">Include expired certificates</label>
                         </div>
                         <div class="table-responsive table-xfull">
@@ -807,12 +814,18 @@
     import axios from 'axios';
     import moment from 'moment';
     import sprintf from 'sprintf-js';
+    import Psl from 'ph4-psl';
+    import Req from 'req';
+
     import VueCharts from 'vue-chartjs';
+    import ToggleButton from 'vue-js-toggle-button';
     import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
-    import Req from 'req';
     import toastr from 'toastr';
-    import Psl from 'ph4-psl';
+
+    import Vue from 'vue';
+
+    Vue.use(ToggleButton);
 
     export default {
         data: function() {
@@ -827,6 +840,7 @@
 
                 certIssuerTableData: null,
                 includeExpired: false,
+                includeNotVerified: false,
 
                 Laravel: window.Laravel,
 
@@ -1069,12 +1083,6 @@
         methods: {
             hookup(){
                 setTimeout(this.loadData, 0);
-                $('#chk-include-expired').bootstrapSwitch('destroy');
-                $('#chk-include-expired').bootstrapSwitch();
-                $('#chk-include-expired').bootstrapSwitch('size','normal');
-                $('#chk-include-notverified').bootstrapSwitch('destroy');
-                $('#chk-include-notverified').bootstrapSwitch();
-                $('#chk-include-notverified').bootstrapSwitch('size','normal');
             },
 
             //
@@ -1368,19 +1376,7 @@
             },
 
             postLoad(){
-                const chkInclude = $('#chk-include-expired');
-                chkInclude.bootstrapSwitch('destroy');
-                chkInclude.bootstrapSwitch();
-                chkInclude.bootstrapSwitch('size','normal');
-                chkInclude.on('switchChange.bootstrapSwitch', (evt, state) => {
-                    if (evt.type === 'switchChange'){
-                        this.includeExpired = state;
-                    }
-                });
 
-                $('#chk-include-notverified').bootstrapSwitch('destroy');
-                $('#chk-include-notverified').bootstrapSwitch();
-                $('#chk-include-notverified').bootstrapSwitch('size','normal');
             },
 
             cleanResults(){
