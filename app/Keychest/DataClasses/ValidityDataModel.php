@@ -55,12 +55,14 @@ class ValidityDataModel {
     public $crtshScans;
 
     /**
+     * Watch id -> [leaf certs ids] map.
+     * Watch id mapping to the leaf certificates found by the latest TLS scan.
      * @var Collection
      */
     public $watch2certsTls;
 
     /**
-     * Mapping cert back to IP & watch id it was taken from
+     * Mapping leaf cert back to TLS scan it was found by.
      * @var Collection
      */
     public $cert2tls;

@@ -86,9 +86,18 @@ class DashboardController extends Controller
             'dns' => $md->getDnsScans(),
             'whois' => $this->thinWhois($md->getWhoisScans()),
             'tls' => $md->getTlsScans(),
+
+            // Watch id -> [leaf certs ids] map.
+            // Watch id mapping to the leaf certificates found by the latest TLS scan.
             'tls_cert_map' => $md->getWatch2certsTls(),
+
+            // As before, just with crtsh certificates
             'crtsh_cert_map' => $md->getWatch2certsCrtsh(),
+
+            // cert id to watch id (tls)
             'crt_to_watch_tls' => $md->getCert2watchTls(),
+
+            // cert id to watch id (ct)
             'crt_to_watch_crtsh' => $md->getCert2watchCrtsh(),
             'domain_to_watch' => $md->getTopDomainToWatch(),
             'certificates' => $this->thinCertsModel($md->getCerts())
