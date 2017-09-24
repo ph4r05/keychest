@@ -1291,11 +1291,11 @@
                             }
                         });
 
-                    cert.watch_hostports = _.uniq(cert.watch_hostports.sort());
-                    cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
-                    cert.watch_urls = _.uniq(cert.watch_urls.sort());
-                    cert.watch_hosts_ct = _.uniq(cert.watch_hosts_ct.sort());
-                    cert.watch_urls_ct = _.uniq(cert.watch_urls_ct.sort());
+                    cert.watch_hostports = _.sortedUniq(cert.watch_hostports.sort());
+                    cert.watch_hosts = _.sortedUniq(cert.watch_hosts.sort());
+                    cert.watch_urls = _.sortedUniq(cert.watch_urls.sort());
+                    cert.watch_hosts_ct = _.sortedUniq(cert.watch_hosts_ct.sort());
+                    cert.watch_urls_ct = _.sortedUniq(cert.watch_urls_ct.sort());
                     cert.last_scan_at_utc = _.reduce(cert.tls_watches_ids, (acc, val) => {
                         if (!this.results.watches || !(val in this.results.watches)){
                             return acc;
