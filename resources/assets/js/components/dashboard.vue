@@ -776,8 +776,8 @@
                                 <tr>
                                     <th>Domain name(s)</th>
                                     <th>Issuer</th>
+                                    <th>Source</th>
                                     <th colspan="2">Certificate expiration date</th>
-                                    <!--<th>Relative</th>-->
                                 </tr>
                                 </thead>
 
@@ -794,6 +794,10 @@
                                         </ul>
                                     </td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">
+                                        <span class="label label-success" title="TLS scan" v-if="len(cert.watch_hosts) > 0">TLS</span>
+                                        <span class="label label-primary" title="CT scan" v-if="len(cert.watch_hosts_ct) > 0">CT</span>
+                                    </td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
                                         v-if="momentu(cert.valid_to)<momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}</td>
