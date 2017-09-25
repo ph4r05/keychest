@@ -13,6 +13,8 @@ use App\Keychest\Services\ScanManager;
 use App\Keychest\Utils\DataTools;
 
 
+use Barryvdh\Debugbar\LaravelDebugbar;
+use Barryvdh\Debugbar\Middleware\Debugbar;
 use Carbon\Carbon;
 use Exception;
 
@@ -60,16 +62,27 @@ class DashboardController extends Controller
         $md = new ValidityDataModel($curUser);
 
         // Host load, dns scans
+        $dbg = app('debugbar');
+
+        start_measure('loadDashboard');
+        start_measure('loadHosts');
         $this->analysisManager->loadHosts($curUser, $md, false);
+        stop_measure('loadHosts');
 
         // Cert loading and processing, tls scan, crtsh scan load
+        start_measure('loadCerts');
         $this->analysisManager->loadCerts($md, false);
+        stop_measure('loadCerts');
 
         Log::info('Certificate count: ' . var_export($md->getCerts()->count(), true));
+        start_measure('loadWhois');
         $this->analysisManager->loadWhois($md);
+        stop_measure('loadWhois');
 
         // Processing section
+        start_measure('processExpiring');
         $this->analysisManager->processExpiring($md);
+        stop_measure('processExpiring');
 
         // TODO: downtime computation?
         // TODO: CAs?
@@ -109,6 +122,7 @@ class DashboardController extends Controller
 
         ];
 
+        stop_measure('loadDashboard');
         return response()->json($data, 200);
     }
 

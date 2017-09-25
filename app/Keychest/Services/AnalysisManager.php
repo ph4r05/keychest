@@ -132,6 +132,7 @@ class AnalysisManager
         $md->setCert2watchTls(DataTools::invertMap($md->getWatch2certsTls()));
         $md->setCert2watchCrtsh(DataTools::invertMap($md->getWatch2certsCrtsh()));
 
+        start_measure('loadCerts-sub');
         $md->setCertsToLoad($md->getTlsCertsIds()->merge($md->getCrtshCertIds())->values()->unique()->values());
         $md->setCerts($this->scanManager->loadCertificates($md->getCertsToLoad())->get());
         $md->setCerts($md->getCerts()->transform(
@@ -153,6 +154,7 @@ class AnalysisManager
             })->mapWithKeys(function ($item){
             return [$item->id => $item];
         }));
+        stop_measure('loadCerts-sub');
     }
 
     /**
