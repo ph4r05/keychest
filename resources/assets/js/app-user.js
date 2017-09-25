@@ -11,7 +11,6 @@ import _ from 'lodash';
 
 window.Vue = require('vue');
 window.Req = require('req').default;
-window.Psl = require('./lib/psl');
 window.Moment = require('moment');
 window.toastr = require('toastr');
 window.swal = require('sweetalert2');

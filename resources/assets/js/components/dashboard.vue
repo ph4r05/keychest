@@ -307,6 +307,7 @@
                                 <thead>
                                 <tr>
                                     <th>Server name</th>
+                                    <th>Address</th>
                                     <th>Cause</th>
                                     <th>Time of detection</th>
                                     <th>Last failure</th>
@@ -314,7 +315,8 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in tlsErrors" class="danger">
-                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ tls.url_short }}</td>
+                                    <td>{{ tls.ip_scanned }}</td>
                                     <td>
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
                                         <span v-else-if="tls.err_code == 2">No server detected</span>
@@ -337,13 +339,14 @@
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" >
-                        <template slot="title">Servers with configuration errors ({{len(tlsInvalidTrust)}})</template>
+                        <template slot="title">Servers with configuration errors ({{ len(tlsInvalidTrust) }})</template>
                         <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
                                     <th>Server name</th>
+                                    <th>Address</th>
                                     <th>Cause</th>
                                     <th>Time of detection</th>
                                     <th>Last failure</th>
@@ -351,7 +354,8 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
-                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ tls.url_short }}</td>
+                                    <td>{{ tls.ip_scanned }}</td>
                                     <td>
                                         <ul class="domain-list">
                                             <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
@@ -392,7 +396,7 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
-                                    <td>{{ tls.urlShort }}</td>
+                                    <td>{{ tls.url_short }}</td>
                                     <td>
                                         <ul class="coma-list" v-if="tls.host_cert">
                                             <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
@@ -705,14 +709,17 @@
                         <p>This is a list of all certificates that you control and are responsible for renewals.
                             You can choose to see only certificates correctly installed on your server,
                             or all certificates issued to your servers.</p>
-                        <input type="checkbox" id="chk-include-notverified" disabled="disabled">
+                            <toggle-button v-model="includeNotVerified" id="chk-include-notverified"
+                                           color="#00a7d7"
+                                           disabled="disabled"
+                                           :labels="{checked: 'On', unchecked: 'Off'}"
+                            ></toggle-button>
                         <label for="chk-include-notverified">Include certificates not verified from your servers</label>
                         </div>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <!--<th>ID</th>-->
                                     <th>Server names</th>
                                     <th>Issuer</th>
                                     <th colspan="2">Renew / plan renewal</th>
@@ -721,8 +728,10 @@
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                                    <!--<td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
+                                        <span class="hidden">
+                                            {{ cert.id }}
+                                        </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
                                                 {{ domain }}
@@ -755,25 +764,29 @@
                         <template slot="title">All certificates of your servers</template>
                         <div class="form-group">
                             <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
-                            <input type="checkbox" id="chk-include-expired">
-                            <label for="chk-include-expired">Include expired certificates</label>
+                            <toggle-button v-model="includeExpired" id="chk-include-expired"
+                                           color="#00a7d7"
+                                           :labels="{checked: 'On', unchecked: 'Off'}"
+                            ></toggle-button>
+                            <label for="chk-include-expired">Include expired CT certificates</label>
                         </div>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <!--<th>ID</th>-->
                                     <th>Domain name(s)</th>
                                     <th>Issuer</th>
+                                    <th>Source</th>
                                     <th colspan="2">Certificate expiration date</th>
-                                    <!--<th>Relative</th>-->
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
-                                    <!--<td v-bind:class="cert.planCss.tbl">{{ cert.id }}</td>-->
                                     <td v-bind:class="cert.planCss.tbl">
+                                        <span class="hidden">
+                                            {{ cert.id }}
+                                        </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
                                                 {{ domain }}
@@ -781,6 +794,10 @@
                                         </ul>
                                     </td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
+                                    <td v-bind:class="cert.planCss.tbl">
+                                        <span class="label label-success" title="TLS scan" v-if="len(cert.watch_hosts) > 0">TLS</span>
+                                        <span class="label label-primary" title="CT scan" v-if="len(cert.watch_hosts_ct) > 0">CT</span>
+                                    </td>
                                     <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                                     <td v-bind:class="cert.planCss.tbl"
                                         v-if="momentu(cert.valid_to)<momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}</td>
@@ -805,11 +822,18 @@
     import axios from 'axios';
     import moment from 'moment';
     import sprintf from 'sprintf-js';
+    import Psl from 'ph4-psl';
+    import Req from 'req';
+
     import VueCharts from 'vue-chartjs';
+    import ToggleButton from 'vue-js-toggle-button';
     import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
-    import Req from 'req';
     import toastr from 'toastr';
+
+    import Vue from 'vue';
+
+    Vue.use(ToggleButton);
 
     export default {
         data: function() {
@@ -824,6 +848,7 @@
 
                 certIssuerTableData: null,
                 includeExpired: false,
+                includeNotVerified: false,
 
                 Laravel: window.Laravel,
 
@@ -851,7 +876,7 @@
         },
 
         mounted() {
-            this.$nextTick(function () {
+            this.$nextTick(() => {
                 this.hookup();
             })
         },
@@ -862,15 +887,14 @@
             },
 
             tlsCertsIdsMap(){
-                if (!this.results || !this.results.tls_cert_map){
+                if (!this.results || !this.results.watch_to_tls_certs){
                     return {};
                 }
 
-                return this.listToSet(_.uniq(_.values(this.results.tls_cert_map)));
+                return this.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
             },
 
             tlsCerts(){
-                // return _.filter(this.certs, o => { return o.found_tls_scan; });
                 return _.map(_.keys(this.tlsCertsIdsMap), x => {
                     return this.results.certificates[x];
                 });
@@ -987,9 +1011,13 @@
             },
 
             tlsErrors(){
-                return _.filter(this.tls, x => {
+                return _.sortBy(_.filter(this.tls, x => {
                     return x && x.status !== 1;
-                });
+                }),
+                    [
+                        x => { return x.url_short; },
+                        x => { return x.ip_scanned; }
+                    ]);
             },
 
             expiredCertificates(){
@@ -1063,12 +1091,6 @@
         methods: {
             hookup(){
                 setTimeout(this.loadData, 0);
-                $('#chk-include-expired').bootstrapSwitch('destroy');
-                $('#chk-include-expired').bootstrapSwitch();
-                $('#chk-include-expired').bootstrapSwitch('size','normal');
-                $('#chk-include-notverified').bootstrapSwitch('destroy');
-                $('#chk-include-notverified').bootstrapSwitch();
-                $('#chk-include-notverified').bootstrapSwitch('size','normal');
             },
 
             //
@@ -1180,16 +1202,16 @@
             //
 
             loadData(){
-                const onFail = (function(){
+                const onFail = () => {
                     this.loadingState = -1;
                     toastr.error('Error while loading, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     this.loadingState = 1;
                     this.results = data;
                     setTimeout(this.processData, 0);
-                }).bind(this);
+                };
 
                 this.loadingState = 0;
                 axios.get('/home/dashboard/data')
@@ -1203,7 +1225,7 @@
                         }
                     })
                     .catch(e => {
-                        console.log("Add server failed: " + e);
+                        console.log('Add server failed: ' + e);
                         onFail();
                     });
 
@@ -1219,7 +1241,7 @@
             },
 
             processData(){
-                this.$nextTick(function () {
+                this.$nextTick(() => {
                     console.log('Data loaded');
                     this.dataProcessStart = moment();
                     this.processResults();
@@ -1228,22 +1250,16 @@
 
             processResults() {
                 const curTime = moment().valueOf() / 1000.0;
-                for(const watch_id in this.results.watches){
+                for(const watch_id of Object.keys(this.results.watches)){
                     const watch = this.results.watches[watch_id];
                     this.extendDateField(watch, 'last_scan_at');
                     this.extendDateField(watch, 'created_at');
                     this.extendDateField(watch, 'updated_at');
-
-                    const strPort = parseInt(watch.scan_port) || 443;
-                    watch.url = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort);
-                    watch.urlShort = Req.buildUrl(watch.scan_scheme, watch.scan_host, strPort === 443 ? undefined : strPort);
-                    watch.hostport = watch.scan_host + (strPort === 443 ? '' : ':' + strPort);
                 }
 
                 const fqdnResolver = _.memoize(Psl.get);
                 const wildcardRemover = _.memoize(Req.removeWildcard);
-                for(const certId in this.results.certificates){
-                    const cert = this.results.certificates[certId];
+                for(const [certId, cert] of Object.entries(this.results.certificates)){
                     cert.valid_to_dayfmt = moment.utc(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
@@ -1260,27 +1276,31 @@
                         return fqdnResolver(x);  // too expensive now. 10 seconds for 150 certs. invoke later
                     })));
 
-                    _.forEach(cert.tls_watches, watch_id => {
+                    _.forEach(cert.tls_watches_ids, watch_id => {
                         if (watch_id in this.results.watches){
-                            cert.watch_hostports.push(this.results.watches[watch_id].hostport);
+                            cert.watch_hostports.push(this.results.watches[watch_id].host_port);
                             cert.watch_hosts.push(this.results.watches[watch_id].scan_host);
                             cert.watch_urls.push(this.results.watches[watch_id].url);
                         }
                     });
 
-                    _.forEach(_.uniq(_.union(cert.tls_watches, cert.crtsh_watches)), watch_id=>{
-                        if (watch_id in this.results.watches){
-                            cert.watch_hosts_ct.push(this.results.watches[watch_id].scan_host);
-                            cert.watch_urls_ct.push(this.results.watches[watch_id].url);
-                        }
-                    });
+                    _.forEach(
+                        _.uniq(_.union(
+                            cert.tls_watches_ids,
+                            cert.crtsh_watches_ids)), watch_id =>
+                        {
+                            if (watch_id in this.results.watches) {
+                                cert.watch_hosts_ct.push(this.results.watches[watch_id].scan_host);
+                                cert.watch_urls_ct.push(this.results.watches[watch_id].url);
+                            }
+                        });
 
-                    cert.watch_hostports = _.uniq(cert.watch_hostports.sort());
-                    cert.watch_hosts = _.uniq(cert.watch_hosts.sort());
-                    cert.watch_urls = _.uniq(cert.watch_urls.sort());
-                    cert.watch_hosts_ct = _.uniq(cert.watch_hosts_ct.sort());
-                    cert.watch_urls_ct = _.uniq(cert.watch_urls_ct.sort());
-                    cert.last_scan_at_utc = _.reduce(cert.tls_watches, (acc, val) => {
+                    cert.watch_hostports = _.sortedUniq(cert.watch_hostports.sort());
+                    cert.watch_hosts = _.sortedUniq(cert.watch_hosts.sort());
+                    cert.watch_urls = _.sortedUniq(cert.watch_urls.sort());
+                    cert.watch_hosts_ct = _.sortedUniq(cert.watch_hosts_ct.sort());
+                    cert.watch_urls_ct = _.sortedUniq(cert.watch_urls_ct.sort());
+                    cert.last_scan_at_utc = _.reduce(cert.tls_watches_ids, (acc, val) => {
                         if (!this.results.watches || !(val in this.results.watches)){
                             return acc;
                         }
@@ -1311,8 +1331,7 @@
                     normalizer: Req.normalizeIssuer
                 });
 
-                for(const whois_id in this.results.whois){
-                    const whois = this.results.whois[whois_id];
+                for(const [whois_id, whois] of Object.entries(this.results.whois)){
                     this.extendDateField(whois, 'expires_at');
                     this.extendDateField(whois, 'registered_at');
                     this.extendDateField(whois, 'rec_updated_at');
@@ -1325,21 +1344,19 @@
                     }};
                 }
 
-                for(const dns_id in this.results.dns){
-                    const dns = this.results.dns[dns_id];
+                for(const [dns_id, dns] of Object.entries(this.results.dns)){
                     this.extendDateField(dns, 'last_scan_at');
                     dns.domain = this.results.watches && dns.watch_id in this.results.watches ?
                         this.results.watches[dns.watch_id].scan_host : undefined;
                 }
 
-                for(const tls_id in this.results.tls){
-                    const tls = this.results.tls[tls_id];
+                for(const [tls_id, tls] of Object.entries(this.results.tls)){
                     this.extendDateField(tls, 'last_scan_at');
                     this.extendDateField(tls, 'created_at');
                     this.extendDateField(tls, 'updated_at');
                     if (this.results.watches && tls.watch_id in this.results.watches){
                         tls.domain = this.results.watches[tls.watch_id].scan_host;
-                        tls.urlShort = this.results.watches[tls.watch_id].urlShort;
+                        tls.url_short = this.results.watches[tls.watch_id].url_short;
                     }
 
                     tls.leaf_cert = tls.cert_id_leaf && tls.cert_id_leaf in this.results.certificates ?
@@ -1356,7 +1373,7 @@
                 this.$emit('onProcessed');
                 this.loadingState = 10;
 
-                this.$nextTick(function () {
+                this.$nextTick(() => {
                     this.graphDataReady = true;
                     this.graphLibLoaded = true;
                     this.renderCharts();
@@ -1367,19 +1384,7 @@
             },
 
             postLoad(){
-                const chkInclude = $('#chk-include-expired');
-                chkInclude.bootstrapSwitch('destroy');
-                chkInclude.bootstrapSwitch();
-                chkInclude.bootstrapSwitch('size','normal');
-                chkInclude.on('switchChange.bootstrapSwitch', (evt, state) => {
-                    if (evt.type === 'switchChange'){
-                        this.includeExpired = state;
-                    }
-                });
 
-                $('#chk-include-notverified').bootstrapSwitch('destroy');
-                $('#chk-include-notverified').bootstrapSwitch();
-                $('#chk-include-notverified').bootstrapSwitch('size','normal');
             },
 
             cleanResults(){
@@ -1739,7 +1744,7 @@
                     });
                 }
 
-                _.forEach(data, function(value, idx){
+                _.forEach(data, (value, idx) => {
                     if (idx===0){
                         return;
                     }
@@ -1755,8 +1760,7 @@
                 // certificate type aggregation
                 const certTypes = [0, 0, 0];  // LE, Cloudflare, Public / other
 
-                for(const crtIdx in certSet){
-                    const ccrt = certSet[crtIdx];
+                for(const [crtIdx, ccrt] of Object.entries(certSet)){
                     if (ccrt.is_le){
                         certTypes[0] += 1
                     } else if (ccrt.is_cloudflare){
@@ -1824,8 +1828,7 @@
                 const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
                 const ret = [];
                 let lastGrp = moment().utc().subtract(1, 'month');
-                for(const idx in sorted){
-                    const grp = sorted[idx];
+                for(const [idx, grp] of Object.entries(sorted)){
                     const crt = grp[0];
                     const curMoment = moment.utc(crt.valid_to_utc * 1000.0);
                     const label = curMoment.format('MM/YY');
@@ -1879,8 +1882,8 @@
             groupStats(grouped, sort){
                 // processes groupBy result and returns [[key1, size1], [key2, size2], ...]
                 const agg = [];
-                for(const curLabel in grouped){
-                    agg.push([curLabel, grouped[curLabel].length]);  // zip
+                for(const [curLabel, val] of Object.entries(grouped)){
+                    agg.push([curLabel, val.length]);  // zip
                 }
 
                 let sorted = agg;

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\ApiKey;
+use App\Models\WatchTarget;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -65,6 +66,8 @@ class User extends Authenticatable
      */
     public function activeWatchTargets(){
         return $this->watchTargets()
+            ->addSelect(WatchTarget::TABLE . '.*')
+            ->addSelect(WatchTarget::TABLE . '.id as watch_id')
             ->whereNull('deleted_at')
             ->whereNull('disabled_at');
     }
