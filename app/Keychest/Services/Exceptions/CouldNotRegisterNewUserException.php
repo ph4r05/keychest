@@ -6,7 +6,7 @@
  * Time: 0:13
  */
 
-namespace Keychest\Services\Exceptions;
+namespace App\Keychest\Services\Exceptions;
 
 
 use Throwable;

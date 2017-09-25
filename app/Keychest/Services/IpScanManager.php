@@ -22,7 +22,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 
 
-use Keychest\Services\Exceptions\CouldNotCreateException;
+use App\Keychest\Services\Exceptions\CouldNotCreateException;
 
 class IpScanManager {
 

@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class UserManager {
@@ -80,16 +81,16 @@ class UserManager {
 
         // Allow only certain number of users per the IP address per day.
         $userTbl = User::TABLE;
-        $reqs = ApiKeyLog::query()
-            ->where('req_ip', '=', $request->ip())
-            ->where('action_type', '=', 'new-user')
-            ->whereDate('created_at', DB::raw('CURDATE()'))
+        $q = ApiKeyLog::query()
+            ->where(ApiKeyLog::TABLE.'.req_ip', '=', $request->ip())
+            ->where(ApiKeyLog::TABLE.'.action_type', '=', 'new-user')
+            ->whereDate(ApiKeyLog::TABLE.'.created_at', DB::raw('CURDATE()'))
             ->join($userTbl, function(JoinClause $q){
                 $q->on(ApiKeyLog::TABLE.'.req_email', '=', User::TABLE.'.email')
                     ->whereNotNull(User::TABLE.'.auto_created_at');
-            })
-            ->get();
+            });
 
+        $reqs = $q->get();
         if ($reqs->count() > 5){
             return UserSelfRegistrationResult::$TOO_MANY;
         }

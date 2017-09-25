@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
-use Keychest\Services\Exceptions\CouldNotRegisterNewUserException;
+use App\Keychest\Services\Exceptions\CouldNotRegisterNewUserException;
 
 
 /**
@@ -130,8 +130,11 @@ class UserController extends Controller
 
             try {
                 $user = $this->claimAccessNewUser($request, $email, $apiKey);
+            } catch (CouldNotRegisterNewUserException $e){
+                Log::warning('Could not auto-register create a new user: ' . $email . ' ex: ' . $e->getMessage());
+                return $bailResponse;
             } catch (\Exception $e){
-                Log::warning('Could not auto-register create a new user: ' . $email);
+                Log::warning('Could not auto-register create a new user: ' . $email . ' ex: ' . $e);
                 return $bailResponse;
             }
         }
@@ -166,8 +169,10 @@ class UserController extends Controller
      * @throws CouldNotRegisterNewUserException
      */
     protected function claimAccessNewUser(Request $request, $email, $apiKey){
-        if ($this->userManager->isNewUserRegistrationAllowed($request, $email) !== UserSelfRegistrationResult::$ALLOWED){
-            throw new CouldNotRegisterNewUserException('New user registration is not allowed by the system policy');
+        $allowNewUserResult = $this->userManager->isNewUserRegistrationAllowed($email, $request);
+        if ($allowNewUserResult !== UserSelfRegistrationResult::$ALLOWED){
+            throw new CouldNotRegisterNewUserException(
+                'New user registration is not allowed by the system policy, code: ' . $allowNewUserResult);
         }
 
         return $this->userManager->registerNewUser($request, $email, $apiKey);
