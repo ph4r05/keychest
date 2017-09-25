@@ -10,7 +10,7 @@ namespace App\Keychest\Services;
 
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Models\ApiKey;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Builder;

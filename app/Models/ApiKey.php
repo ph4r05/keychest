@@ -35,6 +35,6 @@ class ApiKey extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(){
-        return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo('App\Models\User', 'user_id');
     }
 }

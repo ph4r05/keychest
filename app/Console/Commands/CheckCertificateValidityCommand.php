@@ -6,7 +6,7 @@ use App\Jobs\SendUserWeeklyReport;
 
 
 use App\Keychest\Utils\DataTools;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;

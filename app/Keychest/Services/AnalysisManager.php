@@ -11,7 +11,7 @@ namespace App\Keychest\Services;
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 
 use Illuminate\Foundation\Application;

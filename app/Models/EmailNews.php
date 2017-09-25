@@ -33,7 +33,7 @@ class EmailNews extends Model
     public function users()
     {
         return $this->belongsToMany(
-            'App\User',
+            'App\Models\User',
             'email_news_user',
             'email_news_id',
             'user_id')

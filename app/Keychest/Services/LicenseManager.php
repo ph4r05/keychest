@@ -8,7 +8,7 @@
 
 namespace App\Keychest\Services;
 
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Builder;

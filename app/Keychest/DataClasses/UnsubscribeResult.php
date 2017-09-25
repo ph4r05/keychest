@@ -9,7 +9,7 @@
 namespace App\Keychest\DataClasses;
 
 
-use App\User;
+use App\Models\User;
 
 class UnsubscribeResult
 {

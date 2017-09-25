@@ -6,7 +6,7 @@ use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\UserManager;
 use App\Models\ApiKey;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

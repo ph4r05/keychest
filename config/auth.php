@@ -72,7 +72,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'ph4-eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
         ],
 
         // 'users' => [

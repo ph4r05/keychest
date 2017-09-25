@@ -214,7 +214,7 @@ class AcachaAdminLTELaravelTest extends TestCase
      */
     public function testLogin()
     {
-        $user = factory(\App\User::class)->create(['password' => Hash::make('passw0RD')]);
+        $user = factory(\App\Models\User::class)->create(['password' => Hash::make('passw0RD')]);
 
         $response = $this->json('POST', '/login', [
             'email' => $user->email,

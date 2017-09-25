@@ -12,9 +12,7 @@ use App\Keychest\Utils\DomainTools;
 use App\Models\SubdomainScanBlacklist;
 use App\Models\SubdomainWatchAssoc;
 use App\Models\SubdomainWatchTarget;
-
-
-use App\User;
+use App\Models\User;
 
 
 use Illuminate\Support\Collection;

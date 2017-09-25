@@ -8,7 +8,7 @@
 
 namespace App\Keychest\Utils;
 
-use App\User;
+use App\Models\User;
 
 use RandomLib\Factory;
 

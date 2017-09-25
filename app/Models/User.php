@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Models\ApiKey;
 use App\Models\WatchTarget;

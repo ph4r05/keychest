@@ -10,7 +10,7 @@ use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Mail\WeeklyNoServers;
 use App\Mail\WeeklyReport;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Mail\Mailable;

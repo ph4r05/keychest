@@ -9,7 +9,7 @@
 namespace App\Keychest\DataClasses;
 
 use App\Keychest\Utils\AnalysisTools;
-use App\User;
+use App\Models\User;
 
 
 use Illuminate\Support\Collection;

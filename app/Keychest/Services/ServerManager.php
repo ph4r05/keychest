@@ -16,7 +16,7 @@ use App\Models\LastScanCache;
 use App\Models\WatchAssoc;
 use App\Models\WatchService;
 use App\Models\WatchTarget;
-use App\User;
+use App\Models\User;
 
 
 use Illuminate\Database\Query\JoinClause;
