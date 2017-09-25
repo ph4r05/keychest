@@ -60,12 +60,12 @@ class DashboardController extends Controller
         $md = new ValidityDataModel($curUser);
 
         // Host load, dns scans
-        $this->analysisManager->loadHosts($curUser, $md);
+        $this->analysisManager->loadHosts($curUser, $md, false);
 
         // Cert loading and processing, tls scan, crtsh scan load
         $this->analysisManager->loadCerts($md, false);
 
-        Log::info(var_export($md->getCerts()->count(), true));
+        Log::info('Certificate count: ' . var_export($md->getCerts()->count(), true));
         $this->analysisManager->loadWhois($md);
 
         // Processing section
