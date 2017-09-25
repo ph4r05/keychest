@@ -17,7 +17,9 @@ use Carbon\Carbon;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 
 class UserManager {
@@ -74,6 +76,22 @@ class UserManager {
     public function isNewUserRegistrationAllowed($user, $request){
         if (!config('keychest.enabled_user_auto_register')){
             return UserSelfRegistrationResult::$GLOBAL_DENIAL;
+        }
+
+        // Allow only certain number of users per the IP address per day.
+        $userTbl = User::TABLE;
+        $reqs = ApiKeyLog::query()
+            ->where('req_ip', '=', $request->ip())
+            ->where('action_type', '=', 'new-user')
+            ->whereDate('created_at', DB::raw('CURDATE()'))
+            ->join($userTbl, function(JoinClause $q){
+                $q->on(ApiKeyLog::TABLE.'.req_email', '=', User::TABLE.'.email')
+                    ->whereNotNull(User::TABLE.'.auto_created_at');
+            })
+            ->get();
+
+        if ($reqs->count() > 5){
+            return UserSelfRegistrationResult::$TOO_MANY
         }
 
         return UserSelfRegistrationResult::$ALLOWED;
