@@ -117,6 +117,7 @@ class UserController extends Controller
         ]);
 
         $bailResponse = response()->json(['status' => 'not-allowed'], 405);
+        $errorResponse = response()->json(['status' => 'error'], 503);
         $successResponse = response()->json(['status' => 'success'], 200);
 
         $email = Input::get('email');
@@ -124,18 +125,22 @@ class UserController extends Controller
 
         // Load user by the email, user has to exist before this call.
         // If user does not exist and system policy allows it a new user is created.
+        $userExisted = true;
         $user = User::query()->where('email', '=', $email)->first();
         if (empty($user)){
             Log::debug('User with email not found: ' . $email);
 
             try {
                 $user = $this->claimAccessNewUser($request, $email, $apiKey);
+                $userExisted = true;
+
             } catch (CouldNotRegisterNewUserException $e){
                 Log::warning('Could not auto-register create a new user: ' . $email . ' ex: ' . $e->getMessage());
                 return $bailResponse;
+
             } catch (\Exception $e){
                 Log::warning('Could not auto-register create a new user: ' . $email . ' ex: ' . $e);
-                return $bailResponse;
+                return $errorResponse;
             }
         }
 
@@ -156,7 +161,16 @@ class UserController extends Controller
         }
 
         // Create a new API key if the user has allowed it.
-        $this->userManager->registerNewApiKey($user, $apiKey, $request);
+        try {
+            $apiKeyObj = $this->userManager->registerNewApiKey($user, $apiKey, $request);
+
+        } catch (\Exception $e){
+            Log::warning('Could not auto-register API key, email: ' . $email . ' api: ' . $apiKey . ' ex: ' . $e);
+            return $errorResponse;
+        }
+
+        // TODO: new user & api key ? send registration email with confirmation & password set / unsubscribe
+        // TODO: existing user & api key ? send confirm email / unsubscribe link / block.
         return response()->json(['status' => 'created'], 200);
     }
 
