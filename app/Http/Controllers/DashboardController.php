@@ -89,17 +89,22 @@ class DashboardController extends Controller
 
             // Watch id -> [leaf certs ids] map.
             // Watch id mapping to the leaf certificates found by the latest TLS scan.
-            'tls_cert_map' => $md->getWatch2certsTls(),
+            'watch_to_tls_certs' => $md->getWatch2certsTls(),
 
-            // As before, just with crtsh certificates
-            'crtsh_cert_map' => $md->getWatch2certsCrtsh(),
+            // Watch id -> [leaf certs ids] map.
+            // Watch id mapping to the leaf certificates found by the latest CT scan.
+            // 'watch_to_crtsh_certs' => $md->getWatch2certsCrtsh(),  // not used by dashboard right now
 
-            // cert id to watch id (tls)
-            'crt_to_watch_tls' => $md->getCert2watchTls(),
+            // cert id to watch id (TLS)
+            // 'crt_to_watch_tls' => $md->getCert2watchTls(), // not used by dashboard right now
 
-            // cert id to watch id (ct)
-            'crt_to_watch_crtsh' => $md->getCert2watchCrtsh(),
-            'domain_to_watch' => $md->getTopDomainToWatch(),
+            // cert id to watch id (CT)
+            // 'crt_to_watch_crtsh' => $md->getCert2watchCrtsh(), // not used by dashboard right now
+
+            // top domain id -> [watch ids]
+            // Mapping of the top domain IDs to the related watch target ids (containing the top domain)
+            // 'domain_to_watch' => $md->getTopDomainToWatch(), // not used by dashboard right now
+
             'certificates' => $this->thinCertsModel($md->getCerts())
 
         ];

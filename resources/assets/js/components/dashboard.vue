@@ -887,11 +887,11 @@
             },
 
             tlsCertsIdsMap(){
-                if (!this.results || !this.results.tls_cert_map){
+                if (!this.results || !this.results.watch_to_tls_certs){
                     return {};
                 }
 
-                return this.listToSet(_.uniq(_.flattenDeep(_.values(this.results.tls_cert_map))));
+                return this.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
             },
 
             tlsCerts(){
