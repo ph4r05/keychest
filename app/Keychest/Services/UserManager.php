@@ -8,6 +8,7 @@
 
 namespace App\Keychest\Services;
 
+use App\Events\NewApiKeyCreated;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Results\UserSelfRegistrationResult;
 use App\Models\ApiKey;
@@ -142,6 +143,11 @@ class UserManager {
         ]);
 
         $user->apiKeys()->save($apiObj);
+
+        // New event dispatch
+        $evt = new NewApiKeyCreated($user, $apiObj);
+        event($evt);
+
         return $apiObj;
     }
 
