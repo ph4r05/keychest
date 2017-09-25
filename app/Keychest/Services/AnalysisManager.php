@@ -83,8 +83,10 @@ class AnalysisManager
     /**
      * Loads Scans & certificate related data
      * @param ValidityDataModel $md
+     * @param bool $expandScans if true cert model is expanded with tls scans and watch info - large model
+     * @param int $crtshCertLimit number of the newest crtsh certificates to load
      */
-    public function loadCerts(ValidityDataModel $md, $expandScans = true){
+    public function loadCerts(ValidityDataModel $md, $expandScans = true, $crtshCertLimit=1000){
         // Load latest TLS scans for active watchers for primary IP addresses.
         $q = $this->scanManager->getNewestTlsScansOptim($md->getActiveWatchesIds());
         $md->setTlsScans($this->scanManager->processTlsScans($q->get())->keyBy('id'));
@@ -121,7 +123,7 @@ class AnalysisManager
 
         $md->setCrtshCertIds($md->getCrtshScans()->reduce(function($carry, $item){
             return $carry->merge(collect($item->certs_ids)->values());
-        }, collect())->values()->unique()->sort()->reverse()->take(2000)->values());
+        }, collect())->values()->unique()->sort()->reverse()->take($crtshCertLimit)->values());
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
         $md->setCert2watchTls(DataTools::invertMap($md->getWatch2certsTls()));
