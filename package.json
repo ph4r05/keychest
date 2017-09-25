@@ -53,6 +53,7 @@
     "moment-timezone": "^0.5.13",
     "numeral": "^2.0.6",
     "ph4": "file:resources/assets/js/lib/ph4",
+    "ph4-psl": "file:resources/assets/js/lib/psl",
     "pluralize": "^6.0.0",
     "psl": "^1.1.19",
     "req": "file:resources/assets/js/lib/req",
@@ -65,6 +66,10 @@
     "vue": "^2.4.2",
     "vue-chartjs": "^2.8.1",
     "vue-events": "^3.0.1",
+    "vue-js-toggle-button": "^1.1.5",
+    "vue-select": "^2.2.0",
+    "vue-slider-component": "^2.4.1",
+    "vue-switches": "^2.0.1",
     "vue2-filters": "^0.1.9",
     "vuetable-2": "^1.6.5",
     "w3c-blob": "0.0.1"

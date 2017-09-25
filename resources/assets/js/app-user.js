@@ -11,7 +11,6 @@ import _ from 'lodash';
 
 window.Vue = require('vue');
 window.Req = require('req').default;
-window.Psl = require('./lib/psl');
 window.Moment = require('moment');
 window.toastr = require('toastr');
 window.swal = require('sweetalert2');
@@ -73,6 +72,9 @@ Vue.component('server-tables', resolve => {
 });
 Vue.component('servers-import', resolve => {
     require.ensure([], require => resolve(require('./components/servers-import/server-import.vue')), 'servers-import');
+});
+Vue.component('account', resolve => {
+    require.ensure([], require => resolve(require('./components/license/Account.vue')), 'account');
 });
 
 

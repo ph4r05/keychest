@@ -1,2 +1,4 @@
 User-agent: *
 Disallow: /home/
+Disallow: /api/
+Sitemap: https://keychest.net/sitemap.xml

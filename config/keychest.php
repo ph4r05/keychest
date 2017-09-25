@@ -13,5 +13,6 @@ return [
     'wrk_weekly_emails_queue' => env('WORK_WEEKLY_EMAILS_QUEUE', 'emails'),
 
     'enabled_ip_scanning' => env('APP_ENABLED_IP_SCANNING', false),
+    'enabled_api_self_register' => env('APP_ENABLED_API_SELF_REGISTER', false),
 ];
 

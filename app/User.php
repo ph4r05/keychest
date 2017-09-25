@@ -2,12 +2,15 @@
 
 namespace App;
 
+use App\Models\ApiKey;
+use App\Models\WatchTarget;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -28,12 +31,19 @@ class User extends Authenticatable
     ];
 
     /**
+     * ApiKey used for auth.
+     * Transient variable initialized by the user provider, if applicable.
+     * @var ApiKey
+     */
+    public $apiKey;
+
+    /**
      * Carbon converted date fields
      * @return array
      */
     public function getDates()
     {
-        return array('created_at', 'updated_at', 'last_email_report_sent_at',
+        return array('created_at', 'updated_at', 'deleted_at', 'closed_at', 'last_email_report_sent_at',
             'last_email_no_servers_sent_at', 'last_email_report_enqueued_at',
             'last_login_at', 'cur_login_at', 'last_action_at');
     }
@@ -56,6 +66,8 @@ class User extends Authenticatable
      */
     public function activeWatchTargets(){
         return $this->watchTargets()
+            ->addSelect(WatchTarget::TABLE . '.*')
+            ->addSelect(WatchTarget::TABLE . '.id as watch_id')
             ->whereNull('deleted_at')
             ->whereNull('disabled_at');
     }
@@ -96,5 +108,14 @@ class User extends Authenticatable
     public function ipScanRecords()
     {
         return $this->belongsToMany('App\Models\IpScanRecord')->using('App\Models\UserIpScanRecord');
+    }
+
+    /**
+     * All api keys
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function apiKeys()
+    {
+        return $this->hasMany('App\Models\ApiKey', 'user_id');
     }
 }

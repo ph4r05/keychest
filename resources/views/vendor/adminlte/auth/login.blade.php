@@ -9,7 +9,7 @@
     <div id="app" v-cloak>
         <div class="login-box">
             <div class="register-logo" style="background: #fff; opacity: 0.6;" >
-                <a href="{{ url('/') }}"><b>KeyChest</b> Dashboard</a></br>
+                <a href="{{ url('/') }}"><b>KeyChest</b> Dashboard</a><br/>
                 <div style="color:#00a7d7;font-size:18px"><b>Discovers your TLS/HTTPS Certificates</b></div>
             </div> <!-- end of register-logo -->
 

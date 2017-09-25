@@ -71,8 +71,8 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestWhoisScans($domainIds){
-        $table = (new WhoisResult())->getTable();
-        $domainsTable = (new BaseDomain())->getTable();
+        $table = WhoisResult::TABLE;
+        $domainsTable = BaseDomain::TABLE;
 
         $qq = WhoisResult::query()
             ->select('x.domain_id')
@@ -105,9 +105,9 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestWhoisScansOptim($domainIds){
-        $table = (new WhoisResult())->getTable();
-        $domainsTable = (new BaseDomain())->getTable();
-        $lstScanTbl = (new LastScanCache())->getTable();
+        $table = WhoisResult::TABLE;
+        $domainsTable = BaseDomain::TABLE;
+        $lstScanTbl = LastScanCache::TABLE;
 
         $q = LastScanCache::query()
             ->select(['s.*', $domainsTable.'.domain_name AS domain'])
@@ -131,7 +131,7 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestCrtshScans($watches){
-        $table = (new CrtShQuery())->getTable();
+        $table = CrtShQuery::TABLE;
 
         $qq = CrtShQuery::query()
             ->select('x.watch_id')
@@ -162,8 +162,8 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestCrtshScansOptim($watches){
-        $table = (new CrtShQuery())->getTable();
-        $lstScanTbl = (new LastScanCache())->getTable();
+        $table = CrtShQuery::TABLE;
+        $lstScanTbl = LastScanCache::TABLE;
 
         $q = LastScanCache::query()
             ->select('s.*')
@@ -188,7 +188,7 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestTlsScans($watches, $dnsScans, $primaryIPs){
-        $table = (new HandshakeScan())->getTable();
+        $table = HandshakeScan::TABLE;
 
         $qq = HandshakeScan::query()
             ->select(['x.watch_id', 'x.ip_scanned'])
@@ -233,11 +233,11 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestTlsScansOptim($watches, $primaryIPs=false){
-        $table = (new HandshakeScan())->getTable();
-        $watchTbl = (new WatchTarget())->getTable();
-        $dnsTbl = (new DnsResult())->getTable();
-        $dnsEntryTbl = (new DnsEntry())->getTable();
-        $lstScanTbl = (new LastScanCache())->getTable();
+        $table = HandshakeScan::TABLE;
+        $watchTbl = WatchTarget::TABLE;
+        $dnsTbl = DnsResult::TABLE;
+        $dnsEntryTbl = DnsEntry::TABLE;
+        $lstScanTbl = LastScanCache::TABLE;
 
         $q = WatchTarget::query()
             ->select('xh.*')
@@ -278,7 +278,7 @@ class ScanManager {
         //      WHERE x.watch_id IN (23)
         //      group by x.watch_id ) ss
         // ON s.watch_id = ss.watch_id AND s.last_scan_at = ss.last_scan;
-        $dnsTable = (new DnsResult())->getTable();
+        $dnsTable = DnsResult::TABLE;
 
         $qq = DnsResult::query()
             ->select('x.watch_id')
@@ -309,8 +309,8 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getNewestDnsScansOptim($watches){
-        $dnsTable = (new DnsResult())->getTable();
-        $watchTbl = (new WatchTarget())->getTable();
+        $dnsTable = DnsResult::TABLE;
+        $watchTbl = WatchTarget::TABLE;
 
         $q = WatchTarget::query()
             ->select('s.*')
@@ -330,9 +330,9 @@ class ScanManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getActiveWatcher($userId){
-        $watchTbl = (new WatchTarget())->getTable();
-        $watchAssocTbl = (new WatchAssoc())->getTable();
-        $baseDomainTbl = (new BaseDomain())->getTable();
+        $watchTbl = WatchTarget::TABLE;
+        $watchAssocTbl = WatchAssoc::TABLE;
+        $baseDomainTbl = BaseDomain::TABLE;
 
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')

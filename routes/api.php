@@ -13,14 +13,30 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+// Unauthenticated API ping
+Route::get('ping', function (Request $request) {
+    return ['status' => 'success'];
+});
+
+// Current user auth check call
+Route::middleware('auth:api')->get('user', function (Request $request) {
     return $request->user();
 });
-//
-//Route::post('/submitJob', 'SearchController@restSubmitJob');
-//Route::post('/jobState', 'SearchController@restGetJobState');
-//Route::post('/jobResult', 'SearchController@restJobResults');
 
+// Main API URL namespace
+Route::prefix('v1.0')->group(function () {
+    // Easy client registration.
+    Route::get('access/claim', 'UserController@claimAccess');
+
+    // All API methods accessible
+    Route::group(['middleware' => 'auth:ph4-token'], function(){
+
+        Route::get('user', function(Request $request){
+            return $request->user();
+        });
+
+    });
+});
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:api'], function () {
     //    Route::resource('task', 'TasksController');
