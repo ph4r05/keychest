@@ -134,15 +134,15 @@ class AnalysisManager
         $md->setCerts($md->getCerts()->transform(
             function ($item, $key) use ($md, $expandScans)
             {
-                $this->attributeCertificate($item, $md->tlsCertsIds->values(), 'found_tls_scan');
-                $this->attributeCertificate($item, $md->certsToLoad->values(), 'found_crt_sh');
+                $this->attributeCertificate($item, $md->tlsCertsIds, 'found_tls_scan');
+                $this->attributeCertificate($item, $md->certsToLoad, 'found_crt_sh');
                 $this->augmentCertificate($item);
                 $this->addWatchIdToCert($item, $md->cert2watchTls, $md->cert2watchCrtsh);
                 $item->tls_scans_ids = $md->cert2tls->get($item->id, collect());
-                $item->tls_watches = DataTools::pick($md->activeWatches, $md->cert2watchTls->get($item->id, []));
-                $item->crtsh_watches = DataTools::pick($md->activeWatches, $md->cert2watchCrtsh->get($item->id, []));
 
                 if ($expandScans) {
+                    $item->tls_watches = DataTools::pick($md->activeWatches, $md->cert2watchTls->get($item->id, []));
+                    $item->crtsh_watches = DataTools::pick($md->activeWatches, $md->cert2watchCrtsh->get($item->id, []));
                     $this->addTlsScanIpsInfo($item, $md->tlsScans, $md->cert2tls);
                 }
 
