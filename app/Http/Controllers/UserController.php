@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\LicenseManager;
+use App\Keychest\Services\Results\UserSelfRegistrationResult;
 use App\Keychest\Services\UserManager;
 use App\Models\ApiKey;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
+use Keychest\Services\Exceptions\CouldNotRegisterNewUserException;
 
 
 /**
@@ -121,10 +123,17 @@ class UserController extends Controller
         $apiKey = Input::get('api_key');
 
         // Load user by the email, user has to exist before this call.
+        // If user does not exist and system policy allows it a new user is created.
         $user = User::query()->where('email', '=', $email)->first();
         if (empty($user)){
             Log::debug('User with email not found: ' . $email);
-            return $bailResponse;
+
+            try {
+                $user = $this->claimAccessNewUser($request, $email, $apiKey);
+            } catch (\Exception $e){
+                Log::warning('Could not auto-register create a new user: ' . $email);
+                return $bailResponse;
+            }
         }
 
         // Check if there is such api code already. If exists, return success.
@@ -146,5 +155,21 @@ class UserController extends Controller
         // Create a new API key if the user has allowed it.
         $this->userManager->registerNewApiKey($user, $apiKey, $request);
         return response()->json(['status' => 'created'], 200);
+    }
+
+    /**
+     * Auto-registers a new user for the given email.
+     * @param Request $request
+     * @param $email
+     * @param $apiKey
+     * @return User
+     * @throws CouldNotRegisterNewUserException
+     */
+    protected function claimAccessNewUser(Request $request, $email, $apiKey){
+        if ($this->userManager->isNewUserRegistrationAllowed($request, $email) !== UserSelfRegistrationResult::$ALLOWED){
+            throw new CouldNotRegisterNewUserException('New user registration is not allowed by the system policy');
+        }
+
+        return $this->userManager->registerNewUser($request, $email, $apiKey);
     }
 }
