@@ -91,7 +91,7 @@ class UserManager {
             ->get();
 
         if ($reqs->count() > 5){
-            return UserSelfRegistrationResult::$TOO_MANY
+            return UserSelfRegistrationResult::$TOO_MANY;
         }
 
         return UserSelfRegistrationResult::$ALLOWED;
