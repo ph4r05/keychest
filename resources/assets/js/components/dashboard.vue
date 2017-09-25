@@ -730,7 +730,8 @@
                                 <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
                                     <td v-bind:class="cert.planCss.tbl">
                                         <span class="hidden">
-                                            {{ cert.id }}
+                                            ID: {{ cert.id }}
+                                            CNAME: {{ cert.cname }}
                                         </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
@@ -785,7 +786,8 @@
                                 <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
                                     <td v-bind:class="cert.planCss.tbl">
                                         <span class="hidden">
-                                            {{ cert.id }}
+                                            ID: {{ cert.id }}
+                                            CNAME: {{ cert.cname }}
                                         </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
