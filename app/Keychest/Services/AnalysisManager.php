@@ -124,22 +124,25 @@ class AnalysisManager
             return $item->unique()->values();
         }));
 
-        $md->setCrtshCertIds($md->getCrtshScans()->reduce(function($carry, $item){
+        $crtshCertsIds = $md->getCrtshScans()->reduce(function ($carry, $item) {
             return $carry->merge(collect($item->certs_ids)->values());
-        }, collect())->values()->unique()->sort()->reverse()->take($crtshCertLimit)->values());
+        }, collect())->values()->unique()->sort()->reverse();
+
+        $md->setCrtshCertIds($crtshCertsIds->values());
+        $crtshCertsIdsToLoad = $crtshCertsIds->take($crtshCertLimit)->values();
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
         $md->setCert2watchTls(DataTools::invertMap($md->getWatch2certsTls()));
         $md->setCert2watchCrtsh(DataTools::invertMap($md->getWatch2certsCrtsh()));
 
         start_measure('loadCerts-sub');
-        $md->setCertsToLoad($md->getTlsCertsIds()->merge($md->getCrtshCertIds())->values()->unique()->values());
+        $md->setCertsToLoad($md->getTlsCertsIds()->merge($crtshCertsIdsToLoad)->values()->unique()->values());
         $md->setCerts($this->scanManager->loadCertificates($md->getCertsToLoad())->get());
         $md->setCerts($md->getCerts()->transform(
             function ($item, $key) use ($md, $expandModel)
             {
-                $this->attributeCertificate($item, $md->tlsCertsIds, 'found_tls_scan');
-                $this->attributeCertificate($item, $md->certsToLoad, 'found_crt_sh');
+                $this->attributeCertificate($item, $md->cert2watchTls, 'found_tls_scan');
+                $this->attributeCertificate($item, $md->cert2watchCrtsh, 'found_crt_sh');
                 $this->augmentCertificate($item);
                 $this->addWatchIdToCert($item, $md->cert2watchTls, $md->cert2watchCrtsh);
                 $item->tls_scans_ids = $md->cert2tls->get($item->id, collect());
@@ -249,7 +252,7 @@ class AnalysisManager
      */
     protected function attributeCertificate($certificate, $idset, $val)
     {
-        $certificate->$val = $idset->contains($certificate->id);
+        $certificate->$val = $idset->has($certificate->id);
         return $certificate;
     }
 
