@@ -286,7 +286,12 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="dns in dnsFailedLookups" class="danger">
-                                    <td>{{ dns.domain }}</td>
+                                    <td>
+                                        <span class="hidden">
+                                            ID: {{ dns.id }}
+                                        </span>
+                                        {{ dns.domain }}
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -315,7 +320,12 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in tlsErrors" class="danger">
-                                    <td>{{ tls.url_short }}</td>
+                                    <td>
+                                        <span class="hidden">
+                                            ID: {{ tls.id }}
+                                        </span>
+                                        {{ tls.url_short }}
+                                    </td>
                                     <td>{{ tls.ip_scanned }}</td>
                                     <td>
                                         <span v-if="tls.err_code == 1">TLS handshake error</span>
@@ -354,7 +364,12 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
-                                    <td>{{ tls.url_short }}</td>
+                                    <td>
+                                        <span class="hidden">
+                                            ID: {{ tls.id }}
+                                        </span>
+                                        {{ tls.url_short }}
+                                    </td>
                                     <td>{{ tls.ip_scanned }}</td>
                                     <td>
                                         <ul class="domain-list">
@@ -396,7 +411,11 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
-                                    <td>{{ tls.url_short }}</td>
+                                    <td><span class="hidden">
+                                            ID: {{ tls.id }}
+                                        </span>
+                                        {{ tls.url_short }}
+                                    </td>
                                     <td>
                                         <ul class="coma-list" v-if="tls.host_cert">
                                             <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
@@ -434,6 +453,9 @@
                                 <tbody>
                                 <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
                                     <td>
+                                        <span class="hidden">
+                                            ID: {{ cert.id }}
+                                        </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
                                                 {{ domain }}
