@@ -117,13 +117,27 @@ class UserManager {
      * @return ApiKey
      */
     public function registerNewApiKey($user, $apiKey, $request){
+        $now = Carbon::now();
+
+        // Create log about the creation first
+        $log = new ApiKeyLog([
+            'created_at' => $now,
+            'updated_at' => $now,
+            'req_ip' => $request->ip(),
+            'req_email' => $user->email,
+            'req_challenge' => $apiKey,
+            'action_type' => 'new-apikey'
+        ]);
+        $log->save();
+
+        // After log is successfully created, create a api key (we have audit record already)
         $apiObj = new ApiKey([
             'name' => 'self-registered',
             'api_key' => $apiKey,
             'email_claim' => $user->email,
             'ip_registration' => $request->ip(),
             'user_id' => $user->id,
-            'last_seen_active_at' => Carbon::now(),
+            'last_seen_active_at' => $now,
             'last_seen_ip' => $request->ip()
         ]);
 
