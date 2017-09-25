@@ -458,7 +458,8 @@
                                         </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
-                                                {{ domain }}
+                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
+                                                <template v-else="">{{ domain }}</template>
                                             </li>
                                         </ul>
                                     </td>
@@ -757,7 +758,8 @@
                                         </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts">
-                                                {{ domain }}
+                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
+                                                <template v-else="">{{ domain }}</template>
                                             </li>
                                         </ul>
                                     </td>
@@ -813,7 +815,8 @@
                                         </span>
                                         <ul class="domain-list">
                                             <li v-for="domain in cert.watch_hosts_ct">
-                                                {{ domain }}
+                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
+                                                <template v-else="">{{ domain }}</template>
                                             </li>
                                         </ul>
                                     </td>
