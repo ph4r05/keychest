@@ -74,8 +74,24 @@ class CheckCertificateValidityCommand extends Command
      */
     protected function processUser($user)
     {
+        if (!$this->isForce() && !empty($user->deleted_at)){
+            Log::info('User deleted, no emails: ' . $user->id);
+            return;
+        }
+
+        if (!$this->isForce() && !empty($user->closed_at)){
+            Log::info('User closed, no emails: ' . $user->id);
+            return;
+        }
+
         // User disabled reporting.
         if ($user->weekly_emails_disabled) {
+            return;
+        }
+
+        // Not verified
+        if (!$this->isForce() && (!empty($user->auto_created_at) && empty($user->verified_at))){
+            Log::info('User not verified, no emails: ' . $user->id);
             return;
         }
 

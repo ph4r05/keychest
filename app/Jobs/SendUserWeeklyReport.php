@@ -96,6 +96,30 @@ class SendUserWeeklyReport implements ShouldQueue
         $this->emailManager = $emailManager;
         $this->analysisManager = $analysisManager;
 
+        // Deleted
+        if (!$this->isForce() && !empty($this->user->deleted_at)){
+            Log::info('User deleted, no emails: ' . $this->user->id);
+            return;
+        }
+
+        // Closed
+        if (!$this->isForce() && !empty($this->user->closed_at)){
+            Log::info('User closed, no emails: ' . $this->user->id);
+            return;
+        }
+
+        // Email Enabled
+        if (!$this->isForce() && $this->user->weekly_emails_disabled){
+            Log::info('User email disabled, no emails: ' . $this->user->id);
+            return;
+        }
+
+        // Not verified
+        if (!$this->isForce() && (!empty($this->user->auto_created_at) && empty($this->user->verified_at))){
+            Log::info('User not verified, no emails: ' . $this->user->id);
+            return;
+        }
+
         // Double check last sent email, if job is enqueued multiple times by any chance, do not spam the user.
         if (!$this->isForce() &&
             $this->user->last_email_report_sent_at &&
