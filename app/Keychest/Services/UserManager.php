@@ -9,10 +9,13 @@
 namespace App\Keychest\Services;
 
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
+use App\Keychest\Services\Results\UserSelfRegistrationResult;
 use App\Models\ApiKey;
+use App\Models\ApiKeyLog;
 use App\Models\User;
 use Carbon\Carbon;
 
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -63,6 +66,20 @@ class UserManager {
     }
 
     /**
+     * Checks if a new user can be automatically created via anonymous API call
+     * @param $user
+     * @param $request
+     * @return int
+     */
+    public function isNewUserRegistrationAllowed($user, $request){
+        if (!config('keychest.enabled_user_auto_register')){
+            return UserSelfRegistrationResult::$GLOBAL_DENIAL;
+        }
+
+        return UserSelfRegistrationResult::$ALLOWED;
+    }
+
+    /**
      * Returns query on the api keys non-revoked, non-approved yet for the user.
      * @param $user
      * @return mixed
@@ -95,5 +112,42 @@ class UserManager {
         return $apiObj;
     }
 
+    /**
+     * Function called for user auto-registration - by API request
+     * @param $request
+     * @param $email
+     * @param string|null $challenge reg challenge
+     * @return User
+     */
+    public function registerNewUser($request, $email, $challenge=null){
+        $now = Carbon::now();
+
+        // Create log about the creation first
+        $log = new ApiKeyLog([
+            'created_at' => $now,
+            'updated_at' => $now,
+            'req_ip' => $request->ip(),
+            'req_email' => $email,
+            'req_challenge' => $challenge,
+            'action_type' => 'new-user'
+        ]);
+        $log->save();
+
+        // After log is successfully created, create a new user (we have audit record already)
+        $u = new User([
+            'name' => $email,
+            'email' => $email,
+            'created_at' => $now,
+            'updated_at' => $now,
+            'auto_created_at' => $now,
+        ]);
+        $u->save();
+
+        // Dispatch new user registered events (hooks processors)
+        $evt = new Registered($u);
+        event($evt);
+
+        return $u;
+    }
 
 }
