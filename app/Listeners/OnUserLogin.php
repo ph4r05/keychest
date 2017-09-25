@@ -32,6 +32,10 @@ class OnUserLogin
         $event->user->last_login_at = $event->user->cur_login_at;
         $event->user->cur_login_at = Carbon::now();
 
+        // By the login we verify the user account - has to know the password to login.
+        // Designed for auto-registered accounts.
+        $event->user->verified_at = Carbon::now();
+
         $req = request();
         $event->user->accredit = $req->session()->get('accredit');
 
