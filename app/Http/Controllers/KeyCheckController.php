@@ -45,7 +45,20 @@ class KeyCheckController extends Controller
         $this->scanManager = $scanManager;
     }
 
-    public function loadActiveCerts()
+    /**
+     * Main tester view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
+        return view('tester');
+    }
+
+    /**
+     * Dummy JSON view
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dummy()
     {
         return response()->json([], 200);
     }

@@ -129,6 +129,9 @@ Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
 
+// Tester
+Route::get('tester', 'KeyCheckController@index')->name('tester');
+
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
