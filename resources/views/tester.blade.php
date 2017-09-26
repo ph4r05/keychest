@@ -1,4 +1,4 @@
-{{--@extends('layouts.app')--}}
+{{-- Main tester template --}}
 @extends('vendor.adminlte.layouts.landing-tpl')
 
 @section('content')
