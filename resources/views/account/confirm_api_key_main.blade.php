@@ -5,7 +5,25 @@
 @endsection
 
 @section('content-body')
-    @if(!empty($res))
+
+    @if(!$confirm && $res)
+        <div class="alert alert-primary">
+            <strong><i class="fa fa-question-circle"></i> You are about to confirm the API Key</strong>
+        </div>
+
+        <p>
+            If you want to <strong>confirm</strong> access for the API key: {{ $res->api_key }} follow the link:
+            <a href="{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
+                    >{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.<br/>
+        </p>
+
+        <p>
+            If you want to <strong>revoke</strong> access for the API key: {{ $res->api_key }} follow the link:
+            <a href="{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
+                    >{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.<br/>
+        </p>
+
+    @elseif(!empty($res))
         <div class="alert alert-success">
             <strong><i class="fa fa-check-circle"></i> We have successfully completed your request</strong>
         </div>

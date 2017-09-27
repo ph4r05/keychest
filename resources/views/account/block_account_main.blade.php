@@ -5,7 +5,20 @@
 @endsection
 
 @section('content-body')
-    @if(!empty($res))
+
+    @if(!$confirm && $res)
+        <div class="alert alert-primary">
+            <strong><i class="fa fa-question-circle"></i> You are about to block your KeyChest account</strong>
+        </div>
+
+        <p>
+            Are you sure you want to block your KeyChest account and disable KeyChest using your email?
+            Then click on the following link:
+            <a href="{{ url('blockAccount/' . $token . '/?confirm=1') }}" rel="nofollow"
+                    >{{ url('blockAccount/' . $token . '/?confirm=1') }}</a>. <br/>
+        </p>
+
+    @elseif(!empty($res))
         <div class="alert alert-success">
             <strong><i class="fa fa-check-circle"></i> We have successfully completed your request</strong>
         </div>

@@ -95,6 +95,7 @@ class UserController extends Controller
 
     /**
      * Close account request
+     * JSON API request, called by authenticated JS client
      */
     public function closeAccount(){
         $curUser = Auth::user();
@@ -112,18 +113,24 @@ class UserController extends Controller
      * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function verifyEmail($token, $apiKeyToken=null){
-        $res = $this->userManager->verifyEmail($token);
+        $res = $this->userManager->checkVerifyToken($token);
+        $confirm = boolval(Input::get('confirm'));
         $apiKeyObj = null;
 
-        // Verify API call?
-        if ($res && !empty($apiKeyToken)){
-            $apiKeyObj = $this->userManager->confirmApiKey($apiKeyToken);
+        if ($confirm){
+            $res = $this->userManager->verifyEmail($token);
+
+            // Verify API call?
+            if ($res && !empty($apiKeyToken)){
+                $apiKeyObj = $this->userManager->confirmApiKey($apiKeyToken);
+            }
         }
 
         return view('account.verify_email_main')->with(
             [
                 'token' => $token,
                 'apiKey' => $apiKeyObj,
+                'confirm' => $confirm,
                 'res' => $res]
         );
     }
@@ -137,11 +144,17 @@ class UserController extends Controller
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\View
      */
     public function blockAccount($token){
-        $res = $this->userManager->block($token);
+        $res = $this->userManager->checkVerifyToken($token);
+        $confirm = boolval(Input::get('confirm'));
+
+        if ($confirm) {
+            $res = $this->userManager->block($token);
+        }
 
         return view('account.block_account_main')->with(
             [
                 'token' => $token,
+                'confirm' => $confirm,
                 'res' => $res
             ]
         );
@@ -153,11 +166,17 @@ class UserController extends Controller
      * @return $this
      */
     public function blockAutoApiKeys($token){
-        $res = $this->userManager->blockAutoApiKeys($token);
+        $res = $this->userManager->checkVerifyToken($token);
+        $confirm = boolval(Input::get('confirm'));
+
+        if ($confirm) {
+            $res = $this->userManager->blockAutoApiKeys($token);
+        }
 
         return view('account.block_auto_api_key_main')->with(
             [
                 'token' => $token,
+                'confirm' => $confirm,
                 'res' => $res
             ]
         );
@@ -169,12 +188,18 @@ class UserController extends Controller
      * @return $this
      */
     public function confirmApiKey($apiKeyToken){
-        $res = $this->userManager->confirmApiKey($apiKeyToken);
+        $res = $this->userManager->checkApiToken($apiKeyToken);
+        $confirm = boolval(Input::get('confirm'));
+
+        if ($confirm) {
+            $res = $this->userManager->confirmApiKey($apiKeyToken);
+        }
 
         return view('account.confirm_api_key_main')->with(
             [
                 'apiKeyToken' => $apiKeyToken,
                 'apiKey' => $res,
+                'confirm' => $confirm,
                 'res' => $res
             ]
         );
@@ -186,12 +211,18 @@ class UserController extends Controller
      * @return $this
      */
     public function revokeApiKey($apiKeyToken){
-        $res = $this->userManager->revokeApiKey($apiKeyToken);
+        $res = $this->userManager->checkApiToken($apiKeyToken);
+        $confirm = boolval(Input::get('confirm'));
+
+        if ($confirm) {
+            $res = $this->userManager->revokeApiKey($apiKeyToken);
+        }
 
         return view('account.revoke_api_key_main')->with(
             [
                 'apiKeyToken' => $apiKeyToken,
                 'apiKey' => $res,
+                'confirm' => $confirm,
                 'res' => $res
             ]
         );

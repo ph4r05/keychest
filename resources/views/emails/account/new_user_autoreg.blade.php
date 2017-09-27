@@ -9,11 +9,11 @@
 
         You can confirm account creation and allow the client to access the KeyChest account being created on
         the following link:
-        <a href="{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token) }}"
+        <a href="{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token) }}" rel="nofollow"
                 >{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token) }}</a>.<br/>
 
         If the action was not initiated by you, you can decide to block this request by visiting the following link:
-        <a href="{{ url('blockAccount/' . $user->email_verify_token) }}"
+        <a href="{{ url('blockAccount/' . $user->email_verify_token) }}" rel="nofollow"
                 >{{ url('blockAccount/' . $user->email_verify_token) }}</a>. <br/>
         In that case KeyChest won't send you any more email on this address.
     </p>

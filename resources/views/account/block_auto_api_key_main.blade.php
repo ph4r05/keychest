@@ -5,7 +5,20 @@
 @endsection
 
 @section('content-body')
-    @if(!empty($res))
+
+    @if(!$confirm && $res)
+        <div class="alert alert-primary">
+            <strong><i class="fa fa-question-circle"></i> You are about to block unsolicited API key registration</strong>
+        </div>
+
+        <p>
+            Are you sure you want to block KeyChest from allowing unsolicited API key registration?
+            Then click on the following link:
+            <a href="{{ url('blockAutoApiKeys/' . $token . '/?confirm=1') }}" rel="nofollow"
+                    >{{ url('blockAutoApiKeys/' . $token . '/?confirm=1') }}</a>.<br/>
+        </p>
+
+    @elseif(!empty($res))
         <div class="alert alert-success">
             <strong><i class="fa fa-check-circle"></i> We have successfully completed your request</strong>
         </div>
