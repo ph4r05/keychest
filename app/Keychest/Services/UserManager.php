@@ -11,6 +11,7 @@ namespace App\Keychest\Services;
 use App\Events\NewApiKeyCreated;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Results\UserSelfRegistrationResult;
+use App\Keychest\Utils\UserTools;
 use App\Models\ApiKey;
 use App\Models\ApiKeyLog;
 use App\Models\User;
@@ -143,6 +144,7 @@ class UserManager {
         $apiObj = new ApiKey([
             'name' => 'self-registered',
             'api_key' => $apiKey,
+            'api_verify_token' => UserTools::generateVerifyToken(),
             'email_claim' => $user->email,
             'ip_registration' => $request->ip(),
             'user_id' => $user->id,

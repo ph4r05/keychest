@@ -36,7 +36,7 @@ class UserTools {
      * @param $user
      * @return string
      */
-    public static function generateVerifyToken($user){
+    public static function generateVerifyToken($user=null){
         return (new Factory())->getLowStrengthGenerator()->generateString(24, self::TOKEN_CHARSET);
     }
 
@@ -45,7 +45,7 @@ class UserTools {
      * @param $user
      * @return string
      */
-    public static function generateUnsubscribeToken($user){
+    public static function generateUnsubscribeToken($user=null){
         return (new Factory())->getLowStrengthGenerator()->generateString(24, self::TOKEN_CHARSET);
     }
 }
