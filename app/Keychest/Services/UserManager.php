@@ -227,6 +227,26 @@ class UserManager {
     }
 
     /**
+     * Performs the token verification.
+     * If token is valid, user is returned.
+     * @param $token
+     * @return User|null
+     */
+    public function checkVerifyToken($token){
+        return User::query()->where('email_verify_token', '=', $token)->first();
+    }
+
+    /**
+     * Performs the API token verification.
+     * If token is valid, API key is returned.
+     * @param $apiKeyToken
+     * @return ApiKey|null
+     */
+    public function checkApiToken($apiKeyToken){
+        return ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+    }
+
+    /**
      * Blocking Keychest from using this account for any automated purpose.
      * User can decide to let block the account if someone registers his email by mistake / on his behalf
      * without his consent.
@@ -238,7 +258,7 @@ class UserManager {
      */
     public function block($token, $request=null)
     {
-        $u = User::query()->where('email_verify_token', '=', $token)->first();
+        $u = $this->checkVerifyToken($token);
         if (!$u){
             return null;
         }
@@ -260,7 +280,7 @@ class UserManager {
      */
     public function verifyEmail($token, $request=null)
     {
-        $u = User::query()->where('email_verify_token', '=', $token)->first();
+        $u = $this->checkVerifyToken($token);
         if (!$u){
             return null;
         }
@@ -284,7 +304,7 @@ class UserManager {
      */
     public function blockAutoApiKeys($token, $request=null)
     {
-        $u = User::query()->where('email_verify_token', '=', $token)->first();
+        $u = $this->checkVerifyToken($token);
         if (!$u){
             return null;
         }
@@ -303,7 +323,7 @@ class UserManager {
      */
     public function confirmApiKey($apiKeyToken, $request=null)
     {
-        $apiKey = ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+        $apiKey = $this->checkApiToken($apiKeyToken);
         if (!$apiKey){
             return null;
         }
@@ -318,6 +338,7 @@ class UserManager {
         // Modify the api key
         $apiKey->verified_at = Carbon::now();
         $apiKey->revoked_at = null;
+        $apiKey->api_verify_token = UserTools::generateVerifyToken();
         $apiKey->save();
 
         return $apiKey;
@@ -331,7 +352,7 @@ class UserManager {
      */
     public function revokeApiKey($apiKeyToken, $request=null)
     {
-        $apiKey = ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+        $apiKey = $this->checkApiToken($apiKeyToken);
         if (!$apiKey){
             return null;
         }
@@ -345,6 +366,7 @@ class UserManager {
 
         // Modify the api key
         $apiKey->revoked_at = Carbon::now();
+        $apiKey->api_verify_token = UserTools::generateVerifyToken();
         $apiKey->save();
 
         return $apiKey;
