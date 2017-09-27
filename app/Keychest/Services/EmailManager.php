@@ -89,6 +89,16 @@ class EmailManager {
     }
 
     /**
+     * Checks the unsubscribe token.
+     * If valid, returns the corresponding user.
+     * @param $token
+     * @return User|null
+     */
+    public function checkUnsunbscribeToken($token){
+        return User::query()->where('weekly_unsubscribe_token', '=', $token)->first();
+    }
+
+    /**
      * Returns the user of the unsubscribe action
      * @param $token
      * @return UnsubscribeResult
@@ -96,7 +106,7 @@ class EmailManager {
     public function unsubscribe($token){
         $res = new UnsubscribeResult();
 
-        $u = User::query()->where('weekly_unsubscribe_token', '=', $token)->first();
+        $u = $this->checkUnsunbscribeToken($token);
         $res->setUser($u)->setTokenFound(!!$u);
         if (!$u){
             return $res;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 
 use App\Keychest\Services\EmailManager;
+use Illuminate\Support\Facades\Input;
 
 
 /**
@@ -33,10 +34,22 @@ class EmailController extends Controller
      * @return $this
      */
     public function unsubscribe($token){
-        $res = $this->manager->unsubscribe($token);
+        $user = $this->manager->checkUnsunbscribeToken($token);
+        $confirm = boolval(Input::get('confirm'));
+        $res = null;
+
+        if ($confirm) {
+            $res = $this->manager->unsubscribe($token);
+        }
 
         return view('unsubscribe')->with(
-            ['token' => $token, 'res' => $res]
+            [
+                'token' => $token,
+                'confirm' => $confirm,
+                'user' => $user,
+                'alreadyDisabled' => $user->weekly_emails_disabled,
+                'res' => $res
+            ]
         );
     }
 }

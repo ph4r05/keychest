@@ -1,4 +1,15 @@
-@if($res->isTokenFound())
+@if(!$confirm && $user)
+    <div class="alert alert-primary">
+        <strong><i class="fa fa-question-circle"></i> You are about to cancel weekly reports</strong>
+    </div>
+
+    <p>
+        Are you sure you want to cancel weekly reports subscriptions? Click on the following link to cancel:
+        <a href="{{ url('unsubscribe/' . $token . '/?confirm=1') }}" rel="nofollow"
+                >{{ url('unsubscribe/' . $token . '/?confirm=1') }}</a>
+    </p>
+
+@elseif($res && $res->isTokenFound())
     <div class="alert alert-success">
         <strong><i class="fa fa-check-circle"></i> We have successfully completed your request</strong>
     </div>
