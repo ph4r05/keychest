@@ -13,9 +13,9 @@
 
         <p>
             Are you sure you want to block KeyChest from allowing unsolicited API key registration?
-            Then click on the following link:
+            Then click on the following link:<br/>
             <a href="{{ url('blockAutoApiKeys/' . $token . '/?confirm=1') }}" rel="nofollow"
-                    >{{ url('blockAutoApiKeys/' . $token . '/?confirm=1') }}</a>.<br/>
+                    >{{ url('blockAutoApiKeys/' . $token . '/?confirm=1') }}</a>.
         </p>
 
     @elseif(!empty($res))

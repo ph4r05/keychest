@@ -12,15 +12,15 @@
         </div>
 
         <p>
-            If you want to <strong>revoke</strong> access for the API key: {{ $res->api_key }} follow the link:
+            If you want to <strong>revoke</strong> access for the API key: {{ $res->api_key }} follow the link: <br/>
             <a href="{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
-                    >{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.<br/>
+                    >{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.
         </p>
 
         <p>
-            If you want to <strong>confirm</strong> access for the API key: {{ $res->api_key }} follow the link:
+            If you want to <strong>confirm</strong> access for the API key: {{ $res->api_key }} follow the link:<br/>
             <a href="{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
-                    >{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.<br/>
+                    >{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.
         </p>
 
     @elseif(!empty($res))
