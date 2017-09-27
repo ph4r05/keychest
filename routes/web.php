@@ -28,6 +28,11 @@ Route::get('jobState', 'SearchController@restGetJobState');
 Route::get('jobResult', 'SearchController@restJobResults');
 
 Route::get('unsubscribe/{token}', 'EmailController@unsubscribe');
+Route::get('verifyEmail/{token}', 'UserController@verifyEmail');
+Route::get('blockAccount/{token}', 'UserController@blockAccount');
+Route::get('blockAutoApiKeys/{token}', 'UserController@blockAutoApiKeys');
+Route::get('confirmApiKey/{token}', 'UserController@confirmApiKey');
+Route::get('revokeApiKey/{token}', 'UserController@revokeApiKey');
 
 // Auth routes
 Route::auth();

@@ -105,6 +105,99 @@ class UserController extends Controller
     }
 
     /**
+     * Verify user account with email verification.
+     *
+     * @param $token
+     * @param null|string $apiKeyToken
+     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
+     */
+    public function verifyEmail($token, $apiKeyToken=null){
+        $res = $this->userManager->verifyEmail($token);
+        $apiKeyObj = null;
+
+        // Verify API call?
+        if ($res && !empty($apiKeyToken)){
+            $apiKeyObj = $this->userManager->confirmApiKey($apiKeyToken);
+        }
+
+        return view('account.verify_email_main')->with(
+            [
+                'token' => $token,
+                'apiKey' => $apiKeyObj,
+                'res' => $res]
+        );
+    }
+
+    /**
+     * Blocking Keychest from using this account for any automated purpose.
+     * User can decide to let block the account if someone registers his email by mistake / on his behalf
+     * without his consent.
+     *
+     * @param $token
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\View
+     */
+    public function blockAccount($token){
+        $res = $this->userManager->block($token);
+
+        return view('account.block_account_main')->with(
+            [
+                'token' => $token,
+                'res' => $res
+            ]
+        );
+    }
+
+    /**
+     * Blocks unsolicited creation of another API keys
+     * @param $token
+     * @return $this
+     */
+    public function blockAutoApiKeys($token){
+        $res = $this->userManager->blockAutoApiKeys($token);
+
+        return view('account.block_auto_api_key_main')->with(
+            [
+                'token' => $token,
+                'res' => $res
+            ]
+        );
+    }
+
+    /**
+     * Confirms the API key
+     * @param $apiKeyToken
+     * @return $this
+     */
+    public function confirmApiKey($apiKeyToken){
+        $res = $this->userManager->confirmApiKey($apiKeyToken);
+
+        return view('account.confirm_api_key_main')->with(
+            [
+                'apiKeyToken' => $apiKeyToken,
+                'apiKey' => null,
+                'res' => $res
+            ]
+        );
+    }
+
+    /**
+     * Revokes the API key
+     * @param $apiKeyToken
+     * @return $this
+     */
+    public function revokeApiKey($apiKeyToken){
+        $res = $this->userManager->revokeApiKey($apiKeyToken);
+
+        return view('account.revoke_api_key_main')->with(
+            [
+                'apiKeyToken' => $apiKeyToken,
+                'apiKey' => null,
+                'res' => $res
+            ]
+        );
+    }
+
+    /**
      * Claim new API key access - limited functionality until verified / confirmed.
      *
      * @param \Illuminate\Http\Request $request
