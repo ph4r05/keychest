@@ -29,6 +29,7 @@ Route::get('jobResult', 'SearchController@restJobResults');
 
 Route::get('unsubscribe/{token}', 'EmailController@unsubscribe');
 Route::get('verifyEmail/{token}/{apiKeyToken?}', 'UserController@verifyEmail');
+Route::post('setPassword', 'Auth\SetPasswordController@reset')->name('password.set');
 Route::get('blockAccount/{token}', 'UserController@blockAccount');
 Route::get('blockAutoApiKeys/{token}', 'UserController@blockAutoApiKeys');
 Route::get('confirmApiKey/{token}', 'UserController@confirmApiKey');
