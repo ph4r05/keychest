@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\SendUserWeeklyReport;
 
 
+use App\Keychest\Services\EmailManager;
 use App\Keychest\Utils\DataTools;
 use App\Models\User;
 use Carbon\Carbon;
@@ -40,11 +41,19 @@ class CheckCertificateValidityCommand extends Command
     protected $description = 'Check certificate validity job & send emails with warnings';
 
     /**
-     * Create a new command instance.
+     * @var EmailManager
      */
-    public function __construct()
+    protected $emailManager;
+
+    /**
+     * Create a new command instance.
+     * @param EmailManager $emailManager
+     */
+    public function __construct(EmailManager $emailManager)
     {
         parent::__construct();
+
+        $this->emailManager = $emailManager;
     }
 
     /**
@@ -74,24 +83,12 @@ class CheckCertificateValidityCommand extends Command
      */
     protected function processUser($user)
     {
-        if (!$this->isForce() && !empty($user->deleted_at)){
-            Log::info('User deleted, no emails: ' . $user->id);
-            return;
-        }
-
-        if (!$this->isForce() && !empty($user->closed_at)){
-            Log::info('User closed, no emails: ' . $user->id);
+        if (!$this->isForce() && !$this->emailManager->tryCanSendEmailToUser($user)){
             return;
         }
 
         // User disabled reporting.
         if ($user->weekly_emails_disabled) {
-            return;
-        }
-
-        // Not verified
-        if (!$this->isForce() && (!empty($user->auto_created_at) && empty($user->verified_at))){
-            Log::info('User not verified, no emails: ' . $user->id);
             return;
         }
 

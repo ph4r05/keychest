@@ -9,12 +9,18 @@
 namespace App\Keychest\Services;
 
 use App\Keychest\DataClasses\UnsubscribeResult;
+use App\Keychest\Services\Exceptions\CannotSendEmailException;
+use App\Keychest\Services\Exceptions\NoEmailUserAccountBlockedException;
+use App\Keychest\Services\Exceptions\NoEmailUserAccountClosedException;
+use App\Keychest\Services\Exceptions\NoEmailUserDeletedException;
+use App\Keychest\Services\Exceptions\NoEmailUserUnverifiedException;
 use App\Models\EmailNews;
 use App\Models\User;
 use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class EmailManager {
 
@@ -100,5 +106,53 @@ class EmailManager {
         $u->save();
 
         return $res;
+    }
+
+    /**
+     * General test if email can be sent to the user.
+     * @param $user
+     * @return bool
+     * @throws NoEmailUserAccountBlockedException
+     * @throws NoEmailUserAccountClosedException
+     * @throws NoEmailUserDeletedException
+     * @throws NoEmailUserUnverifiedException
+     */
+    public function canSendEmailToUser($user){
+        if (!empty($user->deleted_at)){
+            Log::debug('User deleted, no emails: ' . $user->id);
+            throw new NoEmailUserDeletedException();
+        }
+
+        if (!empty($user->closed_at)){
+            Log::debug('User closed, no emails: ' . $user->id);
+            throw new NoEmailUserAccountClosedException();
+        }
+
+        if (!empty($user->blocked_at)){
+            Log::debug('User blocked, no emails: ' . $user->id);
+            throw new NoEmailUserAccountBlockedException();
+        }
+
+        // Not verified
+        if (!empty($user->auto_created_at) && empty($user->verified_at)){
+            Log::debug('User not verified, no emails: ' . $user->id);
+            throw new NoEmailUserUnverifiedException();
+        }
+
+        return true;
+    }
+
+    /**
+     * General test if email can be sent to the user.
+     *
+     * @param $user
+     * @return bool true if email can be sent
+     */
+    public function tryCanSendEmailToUser($user){
+        try {
+            return $this->canSendEmailToUser($user);
+        } catch (CannotSendEmailException $e){
+            return false;
+        }
     }
 }
