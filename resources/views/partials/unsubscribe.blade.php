@@ -1,5 +1,5 @@
 @if(!$confirm && $user)
-    <div class="alert alert-primary">
+    <div class="alert alert-info">
         <strong><i class="fa fa-question-circle"></i> You are about to cancel weekly reports</strong>
     </div>
 

@@ -7,7 +7,7 @@
 @section('content-body')
 
     @if(!$confirm && $res)
-        <div class="alert alert-primary">
+        <div class="alert alert-info">
             <strong><i class="fa fa-question-circle"></i> You are about to confirm the API Key</strong>
         </div>
 
