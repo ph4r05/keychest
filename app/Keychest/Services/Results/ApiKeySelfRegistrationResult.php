@@ -19,4 +19,5 @@ class ApiKeySelfRegistrationResult extends Enum
     static public $BLACKLISTED = 2;
     static public $RATE_LIMITED = 3;
     static public $TOO_MANY = 4;
+    static public $USER_BLOCK = 5;
 }

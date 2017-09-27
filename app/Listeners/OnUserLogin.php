@@ -36,6 +36,10 @@ class OnUserLogin
         // Designed for auto-registered accounts.
         $event->user->verified_at = Carbon::now();
 
+        // Also the user block (user blocked keychest from using the account) is reset by the
+        // explicit user login to the account.
+        $event->user->blocked_at = null;
+
         $req = request();
         $event->user->accredit = $req->session()->get('accredit');
 

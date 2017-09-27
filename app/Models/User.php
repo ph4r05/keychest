@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'auto_created_at', 'verified_at'
+        'name', 'email', 'password', 'auto_created_at', 'verified_at', 'blocked_at'
     ];
 
     /**
@@ -47,7 +47,7 @@ class User extends Authenticatable
     {
         return array('created_at', 'updated_at', 'deleted_at', 'closed_at', 'last_email_report_sent_at',
             'last_email_no_servers_sent_at', 'last_email_report_enqueued_at',
-            'last_login_at', 'cur_login_at', 'last_action_at', 'auto_created_at', 'verified_at');
+            'last_login_at', 'cur_login_at', 'last_action_at', 'auto_created_at', 'verified_at', 'blocked_at');
     }
 
     /**

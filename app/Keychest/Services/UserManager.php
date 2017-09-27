@@ -56,9 +56,17 @@ class UserManager {
             return ApiKeySelfRegistrationResult::$GLOBAL_DENIAL;
         }
 
-        // TODO: global switch
         // TODO: ip blacklist
         // TODO: rate limiting
+
+        // Check if user has blocked the API key creation
+        if (!empty($user->deleted_at)
+            || !empty($user->closed_at)
+            || !empty($user->blocked_at)
+            || $user->new_api_keys_state)
+        {
+            return ApiKeySelfRegistrationResult::$USER_BLOCK;
+        }
 
         // Number of non-confirmed non-revoked requests - limit.
         $cnt = $this->getNonApprovedApiKeys($user)->count();
