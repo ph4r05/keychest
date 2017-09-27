@@ -130,6 +130,7 @@ class UserController extends Controller
             [
                 'token' => $token,
                 'apiKey' => $apiKeyObj,
+                'apiKeyToken' => $apiKeyToken,
                 'confirm' => $confirm,
                 'res' => $res]
         );

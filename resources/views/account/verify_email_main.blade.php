@@ -12,19 +12,26 @@
         </div>
 
         <p>
-            The KeyChest is asking you to confirm an email address for the KeyChest account and to confirm
-            a new API key requested from the <strong>{{ $apiKey->ip_registration }}</strong>
-            at {{ $apiKey->created_at }}. <br/>
+            The KeyChest is asking you to <strong>confirm an email address</strong> for the KeyChest account
+            @if($apiKey)
+            and to confirm a new API key requested from the <strong>{{ $apiKey->ip_registration }}</strong>
+            at {{ $apiKey->created_at }}.
+            @endif
+            <br/>
 
-            If you want to confirm please visit the following link:
-            <a href="{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token . '?confirm=1') }}" rel="nofollow"
-                    >{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token . '?confirm=1') }}</a>.<br/>
+            If you want to confirm please visit the following link: <br/>
+            <a href="{{ url('verifyEmail/' . $res->email_verify_token . '/' . $apiKeyToken . '?confirm=1') }}" rel="nofollow"
+                    >{{ url('verifyEmail/' . $res->email_verify_token . '/' . $apiKeyToken . '?confirm=1') }}</a>.
         </p>
 
         <p>
-            If the action was not initiated by you, you can decide to block this request by visiting the following link:
-            <a href="{{ url('blockAccount/' . $user->email_verify_token . '?confirm=1') }}" rel="nofollow"
-                    >{{ url('blockAccount/' . $user->email_verify_token . '?confirm=1') }}</a>. <br/>
+            If the action was not initiated by you, you can decide to <strong>block this request</strong>
+            by visiting the following link: <br/>
+            <a href="{{ url('blockAccount/' . $res->email_verify_token . '?confirm=1') }}" rel="nofollow"
+                    >{{ url('blockAccount/' . $res->email_verify_token . '?confirm=1') }}</a>.
+        </p>
+
+        <p>
             In that case KeyChest won't send you any more email on this address.
         </p>
 
@@ -37,13 +44,15 @@
             You have successfully verified your email for KeyChest account.
         </p>
 
+        @if ($res && empty($res->password))
         <p>
             As you are here, you can set the password for your KeyChest account
             @include('account.partials.set_password',[
-                'token' => $user->remember_token,
-                'user' => $user,
+                'token' => $res->remember_token,
+                'user' => $res,
             ])
         </p>
+        @endif
 
     @else
         <div class="alert alert-warning">
