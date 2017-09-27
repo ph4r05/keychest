@@ -9,6 +9,8 @@
 namespace App\Keychest\Services;
 
 use App\Events\NewApiKeyCreated;
+use App\Jobs\SendNewApiKeyConfirmation;
+use App\Jobs\SendNewUserConfirmation;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Results\UserSelfRegistrationResult;
 use App\Keychest\Utils\ApiKeyLogger;
@@ -197,6 +199,34 @@ class UserManager {
     }
 
     /**
+     * Sends new user confirmation email.
+     * User should confirm the account being created for him is a legit request.
+     * User should be able to confirm a) account & change password b) confirm API request c) unsubscribe
+     *
+     * In the initial version a) is merged with b)
+     *
+     * @param User $user
+     * @param ApiKey $apiKey
+     */
+    public function sendNewUserConfirmation(User $user, ApiKey $apiKey, $request){
+        $job = new SendNewUserConfirmation($user, $apiKey, $request);
+        $job->onConnection(config('keychest.wrk_weekly_emails_conn'))
+            ->onQueue(config('keychest.wrk_weekly_emails_queue'));
+    }
+
+    /**
+     * Sends email with API key confirmation / revocation / unsubscribe from these.
+     *
+     * @param User $user
+     * @param ApiKey $apiKey
+     */
+    public function sendNewApiKeyConfirmation(User $user, ApiKey $apiKey, $request){
+        $job = new SendNewApiKeyConfirmation($user, $apiKey, $request);
+        $job->onConnection(config('keychest.wrk_weekly_emails_conn'))
+            ->onQueue(config('keychest.wrk_weekly_emails_queue'));
+    }
+
+    /**
      * Blocking Keychest from using this account for any automated purpose.
      * User can decide to let block the account if someone registers his email by mistake / on his behalf
      * without his consent.
@@ -246,6 +276,8 @@ class UserManager {
 
     /**
      * Blocks API key auto-registration via API.
+     * TODO: separate verification token?
+     *
      * @param $token
      * @param null $request
      * @return User|null

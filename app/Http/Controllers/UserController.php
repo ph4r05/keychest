@@ -262,8 +262,15 @@ class UserController extends Controller
             return $errorResponse;
         }
 
-        // TODO: new user & api key ? send registration email with confirmation & password set / unsubscribe
-        // TODO: existing user & api key ? send confirm email / unsubscribe link / block.
+        // New user & api key ? send registration email with confirmation & password set / unsubscribe.
+        if (!$userExisted){
+            $this->userManager->sendNewUserConfirmation($user, $apiKeyObj, $request);
+
+        } else {
+            // existing user & api key ? send confirm email / unsubscribe link / block.
+            $this->userManager->sendNewApiKeyConfirmation($user, $apiKeyObj, $request);
+        }
+
         return response()->json(['status' => 'created'], 200);
     }
 
@@ -284,4 +291,5 @@ class UserController extends Controller
 
         return $this->userManager->registerNewUser($request, $email, $apiKey);
     }
+
 }
