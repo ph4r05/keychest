@@ -11,6 +11,7 @@ namespace App\Keychest\Services;
 use App\Events\NewApiKeyCreated;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Results\UserSelfRegistrationResult;
+use App\Keychest\Utils\ApiKeyLogger;
 use App\Keychest\Utils\UserTools;
 use App\Models\ApiKey;
 use App\Models\ApiKeyLog;
@@ -130,15 +131,13 @@ class UserManager {
         $now = Carbon::now();
 
         // Create log about the creation first
-        $log = new ApiKeyLog([
-            'created_at' => $now,
-            'updated_at' => $now,
-            'req_ip' => $request->ip(),
-            'req_email' => $user->email,
-            'req_challenge' => $apiKey,
-            'action_type' => 'new-apikey'
-        ]);
-        $log->save();
+        ApiKeyLogger::create()
+            ->now($now)
+            ->request($request)
+            ->user($user)
+            ->challenge($apiKey)
+            ->action('new-apikey')
+            ->save();
 
         // After log is successfully created, create a api key (we have audit record already)
         $apiObj = new ApiKey([
@@ -172,15 +171,13 @@ class UserManager {
         $now = Carbon::now();
 
         // Create log about the creation first
-        $log = new ApiKeyLog([
-            'created_at' => $now,
-            'updated_at' => $now,
-            'req_ip' => $request->ip(),
-            'req_email' => $email,
-            'req_challenge' => $challenge,
-            'action_type' => 'new-user'
-        ]);
-        $log->save();
+        ApiKeyLogger::create()
+            ->now($now)
+            ->request($request)
+            ->email($email)
+            ->challenge($challenge)
+            ->action('new-user')
+            ->save();
 
         // After log is successfully created, create a new user (we have audit record already)
         $u = new User([
@@ -197,6 +194,128 @@ class UserManager {
         event($evt);
 
         return $u;
+    }
+
+    /**
+     * Blocking Keychest from using this account for any automated purpose.
+     * User can decide to let block the account if someone registers his email by mistake / on his behalf
+     * without his consent.
+     * Verification token is re-generated.
+     *
+     * @param $token
+     * @param null $request
+     * @return User
+     */
+    public function block($token, $request=null)
+    {
+        $u = User::query()->where('email_verify_token', '=', $token)->first();
+        if (!$u){
+            return null;
+        }
+
+        $u->blocked_at = Carbon::now();
+        $u->email_verify_token = UserTools::generateVerifyToken($u);
+        $u->save();
+
+        return $u;
+    }
+
+    /**
+     * Verify user account by the email verification.
+     * Verification token is re-generated.
+     *
+     * @param $token
+     * @param null $request
+     * @return User|null
+     */
+    public function verifyEmail($token, $request=null)
+    {
+        $u = User::query()->where('email_verify_token', '=', $token)->first();
+        if (!$u){
+            return null;
+        }
+
+        $u->blocked_at = null;
+        $u->email_verified_at = Carbon::now();
+        $u->verified_at = Carbon::now();
+        $u->email_verify_token = UserTools::generateVerifyToken($u);
+        $u->save();
+
+        return $u;
+    }
+
+    /**
+     * Blocks API key auto-registration via API.
+     * @param $token
+     * @param null $request
+     * @return User|null
+     */
+    public function blockAutoApiKeys($token, $request=null)
+    {
+        $u = User::query()->where('email_verify_token', '=', $token)->first();
+        if (!$u){
+            return null;
+        }
+
+        $u->new_api_keys_state = 1;
+        $u->save();
+
+        return $u;
+    }
+
+    /**
+     * Confirms API key
+     * @param $apiKeyToken
+     * @param null $request
+     * @return ApiKey|null
+     */
+    public function confirmApiKey($apiKeyToken, $request=null)
+    {
+        $apiKey = ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+        if (!$apiKey){
+            return null;
+        }
+
+        // Create log about the creation first
+        ApiKeyLogger::create()
+            ->request($request)
+            ->apiKey($apiKey)
+            ->action('confirm-apikey')
+            ->save();
+
+        // Modify the api key
+        $apiKey->verified_at = Carbon::now();
+        $apiKey->revoked_at = null;
+        $apiKey->save();
+
+        return $apiKey;
+    }
+
+    /**
+     * Revokes the API key token
+     * @param $apiKeyToken
+     * @param null $request
+     * @return ApiKey|null
+     */
+    public function revokeApiKey($apiKeyToken, $request=null)
+    {
+        $apiKey = ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+        if (!$apiKey){
+            return null;
+        }
+
+        // Create log about the creation first
+        ApiKeyLogger::create()
+            ->request($request)
+            ->apiKey($apiKey)
+            ->action('revoke-apikey')
+            ->save();
+
+        // Modify the api key
+        $apiKey->revoked_at = Carbon::now();
+        $apiKey->save();
+
+        return $apiKey;
     }
 
 }
