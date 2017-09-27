@@ -174,7 +174,7 @@ class UserController extends Controller
         return view('account.confirm_api_key_main')->with(
             [
                 'apiKeyToken' => $apiKeyToken,
-                'apiKey' => null,
+                'apiKey' => $res,
                 'res' => $res
             ]
         );
@@ -191,7 +191,7 @@ class UserController extends Controller
         return view('account.revoke_api_key_main')->with(
             [
                 'apiKeyToken' => $apiKeyToken,
-                'apiKey' => null,
+                'apiKey' => $res,
                 'res' => $res
             ]
         );
