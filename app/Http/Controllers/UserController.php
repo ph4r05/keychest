@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Exceptions\CouldNotRegisterNewUserException;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Session;
 
 
 /**
@@ -108,21 +110,33 @@ class UserController extends Controller
     /**
      * Verify user account with email verification.
      *
+     * @param Request $request
      * @param $token
      * @param null|string $apiKeyToken
      * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
      */
-    public function verifyEmail($token, $apiKeyToken=null){
+    public function verifyEmail(Request $request, $token=null, $apiKeyToken=null){
         $res = $this->userManager->checkVerifyToken($token);
-        $confirm = boolval(Input::get('confirm'));
+        $confirm = boolval(Input::get('confirm', '0'));
         $apiKeyObj = null;
 
+        // Clear the state
+        $request->session()->forget('verify.email.verified');
+
+        // Confirmation from the user to perform the change
         if ($confirm){
             $res = $this->userManager->verifyEmail($token);
 
             // Verify API call?
             if ($res && !empty($apiKeyToken)){
                 $apiKeyObj = $this->userManager->confirmApiKey($apiKeyToken);
+            }
+
+            // Success change -> redirect to success page + password set page.
+            if ($res) {
+                $request->session()->put('verify.email.verified', $res->id);
+                $request->session()->put('verify.email.verified_at', time());
+                return redirect()->route('email.verified');
             }
         }
 
@@ -134,6 +148,38 @@ class UserController extends Controller
                 'confirm' => $confirm,
                 'res' => $res]
         );
+    }
+
+    /**
+     * Email verified page, success info + password change step.
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
+     */
+    public function emailVerified(Request $request){
+        $sess = $request->session();
+
+        $verifiedId = $sess->get('verify.email.verified');
+        $res = empty($verifiedId) ? null : User::find($verifiedId);
+
+        $data = [
+            'token' => null,
+            'apiKey' => null,
+            'apiKeyToken' => null,
+            'confirm' => 1,
+            'res' => $res
+        ];
+
+        if ($res){
+            $newToken = $sess->get('verify.email.new_token');
+            if (empty($newToken)) {
+                $newToken = $this->userManager->newPasswordToken($res);
+            }
+
+            $data['token'] = $newToken;
+            $sess->flash('verify.email.new_token', $newToken);
+        }
+
+        return view('account.verify_email_main')->with($data);
     }
 
     /**

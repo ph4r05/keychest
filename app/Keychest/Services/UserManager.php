@@ -19,13 +19,13 @@ use App\Models\ApiKey;
 use App\Models\ApiKeyLog;
 use App\Models\User;
 use Carbon\Carbon;
-
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Auth\Passwords\DatabaseTokenRepository;
+use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 
 class UserManager {
@@ -38,6 +38,13 @@ class UserManager {
     protected $app;
 
     /**
+     * The password token repository.
+     *
+     * @var \Illuminate\Auth\Passwords\TokenRepositoryInterface
+     */
+    protected $passwordTokens;
+
+    /**
      * Create a new manager instance.
      *
      * @param  \Illuminate\Foundation\Application  $app
@@ -45,6 +52,17 @@ class UserManager {
     public function __construct($app)
     {
         $this->app = $app;
+        $this->passwordTokens = null; //$this->app->make(TokenRepositoryInterface::class);
+    }
+
+    /**
+     * Get the default password broker name.
+     *
+     * @return string
+     */
+    public function getDefaultDriver()
+    {
+        return $this->app['config']['auth.defaults.passwords'];
     }
 
     /**
@@ -233,7 +251,8 @@ class UserManager {
      * @return User|null
      */
     public function checkVerifyToken($token){
-        return User::query()->where('email_verify_token', '=', $token)->first();
+        return empty($token) ? null :
+            User::query()->where('email_verify_token', '=', $token)->first();
     }
 
     /**
@@ -243,7 +262,8 @@ class UserManager {
      * @return ApiKey|null
      */
     public function checkApiToken($apiKeyToken){
-        return ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+        return empty($apiKeyToken) ? null :
+            ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
     }
 
     /**
@@ -288,7 +308,7 @@ class UserManager {
         $u->blocked_at = null;
         $u->email_verified_at = Carbon::now();
         $u->verified_at = Carbon::now();
-        $u->email_verify_token = UserTools::generateVerifyToken($u);
+        //$u->email_verify_token = UserTools::generateVerifyToken($u); // TODO: FIXME
         $u->save();
 
         return $u;
@@ -370,6 +390,49 @@ class UserManager {
         $apiKey->save();
 
         return $apiKey;
+    }
+
+    /**
+     * Creates own token repository.
+     * A bit hacky way to get to the token repository.
+     *
+     * @return DatabaseTokenRepository|TokenRepositoryInterface|null
+     */
+    protected function getPasswordTokens(){
+        if ($this->passwordTokens){
+            return $this->passwordTokens;
+        }
+
+        $name = $this->getDefaultDriver();
+        $config = $this->app['config']["auth.passwords.{$name}"];
+        if (is_null($config)) {
+            throw new InvalidArgumentException("Password resetter [{$name}] is not defined.");
+        }
+
+        $key = $this->app['config']['app.key'];
+        if (Str::startsWith($key, 'base64:')) {
+            $key = base64_decode(substr($key, 7));
+        }
+
+        $connection = isset($config['connection']) ? $config['connection'] : null;
+        $this->passwordTokens = new DatabaseTokenRepository(
+            $this->app['db']->connection($connection),
+            $this->app['hash'],
+            $config['table'],
+            $key,
+            $config['expire']
+        );
+
+        return $this->passwordTokens;
+    }
+
+    /**
+     * Creates a new reset token for the user.
+     * @param User $user
+     * @return string
+     */
+    public function newPasswordToken(User $user){
+        return $this->getPasswordTokens()->create($user);
     }
 
 }

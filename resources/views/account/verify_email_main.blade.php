@@ -48,7 +48,7 @@
         <p>
             As you are here, you can set the password for your KeyChest account
             @include('account.partials.set_password',[
-                'token' => $res->remember_token,
+                'token' => $token,
                 'user' => $res,
             ])
         </p>

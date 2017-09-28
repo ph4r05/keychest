@@ -14,6 +14,16 @@
             <input type="hidden" name="token" value="{{ $token }}">
             <input type="hidden" name="email_verify_token" value="{{ $user->email_verify_token }}">
 
+            @if ($errors->has('email'))
+                <div class="form-group has-error">
+                    <div class="col-md-6">
+                        <span class="help-block">
+                            <strong>{{ $errors->first('email') }}</strong>
+                        </span>
+                    </div>
+                </div>
+            @endif
+
             <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                 <label for="password" class="col-md-4 control-label">Password</label>
 

@@ -43,6 +43,11 @@ class OnUserLogin
         $req = request();
         $event->user->accredit = $req->session()->get('accredit');
 
+        // Clean some session state
+        if ($req){
+            $req->session()->forget('verify.email');
+        }
+
         $newLoginRecord = new UserLoginHistory([
             'user_id' => $event->user->id,
             'login_at' => $event->user->cur_login_at,

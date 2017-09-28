@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Keychest\Utils\UserTools;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class SetPasswordController extends Controller
