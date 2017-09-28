@@ -308,7 +308,7 @@ class UserManager {
         $u->blocked_at = null;
         $u->email_verified_at = Carbon::now();
         $u->verified_at = Carbon::now();
-        //$u->email_verify_token = UserTools::generateVerifyToken($u); // TODO: FIXME
+        $u->email_verify_token = UserTools::generateVerifyToken($u);
         $u->save();
 
         return $u;
