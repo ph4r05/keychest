@@ -107,7 +107,8 @@ trait TokenRepository
      */
     protected function createNewToken()
     {
-        return hash_hmac('sha256', Str::random(64), '');
+        // return substr(hash_hmac('sha256', Str::random(64), ''), 0, 32);
+        return Str::random(16);
     }
 
     /**
@@ -116,7 +117,7 @@ trait TokenRepository
      */
     protected function createId()
     {
-        return Str::random(24);
+        return Str::random(16);
     }
 
 }
