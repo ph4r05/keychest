@@ -41,10 +41,20 @@ class SendNewApiKeyConfirmation implements ShouldQueue
     public $apiKey;
 
     /**
+     * @var
+     */
+    public $apiToken;
+
+    /**
+     * @var
+     */
+    public $blockApiToken;
+
+    /**
      * Api key caused this
      * @var Request
      */
-    public $request;
+    protected $request;
 
     /**
      * Options
@@ -85,6 +95,7 @@ class SendNewApiKeyConfirmation implements ShouldQueue
      */
     public function handle(EmailManager $emailManager, UserManager $userManager)
     {
+        Log::info('send new api key conf');
         $this->emailManager = $emailManager;
         $this->userManager = $userManager;
 
@@ -116,6 +127,8 @@ class SendNewApiKeyConfirmation implements ShouldQueue
         }
 
         $mailable = new NewApiKeyAutoRegistered($this->user, $this->apiKey);
+        $mailable->blockApiToken = $this->blockApiToken;
+        $mailable->apiToken = $this->apiToken;
 
         $s = Mail::to($userObj);
         if ($enqueue){

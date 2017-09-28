@@ -14,7 +14,9 @@ use App\Jobs\SendNewUserConfirmation;
 use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Results\UserSelfRegistrationResult;
 use App\Keychest\Utils\ApiKeyLogger;
+use App\Keychest\Utils\TokenTools;
 use App\Keychest\Utils\UserTools;
+use App\Models\AccessToken;
 use App\Models\ApiKey;
 use App\Models\ApiKeyLog;
 use App\Models\User;
@@ -24,11 +26,16 @@ use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 
 class UserManager {
+
+    const ACTION_BLOCK_ACCOUNT = 'block-account';
+    const ACTION_BLOCK_AUTO_API = 'block-autoapi';
+    const ACTION_VERIFY_EMAIL = 'verify-email';
 
     /**
      * The application instance.
@@ -43,6 +50,18 @@ class UserManager {
      * @var \Illuminate\Auth\Passwords\TokenRepositoryInterface
      */
     protected $passwordTokens;
+
+    /**
+     * Api Key token manager - verifications
+     * @var ApiKeyTokenManager
+     */
+    protected $apiKeyTokenManager;
+
+    /**
+     * User token manager - verifications
+     * @var UserTokenManager
+     */
+    protected $userTokenManager;
 
     /**
      * Create a new manager instance.
@@ -163,7 +182,6 @@ class UserManager {
         $apiObj = new ApiKey([
             'name' => 'self-registered',
             'api_key' => $apiKey,
-            'api_verify_token' => UserTools::generateVerifyToken(),
             'email_claim' => $user->email,
             'ip_registration' => $request->ip(),
             'user_id' => $user->id,
@@ -227,9 +245,15 @@ class UserManager {
      * @param ApiKey $apiKey
      */
     public function sendNewUserConfirmation(User $user, ApiKey $apiKey, $request){
-        $job = new SendNewUserConfirmation($user, $apiKey, $request);
+        $job = new SendNewUserConfirmation($user, $apiKey, null);
+        $job->apiToken = empty($apiKey) ? null : $this->getNewApiKeyToken($apiKey);
+        $job->blockAccountToken = $this->getNewUserToken($user, self::ACTION_BLOCK_ACCOUNT);
+        $job->emailVerifyToken = $this->getNewUserToken($user, self::ACTION_VERIFY_EMAIL);
+
         $job->onConnection(config('keychest.wrk_weekly_emails_conn'))
             ->onQueue(config('keychest.wrk_weekly_emails_queue'));
+
+        dispatch($job);
     }
 
     /**
@@ -239,9 +263,17 @@ class UserManager {
      * @param ApiKey $apiKey
      */
     public function sendNewApiKeyConfirmation(User $user, ApiKey $apiKey, $request){
-        $job = new SendNewApiKeyConfirmation($user, $apiKey, $request);
+        $job = new SendNewApiKeyConfirmation($user, $apiKey, null);
+        $job->apiToken = $this->getNewApiKeyToken($apiKey);
+        $job->blockApiToken = $this->getNewUserToken($user, [
+            'action' => self::ACTION_BLOCK_AUTO_API,
+            'multiple' => true
+        ]);
+
         $job->onConnection(config('keychest.wrk_weekly_emails_conn'))
             ->onQueue(config('keychest.wrk_weekly_emails_queue'));
+
+        dispatch($job);
     }
 
     /**
@@ -256,14 +288,33 @@ class UserManager {
     }
 
     /**
+     * Performs the User token verification.
+     * Does not invalidate the token.
+     *
+     * @param $token
+     * @param $action
+     * @return AccessToken|null
+     */
+    public function checkUserToken($token, $action){
+        $mgr = $this->getUserTokenManager();
+        $token = $mgr->get($token, [
+            'action' => $action
+        ]);
+
+        return $token;
+    }
+
+    /**
      * Performs the API token verification.
-     * If token is valid, API key is returned.
+     * Does not invalidate the token.
+     *
      * @param $apiKeyToken
-     * @return ApiKey|null
+     * @return AccessToken|null
      */
     public function checkApiToken($apiKeyToken){
-        return empty($apiKeyToken) ? null :
-            ApiKey::query()->where('api_verify_token', '=', $apiKeyToken)->first();
+        $mgr = $this->getApiKeyTokenManager();
+        $token = $mgr->get($apiKeyToken);
+        return $token;
     }
 
     /**
@@ -278,10 +329,13 @@ class UserManager {
      */
     public function block($token, $request=null)
     {
-        $u = $this->checkVerifyToken($token);
-        if (!$u){
+        $token = $this->checkUserToken($token, self::ACTION_BLOCK_ACCOUNT);
+        if (!$token){
             return null;
         }
+
+        $u = $token->user;
+        TokenTools::tokenUsed($token);
 
         $u->blocked_at = Carbon::now();
         $u->email_verify_token = UserTools::generateVerifyToken($u);
@@ -300,10 +354,13 @@ class UserManager {
      */
     public function verifyEmail($token, $request=null)
     {
-        $u = $this->checkVerifyToken($token);
-        if (!$u){
+        $token = $this->checkUserToken($token, self::ACTION_VERIFY_EMAIL);
+        if (!$token){
             return null;
         }
+
+        $u = $token->user;
+        TokenTools::tokenUsed($token);
 
         $u->blocked_at = null;
         $u->email_verified_at = Carbon::now();
@@ -316,7 +373,6 @@ class UserManager {
 
     /**
      * Blocks API key auto-registration via API.
-     * TODO: separate verification token?
      *
      * @param $token
      * @param null $request
@@ -324,10 +380,13 @@ class UserManager {
      */
     public function blockAutoApiKeys($token, $request=null)
     {
-        $u = $this->checkVerifyToken($token);
-        if (!$u){
+        $token = $this->checkUserToken($token, self::ACTION_BLOCK_AUTO_API);
+        if (!$token){
             return null;
         }
+
+        $u = $token->user;
+        TokenTools::tokenUsed($token);
 
         $u->new_api_keys_state = 1;
         $u->save();
@@ -343,10 +402,12 @@ class UserManager {
      */
     public function confirmApiKey($apiKeyToken, $request=null)
     {
-        $apiKey = $this->checkApiToken($apiKeyToken);
-        if (!$apiKey){
+        $token = $this->checkApiToken($apiKeyToken);
+        if (!$token){
             return null;
         }
+
+        $apiKey = $token->apiKey;
 
         // Create log about the creation first
         ApiKeyLogger::create()
@@ -355,10 +416,11 @@ class UserManager {
             ->action('confirm-apikey')
             ->save();
 
+        TokenTools::tokenUsed($token);
+
         // Modify the api key
         $apiKey->verified_at = Carbon::now();
         $apiKey->revoked_at = null;
-        $apiKey->api_verify_token = UserTools::generateVerifyToken();
         $apiKey->save();
 
         return $apiKey;
@@ -372,10 +434,14 @@ class UserManager {
      */
     public function revokeApiKey($apiKeyToken, $request=null)
     {
-        $apiKey = $this->checkApiToken($apiKeyToken);
-        if (!$apiKey){
+        $token = $this->checkApiToken($apiKeyToken);
+        if (!$token){
             return null;
         }
+
+        $apiKey = $token->apiKey;
+
+        TokenTools::tokenUsed($token);
 
         // Create log about the creation first
         ApiKeyLogger::create()
@@ -386,7 +452,6 @@ class UserManager {
 
         // Modify the api key
         $apiKey->revoked_at = Carbon::now();
-        $apiKey->api_verify_token = UserTools::generateVerifyToken();
         $apiKey->save();
 
         return $apiKey;
@@ -427,6 +492,30 @@ class UserManager {
     }
 
     /**
+     * Returns local API key token manager.
+     * @return ApiKeyTokenManager
+     */
+    protected function getApiKeyTokenManager(){
+        if (!$this->apiKeyTokenManager){
+            $this->apiKeyTokenManager = $this->app->make(ApiKeyTokenManager::class);
+        }
+
+        return $this->apiKeyTokenManager;
+    }
+
+    /**
+     * Returns local API key token manager.
+     * @return UserTokenManager
+     */
+    protected function getUserTokenManager(){
+        if (!$this->userTokenManager){
+            $this->userTokenManager = $this->app->make(UserTokenManager::class);
+        }
+
+        return $this->userTokenManager;
+    }
+
+    /**
      * Creates a new reset token for the user.
      * @param User $user
      * @return string
@@ -435,4 +524,29 @@ class UserManager {
         return $this->getPasswordTokens()->create($user);
     }
 
+    /**
+     * Creates new token for the User
+     * @param User $user
+     * @param null $options
+     * @return string
+     */
+    protected function getNewUserToken(User $user, $options=null){
+        if (is_string($options)){
+            $options = ['action' => $options];
+        }
+        return $this->getUserTokenManager()->create($user, $options)->getTokenToSend();
+    }
+
+    /**
+     * Creates new confirmation token for the API key
+     * @param ApiKey $apiKey
+     * @param null $options
+     * @return string
+     */
+    protected function getNewApiKeyToken(ApiKey $apiKey, $options=null){
+        if (is_string($options)){
+            $options = ['action' => $options];
+        }
+        return $this->getApiKeyTokenManager()->create($apiKey, $options)->getTokenToSend();
+    }
 }

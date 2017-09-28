@@ -111,13 +111,14 @@ class UserController extends Controller
      * Verify user account with email verification.
      *
      * @param Request $request
-     * @param $token
+     * @param null|string $token
      * @param null|string $apiKeyToken
      * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
      */
     public function verifyEmail(Request $request, $token=null, $apiKeyToken=null){
-        $res = $this->userManager->checkVerifyToken($token);
+        $tokenObj = $this->userManager->checkUserToken($token, UserManager::ACTION_VERIFY_EMAIL);
         $confirm = boolval(Input::get('confirm', '0'));
+        $res = $tokenObj ? $tokenObj->user : null;
         $apiKeyObj = null;
 
         // Clear the state
@@ -191,8 +192,9 @@ class UserController extends Controller
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\View
      */
     public function blockAccount($token){
-        $res = $this->userManager->checkVerifyToken($token);
+        $tokenObj = $this->userManager->checkUserToken($token, UserManager::ACTION_BLOCK_ACCOUNT);
         $confirm = boolval(Input::get('confirm'));
+        $res = $tokenObj ? $tokenObj->user : null;
 
         if ($confirm) {
             $res = $this->userManager->block($token);
@@ -213,8 +215,9 @@ class UserController extends Controller
      * @return $this
      */
     public function blockAutoApiKeys($token){
-        $res = $this->userManager->checkVerifyToken($token);
+        $tokenObj = $this->userManager->checkUserToken($token, UserManager::ACTION_BLOCK_AUTO_API);
         $confirm = boolval(Input::get('confirm'));
+        $res = $tokenObj ? $tokenObj->user : null;
 
         if ($confirm) {
             $res = $this->userManager->blockAutoApiKeys($token);
@@ -235,8 +238,9 @@ class UserController extends Controller
      * @return $this
      */
     public function confirmApiKey($apiKeyToken){
-        $res = $this->userManager->checkApiToken($apiKeyToken);
+        $token = $this->userManager->checkApiToken($apiKeyToken);
         $confirm = boolval(Input::get('confirm'));
+        $res = $token ? $token->apiKey : null;
 
         if ($confirm) {
             $res = $this->userManager->confirmApiKey($apiKeyToken);
@@ -258,8 +262,9 @@ class UserController extends Controller
      * @return $this
      */
     public function revokeApiKey($apiKeyToken){
-        $res = $this->userManager->checkApiToken($apiKeyToken);
+        $token = $this->userManager->checkApiToken($apiKeyToken);
         $confirm = boolval(Input::get('confirm'));
+        $res = $token ? $token->apiKey : null;
 
         if ($confirm) {
             $res = $this->userManager->revokeApiKey($apiKeyToken);
@@ -303,7 +308,7 @@ class UserController extends Controller
 
             try {
                 $user = $this->claimAccessNewUser($request, $email, $apiKey);
-                $userExisted = true;
+                $userExisted = false;
 
             } catch (CouldNotRegisterNewUserException $e){
                 Log::warning('Could not auto-register create a new user: ' . $email . ' ex: ' . $e->getMessage());
@@ -349,7 +354,11 @@ class UserController extends Controller
             $this->userManager->sendNewApiKeyConfirmation($user, $apiKeyObj, $request);
         }
 
-        return response()->json(['status' => 'created'], 200);
+        return response()->json([
+            'status' => 'created',
+            'user' => $user->email,
+            'apiKey' => $apiKeyObj->api_key
+        ], 200);
     }
 
     /**

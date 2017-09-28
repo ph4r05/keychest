@@ -23,6 +23,21 @@ class NewUserAutoRegistered extends Mailable
     public $apiKey;
 
     /**
+     * @var
+     */
+    public $apiToken;
+
+    /**
+     * @var
+     */
+    public $emailVerifyToken;
+
+    /**
+     * @var
+     */
+    public $blockAccountToken;
+
+    /**
      * Create a new message instance.
      *
      * @param User $user

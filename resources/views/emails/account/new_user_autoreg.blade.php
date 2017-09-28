@@ -6,15 +6,19 @@
     <p>
         Keychest has got an user registration request for this email from the IP <strong>{{ $apiKey->ip_registration }}</strong>
         at {{ $apiKey->created_at }}. <br/>
+    </p>
 
+    <p>
         You can confirm account creation and allow the client to access the KeyChest account being created on
-        the following link:
-        <a href="{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token) }}" rel="nofollow"
-                >{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token) }}</a>.<br/>
+        the following link: <br/>
+        <a href="{{ url('verifyEmail/' . $emailVerifyToken . '/' . $apiToken) }}" rel="nofollow"
+                >{{ url('verifyEmail/' . $emailVerifyToken . '/' . $apiToken) }}</a>.
+    </p>
 
-        If the action was not initiated by you, you can decide to block this request by visiting the following link:
-        <a href="{{ url('blockAccount/' . $user->email_verify_token) }}" rel="nofollow"
-                >{{ url('blockAccount/' . $user->email_verify_token) }}</a>. <br/>
+    <p>
+        If the action was not initiated by you, you can decide to block this request by visiting the following link:<br/>
+        <a href="{{ url('blockAccount/' . $blockAccountToken) }}" rel="nofollow"
+                >{{ url('blockAccount/' . $blockAccountToken) }}</a>. <br/> <br/>
         In that case KeyChest won't send you any more email on this address.
     </p>
 

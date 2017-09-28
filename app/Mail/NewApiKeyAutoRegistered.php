@@ -23,6 +23,16 @@ class NewApiKeyAutoRegistered extends Mailable
     public $apiKey;
 
     /**
+     * @var
+     */
+    public $apiToken;
+
+    /**
+     * @var
+     */
+    public $blockApiToken;
+
+    /**
      * Create a new message instance.
      *
      * @param User $user

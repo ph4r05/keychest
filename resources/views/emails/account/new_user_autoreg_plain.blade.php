@@ -5,10 +5,10 @@ at {{ $apiKey->created_at }}.
 
 You can confirm account creation and allow the client to access the KeyChest account being created on
 the following link:
-{{ url('verifyEmail/' . $user->email_verify_token . '/' . $apiKey->api_verify_token) }}
+{{ url('verifyEmail/' . $emailVerifyToken . '/' . $apiToken) }}
 
 If the action was not initiated by you, you can decide to block this request by visiting the following link:
-{{ url('blockAccount/' . $user->email_verify_token) }}
+{{ url('blockAccount/' . $blockAccountToken) }}
 
 In that case KeyChest won't send you any more email on this address.
 

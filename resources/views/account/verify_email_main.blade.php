@@ -20,15 +20,15 @@
             <br/>
 
             If you want to confirm please visit the following link: <br/>
-            <a href="{{ url('verifyEmail/' . $res->email_verify_token . '/' . $apiKeyToken . '?confirm=1') }}" rel="nofollow"
-                    >{{ url('verifyEmail/' . $res->email_verify_token . '/' . $apiKeyToken . '?confirm=1') }}</a>.
+            <a href="{{ url('verifyEmail/' . $token . '/' . $apiKeyToken . '?confirm=1') }}" rel="nofollow"
+                    >{{ url('verifyEmail/' . $token . '/' . $apiKeyToken . '?confirm=1') }}</a>.
         </p>
 
         <p>
             If the action was not initiated by you, you can decide to <strong>block this request</strong>
             by visiting the following link: <br/>
-            <a href="{{ url('blockAccount/' . $res->email_verify_token . '?confirm=1') }}" rel="nofollow"
-                    >{{ url('blockAccount/' . $res->email_verify_token . '?confirm=1') }}</a>.
+            <a href="{{ url('blockAccount/' . $token . '?confirm=1') }}" rel="nofollow"
+                    >{{ url('blockAccount/' . $token . '?confirm=1') }}</a>.
         </p>
 
         <p>

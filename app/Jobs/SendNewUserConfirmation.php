@@ -42,10 +42,25 @@ class SendNewUserConfirmation implements ShouldQueue
     public $apiKey;
 
     /**
+     * @var
+     */
+    public $apiToken;
+
+    /**
+     * @var
+     */
+    public $emailVerifyToken;
+
+    /**
+     * @var
+     */
+    public $blockAccountToken;
+
+    /**
      * Api key caused this
      * @var Request
      */
-    public $request;
+    protected $request;
 
     /**
      * Options
@@ -86,6 +101,7 @@ class SendNewUserConfirmation implements ShouldQueue
      */
     public function handle(EmailManager $emailManager, UserManager $userManager)
     {
+        Log::info('send new user conf');
         $this->emailManager = $emailManager;
         $this->userManager = $userManager;
 
@@ -119,6 +135,9 @@ class SendNewUserConfirmation implements ShouldQueue
         }
 
         $mailable = new NewUserAutoRegistered($this->user, $this->apiKey);
+        $mailable->apiToken = $this->apiToken;
+        $mailable->emailVerifyToken = $this->emailVerifyToken;
+        $mailable->blockAccountToken = $this->blockAccountToken;
 
         $s = Mail::to($userObj);
         if ($enqueue){
