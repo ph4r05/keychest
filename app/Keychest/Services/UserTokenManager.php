@@ -137,7 +137,8 @@ class UserTokenManager {
     /**
      * Delete all existing reset tokens from the database.
      *
-     * @param  User  $user
+     * @param  User $user
+     * @param null $options
      * @return int
      */
     protected function deleteExisting(User $user, $options=null)

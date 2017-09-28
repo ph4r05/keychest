@@ -11,9 +11,7 @@ namespace App\Keychest\Utils;
 
 use App\Models\AccessToken;
 use \InvalidArgumentException;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class TokenTools
 {
@@ -24,7 +22,7 @@ class TokenTools
      * @return Collection
      */
     public static function parts($token){
-        $ret = explode('.', $token, 1);
+        $ret = explode('.', $token, 2);
         if (count($ret) !== 2) {
             throw new InvalidArgumentException();
         }

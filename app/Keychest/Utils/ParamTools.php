@@ -23,9 +23,11 @@ class ParamTools
     public static function col($options){
         if ($options instanceof Collection){
             return $options;
+        } elseif (empty($options)){
+            return collect();
         }
 
-        return collect();
+        return collect($options);
     }
 
 
