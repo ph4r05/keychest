@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Keychest\Services\AnalysisManager;
+use App\Keychest\Services\ApiKeyTokenManager;
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\IpScanManager;
 use App\Keychest\Services\LicenseManager;
@@ -10,6 +11,7 @@ use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
 use App\Keychest\Services\UserManager;
+use App\Keychest\Services\UserTokenManager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -62,6 +64,12 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(UserManager::class, function(Application $app){
             return new UserManager($app);
+        });
+        $this->app->bind(UserTokenManager::class, function(Application $app){
+            return new UserTokenManager($app);
+        });
+        $this->app->bind(ApiKeyTokenManager::class, function(Application $app){
+            return new ApiKeyTokenManager($app);
         });
     }
 }
