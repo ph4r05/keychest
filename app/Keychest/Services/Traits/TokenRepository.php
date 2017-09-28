@@ -107,7 +107,7 @@ trait TokenRepository
      */
     protected function createNewToken()
     {
-        // return substr(hash_hmac('sha256', Str::random(64), ''), 0, 32);
+        // a-zA-Z0-9 = 54 characters, complexity = log(54**16, 2) ~ 91.2 bits
         return Str::random(16);
     }
 
@@ -117,6 +117,7 @@ trait TokenRepository
      */
     protected function createId()
     {
+        // a-zA-Z0-9 = 54 characters, complexity = log(54**16, 2) ~ 91.2 bits
         return Str::random(16);
     }
 
