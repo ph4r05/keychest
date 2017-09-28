@@ -25,7 +25,7 @@
 
         <p>
             We have successfully blocked KeyChest from sending you new API registration
-            requests to {{ $res->getUser()->email }}.
+            requests to {{ $res->email }}.
         </p>
 
         <p>

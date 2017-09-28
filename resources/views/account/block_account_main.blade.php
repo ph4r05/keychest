@@ -24,7 +24,7 @@
         </div>
 
         <p>
-            We have successfully blocked KeyChest from using your address {{ $res->getUser()->email }}.
+            We have successfully blocked KeyChest from using your address {{ $res->email }}.
         </p>
 
         <p>
