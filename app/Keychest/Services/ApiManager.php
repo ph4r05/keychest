@@ -77,7 +77,7 @@ class ApiManager
             ->now($now)
             ->request($request)
             ->user($user)
-            ->challenge($apiKey)
+            ->apiKey($apiKey)
             ->action('new-certificate')
             ->actionData($key)
             ->save();
@@ -119,7 +119,7 @@ class ApiManager
             ->now($now)
             ->request($request)
             ->user($user)
-            ->challenge($apiKey)
+            ->apiKey($apiKey)
             ->action('new-domain')
             ->actionData($domain)
             ->save();
