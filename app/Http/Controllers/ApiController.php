@@ -19,6 +19,7 @@ use App\Keychest\Utils\CertificateTools;
 use App\Keychest\Utils\DataTools;
 
 
+use App\Keychest\Utils\DomainTools;
 use App\Keychest\Utils\Exceptions\MultipleCertificatesException;
 use App\Models\User;
 use Barryvdh\Debugbar\LaravelDebugbar;
@@ -168,7 +169,7 @@ class ApiController extends Controller
             $certificate = CertificateTools::sanitizeCertificate($certificate);
 
             // Insert waiting object
-            $apiObj = $this->apiManager->addCertificateToWatch($user, $user->apiKey, $certificate);
+            $apiObj = $this->apiManager->addCertificateToWatch($user, $user->apiKey, $certificate, $request);
 
             return response()->json([
                 'status' => 'success',
@@ -195,7 +196,36 @@ class ApiController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function addDomain(Request $request){
-        return response()->json(['status' => 'not-implemented'], 501);
+        $this->validate($request, [
+            'domain' => 'bail|required|min:3'
+        ]);
+
+        $domain = strtolower(trim(Input::get('domain')));
+        $server = DomainTools::normalizeUserDomainInput($domain);
+        $parsed = parse_url($server);
+
+        if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
+            return response()->json(['status' => 'invalid-domain'], 406);
+        }
+
+        // Add request for waiting object.
+        try {
+            $user = $request->user();
+
+            $apiObj = $this->apiManager->addDomainToWatch($user, $user->apiKey, $domain, $request);
+
+            return response()->json([
+                'status' => 'success',
+                'id' => $apiObj->waiting_id,
+                'key' => $apiObj->object_key,
+                'domain' => $domain
+            ], 200);
+
+        } catch (Exception $e){
+            Log::error($e);
+            return response()->json(['status' => 'error'], 500);
+
+        }
     }
 
     /**

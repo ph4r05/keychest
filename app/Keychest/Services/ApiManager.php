@@ -10,6 +10,7 @@ namespace App\Keychest\Services;
 
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\Exceptions\CertificateAlreadyInsertedException;
+use App\Keychest\Utils\ApiKeyLogger;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
 use App\Models\ApiKey;
@@ -49,10 +50,11 @@ class ApiManager
      * @param User $user
      * @param ApiKey $apiKey
      * @param $certificate
+     * @param $request
      * @return ApiWaitingObject
      * @throws CertificateAlreadyInsertedException
      */
-    public function addCertificateToWatch(User $user, ApiKey $apiKey, $certificate)
+    public function addCertificateToWatch(User $user, ApiKey $apiKey, $certificate, $request)
     {
         // hash of the certificate is the object key here, with little change
         $key = md5('CERT:' . $certificate);
@@ -69,10 +71,21 @@ class ApiManager
             throw new CertificateAlreadyInsertedException('Duplicate found');
         }
 
+        // Create log about the creation first
+        $now = Carbon::now();
+        ApiKeyLogger::create()
+            ->now($now)
+            ->request($request)
+            ->user($user)
+            ->challenge($apiKey)
+            ->action('new-certificate')
+            ->actionData($key)
+            ->save();
+
         // Insert new waiting object.
         $obj = new ApiWaitingObject([
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'created_at' => $now,
+            'updated_at' => $now,
             'api_key_id' => $apiKey->id,
             'waiting_id' => Uuid::generate()->string,
             'object_operation' => 'add',
@@ -86,6 +99,46 @@ class ApiManager
         return $obj;
     }
 
+    /**
+     * Adds domain to the watching
+     *
+     * @param User $user
+     * @param ApiKey $apiKey
+     * @param $domain
+     * @param $request
+     * @internal param $certificate
+     * @return ApiWaitingObject
+     */
+    public function addDomainToWatch(User $user, ApiKey $apiKey, $domain, $request){
+        // hash of the certificate is the object key here, with little change
+        $key = md5('DOMAIN:' . $domain);
 
+        // Create log about the creation first
+        $now = Carbon::now();
+        ApiKeyLogger::create()
+            ->now($now)
+            ->request($request)
+            ->user($user)
+            ->challenge($apiKey)
+            ->action('new-domain')
+            ->actionData($domain)
+            ->save();
+
+        // Insert new waiting object.
+        $obj = new ApiWaitingObject([
+            'created_at' => $now,
+            'updated_at' => $now,
+            'api_key_id' => $apiKey->id,
+            'waiting_id' => Uuid::generate()->string,
+            'object_operation' => 'add',
+            'object_type' => 'domain',
+            'object_key' => $key,
+            'object_value' => $domain,
+            'approval_status' => 0
+        ]);
+
+        $obj->save();
+        return $obj;
+    }
 
 }
