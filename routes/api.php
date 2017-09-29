@@ -19,9 +19,7 @@ Route::get('ping', function (Request $request) {
 });
 
 // Current user auth check call
-Route::middleware('auth:api')->get('user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:api')->get('user', 'ApiController@user');
 
 // Main API URL namespace
 Route::prefix('v1.0')->group(function () {
@@ -31,14 +29,17 @@ Route::prefix('v1.0')->group(function () {
     // All API methods accessible
     Route::group(['middleware' => 'auth:ph4-token'], function(){
 
-        Route::get('user', function(Request $request){
-            return $request->user();
-        });
+        // Basic auth test
+        Route::get('user', 'ApiController@user');
 
-        // TODO: add certificate
-        // TODO: add domain
-        // TODO: get expiration
+        // Add certificate to the monitoring
+        Route::post('certificate/add', 'ApiController@addCertificate');
 
+        // Add domain to the monitoring
+        Route::post('servers/add', 'ApiController@addDomain');
+
+        // Get domain cert expiration
+        Route::get('servers/expiration', 'ApiController@domainCertExpiration');
     });
 });
 

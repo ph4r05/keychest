@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Exception;
 
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -70,6 +71,8 @@ class ApiController extends Controller
 
     /**
      * Confirms the API key
+     * Returns view.
+     *
      * @param $apiKeyToken
      * @return $this
      */
@@ -94,6 +97,8 @@ class ApiController extends Controller
 
     /**
      * Revokes the API key
+     * Returns view.
+     *
      * @param $apiKeyToken
      * @return $this
      */
@@ -116,5 +121,43 @@ class ApiController extends Controller
         );
     }
 
+    // ------------------------------------------------------------------------------------------------------------
+    // API related part
 
+    /**
+     * Basic API auth test
+     * @param Request $request
+     * @return null
+     */
+    public function user(Request $request){
+        $u = $request->user();
+        return empty($u) ? null : $u->email;
+    }
+
+    /**
+     * Adds certificate to the monitoring, via waiting object.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function addCertificate(Request $request){
+        return response()->json(['status' => 'not-implemented'], 503);
+    }
+
+    /**
+     * Adds domain to the monitoring, via waiting object.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function addDomain(Request $request){
+        return response()->json(['status' => 'not-implemented'], 503);
+    }
+
+    /**
+     * Checks the domain
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function domainCertExpiration(Request $request){
+        return response()->json(['status' => 'not-implemented'], 503);
+    }
 }
