@@ -4,35 +4,38 @@
     <p>Hi,</p>
 
     <p>
-        We've got a new request for an API key registration from the IP <strong>{{ $apiKey->ip_registration }}</strong>
-        at {{ $apiKey->created_at }}.
+        We've received a request to register a new API key from the IP address <strong>{{ $apiKey->ip_registration }}</strong>
+        at {{ $apiKey->created_at }} Greenwich time (GMT).
+    </p>
+    <p>
+        This request is typically a result of an automation, which uses KeyChest's API. A confirmed API key has
+        a basic API access to your KeyChest account (e.g., add a new server, request a spot check). Details of the API
+        are available at <a class="tc-rich-electric-blue" href="https://api.enigmabridge.com/api/#keychest">https://api.enigmabridge.com</a>.
     </p>
 
     <p>
-        If you confirm this request please visit the following link:<br/>
+        Please use this link below to confirm and instantly enable the API key.<br/>
         <a href="{{ url('confirmApiKey/' . $apiToken) }}" rel="nofollow"
-                >{{ url('confirmApiKey/' . $apiToken) }}</a>.
+                >{{ url('confirmApiKey/' . $apiToken) }}</a>
     </p>
 
     <p>
-        You can also revoke this request if you deem the registration suspicious on the following link:<br/>
+        If you don't recognize this request, you can disable this API key here.<br/>
         <a href="{{ url('revokeApiKey/' . $apiToken) }}" rel="nofollow"
-                >{{ url('revokeApiKey/' . $apiToken) }}</a>.<br/>
-
-        The confirmed API key would have a basic access to your KeyChest account (e.g., add a new server, do a spot check).
+                >{{ url('revokeApiKey/' . $apiToken) }}</a><br/>
     </p>
 
     <p>
-        You can also decide to block further unsolicited API key registrations for your account on the following link:<br/>
+        You can also block all future unauthenticated API key registrations your email address with the following link.<br/>
         <a href="{{ url('blockAutoApiKeys/' . $blockApiToken) }}" rel="nofollow"
-                >{{ url('blockAutoApiKeys/' . $blockApiToken) }}</a>.<br/><br/>
+                >{{ url('blockAutoApiKeys/' . $blockApiToken) }}</a><br/><br/>
 
-        If you change your mind later, you can adjust this and other account options in your
-        <a href="{{ url('home/license') }}">KeyChest dashboard</a>.
+        You can change these settings at any time from the
+        <a href="{{ url('home/license') }}">Dashboard of your KeyChest account</a>.
     </p>
 
     <p>
-        Kind regards <br/>
+        Kind regards, <br/>
           <i>{{ config('app.name') }} &amp; Enigma Bridge</i>
     </p>
 

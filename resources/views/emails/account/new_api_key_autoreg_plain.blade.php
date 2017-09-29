@@ -1,22 +1,28 @@
 Hi,
 
-We've got a new request for an API key registration from the IP {{ $apiKey->ip_registration }}
-at {{ $apiKey->created_at }}.
+We've received a request to register a new API key from the IP address {{ $apiKey->ip_registration }}
+at {{ $apiKey->created_at }} Greenwich time (GMT).
 
-If you confirm this request please visit the following link:
+This request is typically a result of an automation, which uses KeyChest's API. A confirmed API key has
+a basic API access to your KeyChest account (e.g., add a new server, request a spot check). Details of the API
+are available at https://api.enigmabridge.com/api/#keychest.
+
+
+
+
+Please use this link below to confirm and instantly enable the API key.
 {{ url('confirmApiKey/' . $apiToken) }}
 
-You can also revoke this request if you deem the registration suspicious on the following link:
+If you don't recognize this request, you can disable this API key here.
 {{ url('revokeApiKey/' . $apiToken) }}
 
 The confirmed API key would have a basic access to your KeyChest account (e.g., add a new server, do a spot check).
 
 
-You can also decide to block further unsolicited API key registrations for your account on the following link:
+You can also block all future unauthenticated API key registrations your email address with the following link.
 {{ url('blockAutoApiKeys/' . $blockApiToken) }}
 
-If you change your mind later, you can adjust this and other account options in your
- KeyChest dashboard: {{ url('home/license') }}.
+You can change these settings at any time from the Dashboard of your KeyChest account at {{ url('home/license') }}.
 
-Kind regards
+Kind regards,
   {{ config('app.name') }} & Enigma Bridge
