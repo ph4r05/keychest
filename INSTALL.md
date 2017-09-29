@@ -16,7 +16,7 @@ npm istall
 
 ## Configuration
 
-The `.env` file contains current configuration for the environment Keychest is deployed on. 
+The `.env` file contains current configuration for the environment KeyChest is deployed on. 
 `.env` file must not be commited to the Git.
 
 ```bash
@@ -348,7 +348,7 @@ npm run prod
 sed -i 's/->json/->text/g' /var/www/keychest/vendor/acacha/laravel-social/database/migrations/2014_10_12_400000_create_social_users_table.php
 ```
 
-Keychest scanner
+KeyChest scanner
 
 ```bash
 cd
@@ -366,7 +366,7 @@ git checkout tags/v${KC_SCANNER_VER} -b rel_v${KC_SCANNER_VER}
 sudo /usr/local/bin/pip install -U --find-links=. .
 ```
 
-Keychest Configuration
+KeyChest Configuration
 
 ```bash
 # Scanner config setup, DB setup

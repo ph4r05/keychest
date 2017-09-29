@@ -1,6 +1,6 @@
 <head>
     <meta charset="UTF-8">
-    <title> Keychest - @yield('htmlheader_title', 'Profile') </title>
+    <title> KeyChest - @yield('htmlheader_title', 'Profile') </title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
 

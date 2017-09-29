@@ -1,7 +1,7 @@
 Hi,
 
-Keychest has got an user registration request for this email from the IP {{ $apiKey->ip_registration }}
-at {{ $apiKey->created_at }}.
+KeyChest has got an user registration request for this email from the IP {{ $apiKey->ip_registration }}
+at {{ $apiKey->created_at }} Greenwhich time (GMT).
 
 You can confirm account creation and allow the client to access the KeyChest account being created on
 the following link:
