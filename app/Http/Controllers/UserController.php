@@ -241,7 +241,7 @@ class UserController extends Controller
     public function claimAccess(Request $request){
         $this->validate($request, [
             'email' => 'bail|required|email|max:255',
-            'api_key' => 'bail|required|max:64'
+            'api_key' => 'bail|required|max:64|min:16'
         ]);
 
         $bailResponse = response()->json(['status' => 'not-allowed'], 405);
