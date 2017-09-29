@@ -1,52 +1,48 @@
 @extends('layouts.landing')
 
 @section('header-title')
-    Verify email address
+    Confirm your KeyChest account to receive notifications
 @endsection
 
 @section('content-body')
 
     @if(!$confirm && $res)
         <div class="alert alert-info">
-            <strong><i class="fa fa-question-circle"></i> You are about to confirm the email for KeyChest</strong>
+            <strong><i class="fa fa-question-circle"></i>KeyChest account activation</strong>
         </div>
 
         <p>
-            The KeyChest is asking you to <strong>confirm an email address</strong> for the KeyChest account
+            Please use the link below to <strong>confirm activation of your account </strong> in KeyChest.
             @if($apiKey)
-            and to confirm a new API key requested from the <strong>{{ $apiKey->ip_registration }}</strong>
-            at {{ $apiKey->created_at }}.
+            It also confirms validity of an API key requested by a server at the address <strong>{{ $apiKey->ip_registration }}</strong>
+            as received at {{ $apiKey->created_at }}.
             @endif
             <br/>
 
-            If you want to confirm please visit the following link: <br/>
-            <a href="{{ url('verifyEmail/' . $token . '/' . $apiKeyToken . '?confirm=1') }}" rel="nofollow"
-                    >{{ url('verifyEmail/' . $token . '/' . $apiKeyToken . '?confirm=1') }}</a>.
+            <a class="tc-rich-electric-blue" href="{{ url('verifyEmail/' . $token . '/' . $apiKeyToken . '?confirm=1') }}" rel="nofollow"
+                    >{{ url('verifyEmail/' . $token . '/' . $apiKeyToken . '?confirm=1') }}</a>
         </p>
 
         <p>
-            If the action was not initiated by you, you can decide to <strong>block this request</strong>
-            by visiting the following link: <br/>
-            <a href="{{ url('blockAccount/' . $token . '?confirm=1') }}" rel="nofollow"
-                    >{{ url('blockAccount/' . $token . '?confirm=1') }}</a>.
-        </p>
-
-        <p>
-            In that case KeyChest won't send you any more email on this address.
+            <br/><br/>
+            If you got here by mistake, you can use the following link to stop receiving KeyChest emails. <br/>
+            <a class="tc-rich-electric-blue"  href="{{ url('blockAccount/' . $token . '?confirm=1') }}" rel="nofollow"
+                    >{{ url('blockAccount/' . $token . '?confirm=1') }}</a>
         </p>
 
     @elseif(!empty($res))
         <div class="alert alert-success">
-            <strong><i class="fa fa-check-circle"></i> We have successfully completed your request</strong>
+            <strong><i class="fa fa-check-circle"></i>You have activated your account</strong>
         </div>
 
         <p>
-            You have successfully verified your email for KeyChest account.
+            You can login to your account with a Twitter, Linkedin, GitHub, Facebook, or Google+ account authentication
+            so long as it is associated with the same email address.
         </p>
 
         @if ($res && empty($res->password))
         <p>
-            As you are here, you can set the password for your KeyChest account
+            If you prefer using a separate KeyChest account, please set your new password now.
             @include('account.partials.set_password',[
                 'token' => $token,
                 'user' => $res,
@@ -56,11 +52,12 @@
 
     @else
         <div class="alert alert-warning">
-            <strong><i class="fa fa-exclamation-circle"></i>We can't complete your request</strong>
+            <strong><i class="fa fa-exclamation-circle"></i>We couldn't activate your account</strong>
         </div>
 
         <p>
-            The request you submitted contained an expired or invalid authorization token.
+            The link you used probably contained an expired or invalid authorization token. Please get in touch with us
+            at <a href="mailto:support@enigmabridge.com">support@enigmabridge.com</a> and we will assist you shortly.
         </p>
 
         <p>
