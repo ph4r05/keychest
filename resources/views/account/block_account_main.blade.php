@@ -8,7 +8,7 @@
 
     @if(!$confirm && $res)
         <div class="alert alert-info">
-            <strong><i class="fa fa-question-circle"></i> Block emails from KeyChest</strong>
+            <strong><i class="fa fa-question-circle"></i>&nbsp;Block emails from KeyChest</strong>
         </div>
 
         <p>
@@ -20,7 +20,7 @@
 
     @elseif(!empty($res))
         <div class="alert alert-success">
-            <strong><i class="fa fa-check-circle"></i>KeyChest will stopped your email address</strong>
+            <strong><i class="fa fa-check-circle"></i>&nbsp;KeyChest will stopped your email address</strong>
         </div>
 
         <p>
@@ -35,7 +35,7 @@
 
     @else
         <div class="alert alert-warning">
-            <strong><i class="fa fa-exclamation-circle"></i>We can't update your email settings</strong>
+            <strong><i class="fa fa-exclamation-circle"></i>&nbsp;We can't update your email settings</strong>
         </div>
 
         <p>
