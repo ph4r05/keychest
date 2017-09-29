@@ -24,7 +24,7 @@
 						about keeping your servers available, than secure. You can only do a thorough security audit
 						on servers, which have been configured and use the certificate you want.<br><br>
 
-						Keychest.net is about keeping your business up and running. It may be prudent to reach A+ rating
+						KeyChest.net is about keeping your business up and running. It may be prudent to reach A+ rating
 						at SSL Labs in April, but it doesn't help if your customers can't access your online store
 						in July.<br><br>
 

@@ -122,5 +122,5 @@ npm install
 
 ### IPv6-only hosts
 
-Keychest scanner supports IPv6 only hosts, try scanning `www.v6.facebook.com`
+KeyChest scanner supports IPv6 only hosts, try scanning `www.v6.facebook.com`
 

@@ -29,7 +29,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Keychest') }} - certificate expiry monitor and server status for HTTPS, TLS, Letsencrypt</title>
+    <title>{{ config('app.name', 'KeyChest') }} - certificate expiry monitor and server status for HTTPS, TLS, Letsencrypt</title>
 
     <!-- Styles -->
     <link href="{{ mix('css/all-landing.css') }}" rel="stylesheet">
@@ -83,7 +83,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        <img src="/images/logo2-rgb_keychest.png" alt="Certificate monitoring KeyChest logo" height="30" title="{{ config('app.name', 'Keychest') }}">
+                        <img src="/images/logo2-rgb_keychest.png" alt="Certificate monitoring KeyChest logo" height="30" title="{{ config('app.name', 'KeyChest') }}">
                     </a>
                 </div>
 
