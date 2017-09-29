@@ -30,7 +30,7 @@ class ApiWaitingObject extends Model
 
     public function getDates()
     {
-        return ['created_at', 'updated_at', 'ct_scanned_at', 'ct_found_at', 'processed_at', 'finished_at'];
+        return ['created_at', 'updated_at', 'last_scan_at', 'ct_found_at', 'processed_at', 'finished_at'];
     }
 
     /**
