@@ -27,7 +27,6 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Class DashboardController
- * TODO: move logic to the manager, this will be needed also for reporting (scheduled emails)
  *
  * @package App\Http\Controllers
  */
