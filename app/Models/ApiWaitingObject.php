@@ -12,14 +12,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * API key access.
+ * Object waiting to be processed by the backend and eventually added to the Keychest.
+ * Action started by client using an API key.
  *
- * Class ApiKeys
+ * This may be e.g. request to add a new certificate to the system (add all related watches).
+ *
+ * Class ApiWaitingObject
  * @package App\Models
  */
-class ApiKey extends Model
+class ApiWaitingObject extends Model
 {
-    const TABLE = 'api_keys';
+    const TABLE = 'api_waiting';
 
     protected $guarded = array();
 
@@ -27,14 +30,14 @@ class ApiKey extends Model
 
     public function getDates()
     {
-        return ['created_at', 'updated_at', 'last_seen_active_at', 'verified_at', 'revoked_at'];
+        return ['created_at', 'updated_at', 'ct_scanned_at', 'ct_found_at', 'processed_at', 'finished_at'];
     }
 
     /**
      * Associated user
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(){
-        return $this->belongsTo('App\Models\User', 'user_id');
+    public function apiKey(){
+        return $this->belongsTo('App\Models\ApiKey', 'api_key_id');
     }
 }
