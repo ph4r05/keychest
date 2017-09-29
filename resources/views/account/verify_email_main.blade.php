@@ -8,7 +8,7 @@
 
     @if(!$confirm && $res)
         <div class="alert alert-info">
-            <strong><i class="fa fa-question-circle"></i>&nbsp;KeyChest account activation</strong>
+            <strong><i class="fa fa-alert-move fa-question-circle"></i>KeyChest account activation</strong>
         </div>
 
         <p>
@@ -32,7 +32,7 @@
 
     @elseif(!empty($res))
         <div class="alert alert-success">
-            <strong><i class="fa fa-check-circle"></i>&nbsp;You have activated your account</strong>
+            <strong><i class="fa fa-alert-move fa-check-circle"></i>You have activated your account</strong>
         </div>
 
         <p>
@@ -52,7 +52,7 @@
 
     @else
         <div class="alert alert-warning">
-            <strong><i class="fa fa-exclamation-circle"></i>&nbsp;We couldn't activate your account</strong>
+            <strong><i class="fa fa-alert-move fa-exclamation-circle"></i>We couldn't activate your account</strong>
         </div>
 
         <p>

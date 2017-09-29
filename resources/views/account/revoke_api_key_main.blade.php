@@ -8,7 +8,7 @@
 
     @if(!$confirm && $res)
         <div class="alert alert-info">
-            <strong><i class="fa fa-question-circle"></i>&nbsp;Disabling KeyChest API Key</strong>
+            <strong><i class="fa fa-alert-move fa-question-circle"></i>Disabling KeyChest API Key</strong>
         </div>
 
         KeyChest requires use of a valid API key for authenticated functions of its RESTful API. The API documentation
@@ -29,7 +29,7 @@
 
     @elseif(!empty($res))
         <div class="alert alert-success">
-            <strong><i class="fa fa-check-circle"></i>&nbsp;KeyChest API key is disabled</strong>
+            <strong><i class="fa fa-alert-move fa-check-circle"></i>KeyChest API key is disabled</strong>
         </div>
 
         <p>
@@ -38,7 +38,7 @@
 
     @else
         <div class="alert alert-warning">
-            <strong><i class="fa fa-exclamation-circle"></i>&nbsp;We can't complete your API key validation request</strong>
+            <strong><i class="fa fa-alert-move fa-exclamation-circle"></i>We can't complete your API key validation request</strong>
         </div>
 
         <p>
