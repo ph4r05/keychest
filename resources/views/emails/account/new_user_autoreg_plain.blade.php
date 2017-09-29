@@ -1,21 +1,24 @@
 Hi,
 
-KeyChest has got an user registration request for this email from the IP {{ $apiKey->ip_registration }}
-at {{ $apiKey->created_at }} Greenwhich time (GMT).
 
-You can confirm account creation and allow the client to access the KeyChest account being created on
-the following link:
+We have created a new KeyChest account for you to provide HTTPS/TLS monitoring for a server with the IP address
+of {{ $apiKey->ip_registration }}.
+We received the initial request at {{ $apiKey->created_at }} Greenwich time (GMT).<br/>
+
+
+This request is typically a result of an automation, which uses KeyChest's API. Details of the API
+are available at https://api.enigmabridge.com/api/#keychest.
+
+Please follow the link below to confirm the new account and to set your password.
 {{ url('verifyEmail/' . $emailVerifyToken . '/' . $apiToken) }}
 
-If the action was not initiated by you, you can decide to block this request by visiting the following link:
+If you are not aware of this monitoring request, please use the alternative link below.
 {{ url('blockAccount/' . $blockAccountToken) }}
 
-In that case KeyChest won't send you any more email on this address.
 
-If you change your mind later, you can re-activate the account by logging in via
+If you decide to use KeyChest monitoring at a later date, you can re-create your account from the
 KeyChest Login page {{ url('login') }}.
+This page also provides a password reset facility: {{ url('password/reset') }}.
 
-In case you've lost your password you can ask for a password reset: {{ url('password/reset') }}.
-
-Kind regards
+Kind regards,
   {{ config('app.name') }} & Enigma Bridge
