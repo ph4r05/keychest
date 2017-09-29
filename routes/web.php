@@ -27,14 +27,15 @@ Route::post('submitJob', 'SearchController@restSubmitJob');
 Route::get('jobState', 'SearchController@restGetJobState');
 Route::get('jobResult', 'SearchController@restJobResults');
 
+// Account and API key confirmation / flow.
 Route::get('unsubscribe/{token}', 'EmailController@unsubscribe');
 Route::get('verifyEmail/{token}/{apiKeyToken?}', 'UserController@verifyEmail');
 Route::get('emailVerified', 'UserController@emailVerified')->name('email.verified');
 Route::post('setPassword', 'Auth\SetPasswordController@reset')->name('password.set');
 Route::get('blockAccount/{token}', 'UserController@blockAccount');
 Route::get('blockAutoApiKeys/{token}', 'UserController@blockAutoApiKeys');
-Route::get('confirmApiKey/{token}', 'UserController@confirmApiKey');
-Route::get('revokeApiKey/{token}', 'UserController@revokeApiKey');
+Route::get('confirmApiKey/{token}', 'ApiController@confirmApiKey');
+Route::get('revokeApiKey/{token}', 'ApiController@revokeApiKey');
 
 // Auth routes
 Route::auth();

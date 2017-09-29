@@ -233,54 +233,6 @@ class UserController extends Controller
     }
 
     /**
-     * Confirms the API key
-     * @param $apiKeyToken
-     * @return $this
-     */
-    public function confirmApiKey($apiKeyToken){
-        $token = $this->userManager->checkApiToken($apiKeyToken);
-        $confirm = boolval(Input::get('confirm'));
-        $res = $token ? $token->apiKey : null;
-
-        if ($confirm) {
-            $res = $this->userManager->confirmApiKey($apiKeyToken);
-        }
-
-        return view('account.confirm_api_key_main')->with(
-            [
-                'apiKeyToken' => $apiKeyToken,
-                'apiKey' => $res,
-                'confirm' => $confirm,
-                'res' => $res
-            ]
-        );
-    }
-
-    /**
-     * Revokes the API key
-     * @param $apiKeyToken
-     * @return $this
-     */
-    public function revokeApiKey($apiKeyToken){
-        $token = $this->userManager->checkApiToken($apiKeyToken);
-        $confirm = boolval(Input::get('confirm'));
-        $res = $token ? $token->apiKey : null;
-
-        if ($confirm) {
-            $res = $this->userManager->revokeApiKey($apiKeyToken);
-        }
-
-        return view('account.revoke_api_key_main')->with(
-            [
-                'apiKeyToken' => $apiKeyToken,
-                'apiKey' => $res,
-                'confirm' => $confirm,
-                'res' => $res
-            ]
-        );
-    }
-
-    /**
      * Claim new API key access - limited functionality until verified / confirmed.
      *
      * @param \Illuminate\Http\Request $request

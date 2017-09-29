@@ -495,7 +495,7 @@ class UserManager {
      * Returns local API key token manager.
      * @return ApiKeyTokenManager
      */
-    protected function getApiKeyTokenManager(){
+    public function getApiKeyTokenManager(){
         if (!$this->apiKeyTokenManager){
             $this->apiKeyTokenManager = $this->app->make(ApiKeyTokenManager::class);
         }
@@ -507,7 +507,7 @@ class UserManager {
      * Returns local API key token manager.
      * @return UserTokenManager
      */
-    protected function getUserTokenManager(){
+    public function getUserTokenManager(){
         if (!$this->userTokenManager){
             $this->userTokenManager = $this->app->make(UserTokenManager::class);
         }

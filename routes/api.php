@@ -35,6 +35,10 @@ Route::prefix('v1.0')->group(function () {
             return $request->user();
         });
 
+        // TODO: add certificate
+        // TODO: add domain
+        // TODO: get expiration
+
     });
 });
 
