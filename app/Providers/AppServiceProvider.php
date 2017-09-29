@@ -41,6 +41,12 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Registering sub-components, services, managers.
+        $this->app->bind(UserTokenManager::class, function(Application $app){
+            return new UserTokenManager($app);
+        });
+        $this->app->bind(ApiKeyTokenManager::class, function(Application $app){
+            return new ApiKeyTokenManager($app);
+        });
         $this->app->bind(ServerManager::class, function($app){
             return new ServerManager($app);
         });
@@ -64,12 +70,6 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(UserManager::class, function(Application $app){
             return new UserManager($app);
-        });
-        $this->app->bind(UserTokenManager::class, function(Application $app){
-            return new UserTokenManager($app);
-        });
-        $this->app->bind(ApiKeyTokenManager::class, function(Application $app){
-            return new ApiKeyTokenManager($app);
         });
     }
 }
