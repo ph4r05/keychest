@@ -9,13 +9,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\AnalysisManager;
+use App\Keychest\Services\ApiManager;
+use App\Keychest\Services\Exceptions\CertificateAlreadyInsertedException;
 use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\UserManager;
+use App\Keychest\Utils\CertificateTools;
 use App\Keychest\Utils\DataTools;
 
 
+use App\Keychest\Utils\Exceptions\MultipleCertificatesException;
 use App\Models\User;
 use Barryvdh\Debugbar\LaravelDebugbar;
 use Barryvdh\Debugbar\Middleware\Debugbar;
@@ -56,17 +60,28 @@ class ApiController extends Controller
     protected $userManager;
 
     /**
+     * @var ApiManager
+     */
+    protected $apiManager;
+
+    /**
      * Create a new controller instance.
      *
      * @param ScanManager $scanManager
+     * @param AnalysisManager $analysisManager
+     * @param UserManager $userManager
+     * @param LicenseManager $licenseManager
+     * @param ServerManager $serverManager
+     * @param ApiManager $apiManager
      */
     public function __construct(ScanManager $scanManager, AnalysisManager $analysisManager,
                                 UserManager $userManager, LicenseManager $licenseManager,
-                                ServerManager $serverManager)
+                                ServerManager $serverManager, ApiManager $apiManager)
     {
         $this->scanManager = $scanManager;
         $this->analysisManager = $analysisManager;
         $this->userManager = $userManager;
+        $this->apiManager = $apiManager;
     }
 
     /**
@@ -140,7 +155,38 @@ class ApiController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function addCertificate(Request $request){
-        return response()->json(['status' => 'not-implemented'], 503);
+        $this->validate($request, [
+            'certificate' => 'bail|required|min:24'
+        ]);
+
+        $user = $request->user();
+        $certificate = Input::get('certificate');
+
+        // Add request for waiting object.
+        try {
+            // Basic certificate processing
+            $certificate = CertificateTools::sanitizeCertificate($certificate);
+
+            // Insert waiting object
+            $apiObj = $this->apiManager->addCertificateToWatch($user, $user->apiKey, $certificate);
+
+            return response()->json([
+                'status' => 'success',
+                'id' => $apiObj->waiting_id,
+                'key' => $apiObj->object_key,
+            ], 200);
+
+        } catch (CertificateAlreadyInsertedException $e){
+            return response()->json(['status' => 'already-inserted'], 409);
+
+        } catch (MultipleCertificatesException $e){
+            return response()->json(['status' => 'single-cert-expected'], 406);
+
+        } catch (Exception $e){
+            Log::error($e);
+            return response()->json(['status' => 'error'], 500);
+
+        }
     }
 
     /**
@@ -149,7 +195,7 @@ class ApiController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function addDomain(Request $request){
-        return response()->json(['status' => 'not-implemented'], 503);
+        return response()->json(['status' => 'not-implemented'], 501);
     }
 
     /**
@@ -158,6 +204,6 @@ class ApiController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function domainCertExpiration(Request $request){
-        return response()->json(['status' => 'not-implemented'], 503);
+        return response()->json(['status' => 'not-implemented'], 501);
     }
 }

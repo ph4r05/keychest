@@ -10,7 +10,7 @@ namespace App\Keychest\Services\Exceptions;
 
 use Throwable;
 
-class CannotSendEmailException extends \Exception
+class CertificateAlreadyInsertedException extends \Exception
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {
