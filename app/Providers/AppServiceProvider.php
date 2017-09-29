@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Keychest\Services\AnalysisManager;
 use App\Keychest\Services\ApiKeyTokenManager;
+use App\Keychest\Services\ApiManager;
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\IpScanManager;
 use App\Keychest\Services\LicenseManager;
@@ -70,6 +71,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(UserManager::class, function(Application $app){
             return new UserManager($app);
+        });
+        $this->app->bind(ApiManager::class, function(Application $app){
+            return new ApiManager($app);
         });
     }
 }
