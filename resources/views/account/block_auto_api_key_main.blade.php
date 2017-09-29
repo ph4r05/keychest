@@ -8,7 +8,7 @@
 
     @if(!$confirm && $res)
         <div class="alert alert-info">
-            <strong><i class="fa fa-question-circle"></i>Block anonymous API key registrations</strong>
+            <strong><i class="fa fa-question-circle"></i>&nbsp;Block anonymous API key registrations</strong>
         </div>
 
         <p>
@@ -32,7 +32,7 @@
 
     @elseif(!empty($res))
         <div class="alert alert-success">
-            <strong><i class="fa fa-check-circle"></i>We have updated your KeyChest API access</strong>
+            <strong><i class="fa fa-check-circle"></i>&nbsp;We have updated your KeyChest API access</strong>
         </div>
 
         <p>
@@ -46,7 +46,7 @@
 
     @else
         <div class="alert alert-warning">
-            <strong><i class="fa fa-exclamation-circle"></i>We can't change API access</strong>
+            <strong><i class="fa fa-exclamation-circle"></i>&nbsp;We can't change API access</strong>
         </div>
 
         <p>
