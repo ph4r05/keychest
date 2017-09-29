@@ -8,19 +8,23 @@
 
     @if(!$confirm && $res)
         <div class="alert alert-info">
-            <strong><i class="fa fa-question-circle"></i> You are about to confirm the API Key</strong>
+            <strong><i class="fa fa-question-circle"></i>Enabling KeyChest API Key</strong>
         </div>
 
         <p>
-            If you want to <strong>confirm</strong> access for the API key: {{ $res->api_key }} follow the link:<br/>
-            <a href="{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
-                    >{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.
+            KeyChest requires use of a valid API key for authenticated functions of its RESTful API. The API documentation
+            is available at <a class="tc-rich-electric-blue" href="https://api.enigmabridge.com/api/#keychest">https://api.enigmabridge.com</a>.
+        </p>
+        <p>
+            Please follow the link below to <strong>enable</strong> the {{ $res->api_key }} API key. <br/>
+            <a class="tc-rich-electric-blue" href="{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
+                    >{{ url('confirmApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>
         </p>
 
         <p>
-            If you want to <strong>revoke</strong> access for the API key: {{ $res->api_key }} follow the link:<br/>
-            <a href="{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
-                    >{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>.
+            However, if you want to <strong>disable</strong> the {{ $res->api_key }} API key instead, use this link.<br/>
+            <a class="tc-rich-electric-blue" href="{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}" rel="nofollow"
+                    >{{ url('revokeApiKey/' . $apiKeyToken . '/?confirm=1') }}</a>
         </p>
 
     @elseif(!empty($res))
@@ -34,7 +38,7 @@
 
         <p>
             If you change your mind later, you can also change your
-            account settings on the <b>Account</b> page of your <a href="{{ url('/login')}}"
+            account settings on the <b>Account</b> page of your <a class="tc-rich-electric-blue" href="{{ url('/login')}}"
             >KeyChest dashboard</a>.
         </p>
 
@@ -44,7 +48,8 @@
         </div>
 
         <p>
-            The request you submitted contained an expired or invalid authorization token.
+            The link you used probably contained an expired or invalid authorization token. Please get in touch with us
+            at <a href="mailto:support@enigmabridge.com">support@enigmabridge.com</a> and we will assist you shortly.
         </p>
 
         <p>
