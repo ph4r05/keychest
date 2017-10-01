@@ -163,16 +163,24 @@
             The list of possible error causes shown by <i>Spot Check</i> includes:
          </p>
          <ul class="tc-onyx">
-            <li>TLS handshake error - check your TLS configuration, this error may indicate use of
-               insecure versions SSL3 or SSL2. The same error can be caused by StartTLS, which we do
-               not support yet;
-            </li>
+             <li>Domain lookup error - we couldn't find an IP address for the server name. Either you typed the
+                 server name incorrectly, your DNS records are incorrect, or latest DNS changes have not been propagated
+                 to the KeyChest's geographic region yet.
+                 You can use <a href="https://www.whatsmydns.net/">https://www.whatsmydns.net/</a> to check your DNS
+                 configuration.
+             </li>
             <li>Connection error - we couldn't connect to the server, check that the port is correct and/or
-               the server is running; and
+               the server is running.
             </li>
             <li>Timeout - there was no response to TLS requests; check whether the port is open in your
                firewall(s).
             </li>
+             <li>No TLS/HTTPS server found - we have detected a server, but it doesn't use TLS/HTTPS protocol.
+             </li>
+             <li>TLS handshake error - check your TLS configuration, this error may indicate use of
+                 insecure versions SSL3 or SSL2. The same error can be caused by StartTLS, which we do
+                 not support yet.
+             </li>
          </ul>
       </div>
       <!-- /.tab-pane -->
