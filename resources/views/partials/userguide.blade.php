@@ -165,8 +165,8 @@
          <ul class="tc-onyx">
              <li>Domain lookup error - we couldn't find an IP address for the server name. Either you typed the
                  server name incorrectly, your DNS records are incorrect, or latest DNS changes have not been propagated
-                 to the KeyChest's geographic region yet.
-                 You can use <a href="https://www.whatsmydns.net/">https://www.whatsmydns.net/</a> to check your DNS
+                 to the KeyChest's geographic region yet. You can use <a class="mg-md tc-rich-electric-blue"
+                  href="https://www.whatsmydns.net/">https://www.whatsmydns.net/</a> to check your DNS
                  configuration.
              </li>
             <li>Connection error - we couldn't connect to the server, check that the port is correct and/or
