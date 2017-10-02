@@ -9,6 +9,7 @@
 namespace App\Keychest\Utils;
 
 
+use App\Http\Request\ParamRequest;
 use Illuminate\Http\Request;
 use ReflectionClass;
 
@@ -24,6 +25,11 @@ class RequestTools
      * @param Request $request
      */
     public static function tryResetAcceptableContentTypes(Request $request){
+        if ($request instanceof ParamRequest){
+            $request->clearCachedAcceptTypes();
+            return;
+        }
+        
         $reflectionClass = new ReflectionClass(Request::class);
         $reflectionProperty = $reflectionClass->getProperty('acceptableContentTypes');
         $reflectionProperty->setAccessible(true);

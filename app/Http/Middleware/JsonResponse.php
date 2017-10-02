@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Request\ParamRequest;
 use App\Keychest\Utils\RequestTools;
 use Closure;
 use Illuminate\Support\Facades\Log;
@@ -32,6 +33,7 @@ class JsonResponse
             // By setting to null we force it to reload from headers.
             // Ugly reflection hack but creating a new Request does not work here.
             // The controller will get original request object.
+            // If the request is ParamRequest we reset it ourselves.
             try {
                 RequestTools::tryResetAcceptableContentTypes($request);
 

@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+        $this->app->alias('request', 'App\Http\Request\ParamRequest');
     }
 
     /**
