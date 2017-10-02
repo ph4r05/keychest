@@ -6,10 +6,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Request\ParamRequest;
 use App\Http\Requests;
 use App\Keychest\Services\AnalysisManager;
 use App\Keychest\Services\ApiManager;
 use App\Keychest\Services\Exceptions\CertificateAlreadyInsertedException;
+use App\Keychest\Services\Exceptions\InvalidHostname;
 use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
@@ -17,6 +19,7 @@ use App\Keychest\Services\UserManager;
 use App\Keychest\Utils\CertificateTools;
 use App\Keychest\Utils\DomainTools;
 use App\Keychest\Utils\Exceptions\MultipleCertificatesException;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -217,10 +220,66 @@ class ApiController extends Controller
 
     /**
      * Checks the domain
-     * @param Request $request
+     * @param ParamRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function domainCertExpiration(Request $request){
-        return response()->json(['status' => 'not-implemented'], 501);
+    public function domainCertExpiration(ParamRequest $request, $domain){
+        $request->addExtraParam('domain', $domain);
+        $this->validate($request, [
+            'domain' => 'bail|required|min:3',
+            'ip' => 'ip',
+            'requestId' => 'max:64',
+        ]);
+        $requestId = Input::get('requestId');
+        $ip = Input::get('ip');
+
+        $respArr = ['domain' => $domain];
+        $respArr += $ip ? ['ip' => $ip] : [];
+        $respArr += $requestId ? ['requestId' => $requestId] : [];
+
+        try {
+            $hr = $this->analysisManager->loadHost($domain, true, false, false);
+            if (empty($hr)){
+                return response()->json($respArr + ['status' => 'not-registered'], 404);
+            }
+
+            $subRes = collect();
+            $md = $hr->getValidityModel();
+
+            foreach ($md->getTlsScans() as $tlsScan) {
+                if (!empty($ip) && $ip != $tlsScan->ip_scanned) {
+                    continue;
+                }
+
+                $certId = $tlsScan->cert_id_leaf;
+                $cert = $md->getCerts()->get($certId, null);
+
+                $subRes->push([
+                    'ip' => $tlsScan->ip_scanned,
+                    'certificate_found' =>
+                        !!$cert,
+                    'certificate_fprint_sha256' =>
+                        $cert ? $cert->fprint_sha256 : null,
+                    'renewal_due' =>
+                        $cert ? Carbon::now()->addDays(28)->greaterThanOrEqualTo($cert->valid_to) : null,
+                    'expired' =>
+                        $cert ? Carbon::now()->greaterThanOrEqualTo($cert->valid_to) : null,
+                    'renewal_utc' =>
+                        $cert ? $cert->valid_to->getTimestamp() : null,
+                    'last_scan_at_utc' =>
+                        $tlsScan->last_scan_at->getTimestamp()
+                ]);
+            }
+
+            $respArr['results'] = $subRes->all();
+            return response()->json($respArr + ['status' => 'success'], 200);
+
+        } catch (InvalidHostname $e){
+            return response()->json($respArr + ['status' => 'invalid-domain'], 422);
+
+        } catch (Exception $e){
+            Log::error('Exception loading host for domain cert expiration: ' . $e);
+            return response()->json($respArr + ['status' => 'error'], 503);
+        }
     }
 }

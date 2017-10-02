@@ -20,7 +20,7 @@ class HostRecord
 
     /**
      * Validity model for the host
-     * @var
+     * @var ValidityDataModel
      */
     protected $validityModel;
 
@@ -43,7 +43,7 @@ class HostRecord
     }
 
     /**
-     * @return mixed
+     * @return ValidityDataModel
      */
     public function getValidityModel()
     {

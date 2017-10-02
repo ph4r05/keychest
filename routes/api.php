@@ -40,7 +40,7 @@ Route::group(['prefix' => 'v1.0', 'middleware' => 'api.response'], function () {
         Route::post('servers/add', 'ApiController@addDomain');
 
         // Get domain cert expiration
-        Route::get('servers/expiration', 'ApiController@domainCertExpiration');
+        Route::get('servers/expiration/{domain}', 'ApiController@domainCertExpiration');
     });
 });
 
