@@ -22,7 +22,8 @@ Route::get('ping', function (Request $request) {
 Route::middleware('auth:api')->get('user', 'ApiController@user');
 
 // Main API URL namespace
-Route::prefix('v1.0')->group(function () {
+Route::group(['prefix' => 'v1.0', 'middleware' => 'api.response'], function () {
+
     // Easy client registration.
     Route::get('access/claim', 'UserController@claimAccess');
 

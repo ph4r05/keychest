@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\JsonResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -57,5 +58,24 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'api.response' => JsonResponse::class,
+    ];
+
+    /**
+     * The priority-sorted list of middleware.
+     *
+     * Forces the listed middleware to always be in the given order.
+     *
+     * @var array
+     */
+    protected $middlewarePriority = [
+        JsonResponse::class,
+        \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \Illuminate\Auth\Middleware\Authenticate::class,
+        \Illuminate\Session\Middleware\AuthenticateSession::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        \Illuminate\Auth\Middleware\Authorize::class,
     ];
 }

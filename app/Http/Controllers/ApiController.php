@@ -7,7 +7,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\AnalysisManager;
 use App\Keychest\Services\ApiManager;
 use App\Keychest\Services\Exceptions\CertificateAlreadyInsertedException;
@@ -16,22 +15,10 @@ use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\UserManager;
 use App\Keychest\Utils\CertificateTools;
-use App\Keychest\Utils\DataTools;
-
-
 use App\Keychest\Utils\DomainTools;
 use App\Keychest\Utils\Exceptions\MultipleCertificatesException;
-use App\Models\User;
-use Barryvdh\Debugbar\LaravelDebugbar;
-use Barryvdh\Debugbar\Middleware\Debugbar;
-use Carbon\Carbon;
 use Exception;
-
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 
@@ -147,7 +134,7 @@ class ApiController extends Controller
      */
     public function user(Request $request){
         $u = $request->user();
-        return empty($u) ? null : $u->email;
+        return response()->json(['user' => empty($u) ? null : $u->email], 200);
     }
 
     /**
