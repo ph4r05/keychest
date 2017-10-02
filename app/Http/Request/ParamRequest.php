@@ -18,7 +18,7 @@ class ParamRequest extends BaseRequest
     public function all()
     {
         $arr = parent::all();
-        return $arr;
+        return $this->augmentAllResponse($arr);
     }
 
 

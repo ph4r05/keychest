@@ -18,7 +18,7 @@ class ParamFormRequest extends BaseFormRequest
     public function all()
     {
         $arr = parent::all();
-        return $arr;
+        return $this->augmentAllResponse($arr);
     }
 
 
