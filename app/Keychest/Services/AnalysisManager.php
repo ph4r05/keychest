@@ -8,7 +8,9 @@
 
 namespace App\Keychest\Services;
 
+use App\Keychest\DataClasses\HostRecord;
 use App\Keychest\DataClasses\ValidityDataModel;
+use App\Keychest\DataClasses\ValidityModelOptions;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
 use App\Models\User;
@@ -63,6 +65,16 @@ class AnalysisManager
         $md->setActiveWatches($user->activeWatchTargets()->get()->keyBy('id'));
         $md->setActiveWatchesIds($md->getActiveWatches()->pluck('id')->sort()->values());
 
+        $this->loadDnsForHosts($md, $expandModel);
+        return $this;
+    }
+
+    /**
+     * Loads DNS scan results for the loaded watches.
+     * @param ValidityDataModel $md
+     * @param bool $expandModel
+     */
+    public function loadDnsForHosts(ValidityDataModel $md, $expandModel = true){
         // Load all newest DNS scans for active watches
         $q = $this->scanManager->getNewestDnsScansOptim($md->getActiveWatchesIds());
         $md->setDnsScans($this->scanManager->processDnsScans($q->get()));
@@ -79,8 +91,6 @@ class AnalysisManager
             $item->host_port = $item->scan_host . ($strPort == 0 || $strPort === 443 ? '' : ':' . $strPort);
             return $item;
         });
-
-        return $this;
     }
 
     /**
@@ -89,38 +99,75 @@ class AnalysisManager
      * @param bool $expandModel if true cert model is expanded with tls scans and watch info - large model
      * @param int $crtshCertLimit number of the newest crtsh certificates to load
      */
-    public function loadCerts(ValidityDataModel $md, $expandModel = true, $crtshCertLimit=1000){
+    public function loadCerts(ValidityDataModel $md, $expandModel=true, $crtshCertLimit=1000)
+    {
+        $opts = new ValidityModelOptions();
+        $opts->setExpandModel($expandModel)->setCrtshCertLimit($crtshCertLimit);
+
+        $this->loadCertsWithOptions($md, $opts);
+    }
+
+    /**
+     * Loads Scans & certificate related data
+     * @param ValidityDataModel $md
+     * @param ValidityModelOptions $options
+     */
+    public function loadCertsWithOptions(ValidityDataModel $md, ValidityModelOptions $options)
+    {
+        $this->loadScansWithOptions($md, $options);
+        $this->loadCertificatesFromScansWithOptions($md, $options);
+    }
+
+    /**
+     * Loads TLS & CRTSH scan results using $md and $options.
+     * Scans can be selectively loaded.
+     *
+     * @param ValidityDataModel $md
+     * @param ValidityModelOptions $options
+     */
+    public function loadScansWithOptions(ValidityDataModel $md, ValidityModelOptions $options)
+    {
         // Load latest TLS scans for active watchers for primary IP addresses.
-        $q = $this->scanManager->getNewestTlsScansOptim($md->getActiveWatchesIds());
-        $md->setTlsScans($this->scanManager->processTlsScans($q->get())->keyBy('id'));
+        $tlsScans = collect();
+        if ($options->shouldLoadTls()) {
+            $tlsScans = $this->scanManager->getNewestTlsScansOptim($md->getActiveWatchesIds())->get();
+            $tlsScans = $this->scanManager->processTlsScans($tlsScans)->keyBy('id');
+        }
+
+        $md->setTlsScans($tlsScans);
         $md->setTlsScansGrp($md->getTlsScans()->groupBy('watch_id'));
 
         // Latest CRTsh scan
-        $md->setCrtshScans($this->scanManager->getNewestCrtshScansOptim($md->getActiveWatchesIds())->get());
-        $md->setCrtshScans($this->scanManager->processCrtshScans($md->getCrtshScans()));
+        $crtshScans = collect();
+        if ($options->shouldLoadCrtsh()) {
+            $crtshScans = $this->scanManager->getNewestCrtshScansOptim($md->getActiveWatchesIds())->get();
+            $crtshScans = $this->scanManager->processCrtshScans($crtshScans);
+        }
+
+        $md->setCrtshScans($crtshScans);
 
         // Certificate IDs from TLS scans - more important certs.
         // Load also crtsh certificates.
-        $md->setWatch2certsTls(DataTools::multiMap($md->getTlsScans(), function($item, $key){
+        $md->setWatch2certsTls(DataTools::multiMap($md->getTlsScans(), function ($item, $key) {
             return empty($item->cert_id_leaf) ? [] : [$item->watch_id => $item->cert_id_leaf]; // wid => cid, TODO: CA leaf cert?
-        })->transform(function($item, $key) {
+        })->transform(function ($item, $key) {
             return $item->unique()->values();
         }));
 
         // mapping cert back to IP & watch id it was taken from
-        $md->setCert2tls(DataTools::multiMap($md->getTlsScans(), function($item, $key){
+        $md->setCert2tls(DataTools::multiMap($md->getTlsScans(), function ($item, $key) {
             return empty($item->cert_id_leaf) ? [] : [$item->cert_id_leaf => $item->id]; // wid => cid, TODO: CA leaf cert?
         }));
 
         // watch_id -> leaf cert from the last tls scanning
-        $md->setTlsCertsIds($md->getWatch2certsTls()->flatten()->values()->reject(function($item){
+        $md->setTlsCertsIds($md->getWatch2certsTls()->flatten()->values()->reject(function ($item) {
             return empty($item);
         })->unique()->values());
 
         // watch_id -> array of certificate ids
-        $md->setWatch2certsCrtsh(DataTools::multiMap($md->getCrtshScans(), function($item, $key){
+        $md->setWatch2certsCrtsh(DataTools::multiMap($md->getCrtshScans(), function ($item, $key) {
             return empty($item->certs_ids) ? [] : [$item->watch_id => $item->certs_ids];  // wid => []
-        }, true)->transform(function($item, $key) {
+        }, true)->transform(function ($item, $key) {
             return $item->unique()->values();
         }));
 
@@ -129,17 +176,26 @@ class AnalysisManager
         }, collect())->values()->unique()->sort()->reverse();
 
         $md->setCrtshCertIds($crtshCertsIds->values());
-        $crtshCertsIdsToLoad = $crtshCertsIds->take($crtshCertLimit)->values();
 
         // cert id -> watches contained in, tls watch, crtsh watch detection
         $md->setCert2watchTls(DataTools::invertMap($md->getWatch2certsTls()));
         $md->setCert2watchCrtsh(DataTools::invertMap($md->getWatch2certsCrtsh()));
+    }
+
+    /**
+     * Loads certificates using already loaded scan results.
+     * @param ValidityDataModel $md
+     * @param ValidityModelOptions $options
+     */
+    public function loadCertificatesFromScansWithOptions(ValidityDataModel $md, ValidityModelOptions $options)
+    {
+        $crtshCertsIdsToLoad = $md->getCrtshCertIds()->take($options->getCrtshCertLimit())->values();
 
         start_measure('loadCerts-sub');
         $md->setCertsToLoad($md->getTlsCertsIds()->merge($crtshCertsIdsToLoad)->values()->unique()->values());
         $md->setCerts($this->scanManager->loadCertificates($md->getCertsToLoad())->get());
         $md->setCerts($md->getCerts()->transform(
-            function ($item, $key) use ($md, $expandModel)
+            function ($item, $key) use ($md, $options)
             {
                 $this->attributeCertificate($item, $md->cert2watchTls, 'found_tls_scan');
                 $this->attributeCertificate($item, $md->cert2watchCrtsh, 'found_crt_sh');
@@ -147,7 +203,7 @@ class AnalysisManager
                 $this->addWatchIdToCert($item, $md->cert2watchTls, $md->cert2watchCrtsh);
                 $item->tls_scans_ids = $md->cert2tls->get($item->id, collect());
 
-                if ($expandModel) {
+                if ($options->shouldExpandModel()) {
                     $item->tls_watches = DataTools::pick($md->activeWatches, $md->cert2watchTls->get($item->id, []));
                     $item->crtsh_watches = DataTools::pick($md->activeWatches, $md->cert2watchCrtsh->get($item->id, []));
                     $this->addTlsScanIpsInfo($item, $md->tlsScans, $md->cert2tls);
@@ -185,6 +241,51 @@ class AnalysisManager
      */
     public function processExpiring(ValidityDataModel $md){
 
+    }
+
+    /**
+     * Loads info about the host.
+     * DNS scan, certificates (tls/crtsh), whois info
+     * @param $host
+     * @param bool $tls
+     * @param bool $crtsh
+     * @param bool $whois
+     * @return HostRecord|null
+     */
+    public function loadHost($host, $tls=true, $crtsh=true, $whois=true, $crtshCertLimit=300){
+        $hosts = $this->serverManager->loadHostQueryByUrl($host)
+            ->with(['lastDnsScan', 'service', 'topDomain'])
+            ->get();
+
+        if ($hosts->isEmpty()){
+            return null;
+        }
+
+        $watch = $hosts->first();
+        $watchIds = collect([$watch->id]);
+        $this->scanManager->processDnsScan($watch->lastDnsScan);
+
+        $hr = new HostRecord();
+        $hr->setHost($watch);
+
+        $md = new ValidityDataModel();
+        $md->setActiveWatches(collect($watch));
+        $md->setActiveWatchesIds($watchIds);
+
+        $options = (new ValidityModelOptions())
+            ->setLoadCrtsh($crtsh)
+            ->setLoadTls($tls)
+            ->setExpandModel(false)
+            ->setCrtshCertLimit($crtshCertLimit);
+
+        $this->loadCertsWithOptions($md, $options);
+
+        if ($whois){
+            $this->loadWhois($md);
+        }
+
+        $hr->setValidityModel($md);
+        return $hr;
     }
 
     /**

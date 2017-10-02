@@ -191,7 +191,7 @@ class ServersController extends Controller
         // ...
 
         // Duplicity detection, soft delete manipulation
-        $hosts = $this->serverManager->getAllHostsBy($criteria);   // load all matching host records
+        $hosts = $this->serverManager->getAllHostsWithAssociationsBy($criteria);   // load all matching host records
         $hostAssoc = $this->serverManager->getHostAssociations($userId, $hosts->pluck('id'));
         $userHosts = $this->serverManager->filterHostsWithAssoc($hosts, $hostAssoc);
 
@@ -307,7 +307,7 @@ class ServersController extends Controller
         $criteriaNew = $this->serverManager->buildCriteria($parsedNew);
 
         // Duplicity detection, host might be already monitored in a different association record.
-        $newHosts = $this->serverManager->getAllHostsBy($criteriaNew);   // load all matching host records
+        $newHosts = $this->serverManager->getAllHostsWithAssociationsBy($criteriaNew);   // load all matching host records
         $hostNewAssoc = $this->serverManager->getHostAssociations($userId, $newHosts->pluck('id'));
         $userNewHosts = $this->serverManager->filterHostsWithAssoc($newHosts, $hostNewAssoc);
         if ($this->serverManager->allHostsEnabled($userNewHosts)){

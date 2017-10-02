@@ -9,6 +9,7 @@
 namespace App\Keychest\Services;
 
 
+use App\Keychest\Utils\DomainTools;
 use App\Models\BaseDomain;
 use App\Models\Certificate;
 use App\Models\CrtShQuery;
@@ -352,12 +353,26 @@ class ScanManager {
     public function processDnsScans($dnsScans){
         return $dnsScans->mapWithKeys(function ($item) {
             try{
-                $item->dns = json_decode($item->dns);
+                $this->processDnsScan($item);
             } catch (Exception $e){
             }
 
             return [intval($item->watch_id) => $item];
         });
+    }
+
+    /**
+     * Single DNS scan processing.
+     * @param $scan
+     * @return mixed
+     */
+    public function processDnsScan($scan){
+        if (empty($scan)){
+            return $scan;
+        }
+
+        $scan->dns = json_decode($scan->dns);
+        return $scan;
     }
 
     /**
@@ -368,12 +383,26 @@ class ScanManager {
     public function processTlsScans($tlsScans){
         return $tlsScans->transform(function($val, $key){
             try{
-                $val->certs_ids = json_decode($val->certs_ids);
+                $this->processTlsScan($val);
             } catch (Exception $e){
             }
 
             return $val;
         });
+    }
+
+    /**
+     * Processing single TLS scan
+     * @param $scan
+     * @return mixed
+     */
+    public function processTlsScan($scan){
+        if (empty($scan)){
+            return $scan;
+        }
+
+        $scan->certs_ids = json_decode($scan->certs_ids);
+        return $scan;
     }
 
     /**
@@ -384,12 +413,26 @@ class ScanManager {
     public function processCrtshScans($crtshScans){
         return $crtshScans->mapWithKeys(function ($item){
             try{
-                $item->certs_ids = json_decode($item->certs_ids);
+                $this->processCrtshScan($item);
             } catch (Exception $e){
             }
 
             return [intval($item->watch_id) => $item];
         });
+    }
+
+    /**
+     * Processing single CRTSH scan.
+     * @param $scan
+     * @return mixed
+     */
+    public function processCrtshScan($scan){
+        if (empty($scan)){
+            return $scan;
+        }
+
+        $scan->certs_ids = json_decode($scan->certs_ids);
+        return $scan;
     }
 
     /**
@@ -399,17 +442,44 @@ class ScanManager {
      */
     public function processWhoisScans($whoisScans){
         return $whoisScans->mapWithKeys(function ($item){
-            try{
-                $item->dns = json_decode($item->dns);
-            } catch (Exception $e){
-            }
-
-            try{
-                $item->emails = json_decode($item->emails);
-            } catch (Exception $e){
-            }
-
+            $this->processWhoisScan($item);
             return [intval($item->domain_id) => $item];
         });
+    }
+
+    /**
+     * Processing single Whois scan.
+     * @param $scan
+     * @return mixed
+     */
+    public function processWhoisScan($scan){
+        if (empty($scan)){
+            return $scan;
+        }
+
+        try{
+            $scan->dns = json_decode($scan->dns);
+        } catch (Exception $e){
+        }
+
+        try{
+            $scan->emails = json_decode($scan->emails);
+        } catch (Exception $e){
+        }
+
+        return $scan;
+    }
+
+    /**
+     * Extends watches with url names.
+     * @param $watch
+     * @return mixed
+     */
+    public function extendWatchWithUrls($watch){
+        $strPort = empty($watch->scan_port) ? 443 : intval($watch->scan_port);
+        $watch->url = DomainTools::buildUrl($watch->scan_scheme, $watch->scan_host, $strPort);
+        $watch->url_short = DomainTools::buildUrl($watch->scan_scheme, $watch->scan_host, $strPort === 443 ? null : $strPort);
+        $watch->host_port = $watch->scan_host . ($strPort == 0 || $strPort === 443 ? '' : ':' . $strPort);
+        return $watch;
     }
 }

@@ -8,6 +8,7 @@
 
 namespace App\Keychest\Services;
 
+use App\Keychest\Services\Exceptions\InvalidHostname;
 use App\Keychest\Utils\DomainTools;
 use App\Models\DnsEntry;
 use App\Models\DnsResult;
@@ -74,7 +75,7 @@ class ServerManager {
         $criteria = $this->buildCriteria($parsed, $server);
         $userId = empty($curUser) ? null : $curUser->getAuthIdentifier();
 
-        $allMatchingHosts = $this->getAllHostsBy($criteria, $userId);
+        $allMatchingHosts = $this->getAllHostsWithAssociationsBy($criteria, $userId);
         return !$this->allHostsEnabled($allMatchingHosts);
     }
 
@@ -111,13 +112,14 @@ class ServerManager {
     }
 
     /**
-     * Used to load hosts for update / add to detect duplicates
+     * Builds query to load hosts by the defined criteria.
+     *
      * @param $criteria
      * @param $userId user ID criteria for the match
      * @param $assoc Collection association loaded for the given user
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getHostsBy($criteria=null, $userId=null, $assoc=null){
+    public function getHostsQueryBy($criteria=null, $userId=null, $assoc=null){
         $query = WatchTarget::query();
 
         if (!empty($criteria)) {
@@ -134,7 +136,18 @@ class ServerManager {
             $query->whereIn('id', $assoc->pluck('watch_id'));
         }
 
-        return $query->get();
+        return $query;
+    }
+
+    /**
+     * Used to load hosts for update / add to detect duplicates
+     * @param $criteria
+     * @param $userId user ID criteria for the match
+     * @param $assoc Collection association loaded for the given user
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getHostsBy($criteria=null, $userId=null, $assoc=null){
+        return $this->getHostsQueryBy($criteria, $userId, $assoc)->get();
     }
 
     /**
@@ -144,7 +157,7 @@ class ServerManager {
      * @param $assoc Collection
      * @return Collection
      */
-    function getAllHostsBy($criteria, $userId=null, $assoc=null){
+    function getAllHostsWithAssociationsBy($criteria, $userId=null, $assoc=null){
         if (!empty($userId)) {
             $assoc = $this->getHostAssociations($userId);
         }
@@ -229,6 +242,24 @@ class ServerManager {
             $criteria['scan_port'] = 443;
         }
         return $criteria;
+    }
+
+    /**
+     * Loads hostnames by the given URL
+     * @param $url
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws InvalidHostname
+     */
+    public function loadHostQueryByUrl($url){
+        $domain = DomainTools::normalizeUserDomainInput($url);
+        $parsed = parse_url($domain);
+
+        if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
+            throw new InvalidHostname('Hostname is not valid');
+        }
+
+        $criteria = $this->buildCriteria($parsed, $url);
+        return $this->getHostsQueryBy($criteria);
     }
 
     /**
