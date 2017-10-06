@@ -72,7 +72,7 @@
                                        @change="onFileChange"
                                        name="keyFile"
                                        data-vv-as="Key File"
-                                       v-validate="{size: 10000, required: true}"/>
+                                       v-validate="{size: 1000, required: true}"/>
 
                                 <i v-show="errors.has('keyFile.keyFile')" class="fa fa-warning"></i>
                                 <span v-show="errors.has('keyFile.keyFile')" class="help is-danger"
@@ -353,7 +353,7 @@
                         this.onStartSending();
                         Req.bodyProgress(true);
 
-                        axios.put('/tester/file', data, config)
+                        axios.post('/tester/file', data, config)
                             .then(res => {
                                 this.onSendFinished();
                                 Req.bodyProgress(false);
