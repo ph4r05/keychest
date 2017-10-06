@@ -193,6 +193,17 @@
                 </div>
             </div>
         </div>
+
+        <transition name="fade" v-on:after-leave="transitionHook">
+            <div class="row test-results" v-show="hasResults">
+                <div class="xcol-md-12">
+                    <sbox cssBox="box-primary">
+                        <template slot="title">Results</template>
+
+                    </sbox>
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 <script>
@@ -229,6 +240,8 @@
                 pgpSearch: null,
 
                 sendingState: 0,
+                resultsAvailable: 0,
+                uuid: null,
 
             }
         },
@@ -242,7 +255,10 @@
         computed: {
             isRequestInProgress(){
                 return this.sendingState === 1;
-            }
+            },
+            hasResults(){
+                return this.resultsAvailable === 1;
+            },
         },
 
         methods: {
@@ -260,6 +276,10 @@
 
             onSendFinished(){
                 this.sendingState = 2;
+            },
+
+            transitionHook(){
+
             },
 
             validCheck(res, invalidError){
@@ -352,7 +372,7 @@
                     .then((result) => this.validCheck(result, 'Invalid Key File'))
                     .then((result) => onValid())
                     .then((result) => {
-                        console.log(res);
+                        console.log(result);
                     })
                     .catch((err) => {
                         console.log(err);
@@ -374,9 +394,7 @@
 
                         // Get github ssh keys first.
                         axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
-                            .then(response => {
-                                this.githubCheckKeys(response.data);
-                            })
+                            .then(response => this.githubCheckKeys(response.data))
                             .then(response => {
                                 this.onSendFinished();
                                 Req.bodyProgress(false);
@@ -406,7 +424,7 @@
             },
 
             githubCheckKeys(res){
-                return new Promise( (resolve, reject) => {
+                return new Promise((resolve, reject) => {
                     axios.post('/tester/key', {keys: res, keyType: 'github'})
                         .then(function (res) {
                             resolve(res);
