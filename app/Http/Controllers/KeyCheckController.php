@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Keychest\DataClasses\KeyToTest;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Utils\DataTools;
 
@@ -19,7 +20,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
+use Webpatser\Uuid\Uuid;
 
 
 /**
@@ -62,7 +66,24 @@ class KeyCheckController extends Controller
      */
     public function keyCheck(Request $request)
     {
-        return response()->json(['state' => 'success'], 200);
+        $this->validate($request, [
+            'key' => 'max:1000000',
+            'keyType' => 'max:1000',
+        ]);
+
+        $key = Input::get('key');
+        $keys = Input::get('keys');
+        $keyType = Input::get('keyType');
+
+        $job = $this->newTest();
+        $job->setKeyType($keyType);
+        $job->setKeyValue(!empty($keys) ? $keys : [$key]);
+        Log::info(json_encode($job));
+
+
+        return response()->json([
+            'state' => 'success'
+        ] + $this->generateResultBase($job), 200);
     }
 
     /**
@@ -72,7 +93,27 @@ class KeyCheckController extends Controller
      */
     public function fileUpload(Request $request)
     {
-        return response()->json(['state' => 'success'], 200);
+        $this->validate($request, [
+            'file' => 'bail|required|file|max:1000',
+        ]);
+
+        $file = $request->file('file');
+        try {
+            $content = File::get($file);
+
+            $job = $this->newTest();
+            $job->setKeyType('file');
+            $job->setKeyValue($content);
+            $job->setKeyName($file->getClientOriginalName());
+            Log::info(json_encode($job));
+
+            return response()->json([
+                    'state' => 'success'
+                ] + $this->generateResultBase($job), 200);
+
+        } catch (Exception $e) {
+            return response()->json(['state' => 'not-found'], 404);
+        }
     }
 
     /**
@@ -82,7 +123,26 @@ class KeyCheckController extends Controller
      */
     public function fileUploadApi(Request $request)
     {
-        return response()->json(['state' => 'success'], 200);
+        $file = Input::get('file');
+        Log::info($file);
+
+        $job = $this->newTest();
+        $job->setKeyType('file');
+        $job->setKeyValue($file);
+        Log::info(json_encode($job));
+
+        return response()->json([
+            'state' => 'success'
+            ] + $this->generateResultBase($job), 200);
+    }
+
+    /**
+     * Sends key object to redis queue for scanning
+     * @param $job
+     */
+    protected function sendKeyCheck($job)
+    {
+        // TODO: send redis object
     }
 
     /**
@@ -92,19 +152,41 @@ class KeyCheckController extends Controller
      */
     public function pgpCheck(Request $request)
     {
-        return response()->json(['state' => 'success'], 200);
+        $this->validate($request, [
+            'pgp' => 'bail|required|max:128',
+        ]);
+
+        $pgp = Input::get('pgp');
+
+        $job = $this->newTest();
+        $job->setKeyType('pgp');
+        $job->setPgp($pgp);
+        Log::info(json_encode($job));
+
+        return response()->json([
+            'state' => 'success'
+        ] + $this->generateResultBase($job), 200);
     }
 
     /**
-     * Dummy JSON view
-     * @return \Illuminate\Http\JsonResponse
+     * New testing object
+     * @return KeyToTest
      */
-    public function dummy()
+    protected function newTest()
     {
-        return response()->json([], 200);
+        return new KeyToTest(Uuid::generate()->string);
     }
 
-
+    /**
+     * Response base object
+     * @param KeyToTest $obj
+     * @return array
+     */
+    protected function generateResultBase($obj){
+        return [
+            'uuid' => $obj->getUuid(),
+        ];
+    }
 
 
 }
