@@ -7,3 +7,18 @@
 .alert .fa.fa-alert-move {
   padding-right: 5px;
 }
+
+.code-block {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  margin: 0;
+  resize: none;
+  outline: none;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  white-space: pre;
+  word-wrap: normal;
+  overflow: auto;
+}

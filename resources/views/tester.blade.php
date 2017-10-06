@@ -50,7 +50,7 @@
             <!-- ScrollToTop Button END-->
 
             <!-- Footer - bloc-7 -->
-            {{--@include('partials.landing.footer')--}}
+            @include('partials.landing.footer')
             <!-- Footer - bloc-7 END -->
 
         </section><!-- /.content -->
