@@ -59,7 +59,8 @@
                                 <p>
                                     Upload your public key with the form below.
                                 </p>
-                                <input type="file" placeholder="public key in text form" class="form-control"/>
+                                <input type="file" placeholder="public key in text form" class="form-control"
+                                       @change="onFileChange"/>
 
                             </div>
                             <div class="form-group">
@@ -205,18 +206,54 @@
             },
 
             keyTextCheck(){
+                // TODO: submit check
+                axios.post('/tester/key', {key: this.keyText})
+                    .then(function (res) {
+                        console.log(res);
+                    })
+                    .catch(function (err) {
+                        console.warn(err);
+                    });
+            },
 
+            onFileChange(e){
+                const files = e.target.files || e.dataTransfer.files;
+                if (!files.length){
+                    return;
+                }
+
+                this.keyFile = files[0];
             },
 
             keyFileCheck(){
+                console.log(this.keyFile);
+                const data = new FormData();
+                data.append('file', this.keyFile);
+
+                const config = {
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
+                        console.log(percentCompleted);
+                    }
+                };
+
+                axios.put('/tester/file', data, config)
+                    .then(function (res) {
+                        console.log(res);
+                    })
+                    .catch(function (err) {
+                        console.warn(err);
+                    });
 
             },
 
             urlCheck(){
-
+                // TODO: spot-check like
             },
 
             githubCheck(){
+                // TODO: validation working?
+
                 // Fetch github key via API
                 const axos = Req.apiAxios();
                 Req.bodyProgress(true);
@@ -229,15 +266,34 @@
                 .catch(e => {
                     Req.bodyProgress(false);
                     console.warn(e);
+                    toastr.error('Could not find given account name', 'Check failed', {
+                        timeOut: 2000, preventDuplicates: true
+                    });
                 });
             },
 
             githubCheckKeys(res){
                 console.log(res);
+
+                // TODO: submit check
+                axios.post('/tester/key', {keys: res, keyType: 'github'})
+                    .then(function (res) {
+                        console.log(res);
+                    })
+                    .catch(function (err) {
+                        console.warn(err);
+                    });
             },
 
             pgpCheck(){
-
+                // TODO: submit check
+                axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
+                    .then(function (res) {
+                        console.log(res);
+                    })
+                    .catch(function (err) {
+                        console.warn(err);
+                    });
             }
         },
 
