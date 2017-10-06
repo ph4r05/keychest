@@ -131,6 +131,9 @@ Route::get('home/enterprise', function () {
 
 // Tester
 Route::get('tester', 'KeyCheckController@index')->name('tester');
+Route::post('tester/key', 'KeyCheckController@keyCheck')->name('tester.keyCheck');
+Route::get('tester/pgp', 'KeyCheckController@pgpCheck')->name('tester.pgpCheck');
+Route::put('tester/file', 'KeyCheckController@fileUpload')->name('tester.fileUpload');
 
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.

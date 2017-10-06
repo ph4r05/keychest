@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Exception;
 
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,6 +53,46 @@ class KeyCheckController extends Controller
     public function index()
     {
         return view('tester');
+    }
+
+    /**
+     * Key check request - text
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function keyCheck(Request $request)
+    {
+        return response()->json(['state' => 'success'], 200);
+    }
+
+    /**
+     * File upload endpoint
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fileUpload(Request $request)
+    {
+        return response()->json(['state' => 'success'], 200);
+    }
+
+    /**
+     * File upload endpoint - API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fileUploadApi(Request $request)
+    {
+        return response()->json(['state' => 'success'], 200);
+    }
+
+    /**
+     * PGP key / email check
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function pgpCheck(Request $request)
+    {
+        return response()->json(['state' => 'success'], 200);
     }
 
     /**

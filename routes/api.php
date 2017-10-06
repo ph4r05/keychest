@@ -42,6 +42,11 @@ Route::group(['prefix' => 'v1.0', 'middleware' => 'api.response'], function () {
         // Get domain cert expiration
         Route::get('servers/expiration/{domain}', 'ApiController@domainCertExpiration');
     });
+
+    // Tester API
+    Route::group(['prefix' => 'tester'], function (){
+        Route::post('file', 'KeyCheckController@fileUploadApi');
+    });
 });
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:api'], function () {
