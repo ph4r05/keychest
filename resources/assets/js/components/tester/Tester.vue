@@ -262,36 +262,49 @@
                 this.sendingState = 2;
             },
 
+            validCheck(res, invalidError){
+                return new Promise((resolve, reject) => {
+                    if (res) {
+                        resolve();
+                        return;
+                    }
+
+                    toastr.error(invalidError, 'Check failed', {
+                        timeOut: 2000, preventDuplicates: true
+                    });
+                    reject();
+                });
+            },
+
             keyTextCheck(){
                 const onValid = () => {
-                    this.onStartSending();
-                    Req.bodyProgress(true);
+                    return new Promise((resolve, reject)=> {
+                        this.onStartSending();
+                        Req.bodyProgress(true);
 
-                    axios.post('/tester/key', {key: this.keyText})
-                        .then(res => {
-                            // TODO: process
-                            console.log(res);
-                            this.onSendFinished();
-                            Req.bodyProgress(false);
-                        })
-                        .catch(err => {
-                            console.warn(err);
-                            this.onSendingFail();
-                            Req.bodyProgress(false);
-                        });
+                        axios.post('/tester/key', {key: this.keyText})
+                            .then(res => {
+                                this.onSendFinished();
+                                Req.bodyProgress(false);
+                                resolve(res);
+                            })
+                            .catch(err => {
+                                this.onSendingFail();
+                                Req.bodyProgress(false);
+                                reject(new Error(err));
+                            });
+                    });
                 };
 
                 // Validate and submit
                 this.$validator.validateAll('keyText')
+                    .then((result) => this.validCheck(result, 'Invalid Key entered'))
+                    .then((result) => onValid())
                     .then((result) => {
-                        if (result) {
-                            onValid();
-                            return;
-                        }
-
-                        toastr.error('Invalid Key entered', 'Check failed', {
-                            timeOut: 2000, preventDuplicates: true
-                        });
+                        console.log(result);
+                    })
+                    .catch(err => {
+                        console.log(err);
                     });
             },
 
@@ -316,34 +329,34 @@
                 };
 
                 const onValid = () => {
-                    this.onStartSending();
-                    Req.bodyProgress(true);
+                    return new Promise((resolve, reject) => {
+                        this.onStartSending();
+                        Req.bodyProgress(true);
 
-                    axios.put('/tester/file', data, config)
-                        .then(res => {
-                            this.onSendFinished();
-                            Req.bodyProgress(false);
-                            console.log(res);
-                        })
-                        .catch(err => {
-                            this.onSendFinished();
-                            Req.bodyProgress(false);
-                            console.warn(err);
-                        });
+                        axios.put('/tester/file', data, config)
+                            .then(res => {
+                                this.onSendFinished();
+                                Req.bodyProgress(false);
+                                resolve(res);
+                            })
+                            .catch(err => {
+                                this.onSendFinished();
+                                Req.bodyProgress(false);
+                                reject(new Error(err));
+                            });
+                    });
                 };
 
                 // Validate and submit
                 this.$validator.validateAll('keyFile')
+                    .then((result) => this.validCheck(result, 'Invalid Key File'))
+                    .then((result) => onValid())
                     .then((result) => {
-                        if (result) {
-                            onValid();
-                            return;
-                        }
-
-                        toastr.error('Invalid Key File', 'Check failed', {
-                            timeOut: 2000, preventDuplicates: true
-                        });
-                    });
+                        console.log(res);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
             },
 
             urlCheck(){
@@ -353,44 +366,43 @@
             githubCheck(){
 
                 const onValid = () => {
-                    const axos = Req.apiAxios();
+                    return new Promise((resolve, reject) => {
+                        const axos = Req.apiAxios();
 
-                    this.onStartSending();
-                    Req.bodyProgress(true);
+                        this.onStartSending();
+                        Req.bodyProgress(true);
 
-                    // Get github ssh keys first.
-                    axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
-                        .then(response => {
-                            this.githubCheckKeys(response.data);
-                        })
-                        .then(response => {
-                            this.onSendFinished();
-                            Req.bodyProgress(false);
-                            console.log('save-resp');
-                            console.log(response);
-                        })
-                        .catch(e => {
-                            console.warn(e);
-                            this.onSendingFail();
-                            Req.bodyProgress(false);
-                            toastr.error('Could not find given account name', 'Check failed', {
-                                timeOut: 2000, preventDuplicates: true
+                        // Get github ssh keys first.
+                        axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
+                            .then(response => {
+                                this.githubCheckKeys(response.data);
+                            })
+                            .then(response => {
+                                this.onSendFinished();
+                                Req.bodyProgress(false);
+                                resolve(response);
+                            })
+                            .catch(e => {
+                                this.onSendingFail();
+                                Req.bodyProgress(false);
+                                toastr.error('Could not find given account name', 'Check failed', {
+                                    timeOut: 2000, preventDuplicates: true
+                                });
+                                reject(new Error(e, 1));
                             });
-                        });
+                    });
                 };
 
                 // Validate and submit
                 this.$validator.validateAll('github')
+                    .then((result) => this.validCheck(result, 'Invalid GitHub login name'))
+                    .then((result) => onValid())
                     .then((result) => {
-                    if (result) {
-                        onValid();
-                        return;
-                    }
-
-                    toastr.error('Invalid GitHub login name', 'Check failed', {
-                        timeOut: 2000, preventDuplicates: true
+                        console.log(result);
+                    })
+                    .catch((err) => {
+                        console.warn(err);
                     });
-                });
             },
 
             githubCheckKeys(res){
@@ -400,7 +412,7 @@
                             resolve(res);
                         })
                         .catch(function (err) {
-                            reject(err);
+                            reject(new Error(err));
                         });
                 });
             },
@@ -408,33 +420,33 @@
             pgpCheck(){
                 // TODO: submit check
                 const onValid = () => {
+                    return new Promise((resolve, reject) => {
                     this.onStartSending();
                     Req.bodyProgress(true);
 
                     axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
                         .then(res => {
-                            console.log(res);
                             this.onSendFinished();
                             Req.bodyProgress(false);
+                            resolve(res);
                         })
                         .catch(err => {
-                            console.warn(err);
                             this.onSendingFail();
                             Req.bodyProgress(false);
+                            reject(new Error(err));
                         });
+                    });
                 };
 
                 // Validate and submit
                 this.$validator.validateAll('pgp')
+                    .then((result) => this.validCheck(result, 'Invalid PGP search query'))
+                    .then((result) => onValid())
                     .then((result) => {
-                        if (result) {
-                            onValid();
-                            return;
-                        }
-
-                        toastr.error('Invalid PGP search query', 'Check failed', {
-                            timeOut: 2000, preventDuplicates: true
-                        });
+                        console.log(result);
+                    })
+                    .catch((err) => {
+                        console.warn(err);
                     });
             }
         },
