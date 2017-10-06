@@ -6,7 +6,7 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Text input</a></li>
                     <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">File upload</a></li>
-                    <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">URL</a></li>
+                    <!--<li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">URL</a></li>-->
                     <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">GitHub account</a></li>
                     <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">PGP</a></li>
                     <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">Send us an e-mail</a></li>
@@ -16,6 +16,7 @@
                     <div id="tab_1" class="tab-pane active">
                         <div>
                             <div style=""><h3>Text input</h3>
+                                <form>
                                 <div class="form-group">
                                     <p>
                                         Paste your <strong>public key</strong> to the field bellow
@@ -42,9 +43,10 @@
 
                                 </div>
                                 <div class="form-group">
-                                    <button type="button" class="btn btn-block btn-success"
+                                    <button type="submit" class="btn btn-block btn-success"
                                             @click.prevent="keyTextCheck()">Test the key</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -52,6 +54,7 @@
                     <div id="tab_2" class="tab-pane">
                         <div class="subdomains-wrapper">
                             <h3>File upload</h3>
+                            <form>
                             <div class="form-group">
                                 <p>
                                     Upload your public key with the form below.
@@ -60,15 +63,16 @@
 
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success"
+                                <button type="submit" class="btn btn-block btn-success"
                                         @click.prevent="keyFileCheck()">Test the key</button>
                             </div>
+                            </form>
                         </div>
                     </div>
 
                     <div id="tab_3" class="tab-pane">
                         <div class="server-import"><h3>URL</h3>
-
+                            <form>
                             <div class="form-group">
                                 <p>
                                     Check your HTTPS certificate by entering the domain name below:
@@ -78,16 +82,17 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success"
-                                        @click.prevent="urlCheck">Test the key</button>
+                                <button type="submit" class="btn btn-block btn-success"
+                                        @click.prevent="urlCheck()">Test the key</button>
                             </div>
+                            </form>
                         </div>
                     </div>
 
                     <div id="tab_4" class="tab-pane">
                         <div class="subdomains-wrapper">
                             <h3>GitHub account</h3>
-
+                            <form>
                             <div class="form-group">
                                 <p>
                                     Check your SSH keys used for your GitHub account. Enter your GitHub login name:
@@ -102,17 +107,18 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success"
+                                <button type="submit" class="btn btn-block btn-success"
                                         @click.prevent="githubCheck()"
                                 >Test the key</button>
                             </div>
+                            </form>
                         </div>
                     </div>
 
                     <div id="tab_5" class="tab-pane">
                         <div class="subdomains-wrapper">
                             <h3>PGP</h3>
-
+                            <form>
                             <div class="form-group">
                                 <p>
                                     Check your PGP key by entering either <strong>email</strong> address or <strong>key ID</strong>.
@@ -122,10 +128,10 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success"
-                                        @click.prevent="pgpCheck">Test the key</button>
+                                <button type="submit" class="btn btn-block btn-success"
+                                        @click.prevent="pgpCheck()">Test the key</button>
                             </div>
-
+                            </form>
                         </div>
                     </div>
 
