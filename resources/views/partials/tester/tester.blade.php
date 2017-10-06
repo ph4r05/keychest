@@ -48,12 +48,6 @@
     <tester></tester>
 
     <!-- python tester -->
-    {{--<div class="row">--}}
-        {{--<div class="col-md-8 col-md-offset-2 text-center">--}}
-            {{--<h2>Offline tester</h2>--}}
-        {{--</div>--}}
-    {{--</div>--}}
-
     <div class="row">
         <div class="col-md-12">
             <div class="box box-success">
