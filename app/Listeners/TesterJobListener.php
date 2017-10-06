@@ -40,6 +40,8 @@ class TesterJobListener implements ShouldQueue
     {
         Log::info('New event: ' . var_export($event->getJsonData(), true));
 
+        // TODO: email processing event - job for that.
+        // TODO: scan results - rebroadcast to WS.
         // Rewrap and rebroadcast to the socket server
         $e = TesterJobProgressNotif::fromEvent($event);
         event($e);
