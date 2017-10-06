@@ -60,7 +60,11 @@
                                     Upload your public key with the form below.
                                 </p>
                                 <input type="file" placeholder="public key in text form" class="form-control"
-                                       @change="onFileChange"/>
+                                       @change="onFileChange"
+                                       name="keyFile"
+                                       v-validate="{size: 10000, required: true}"/>
+                                <i v-show="errors.has('keyFile')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('keyFile')" class="help is-danger">{{ errors.first('keyFile') }}</span>
 
                             </div>
                             <div class="form-group">
@@ -79,7 +83,9 @@
                                     Check your HTTPS certificate by entering the domain name below:
                                 </p>
 
-                                <input placeholder="GitHub login name" class="form-control" v-model="url"/>
+                                <input placeholder="URL to check" class="form-control" v-model="url"/>
+                                <i v-show="errors.has('url')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('url')" class="help is-danger">{{ errors.first('url') }}</span>
                             </div>
 
                             <div class="form-group">
@@ -101,7 +107,7 @@
 
                                 <input placeholder="GitHub login name" class="form-control"
                                        name="githubNick" v-model="githubNick"
-                                       v-validate="" data-vv-validate="{regex: /[a-zA-Z0-9_]+/}"  />
+                                       v-validate="{regex: /^[a-zA-Z0-9_]+$/, max: 32, required: true}" />
 
                                 <i v-show="errors.has('githubNick')" class="fa fa-warning"></i>
                                 <span v-show="errors.has('githubNick')" class="help is-danger">{{ errors.first('githubNick') }}</span>
@@ -125,7 +131,12 @@
                                     Check your PGP key by entering either <strong>email</strong> address or <strong>key ID</strong>.
                                 </p>
 
-                                <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"/>
+                                <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"
+                                       name="pgp"
+                                       v-validate="{max: 128, required: true}"
+                                />
+                                <i v-show="errors.has('pgp')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('pgp')" class="help is-danger">{{ errors.first('pgp') }}</span>
                             </div>
 
                             <div class="form-group">
@@ -178,6 +189,15 @@
 
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+
+    VeeValidate.Validator.localize('en', {
+        attributes: {
+            keyFile: 'Key File',
+            githubNick: 'GitHub login',
+            pgp: 'PGP search query',
+            url: 'URL'
+        }
+    });
 
     export default {
         data: function() {
