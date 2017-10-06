@@ -7,6 +7,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Jobs\TesterJob;
 use App\Keychest\DataClasses\KeyToTest;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Utils\DataTools;
@@ -80,7 +81,7 @@ class KeyCheckController extends Controller
         $job->setKeyValue(!empty($keys) ? $keys : [$key]);
         Log::info(json_encode($job));
 
-
+        $this->sendKeyCheck($job);
         return response()->json([
             'state' => 'success'
         ] + $this->generateResultBase($job), 200);
@@ -107,6 +108,7 @@ class KeyCheckController extends Controller
             $job->setKeyName($file->getClientOriginalName());
             Log::info(json_encode($job));
 
+            $this->sendKeyCheck($job);
             return response()->json([
                     'state' => 'success'
                 ] + $this->generateResultBase($job), 200);
@@ -131,6 +133,7 @@ class KeyCheckController extends Controller
         $job->setKeyValue($file);
         Log::info(json_encode($job));
 
+        $this->sendKeyCheck($job);
         return response()->json([
             'state' => 'success'
             ] + $this->generateResultBase($job), 200);
@@ -142,7 +145,7 @@ class KeyCheckController extends Controller
      */
     protected function sendKeyCheck($job)
     {
-        // TODO: send redis object
+        dispatch((new TesterJob($job))->onQueue('tester'));
     }
 
     /**
@@ -163,6 +166,7 @@ class KeyCheckController extends Controller
         $job->setPgp($pgp);
         Log::info(json_encode($job));
 
+        $this->sendKeyCheck($job);
         return response()->json([
             'state' => 'success'
         ] + $this->generateResultBase($job), 200);
@@ -184,7 +188,7 @@ class KeyCheckController extends Controller
      */
     protected function generateResultBase($obj){
         return [
-            'uuid' => $obj->getUuid(),
+            'uuid' => $obj->getId(),
         ];
     }
 

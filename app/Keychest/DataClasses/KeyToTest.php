@@ -14,7 +14,7 @@ class KeyToTest
     /**
      * @var
      */
-    public $uuid;
+    public $id;
 
     /**
      * @var
@@ -42,24 +42,24 @@ class KeyToTest
      */
     public function __construct($uuid = null)
     {
-        $this->uuid = $uuid;
+        $this->id = $uuid;
     }
 
     /**
      * @return mixed
      */
-    public function getUuid()
+    public function getId()
     {
-        return $this->uuid;
+        return $this->id;
     }
 
     /**
-     * @param mixed $uuid
+     * @param mixed $id
      * @return KeyToTest
      */
-    public function setUuid($uuid)
+    public function setId($id)
     {
-        $this->uuid = $uuid;
+        $this->id = $id;
         return $this;
     }
 
