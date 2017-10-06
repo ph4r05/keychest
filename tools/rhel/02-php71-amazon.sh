@@ -8,7 +8,9 @@ yum-config-manager --enable remi-php71
 
 yum localinstall http://vault.centos.org/6.5/SCL/x86_64/scl-utils/scl-utils-20120927-8.el6.centos.alt.x86_64.rpm
 
-yum install php71 -y
+yum install php71 php71-fpm php71-mysqlnd php71-mbstring php71-gd php71-xml \
+php71-pecl-xdebug php71-opcache php71-intl \
+php71-pear php71-pecl-redis
 
 # ------------------------------
 # OLD - not finished
