@@ -636,6 +636,19 @@ function download(content, fileName, mimeType) {
     }
 }
 
+/**
+ * Returns clean Axios instance with X-CSRF-TOKEN and similar which
+ * are problematic for accessing CORS API of foreign services, e.g., GitHub.
+ * @param options
+ */
+function apiAxios(options){
+    const axos = axios.create(options);
+    delete axos.defaults.headers.common['X-Socket-ID'];
+    delete axos.defaults.headers.common['X-CSRF-TOKEN'];
+    delete axos.defaults.headers.common['X-Requested-With'];
+    return axos;
+}
+
 //
 // Hacks & minor functions
 //
@@ -680,6 +693,7 @@ export default {
     vueOrderBy: vueOrderBy,
     vuePagination: vuePagination,
     download: download,
+    apiAxios: apiAxios,
 
     switchTab: switchTab,
     switchTabPath: switchTabPath,
