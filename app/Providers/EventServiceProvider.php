@@ -17,6 +17,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\ScanJobListener',
         ],
 
+        'App\Events\TesterJobProgress' => [
+            'App\Listeners\TesterJobListener',
+        ],
+
         'Illuminate\Auth\Events\Login' => [
             'App\Listeners\OnUserLogin',
         ],
