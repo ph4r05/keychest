@@ -373,6 +373,9 @@
                     .then((result) => onValid())
                     .then((result) => {
                         console.log(result);
+                        // TODO: parse uuid
+                        // TODO: subscribe to uuid ws.channel
+                        // TODO: set timeout 20-30 seconds for uuid ws.channel, show error after expiration.
                     })
                     .catch((err) => {
                         console.log(err);
@@ -384,7 +387,8 @@
             },
 
             githubCheck(){
-
+                // Double query: github -> post keys for analysis
+                // Has internal catch logic - if there are no keys promise is rejected with false.
                 const onValid = () => {
                     return new Promise((resolve, reject) => {
                         const axos = Req.apiAxios();
@@ -403,6 +407,13 @@
                             .catch(e => {
                                 this.onSendingFail();
                                 Req.bodyProgress(false);
+
+                                if (!e){
+                                    reject(e);
+                                    return;
+                                }
+
+                                console.warn(e);
                                 toastr.error('Could not find given account name', 'Check failed', {
                                     timeOut: 2000, preventDuplicates: true
                                 });
@@ -419,12 +430,23 @@
                         console.log(result);
                     })
                     .catch((err) => {
+                        if (!err){
+                            return;
+                        }
                         console.warn(err);
                     });
             },
 
             githubCheckKeys(res){
                 return new Promise((resolve, reject) => {
+                    if (_.isEmpty(res)){
+                        toastr.success('No GitHub SSH keys found for this account', 'No GitHub keys', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
+                        reject(false); // false ~ handled
+                        return;
+                    }
+
                     axios.post('/tester/key', {keys: res, keyType: 'github'})
                         .then(function (res) {
                             resolve(res);
