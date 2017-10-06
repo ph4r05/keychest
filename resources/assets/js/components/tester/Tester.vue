@@ -16,7 +16,7 @@
                     <div id="tab_1" class="tab-pane active">
                         <div>
                             <div style=""><h3>Text input</h3>
-                                <form>
+                                <form @submit.prevent="keyTextCheck()" data-vv-scope="keyText">
                                 <div class="form-group">
                                     <p>
                                         Paste your <strong>public key</strong> to the field bellow
@@ -26,7 +26,15 @@
                                               placeholder="public key in text form"
                                               class="form-control"
                                               v-model="keyText"
+                                              name="keyText"
+                                              data-vv-as="Key"
+                                              v-validate="{required: true}"
                                     ></textarea>
+
+                                    <i v-show="errors.has('keyText.keyText')" class="fa fa-warning"></i>
+                                    <span v-show="errors.has('keyText.keyText')" class="help is-danger"
+                                    >{{ errors.first('keyText.keyText') }}</span>
+
                                 </div>
                                 <div class="form-group">
                                     <p>
@@ -44,7 +52,7 @@
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-block btn-success"
-                                            @click.prevent="keyTextCheck()">Test the key</button>
+                                            :disabled="errors.has('keyText.keyText')">Test the key</button>
                                 </div>
                                 </form>
                             </div>
@@ -54,7 +62,7 @@
                     <div id="tab_2" class="tab-pane">
                         <div class="subdomains-wrapper">
                             <h3>File upload</h3>
-                            <form>
+                            <form @submit.prevent="keyFileCheck()" data-vv-scope="keyFile">
                             <div class="form-group">
                                 <p>
                                     Upload your public key with the form below.
@@ -62,14 +70,17 @@
                                 <input type="file" placeholder="public key in text form" class="form-control"
                                        @change="onFileChange"
                                        name="keyFile"
+                                       data-vv-as="Key File"
                                        v-validate="{size: 10000, required: true}"/>
-                                <i v-show="errors.has('keyFile')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('keyFile')" class="help is-danger">{{ errors.first('keyFile') }}</span>
+
+                                <i v-show="errors.has('keyFile.keyFile')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('keyFile.keyFile')" class="help is-danger"
+                                >{{ errors.first('keyFile.keyFile') }}</span>
 
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        @click.prevent="keyFileCheck()">Test the key</button>
+                                        :disabled="errors.has('keyFile.keyFile')">Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -77,20 +88,22 @@
 
                     <div id="tab_3" class="tab-pane">
                         <div class="server-import"><h3>URL</h3>
-                            <form>
+                            <form @submit.prevent="urlCheck()" data-vv-scope="url">
                             <div class="form-group">
                                 <p>
                                     Check your HTTPS certificate by entering the domain name below:
                                 </p>
 
                                 <input placeholder="URL to check" class="form-control" v-model="url"/>
-                                <i v-show="errors.has('url')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('url')" class="help is-danger">{{ errors.first('url') }}</span>
+
+                                <i v-show="errors.has('url.url')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('url.url')" class="help is-danger"
+                                >{{ errors.first('url.url') }}</span>
                             </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        @click.prevent="urlCheck()">Test the key</button>
+                                        :disabled="errors.has('url.url')">Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -99,24 +112,26 @@
                     <div id="tab_4" class="tab-pane">
                         <div class="subdomains-wrapper">
                             <h3>GitHub account</h3>
-                            <form>
+                            <form @submit.prevent="githubCheck()" data-vv-scope="github">
                             <div class="form-group">
                                 <p>
                                     Check your SSH keys used for your GitHub account. Enter your GitHub login name:
                                 </p>
 
                                 <input placeholder="GitHub login name" class="form-control"
-                                       name="githubNick" v-model="githubNick"
+                                       name="githubNick"
+                                       v-model="githubNick"
+                                       data-vv-as="GitHub login"
                                        v-validate="{regex: /^[a-zA-Z0-9_]+$/, max: 32, required: true}" />
 
-                                <i v-show="errors.has('githubNick')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('githubNick')" class="help is-danger">{{ errors.first('githubNick') }}</span>
+                                <i v-show="errors.has('github.githubNick')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('github.githubNick')" class="help is-danger"
+                                >{{ errors.first('github.githubNick') }}</span>
                             </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        @click.prevent="githubCheck()"
-                                >Test the key</button>
+                                        :disabled="errors.has('github.githubNick')">Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -125,7 +140,7 @@
                     <div id="tab_5" class="tab-pane">
                         <div class="subdomains-wrapper">
                             <h3>PGP</h3>
-                            <form>
+                            <form @submit.prevent="pgpCheck()" data-vv-scope="pgp">
                             <div class="form-group">
                                 <p>
                                     Check your PGP key by entering either <strong>email</strong> address or <strong>key ID</strong>.
@@ -134,14 +149,17 @@
                                 <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"
                                        name="pgp"
                                        v-validate="{max: 128, required: true}"
+                                       data-vv-as="PGP search query"
                                 />
-                                <i v-show="errors.has('pgp')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('pgp')" class="help is-danger">{{ errors.first('pgp') }}</span>
+
+                                <i v-show="errors.has('pgp.pgp')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('pgp.pgp')" class="help is-danger"
+                                >{{ errors.first('pgp.pgp') }}</span>
                             </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        @click.prevent="pgpCheck()">Test the key</button>
+                                        :disabled="errors.has('pgp.pgp')">Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -192,9 +210,6 @@
 
     VeeValidate.Validator.localize('en', {
         attributes: {
-            keyFile: 'Key File',
-            githubNick: 'GitHub login',
-            pgp: 'PGP search query',
             url: 'URL'
         }
     });
@@ -272,21 +287,34 @@
             },
 
             githubCheck(){
-                // TODO: validation working?
 
-                // Fetch github key via API
-                const axos = Req.apiAxios();
-                Req.bodyProgress(true);
-                
-                axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
-                .then(response => {
-                    Req.bodyProgress(false);
-                    this.githubCheckKeys(response.data);
-                })
-                .catch(e => {
-                    Req.bodyProgress(false);
-                    console.warn(e);
-                    toastr.error('Could not find given account name', 'Check failed', {
+                const onValid = () => {
+                    const axos = Req.apiAxios();
+                    Req.bodyProgress(true);
+
+                    axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
+                        .then(response => {
+                            Req.bodyProgress(false);
+                            this.githubCheckKeys(response.data);
+                        })
+                        .catch(e => {
+                            Req.bodyProgress(false);
+                            console.warn(e);
+                            toastr.error('Could not find given account name', 'Check failed', {
+                                timeOut: 2000, preventDuplicates: true
+                            });
+                        });
+                };
+
+                // Validate and submit
+                this.$validator.validateAll('github')
+                    .then((result) => {
+                    if (result) {
+                        onValid();
+                        return;
+                    }
+
+                    toastr.error('Invalid GitHub login name', 'Check failed', {
                         timeOut: 2000, preventDuplicates: true
                     });
                 });
