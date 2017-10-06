@@ -56,7 +56,7 @@
                 </div>
                 <div class="box-body">
                     <p>
-                        There is also a way to test your public keys privately offline with use of our detection script.
+                        There is also a way to test your public keys privately offline with use of our detection tool.
                     </p>
 
                     <p>
@@ -64,8 +64,7 @@
                     </p>
 
                     <ul>
-                        <li>X509 Certificate, DER encoded</li>
-                        <li>X509 Certificate, PEM encoded</li>
+                        <li>X509 Certificate, PEM/DER encoded</li>
                         <li>RSA PEM encoded private key, public key</li>
                         <li>SSH public key</li>
                         <li>ASC encoded PGP key, *.pgp, *.asc</li>
