@@ -52,7 +52,8 @@
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-block btn-success"
-                                            :disabled="errors.has('keyText.keyText')">Test the key</button>
+                                            :disabled="errors.has('keyText.keyText') || isRequestInProgress"
+                                    >Test the key</button>
                                 </div>
                                 </form>
                             </div>
@@ -80,7 +81,8 @@
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('keyFile.keyFile')">Test the key</button>
+                                        :disabled="errors.has('keyFile.keyFile') || isRequestInProgress"
+                                >Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -103,7 +105,8 @@
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('url.url')">Test the key</button>
+                                        :disabled="errors.has('url.url') || isRequestInProgress"
+                                >Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -131,7 +134,8 @@
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('github.githubNick')">Test the key</button>
+                                        :disabled="errors.has('github.githubNick') || isRequestInProgress"
+                                >Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -159,7 +163,8 @@
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('pgp.pgp')">Test the key</button>
+                                        :disabled="errors.has('pgp.pgp') || isRequestInProgress"
+                                >Test the key</button>
                             </div>
                             </form>
                         </div>
@@ -222,6 +227,9 @@
                 url: null,
                 githubNick: null,
                 pgpSearch: null,
+
+                sendingState: 0,
+
             }
         },
 
@@ -232,7 +240,9 @@
         },
 
         computed: {
-
+            isRequestInProgress(){
+                return this.sendingState === 1;
+            }
         },
 
         methods: {
@@ -240,15 +250,34 @@
                 
             },
 
+            onStartSending(){
+                this.sendingState = 1;
+            },
+
+            onSendingFail(){
+                this.sendingState = -1;
+            },
+
+            onSendFinished(){
+                this.sendingState = 2;
+            },
+
             keyTextCheck(){
                 const onValid = () => {
+                    this.onStartSending();
+                    Req.bodyProgress(true);
+
                     axios.post('/tester/key', {key: this.keyText})
-                        .then(function (res) {
+                        .then(res => {
                             // TODO: process
                             console.log(res);
+                            this.onSendFinished();
+                            Req.bodyProgress(false);
                         })
-                        .catch(function (err) {
+                        .catch(err => {
                             console.warn(err);
+                            this.onSendingFail();
+                            Req.bodyProgress(false);
                         });
                 };
 
@@ -287,11 +316,18 @@
                 };
 
                 const onValid = () => {
+                    this.onStartSending();
+                    Req.bodyProgress(true);
+
                     axios.put('/tester/file', data, config)
-                        .then(function (res) {
+                        .then(res => {
+                            this.onSendFinished();
+                            Req.bodyProgress(false);
                             console.log(res);
                         })
-                        .catch(function (err) {
+                        .catch(err => {
+                            this.onSendFinished();
+                            Req.bodyProgress(false);
                             console.warn(err);
                         });
                 };
@@ -318,16 +354,25 @@
 
                 const onValid = () => {
                     const axos = Req.apiAxios();
+
+                    this.onStartSending();
                     Req.bodyProgress(true);
 
+                    // Get github ssh keys first.
                     axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
                         .then(response => {
-                            Req.bodyProgress(false);
                             this.githubCheckKeys(response.data);
                         })
-                        .catch(e => {
+                        .then(response => {
+                            this.onSendFinished();
                             Req.bodyProgress(false);
+                            console.log('save-resp');
+                            console.log(response);
+                        })
+                        .catch(e => {
                             console.warn(e);
+                            this.onSendingFail();
+                            Req.bodyProgress(false);
                             toastr.error('Could not find given account name', 'Check failed', {
                                 timeOut: 2000, preventDuplicates: true
                             });
@@ -349,27 +394,33 @@
             },
 
             githubCheckKeys(res){
-                console.log(res);
-
-                // TODO: submit check
-                axios.post('/tester/key', {keys: res, keyType: 'github'})
-                    .then(function (res) {
-                        console.log(res);
-                    })
-                    .catch(function (err) {
-                        console.warn(err);
-                    });
+                return new Promise( (resolve, reject) => {
+                    axios.post('/tester/key', {keys: res, keyType: 'github'})
+                        .then(function (res) {
+                            resolve(res);
+                        })
+                        .catch(function (err) {
+                            reject(err);
+                        });
+                });
             },
 
             pgpCheck(){
                 // TODO: submit check
                 const onValid = () => {
+                    this.onStartSending();
+                    Req.bodyProgress(true);
+
                     axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
-                        .then(function (res) {
+                        .then(res => {
                             console.log(res);
+                            this.onSendFinished();
+                            Req.bodyProgress(false);
                         })
-                        .catch(function (err) {
+                        .catch(err => {
                             console.warn(err);
+                            this.onSendingFail();
+                            Req.bodyProgress(false);
                         });
                 };
 
