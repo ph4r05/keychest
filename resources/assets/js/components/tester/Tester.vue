@@ -23,7 +23,9 @@
 
                                     <textarea rows="10"
                                               placeholder="public key in text form"
-                                              class="form-control"></textarea>
+                                              class="form-control"
+                                              v-model="keyText"
+                                    ></textarea>
                                 </div>
                                 <div class="form-group">
                                     <p>
@@ -40,7 +42,8 @@
 
                                 </div>
                                 <div class="form-group">
-                                    <button type="button" class="btn btn-block btn-success">Test the key</button>
+                                    <button type="button" class="btn btn-block btn-success"
+                                            @click.prevent="keyTextCheck()">Test the key</button>
                                 </div>
                             </div>
                         </div>
@@ -53,11 +56,12 @@
                                 <p>
                                     Upload your public key with the form below.
                                 </p>
-                                <input type="file"  placeholder="public key in text form" class="form-control"/>
+                                <input type="file" placeholder="public key in text form" class="form-control"/>
 
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success">Test the key</button>
+                                <button type="button" class="btn btn-block btn-success"
+                                        @click.prevent="keyFileCheck()">Test the key</button>
                             </div>
                         </div>
                     </div>
@@ -70,11 +74,12 @@
                                     Check your HTTPS certificate by entering the domain name below:
                                 </p>
 
-                                <input placeholder="GitHub login name" class="form-control"/>
+                                <input placeholder="GitHub login name" class="form-control" v-model="url"/>
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success">Test the key</button>
+                                <button type="button" class="btn btn-block btn-success"
+                                        @click.prevent="urlCheck">Test the key</button>
                             </div>
                         </div>
                     </div>
@@ -88,11 +93,18 @@
                                     Check your SSH keys used for your GitHub account. Enter your GitHub login name:
                                 </p>
 
-                                <input placeholder="GitHub login name" class="form-control"/>
+                                <input placeholder="GitHub login name" class="form-control"
+                                       name="githubNick" v-model="githubNick"
+                                       v-validate="" data-vv-validate="{regex: /[a-zA-Z0-9_]+/}"  />
+
+                                <i v-show="errors.has('githubNick')" class="fa fa-warning"></i>
+                                <span v-show="errors.has('githubNick')" class="help is-danger">{{ errors.first('githubNick') }}</span>
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success">Test the key</button>
+                                <button type="button" class="btn btn-block btn-success"
+                                        @click.prevent="githubCheck()"
+                                >Test the key</button>
                             </div>
                         </div>
                     </div>
@@ -106,11 +118,12 @@
                                     Check your PGP key by entering either <strong>email</strong> address or <strong>key ID</strong>.
                                 </p>
 
-                                <input placeholder="email / key ID" class="form-control"/>
+                                <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"/>
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-block btn-success">Test the key</button>
+                                <button type="button" class="btn btn-block btn-success"
+                                        @click.prevent="pgpCheck">Test the key</button>
                             </div>
 
                         </div>
@@ -126,7 +139,7 @@
                             </p>
 
                             <div class="alert alert-info text-center">
-                                <h2 class="h2-nomarg">test@keychest.net</h2>
+                                <h2 class="h2-nomarg"><a href="mailto:test@keychest.net">test@keychest.net</a></h2>
                             </div>
 
                             <p>
@@ -153,12 +166,20 @@
     import toastr from 'toastr';
 
     import Vue from 'vue';
+    import VeeValidate from 'vee-validate';
+    import { mapFields } from 'vee-validate';
 
     Vue.use(ToggleButton);
+    Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
         data: function() {
             return {
+                keyText: null,
+                keyFile: null,
+                url: null,
+                githubNick: null,
+                pgpSearch: null,
             }
         },
 
@@ -175,6 +196,42 @@
         methods: {
             hookup(){
                 
+            },
+
+            keyTextCheck(){
+
+            },
+
+            keyFileCheck(){
+
+            },
+
+            urlCheck(){
+
+            },
+
+            githubCheck(){
+                // Fetch github key via API
+                const axos = Req.apiAxios();
+                Req.bodyProgress(true);
+                
+                axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
+                .then(response => {
+                    Req.bodyProgress(false);
+                    this.githubCheckKeys(response.data);
+                })
+                .catch(e => {
+                    Req.bodyProgress(false);
+                    console.warn(e);
+                });
+            },
+
+            githubCheckKeys(res){
+                console.log(res);
+            },
+
+            pgpCheck(){
+
             }
         },
 
