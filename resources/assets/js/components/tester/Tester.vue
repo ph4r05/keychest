@@ -175,7 +175,7 @@
                             </p>
 
                             <div class="alert alert-info text-center">
-                                <h2 class="h2-nomarg"><a href="mailto:test@keychest.net">test@keychest.net</a></h2>
+                                <h2 class="h2-nomarg"><a href="mailto:test@keychest.net" class="a-nounder">test@keychest.net</a></h2>
                             </div>
 
                             <p>
@@ -241,13 +241,28 @@
             },
 
             keyTextCheck(){
-                // TODO: submit check
-                axios.post('/tester/key', {key: this.keyText})
-                    .then(function (res) {
-                        console.log(res);
-                    })
-                    .catch(function (err) {
-                        console.warn(err);
+                const onValid = () => {
+                    axios.post('/tester/key', {key: this.keyText})
+                        .then(function (res) {
+                            // TODO: process
+                            console.log(res);
+                        })
+                        .catch(function (err) {
+                            console.warn(err);
+                        });
+                };
+
+                // Validate and submit
+                this.$validator.validateAll('keyText')
+                    .then((result) => {
+                        if (result) {
+                            onValid();
+                            return;
+                        }
+
+                        toastr.error('Invalid Key entered', 'Check failed', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
                     });
             },
 
@@ -261,7 +276,6 @@
             },
 
             keyFileCheck(){
-                console.log(this.keyFile);
                 const data = new FormData();
                 data.append('file', this.keyFile);
 
@@ -272,14 +286,28 @@
                     }
                 };
 
-                axios.put('/tester/file', data, config)
-                    .then(function (res) {
-                        console.log(res);
-                    })
-                    .catch(function (err) {
-                        console.warn(err);
-                    });
+                const onValid = () => {
+                    axios.put('/tester/file', data, config)
+                        .then(function (res) {
+                            console.log(res);
+                        })
+                        .catch(function (err) {
+                            console.warn(err);
+                        });
+                };
 
+                // Validate and submit
+                this.$validator.validateAll('keyFile')
+                    .then((result) => {
+                        if (result) {
+                            onValid();
+                            return;
+                        }
+
+                        toastr.error('Invalid Key File', 'Check failed', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
+                    });
             },
 
             urlCheck(){
@@ -335,12 +363,27 @@
 
             pgpCheck(){
                 // TODO: submit check
-                axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
-                    .then(function (res) {
-                        console.log(res);
-                    })
-                    .catch(function (err) {
-                        console.warn(err);
+                const onValid = () => {
+                    axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
+                        .then(function (res) {
+                            console.log(res);
+                        })
+                        .catch(function (err) {
+                            console.warn(err);
+                        });
+                };
+
+                // Validate and submit
+                this.$validator.validateAll('pgp')
+                    .then((result) => {
+                        if (result) {
+                            onValid();
+                            return;
+                        }
+
+                        toastr.error('Invalid PGP search query', 'Check failed', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
                     });
             }
         },
@@ -353,5 +396,9 @@
 <style scoped>
     .h2-nomarg {
         margin: 0;
+    }
+
+    .a-nounder {
+        text-decoration: none;
     }
 </style>
