@@ -10,7 +10,7 @@ sudo yum install -y gcc gcc-c++ make automake autoreconf libtool
 sudo yum install -y git rsync vim htop wget mlocate screen tcpdump
 sudo yum install -y python python-pip python-devel mysql-devel redhat-rpm-config gcc libxml2 \
     libxml2-devel libxslt libxslt-devel openssl-devel sqlite-devel libpng-devel \
-    policycoreutils-devel setools-console readline-devel libzip-devel bzip2-devel
+    policycoreutils-devel setools-console readline-devel libzip-devel bzip2-devel libffi-devel
 
 sudo yum install -y mariadb-server
 sudo yum install -y --enablerepo=epel nginx
