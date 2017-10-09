@@ -12,8 +12,9 @@ pyenv install 2.7.14
 pyenv install 3.6.3
 pyenv local 2.7.14
 
-echo 'export PATH=/usr/local/bin:$PATH' | sudo tee /etc/profile.d/py2.7.13.sh
-source /etc/profile.d/py2.7.13.sh
+echo 'export PYENV_ROOT="/opt/pyenv"' | sudo tee /etc/profile.d/pyenv.sh
+echo 'export PATH=/opt/pyenv/shims:/opt/pyenv/bin:$PATH' | sudo tee -a /etc/profile.d/pyenv.sh
+source /etc/profile.d/pyenv.sh
 
 # In case of a problem use pip --cert /etc/pki/ca-trust/source/anchors/bcoatpip.pym
 # to workaround problem with corporate proxy, add your certs to the verify paths
