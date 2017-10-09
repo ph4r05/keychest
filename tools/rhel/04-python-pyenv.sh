@@ -1,4 +1,7 @@
 #!/bin/bash
+# Disadvantage - only 2 or 3 can be activated at a time
+# Disadvantage - sudo python -V does not work easily. ln -s does not work well.
+# EXPERIMENTAL
 
 sudo git clone https://github.com/pyenv/pyenv.git /opt/pyenv
 sudo chown $KC_USER /opt/pyenv
