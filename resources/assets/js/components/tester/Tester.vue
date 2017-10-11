@@ -152,7 +152,7 @@
 
                                 <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"
                                        name="pgp"
-                                       v-validate="{max: 128, required: true}"
+                                       v-validate="{max: 128, required: true, pgp: true}"
                                        data-vv-as="PGP search query"
                                 />
 
@@ -220,6 +220,7 @@
     import Vue from 'vue';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
+    import pgpValidator from '../../lib/validator/pgp';
 
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
@@ -263,7 +264,7 @@
 
         methods: {
             hookup(){
-                
+                VeeValidate.Validator.extend('pgp', pgpValidator);
             },
 
             onStartSending(){
