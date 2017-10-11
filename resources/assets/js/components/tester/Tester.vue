@@ -1,6 +1,10 @@
 <template>
     <div class="container-fluid spark-screen">
 
+        <!-- Press release -->
+        <roca-press-release></roca-press-release>
+
+        <!-- Tester tabs -->
         <div class="row">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
@@ -78,6 +82,7 @@
     import { mapFields } from 'vee-validate';
     import pgpValidator from '../../lib/validator/pgp';
 
+    import PressRelease from './TesterPressRelease.vue';
     import CheckFileKey from './CheckFileKey.vue';
     import CheckGitHubKey from './CheckGitHubKey.vue';
     import CheckPGPKey from './CheckPGPKey.vue';
@@ -89,6 +94,7 @@
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
+    Vue.component('roca-press-release', PressRelease);
     Vue.component('check-file-key', CheckFileKey);
     Vue.component('check-github-key', CheckGitHubKey);
     Vue.component('check-pgp-key', CheckPGPKey);
