@@ -14,160 +14,23 @@
                 </ul>
                 <div class="tab-content">
                     <div id="tab_1" class="tab-pane active">
-                        <div>
-                            <div style=""><h3>Text input</h3>
-                                <form @submit.prevent="keyTextCheck()" data-vv-scope="keyText">
-                                <div class="form-group">
-                                    <p>
-                                        Paste your <strong>public key</strong> to the field bellow
-                                    </p>
-
-                                    <textarea rows="10"
-                                              placeholder="public key in text form"
-                                              class="form-control"
-                                              v-model="keyText"
-                                              name="keyText"
-                                              data-vv-as="Key"
-                                              v-validate="{required: true}"
-                                    ></textarea>
-
-                                    <i v-show="errors.has('keyText.keyText')" class="fa fa-warning"></i>
-                                    <span v-show="errors.has('keyText.keyText')" class="help is-danger"
-                                    >{{ errors.first('keyText.keyText') }}</span>
-
-                                </div>
-                                <div class="form-group">
-                                    <p>
-                                        Supported formats:
-                                    </p>
-                                    <ul>
-                                        <li>X509 Certificate, PEM encoded</li>
-                                        <li>RSA PEM encoded public key</li>
-                                        <li>SSH public key</li>
-                                        <li>PGP public key</li>
-                                        <li>Raw RSA modulus (hex / decimal / base64 encoded)</li>
-                                        <li>S/MIME PKCS7 Signature</li>
-                                    </ul>
-
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-block btn-success"
-                                            :disabled="errors.has('keyText.keyText') || isRequestInProgress"
-                                    >Test the key</button>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
+                        <check-text-key></check-text-key>
                     </div>
 
                     <div id="tab_2" class="tab-pane">
-                        <div class="subdomains-wrapper">
-                            <h3>File upload</h3>
-                            <form @submit.prevent="keyFileCheck()" data-vv-scope="keyFile">
-                            <div class="form-group">
-                                <p>
-                                    Upload your public key with the form below.
-                                </p>
-                                <input type="file" placeholder="public key in text form" class="form-control"
-                                       @change="onFileChange"
-                                       name="keyFile"
-                                       data-vv-as="Key File"
-                                       v-validate="{size: 1000, required: true}"/>
-
-                                <i v-show="errors.has('keyFile.keyFile')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('keyFile.keyFile')" class="help is-danger"
-                                >{{ errors.first('keyFile.keyFile') }}</span>
-
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('keyFile.keyFile') || isRequestInProgress"
-                                >Test the key</button>
-                            </div>
-                            </form>
-                        </div>
+                        <check-file-key></check-file-key>
                     </div>
 
                     <div id="tab_3" class="tab-pane">
-                        <div class="server-import"><h3>URL</h3>
-                            <form @submit.prevent="urlCheck()" data-vv-scope="url">
-                            <div class="form-group">
-                                <p>
-                                    Check your HTTPS certificate by entering the domain name below:
-                                </p>
 
-                                <input placeholder="URL to check" class="form-control" v-model="url"/>
-
-                                <i v-show="errors.has('url.url')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('url.url')" class="help is-danger"
-                                >{{ errors.first('url.url') }}</span>
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('url.url') || isRequestInProgress"
-                                >Test the key</button>
-                            </div>
-                            </form>
-                        </div>
                     </div>
 
                     <div id="tab_4" class="tab-pane">
-                        <div class="subdomains-wrapper">
-                            <h3>GitHub account</h3>
-                            <form @submit.prevent="githubCheck()" data-vv-scope="github">
-                            <div class="form-group">
-                                <p>
-                                    Check your SSH keys used for your GitHub account. Enter your GitHub login name:
-                                </p>
-
-                                <input placeholder="GitHub login name" class="form-control"
-                                       name="githubNick"
-                                       v-model="githubNick"
-                                       data-vv-as="GitHub login"
-                                       v-validate="{regex: /^[a-zA-Z0-9_]+$/, max: 32, required: true}" />
-
-                                <i v-show="errors.has('github.githubNick')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('github.githubNick')" class="help is-danger"
-                                >{{ errors.first('github.githubNick') }}</span>
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('github.githubNick') || isRequestInProgress"
-                                >Test the key</button>
-                            </div>
-                            </form>
-                        </div>
+                        <check-github-key></check-github-key>
                     </div>
 
                     <div id="tab_5" class="tab-pane">
-                        <div class="subdomains-wrapper">
-                            <h3>PGP</h3>
-                            <form @submit.prevent="pgpCheck()" data-vv-scope="pgp">
-                            <div class="form-group">
-                                <p>
-                                    Check your PGP key by entering either <strong>email</strong> address or <strong>key ID</strong>.
-                                </p>
-
-                                <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"
-                                       name="pgp"
-                                       v-validate="{max: 128, required: true, pgp: true}"
-                                       data-vv-as="PGP search query"
-                                />
-
-                                <i v-show="errors.has('pgp.pgp')" class="fa fa-warning"></i>
-                                <span v-show="errors.has('pgp.pgp')" class="help is-danger"
-                                >{{ errors.first('pgp.pgp') }}</span>
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-block btn-success"
-                                        :disabled="errors.has('pgp.pgp') || isRequestInProgress"
-                                >Test the key</button>
-                            </div>
-                            </form>
-                        </div>
+                        <check-pgp-key></check-pgp-key>
                     </div>
 
                     <div id="tab_6" class="tab-pane">
@@ -213,17 +76,30 @@
     import sprintf from 'sprintf-js';
     import Req from 'req';
     import ph4 from 'ph4';
+    import mixin from './TesterMixin';
 
     import ToggleButton from 'vue-js-toggle-button';
     import toastr from 'toastr';
 
     import Vue from 'vue';
+    import VueEvents from 'vue-events';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
     import pgpValidator from '../../lib/validator/pgp';
 
+    import CheckFileKey from './CheckFileKey.vue';
+    import CheckGitHubKey from './CheckGitHubKey.vue';
+    import CheckPGPKey from './CheckPGPKey.vue';
+    import CheckTextKey from './CheckTextKey.vue';
+
+    Vue.use(VueEvents);
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+
+    Vue.component('check-file-key', CheckFileKey);
+    Vue.component('check-github-key', CheckGitHubKey);
+    Vue.component('check-pgp-key', CheckPGPKey);
+    Vue.component('check-text-key', CheckTextKey);
 
     VeeValidate.Validator.localize('en', {
         attributes: {
@@ -232,18 +108,12 @@
     });
 
     export default {
+        mixins: [mixin],
         data: function() {
             return {
-                keyText: null,
-                keyFile: null,
-                url: null,
-                githubNick: null,
-                pgpSearch: null,
-
                 sendingState: 0,
                 resultsAvailable: 0,
                 uuid: null,
-
             }
         },
 
@@ -283,213 +153,7 @@
 
             },
 
-            validCheck(res, invalidError){
-                return new Promise((resolve, reject) => {
-                    if (res) {
-                        resolve();
-                        return;
-                    }
 
-                    toastr.error(invalidError, 'Check failed', {
-                        timeOut: 2000, preventDuplicates: true
-                    });
-                    reject();
-                });
-            },
-
-            keyTextCheck(){
-                const onValid = () => {
-                    return new Promise((resolve, reject)=> {
-                        this.onStartSending();
-                        Req.bodyProgress(true);
-
-                        axios.post('/tester/key', {key: this.keyText})
-                            .then(res => {
-                                this.onSendFinished();
-                                Req.bodyProgress(false);
-                                resolve(res);
-                            })
-                            .catch(err => {
-                                this.onSendingFail();
-                                Req.bodyProgress(false);
-                                reject(new Error(err));
-                            });
-                    });
-                };
-
-                // Validate and submit
-                this.$validator.validateAll('keyText')
-                    .then((result) => this.validCheck(result, 'Invalid Key entered'))
-                    .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            },
-
-            onFileChange(e){
-                const files = e.target.files || e.dataTransfer.files;
-                if (!files.length){
-                    return;
-                }
-
-                this.keyFile = files[0];
-            },
-
-            keyFileCheck(){
-                const data = new FormData();
-                data.append('file', this.keyFile);
-
-                const config = {
-                    onUploadProgress: (progressEvent) => {
-                        const percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
-                        console.log(percentCompleted);
-                    }
-                };
-
-                const onValid = () => {
-                    return new Promise((resolve, reject) => {
-                        this.onStartSending();
-                        Req.bodyProgress(true);
-
-                        axios.post('/tester/file', data, config)
-                            .then(res => {
-                                this.onSendFinished();
-                                Req.bodyProgress(false);
-                                resolve(res);
-                            })
-                            .catch(err => {
-                                this.onSendFinished();
-                                Req.bodyProgress(false);
-                                reject(new Error(err));
-                            });
-                    });
-                };
-
-                // Validate and submit
-                this.$validator.validateAll('keyFile')
-                    .then((result) => this.validCheck(result, 'Invalid Key File'))
-                    .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                        // TODO: parse uuid
-                        // TODO: subscribe to uuid ws.channel
-                        // TODO: set timeout 20-30 seconds for uuid ws.channel, show error after expiration.
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    })
-            },
-
-            urlCheck(){
-                // TODO: spot-check like
-            },
-
-            githubCheck(){
-                // Double query: github -> post keys for analysis
-                // Has internal catch logic - if there are no keys promise is rejected with false.
-                const onValid = () => {
-                    return new Promise((resolve, reject) => {
-                        const axos = Req.apiAxios();
-
-                        this.onStartSending();
-                        Req.bodyProgress(true);
-
-                        // Get github ssh keys first.
-                        axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
-                            .then(response => this.githubCheckKeys(response.data))
-                            .then(response => {
-                                this.onSendFinished();
-                                Req.bodyProgress(false);
-                                resolve(response);
-                            })
-                            .catch(e => {
-                                this.onSendingFail();
-                                Req.bodyProgress(false);
-
-                                if (!e){
-                                    reject(e);
-                                    return;
-                                }
-
-                                console.warn(e);
-                                toastr.error('Could not find given account name', 'Check failed', {
-                                    timeOut: 2000, preventDuplicates: true
-                                });
-                                reject(new Error(e, 1));
-                            });
-                    });
-                };
-
-                // Validate and submit
-                this.$validator.validateAll('github')
-                    .then((result) => this.validCheck(result, 'Invalid GitHub login name'))
-                    .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                    })
-                    .catch((err) => {
-                        if (!err){
-                            return;
-                        }
-                        console.warn(err);
-                    });
-            },
-
-            githubCheckKeys(res){
-                return new Promise((resolve, reject) => {
-                    if (_.isEmpty(res)){
-                        toastr.success('No GitHub SSH keys found for this account', 'No GitHub keys', {
-                            timeOut: 2000, preventDuplicates: true
-                        });
-                        reject(false); // false ~ handled
-                        return;
-                    }
-
-                    axios.post('/tester/key', {keys: res, keyType: 'github'})
-                        .then(function (res) {
-                            resolve(res);
-                        })
-                        .catch(function (err) {
-                            reject(new Error(err));
-                        });
-                });
-            },
-
-            pgpCheck(){
-                // TODO: submit check
-                const onValid = () => {
-                    return new Promise((resolve, reject) => {
-                    this.onStartSending();
-                    Req.bodyProgress(true);
-
-                    axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
-                        .then(res => {
-                            this.onSendFinished();
-                            Req.bodyProgress(false);
-                            resolve(res);
-                        })
-                        .catch(err => {
-                            this.onSendingFail();
-                            Req.bodyProgress(false);
-                            reject(new Error(err));
-                        });
-                    });
-                };
-
-                // Validate and submit
-                this.$validator.validateAll('pgp')
-                    .then((result) => this.validCheck(result, 'Invalid PGP search query'))
-                    .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                    })
-                    .catch((err) => {
-                        console.warn(err);
-                    });
-            }
         },
 
         events: {
