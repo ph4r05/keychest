@@ -36,8 +36,14 @@ class TesterJobListener implements ShouldQueue
      * @param  TesterJobProgress  $event
      * @return void
      */
-    public function handle(TesterJobProgress $event)
+    public function handle($event)
     {
+        if (!($event instanceof TesterJobProgress)){
+            Log::debug('Invalid object received (expected TesterJobProgress):  '
+                . var_export($event, true));
+            return;
+        }
+
         Log::info('New event: ' . var_export($event->getJsonData(), true));
 
         // TODO: email processing event - job for that.
