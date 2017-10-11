@@ -170,6 +170,10 @@
                     })
             },
 
+            onResult(data){
+                console.log(data);
+            },
+
         },
 
         events: {

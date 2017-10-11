@@ -144,7 +144,11 @@
                         this.unlistenWebsocket();
                         console.warn(err);
                     });
-            }
+            },
+
+            onResult(data){
+                console.log(data);
+            },
 
         },
 
