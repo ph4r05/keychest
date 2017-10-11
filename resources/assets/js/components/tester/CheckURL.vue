@@ -57,6 +57,12 @@
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
+    VeeValidate.Validator.localize('en', {
+        attributes: {
+            url: 'URL'
+        }
+    });
+
     export default {
         mixins: [mixin],
         data: function() {

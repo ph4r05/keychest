@@ -70,7 +70,6 @@
 
                 sendingState: 0,
                 resultsAvailable: 0,
-                uuid: null,
             }
         },
 
@@ -157,6 +156,7 @@
                         if (!err){
                             return;
                         }
+                        this.unlistenWebsocket();
                         console.warn(err);
                     });
             },
@@ -171,7 +171,10 @@
                         return;
                     }
 
-                    axios.post('/tester/key', {keys: res, keyType: 'github'})
+                    this.generateUuid();
+                    this.listenWebsocket();
+
+                    axios.post('/tester/key', {keys: res, keyType: 'github', uuid: this.uuid})
                         .then(function (res) {
                             resolve(res);
                         })

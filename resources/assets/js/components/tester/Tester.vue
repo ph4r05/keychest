@@ -101,12 +101,6 @@
     Vue.component('check-pgp-key', CheckPGPKey);
     Vue.component('check-text-key', CheckTextKey);
 
-    VeeValidate.Validator.localize('en', {
-        attributes: {
-            url: 'URL'
-        }
-    });
-
     export default {
         mixins: [mixin],
         data: function() {

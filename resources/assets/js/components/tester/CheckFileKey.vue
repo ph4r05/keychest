@@ -121,6 +121,11 @@
 
             keyFileCheck(){
                 const data = new FormData();
+
+                this.generateUuid();
+                this.listenWebsocket();
+
+                data.append('uuid', this.uuid);
                 data.append('file', this.keyFile);
 
                 const config = {
@@ -160,6 +165,7 @@
                         // TODO: set timeout 20-30 seconds for uuid ws.channel, show error after expiration.
                     })
                     .catch((err) => {
+                        this.unlistenWebsocket();
                         console.log(err);
                     })
             },

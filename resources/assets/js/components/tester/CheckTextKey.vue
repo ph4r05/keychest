@@ -86,7 +86,6 @@
 
                 sendingState: 0,
                 resultsAvailable: 0,
-                uuid: null,
             }
         },
 
@@ -132,7 +131,10 @@
                         this.onStartSending();
                         Req.bodyProgress(true);
 
-                        axios.post('/tester/key', {key: this.keyText})
+                        this.generateUuid();
+                        this.listenWebsocket();
+
+                        axios.post('/tester/key', {key: this.keyText, uuid: this.uuid})
                             .then(res => {
                                 this.onSendFinished();
                                 Req.bodyProgress(false);
@@ -150,13 +152,33 @@
                 this.$validator.validateAll('keyText')
                     .then((result) => this.validCheck(result, 'Invalid Key entered'))
                     .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                    })
+                    .then((result) => this.onSubmited(result))
                     .catch(err => {
+                        this.unlistenWebsocket();
                         console.log(err);
                     });
             },
+
+            onSubmited(result){
+                return new Promise((resolve, reject)=> {
+                    try {
+                        console.log(result);
+                        const data = result.data;
+                        resolve(data)
+
+                    } catch (e){
+                        console.warn(e);
+                        toastr.error('Unexpected result in result processing', 'Check failed', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
+                        reject(e);
+                    }
+                });
+            },
+
+            onResult(data){
+                console.log(data);
+            }
 
         },
 

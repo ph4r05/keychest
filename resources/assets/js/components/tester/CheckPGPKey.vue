@@ -70,7 +70,6 @@
 
                 sendingState: 0,
                 resultsAvailable: 0,
-                uuid: null,
             }
         },
 
@@ -117,7 +116,10 @@
                         this.onStartSending();
                         Req.bodyProgress(true);
 
-                        axios.get('/tester/pgp', {params: {pgp: this.pgpSearch}})
+                        this.generateUuid();
+                        this.listenWebsocket();
+
+                        axios.get('/tester/pgp', {params: {pgp: this.pgpSearch, uuid: this.uuid}})
                             .then(res => {
                                 this.onSendFinished();
                                 Req.bodyProgress(false);
@@ -139,6 +141,7 @@
                         console.log(result);
                     })
                     .catch((err) => {
+                        this.unlistenWebsocket();
                         console.warn(err);
                     });
             }
