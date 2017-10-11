@@ -48,7 +48,7 @@ class TesterJobListener implements ShouldQueue
         try {
             $jobData = $event->getData();
             $jobType = isset($jobData->jobType) ? $jobData->jobType : null;
-            Log::info('New event: ' . var_export($jobData, true));
+            Log::info('New event: ' . var_export($event->getJsonData(), true));
 
             if ($jobType == 'email') {
                 // Start the new user job
@@ -67,7 +67,7 @@ class TesterJobListener implements ShouldQueue
 
         } catch(\Exception $e){
             Log::error('Exception in job processing: ' . $e);
-        }catch(\Throwable $e){
+        } catch(\Throwable $e){
             Log::error('ExceptionT in job processing: ' . $e);
         }
     }
