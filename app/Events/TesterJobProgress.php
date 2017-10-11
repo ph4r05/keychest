@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Support\Facades\Log;
 
 
 /**
@@ -27,6 +28,12 @@ class TesterJobProgress implements JsonJob
      * @var string
      */
     protected $json_data;
+
+    /**
+     * Cached version of data - after decoding from json
+     * @var
+     */
+    protected $data;
 
     /**
      * Create a new event instance.
@@ -51,6 +58,25 @@ class TesterJobProgress implements JsonJob
     public function getJsonData()
     {
         return $this->json_data;
+    }
+
+    /**
+     * Attempts to decode json data
+     * @return mixed|null
+     */
+    public function getData()
+    {
+        if ($this->data !== null){
+            return $this->data;
+        }
+
+        try{
+            $this->data = json_decode($this->getJsonData());
+        } catch(\Exception $e){
+            Log::error('Exception in event data decode: ' . $e);
+        }
+
+        return $this->data;
     }
 
 

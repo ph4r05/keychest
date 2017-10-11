@@ -55,6 +55,7 @@ class TesterJobProgressNotif implements JsonJob, ShouldBroadcastNow
     public static function fromEvent(TesterJobProgress $evt){
         $e = new TesterJobProgressNotif();
         $e->json_data = $evt->getJsonData();
+        $e->data = $evt->getData();
         return $e;
     }
 
@@ -66,11 +67,11 @@ class TesterJobProgressNotif implements JsonJob, ShouldBroadcastNow
     public function broadcastOn()
     {
         $data = $this->getData();
-        if (empty($data) || !isset($data->job)){
+        if (empty($data) || !isset($data->id)){
             return new PrivateChannel('keytest');
         }
 
-        return new Channel('keytest.' . $data->job);
+        return new Channel('keytest.' . $data->id);
     }
 
     /**

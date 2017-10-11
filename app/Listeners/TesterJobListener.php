@@ -6,6 +6,7 @@ use App\Events\ScanJobProgress;
 use App\Events\ScanJobProgressNotif;
 use App\Events\TesterJobProgress;
 use App\Events\TesterJobProgressNotif;
+use App\Jobs\SendKeyCheckReport;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -44,10 +45,21 @@ class TesterJobListener implements ShouldQueue
             return;
         }
 
-        Log::info('New event: ' . var_export($event->getJsonData(), true));
+        $jobData = $event->getData();
+        $jobType = isset($jobData['jobType']) ? $jobData['jobType'] : null;
+        Log::info('New event: ' . var_export($jobData, true));
 
-        // TODO: email processing event - job for that.
-        // TODO: scan results - rebroadcast to WS.
+        if ($jobType == 'email'){
+            // Start the new user job
+            $job = new SendKeyCheckReport($jobData);
+            $job->onConnection(config('keychest.wrk_key_check_emails_conn'))
+                ->onQueue(config('keychest.wrk_key_check_emails_queue'));
+
+            dispatch($job);
+            return;
+        }
+
+        // Scan results - rebroadcast to WS.
         // Rewrap and rebroadcast to the socket server
         $e = TesterJobProgressNotif::fromEvent($event);
         event($e);
