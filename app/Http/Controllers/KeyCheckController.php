@@ -70,13 +70,14 @@ class KeyCheckController extends Controller
         $this->validate($request, [
             'key' => 'max:1000000',
             'keyType' => 'max:1000',
+            'uuid'  => 'min:24|max:128'
         ]);
 
         $key = Input::get('key');
         $keys = Input::get('keys');
         $keyType = Input::get('keyType');
 
-        $job = $this->newTest();
+        $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType($keyType);
         $job->setKeyValue(!empty($keys) ? $keys : [$key]);
         Log::info(json_encode($job));
@@ -96,13 +97,14 @@ class KeyCheckController extends Controller
     {
         $this->validate($request, [
             'file' => 'bail|required|file|max:1000',
+            'uuid'  => 'min:24|max:128'
         ]);
 
         $file = $request->file('file');
         try {
             $content = File::get($file);
 
-            $job = $this->newTest();
+            $job = $this->newTest(Input::get('uuid'));
             $job->setKeyType('file');
             $job->setKeyValue($content);
             $job->setKeyName($file->getClientOriginalName());
@@ -128,7 +130,7 @@ class KeyCheckController extends Controller
         $file = Input::get('file');
         Log::info($file);
 
-        $job = $this->newTest();
+        $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType('file');
         $job->setKeyValue($file);
         Log::info(json_encode($job));
@@ -157,11 +159,12 @@ class KeyCheckController extends Controller
     {
         $this->validate($request, [
             'pgp' => 'bail|required|max:128',
+            'uuid'  => 'min:24|max:128'
         ]);
 
         $pgp = Input::get('pgp');
 
-        $job = $this->newTest();
+        $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType('pgp');
         $job->setPgp($pgp);
         Log::info(json_encode($job));
@@ -174,11 +177,12 @@ class KeyCheckController extends Controller
 
     /**
      * New testing object
+     * @param string|null $uuid
      * @return KeyToTest
      */
-    protected function newTest()
+    protected function newTest($uuid = null)
     {
-        return new KeyToTest(Uuid::generate()->string);
+        return new KeyToTest(empty($uuid) ? Uuid::generate()->string : $uuid);
     }
 
     /**
