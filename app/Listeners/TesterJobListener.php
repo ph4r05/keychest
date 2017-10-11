@@ -45,23 +45,30 @@ class TesterJobListener implements ShouldQueue
             return;
         }
 
-        $jobData = $event->getData();
-        $jobType = isset($jobData['jobType']) ? $jobData['jobType'] : null;
-        Log::info('New event: ' . var_export($jobData, true));
+        try {
+            $jobData = $event->getData();
+            $jobType = isset($jobData->jobType) ? $jobData->jobType : null;
+            Log::info('New event: ' . var_export($jobData, true));
 
-        if ($jobType == 'email'){
-            // Start the new user job
-            $job = new SendKeyCheckReport($jobData);
-            $job->onConnection(config('keychest.wrk_key_check_emails_conn'))
-                ->onQueue(config('keychest.wrk_key_check_emails_queue'));
+            if ($jobType == 'email') {
+                // Start the new user job
+                $job = new SendKeyCheckReport($jobData);
+                $job->onConnection(config('keychest.wrk_key_check_emails_conn'))
+                    ->onQueue(config('keychest.wrk_key_check_emails_queue'));
 
-            dispatch($job);
-            return;
+                dispatch($job);
+                return;
+            }
+
+            // Scan results - rebroadcast to WS.
+            // Rewrap and rebroadcast to the socket server
+            $e = TesterJobProgressNotif::fromEvent($event);
+            event($e);
+
+        } catch(\Exception $e){
+            Log::error('Exception in job processing: ' . $e);
+        }catch(\Throwable $e){
+            Log::error('ExceptionT in job processing: ' . $e);
         }
-
-        // Scan results - rebroadcast to WS.
-        // Rewrap and rebroadcast to the socket server
-        $e = TesterJobProgressNotif::fromEvent($event);
-        event($e);
     }
 }
