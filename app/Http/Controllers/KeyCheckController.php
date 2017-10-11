@@ -80,7 +80,6 @@ class KeyCheckController extends Controller
         $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType($keyType);
         $job->setKeyValue(!empty($keys) ? $keys : [$key]);
-        Log::info(json_encode($job));
 
         $this->sendKeyCheck($job);
         return response()->json([
@@ -106,9 +105,8 @@ class KeyCheckController extends Controller
 
             $job = $this->newTest(Input::get('uuid'));
             $job->setKeyType('file');
-            $job->setKeyValue($content);
+            $job->setKeyValue(base64_encode($content));
             $job->setKeyName($file->getClientOriginalName());
-            Log::info(json_encode($job));
 
             $this->sendKeyCheck($job);
             return response()->json([
@@ -133,7 +131,6 @@ class KeyCheckController extends Controller
         $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType('file');
         $job->setKeyValue($file);
-        Log::info(json_encode($job));
 
         $this->sendKeyCheck($job);
         return response()->json([
@@ -167,7 +164,6 @@ class KeyCheckController extends Controller
         $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType('pgp');
         $job->setPgp($pgp);
-        Log::info(json_encode($job));
 
         $this->sendKeyCheck($job);
         return response()->json([
