@@ -34,8 +34,14 @@ class ScanJobListener implements ShouldQueue
      * @param  ScanJobProgress  $event
      * @return void
      */
-    public function handle(ScanJobProgress $event)
+    public function handle($event)
     {
+        if (!($event instanceof ScanJobProgress)){
+            Log::debug('Invalid object received (expected ScanJobProgress): '
+                . var_export($event, true));
+            return;
+        }
+
         Log::info('New event: ' . var_export($event->getJsonData(), true));
 
         // Rewrap and rebroadcast to the socket server
