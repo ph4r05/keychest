@@ -65,7 +65,7 @@ class SendKeyCheckReport implements ShouldQueue
     public function handle(EmailManager $emailManager)
     {
         $this->emailManager = $emailManager;
-        
+
         try{
             $this->tryHandle();
         } catch(\Exception $e){
@@ -111,7 +111,7 @@ class SendKeyCheckReport implements ShouldQueue
         $senderEmail = $sender[count($sender)-1];
 
         $userObj = new \stdClass();
-        $userObj->email = 'ph4r05@gmail.com';//$senderEmail;
+        $userObj->email = $senderEmail;
         $userObj->name = $sender[0];
 
         $report = new KeyCheckReport();
