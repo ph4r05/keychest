@@ -22,7 +22,7 @@ We identified some issues with your keys.
 | Master key ID | {{ $key->masterKeyId }} |
 | Created at    | {{ $key->createdAt ? $key->createdAt->toFormattedDateString() : '' }} |
 | Bit Size      | {{ $key->bitSize }} |
-| Test result   | {{ $key->status != 'ok' ?  'Processing error' : ($key->marked ? 'Vulnerable' : 'Safe') }} |
+| Test result   | *{{ $key->verdict }}* |
 
 @endcomponent
 @endforeach
@@ -38,7 +38,7 @@ We identified some issues with your keys.
 | Subject       | {{ $key->subject }} |
 | Created at    | {{ $key->createdAt ? $key->createdAt->toFormattedDateString() : '' }} |
 | Bit Size      | {{ $key->bitSize  }} |
-| Test result   | {{ $key->status != 'ok' ?  'Processing error' : ($key->marked ? 'Vulnerable' : 'Safe') }} |
+| Test result   | *{{ $key->status != 'ok' ?  'Processing error' : ($key->marked ? 'Vulnerable' : 'Safe') }}* |
 
 @endcomponent
 @endforeach

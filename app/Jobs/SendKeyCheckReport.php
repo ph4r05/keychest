@@ -65,8 +65,7 @@ class SendKeyCheckReport implements ShouldQueue
     public function handle(EmailManager $emailManager)
     {
         $this->emailManager = $emailManager;
-        Log::info('Going to handle some report: ' . var_export($this->reportData, true));
-
+        
         try{
             $this->tryHandle();
         } catch(\Exception $e){
@@ -201,7 +200,21 @@ class SendKeyCheckReport implements ShouldQueue
 
             $tests = [];
             foreach ($result->results as $subRes){
-                $tests += $subRes->tests;
+                if (isset($subRes->tests)){
+                    $tests += $subRes->tests;
+                } elseif (isset($subRes->error)){
+                    $res = new PGPKeyResult();
+                    $res->status = 'error';
+                    if (isset($subRes->key_id_resolve_error)){
+                        $res->verdict = 'Cannot find the key';
+                    } elseif (isset($subRes->no_keys)){
+                        $res->verdict = 'No keys found';
+                    } elseif ($subRes->error == 'key-fetch-error'){
+                        $res->verdict = 'Key download error';
+                    } elseif ($subRes->error == 'key-process-error'){
+                        $res->verdict = 'Key processing error';
+                    }
+                }
             }
             $result->tests = $tests;
         }
@@ -210,7 +223,12 @@ class SendKeyCheckReport implements ShouldQueue
             $res = new PGPKeyResult();
             try {
                 $res->keyId = $test->kid;
-                if ($test->n) {
+                $res->status = 'error';
+
+                if (isset($test->limit_reached)){
+                    $res->verdict = 'Limit reached';
+
+                } elseif ($test->n) {
                     $res->masterKeyId = $test->master_kid;
                     $res->modulus = $test->n;
                     $res->bitSize = $this->getBitWidth($test->n);
@@ -221,10 +239,12 @@ class SendKeyCheckReport implements ShouldQueue
                     $res->identity = empty($fidentity) ? '' : [$fidentity->name, $fidentity->email];
 
                     $res->status = 'ok';
+                    $res->verdict = $res->marked ? 'Vulnerable' : 'Safe';
                     $report->allSafe &= !$res->marked;
 
                 } else {
                     $res->status = 'fetch-failed';
+                    $res->verdict = 'Key download error';
                 }
 
                 $report->pgpKeys[] = $res;

@@ -19,4 +19,5 @@ class PGPKeyResult
     public $createdAt;
     public $marked;
     public $status;
+    public $verdict;
 }
