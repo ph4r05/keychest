@@ -1,29 +1,31 @@
 <template>
     <div>
-        <h3>Offline detector</h3>
+        <h3>Download Python test</h3>
 
         <p>
-            There is also a way to test your public keys privately offline with use of our detection tool implemented
-            in python.
+            If want to test your keys privately on your computers, or integrate the test into your application, please
+            install our Python test implementation.
+
         </p>
 
         <p>
-            Supported formats:
+            The Python test supports:
         </p>
 
         <ul>
-            <li>X509 Certificate, PEM/DER encoded</li>
-            <li>RSA PEM encoded private key, public key</li>
-            <li>SSH public key</li>
-            <li>ASC encoded PGP key, *.pgp, *.asc</li>
-            <li>Java Key Store file (JKS). </li>
-            <li>PKCS7 signature with user certificate</li>
-            <li>APK Android application</li>
+            <li>X509 Certificate, PEM/DER encoded;</li>
+            <li>RSA PEM encoded private key, public key;</li>
+            <li>SSH public key;</li>
+            <li>ASC encoded PGP key, *.pgp, *.asc;</li>
+            <li>Java Key Store file (JKS);</li>
+            <li>PKCS7 signature with user certificate;</li>
+            <li>APK Android application;</li>
             <li>LDIFF file - LDAP database dump. Any field ending with ";binary::" is attempted to decode as X509 certificate</li>
-            <li>One modulus per line text file *.txt, modulus can be
-                a) base64 encoded number, b) hex coded number, c) decimal coded number</li>
-            <li>JSON file with moduli, one record per line, record with modulus has
-                key "mod", certificate(s) with key "cert" / array of certificates with key "certs" are supported, base64 encoded DER. </li>
+            <li>Text file (*.txt) with an RSA key modulus per line; the modulus can be
+                a) a base64 encoded number, b) a hex coded number, c) a decimal coded number;</li>
+            <li>JSON file with RSA keys, a record per line; supported records are RSA moduli
+                (the "mod" key), certificates (the "cert" key) in the base64 encoded DER format, or an array of certificates
+                (the "certs" key) in the base64 encoded DER format. </li>
         </ul>
 
         <h3>Installation</h3>
@@ -43,7 +45,7 @@ iont-detect my-pgp-key.asc</span>
         </div>
 
         <p>
-            For more information please refer to the detector GIT repository and its readme:
+            For more information please refer to the detector GIT repository and its readme file at:
             <a href="https://github.com/crocs-muni">https://github.com/crocs-muni</a>
         </p>
     </div>
