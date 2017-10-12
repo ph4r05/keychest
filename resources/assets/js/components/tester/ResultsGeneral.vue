@@ -28,6 +28,10 @@
                                 <th>Key ID</th>
                                 <td>0x{{ test.kid }}</td>
                             </tr>
+                            <tr v-if="github && test.fname">
+                                <th>Key ID</th>
+                                <td>{{ test.fname }}</td>
+                            </tr>
                             <tr v-if="test.fprint">
                                 <th>Fingerprint</th>
                                 <td>{{ test.fprint }}</td>
@@ -78,6 +82,15 @@
     Vue.use(ToggleButton);
 
     export default {
+        props: {
+            github: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+
+        },
+
         data: function() {
             return {
                 results: null,
@@ -118,6 +131,11 @@
 
             hasMarked(obj){
                 return 'marked' in obj;
+            },
+
+            onReset(){
+                this.results = null;
+                this.allSafe = true;
             },
 
             onResultsLoaded(data){

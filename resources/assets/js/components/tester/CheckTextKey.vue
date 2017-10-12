@@ -110,6 +110,7 @@
             },
 
             onStartSending(){
+                this.$refs.gresults.onReset();
                 this.sendingState = 1;
             },
 
