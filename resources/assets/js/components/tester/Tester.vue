@@ -4,12 +4,12 @@
         <div class="row">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Paste your key</a></li>
+                    <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Paste key</a></li>
                     <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">File upload</a></li>
                     <!--<li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">URL</a></li>-->
-                    <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">GitHub account</a></li>
-                    <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">PGP/GnuPG</a></li>
-                    <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">Send us e-mail</a></li>
+                    <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Send e-mail</a></li>
+                    <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">GitHub account</a></li>
+                    <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">PGP/GnuPG keyring</a></li>
                     <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Offline test</a></li>
                     <!--<li class="pull-right"><a href="#" title="Refresh" class="text-muted"><i class="fa fa-refresh"></i></a></li>-->
                 </ul>
@@ -27,16 +27,17 @@
                     </div>
 
                     <div id="tab_4" class="tab-pane">
-                        <check-github-key></check-github-key>
+                        <check-email></check-email>
                     </div>
 
                     <div id="tab_5" class="tab-pane">
-                        <check-pgp-key></check-pgp-key>
+                        <check-github-key></check-github-key>
                     </div>
 
                     <div id="tab_6" class="tab-pane">
-                        <check-email></check-email>
+                        <check-pgp-key></check-pgp-key>
                     </div>
+
 
 
                     <div id="tab_7" class="tab-pane">
