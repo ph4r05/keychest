@@ -36,7 +36,9 @@ We identified some issues with your keys.
 | Attribute     | Value   |
 | ------------  | ------- |
 | Subject       | {{ $key->subject }} |
+| Issuer        | {{ $key->issuerOrg }} |
 | Created at    | {{ $key->createdAt ? $key->createdAt->toFormattedDateString() : '' }} |
+| Valid until   | {{ $key->notValidAfter ? $key->notValidAfter->toFormattedDateString() : '' }} |
 | Bit Size      | {{ $key->bitSize  }} |
 | Test result   | *{{ $key->status != 'ok' ?  'Processing error' : ($key->marked ? 'Vulnerable' : 'Safe') }}* |
 

@@ -13,10 +13,12 @@ class SMIMEKeyResult
 {
     public $fprint;
     public $subject;
+    public $issuerOrg;
     public $email;
     public $modulus;
     public $bitSize;
     public $createdAt;
+    public $notValidAfter;
     public $marked;
     public $status;
 }

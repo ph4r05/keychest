@@ -181,6 +181,9 @@ class SendKeyCheckReport implements ShouldQueue
         $res->modulus = $test->n;
         $res->bitSize = $this->getBitWidth($test->n);
         $res->marked = !!$test->marked;
+        $res->notValidAfter = isset($test->not_valid_after_utc) && $test->not_valid_after_utc ?
+            Carbon::createFromTimestampUTC($test->not_valid_after_utc) : null;
+        $res->issuerOrg = isset($test->issuer_org) ? $test->issuer_org : null;
         $report->allSafe &= !$res->marked;
         $res->status = 'ok';
     }
