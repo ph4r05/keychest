@@ -5,7 +5,8 @@
             <form @submit.prevent="githubCheck()" data-vv-scope="github">
                 <div class="form-group">
                     <p>
-                        Check your SSH keys used for your GitHub account. Enter your GitHub login name:
+                        If you use RSA keys to login to your GitHub account, simply enter your GitHub login name and
+                        we take care of the rest using your public GitHub data.
                     </p>
 
                     <input placeholder="GitHub login name" class="form-control"
