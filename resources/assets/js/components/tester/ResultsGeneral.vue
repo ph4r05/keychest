@@ -13,7 +13,7 @@
 
                 <h3 v-if="length(results.results) > 1">Key {{ r_idx + 1 }}</h3>
 
-                <div v-for="(test, t_idx) in result.tests" v-if="result.tests">
+                <div v-for="(test, t_idx) in result.tests" v-if="result.tests && length(results.results) > 0">
 
                     <h4 v-if="length(result.tests) > 1">Test {{ t_idx + 1 }}</h4>
 
@@ -56,6 +56,9 @@
                         </table>
                     </div>
                 </div>
+                <div v-else="">
+                    Test could not be completed
+                </div>
 
             </div>
 
@@ -84,6 +87,11 @@
     export default {
         props: {
             github: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+            pgp: {
                 type: Boolean,
                 required: false,
                 default: false,
