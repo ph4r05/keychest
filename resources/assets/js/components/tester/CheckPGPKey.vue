@@ -1,11 +1,12 @@
 <template>
     <div>
         <div class="subdomains-wrapper">
-            <h3>PGP</h3>
+            <h3>PGP/GnuPG</h3>
             <form @submit.prevent="pgpCheck()" data-vv-scope="pgp">
                 <div class="form-group">
                     <p>
-                        Check your PGP key by entering either <strong>email</strong> address or <strong>key ID</strong>.
+                        If your PGP/GnuPG key is in a public key ring, you can test it by entering either
+                        your <strong>email address</strong> or the <strong>key ID</strong>.
                     </p>
 
                     <input placeholder="email / key ID" class="form-control" v-model="pgpSearch"
@@ -22,7 +23,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('pgp.pgp') || isRequestInProgress"
-                    >Test the key</button>
+                    >Test key</button>
                 </div>
             </form>
         </div>
