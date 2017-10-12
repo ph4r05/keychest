@@ -45,12 +45,9 @@
 
         <transition name="fade" v-on:after-leave="transitionHook">
             <div class="row test-results" v-show="hasResults">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-primary">
-                        <template slot="title">Results</template>
-
-                    </sbox>
-                </div>
+                <results-general
+                    ref="gresults"
+                ></results-general>
             </div>
         </transition>
 
@@ -72,11 +69,14 @@
     import VueEvents from 'vue-events';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
-    import pgpValidator from '../../lib/validator/pgp';
+
+    import ResultsGeneral from './ResultsGeneral.vue';
 
     Vue.use(VueEvents);
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+
+    Vue.component('results-general', ResultsGeneral);
 
     export default {
         mixins: [mixin],
@@ -106,7 +106,7 @@
 
         methods: {
             hookup(){
-                VeeValidate.Validator.extend('pgp', pgpValidator);
+
             },
 
             onStartSending(){
@@ -178,6 +178,8 @@
 
             onResult(data){
                 console.log(data);
+                this.resultsAvailable = 1;
+                this.$refs.gresults.onResultsLoaded(data);
             }
 
         },

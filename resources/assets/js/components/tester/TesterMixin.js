@@ -9,7 +9,7 @@ const uuidv4 = require('uuid/v4');
 
 
 export default  {
-    created: function () {
+    created() {
         // connected
     },
 
@@ -18,6 +18,7 @@ export default  {
             uuid: null,
             curChannel: null,
             wsStarted: false,
+            testResults: null,
         }
     },
 

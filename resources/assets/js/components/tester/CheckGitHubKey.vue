@@ -175,10 +175,10 @@
                     this.listenWebsocket();
 
                     axios.post('/tester/key', {keys: res, keyType: 'github', uuid: this.uuid})
-                        .then(function (res) {
+                        .then(res => {
                             resolve(res);
                         })
-                        .catch(function (err) {
+                        .catch(err => {
                             reject(new Error(err));
                         });
                 });

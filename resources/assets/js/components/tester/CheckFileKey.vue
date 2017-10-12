@@ -28,12 +28,9 @@
 
         <transition name="fade" v-on:after-leave="transitionHook">
             <div class="row test-results" v-show="hasResults">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-primary">
-                        <template slot="title">Results</template>
-
-                    </sbox>
-                </div>
+                <results-general
+                        ref="gresults"
+                ></results-general>
             </div>
         </transition>
 
@@ -55,11 +52,13 @@
     import VueEvents from 'vue-events';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
-    import pgpValidator from '../../lib/validator/pgp';
+
+    import ResultsGeneral from './ResultsGeneral.vue';
 
     Vue.use(VueEvents);
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+    Vue.component('results-general', ResultsGeneral);
 
     export default {
         mixins: [mixin],
@@ -158,20 +157,34 @@
                 this.$validator.validateAll('keyFile')
                     .then((result) => this.validCheck(result, 'Invalid Key File'))
                     .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                        // TODO: parse uuid
-                        // TODO: subscribe to uuid ws.channel
-                        // TODO: set timeout 20-30 seconds for uuid ws.channel, show error after expiration.
-                    })
+                    .then((result) => this.onSubmited(result))
                     .catch((err) => {
                         this.unlistenWebsocket();
                         console.log(err);
                     })
             },
 
+            onSubmited(result){
+                return new Promise((resolve, reject)=> {
+                    try {
+                        console.log(result);
+                        const data = result.data;
+                        resolve(data)
+
+                    } catch (e){
+                        console.warn(e);
+                        toastr.error('Unexpected result in result processing', 'Check failed', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
+                        reject(e);
+                    }
+                });
+            },
+
             onResult(data){
                 console.log(data);
+                this.resultsAvailable = 1;
+                this.$refs.gresults.onResultsLoaded(data);
             },
 
         },
