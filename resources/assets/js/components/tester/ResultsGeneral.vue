@@ -40,9 +40,17 @@
                                 <th>Subject</th>
                                 <td>{{ test.subject }}</td>
                             </tr>
+                            <tr v-if="test.issuer">
+                                <th>Issuer</th>
+                                <td>{{ test.issuer }}</td>
+                            </tr>
                             <tr v-if="test.created_at_utc">
                                 <th>Created at</th>
                                 <td>{{ momentu(test.created_at_utc * 1000.).format('MMM Do YYYY') }}</td>
+                            </tr>
+                            <tr v-if="test.not_valid_after_utc">
+                                <th>Valid until</th>
+                                <td>{{ momentu(test.not_valid_after_utc * 1000.).format('MMM Do YYYY') }}</td>
                             </tr>
                             <tr v-if="test.n">
                                 <th>Bit length</th>
