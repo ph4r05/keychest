@@ -25,4 +25,11 @@
     }
 </script>
 <style scoped>
+    .h2-nomarg {
+        margin: 0;
+    }
+
+    .a-nounder {
+        text-decoration: none;
+    }
 </style>
