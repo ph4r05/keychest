@@ -4,7 +4,7 @@
             <form @submit.prevent="urlCheck()" data-vv-scope="url">
                 <div class="form-group">
                     <p>
-                        Check your HTTPS certificate by entering the domain name below:
+                        You can check your HTTPS certificate by entering your server address below:
                     </p>
 
                     <input placeholder="URL to check" class="form-control" v-model="url"/>
@@ -17,7 +17,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('url.url') || isRequestInProgress"
-                    >Test the key</button>
+                    >Test key</button>
                 </div>
             </form>
         </div>
