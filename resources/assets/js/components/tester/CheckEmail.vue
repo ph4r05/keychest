@@ -1,10 +1,11 @@
 <template>
     <div class="subdomains-wrapper">
-        <h3>Send us an e-mail</h3>
+        <h3>Send us e-mail</h3>
 
         <p>
-            For easy testing of <strong>PGP</strong> keys and <strong>SMIME</strong> certificates
-            you can send us a signed email to the account below, we will check it and send you report back.
+            We have created an email responder for easy testing of <strong>PGP</strong> keys and <strong>S/MIME</strong>
+            certificates. Simply send a digitally signed email or your PGP key to the address below and the
+            responder will reply with a test report within a couple of minutes.
         </p>
 
         <div class="alert alert-info text-center">
@@ -12,8 +13,8 @@
         </div>
 
         <p>
-            <small><strong>Note:</strong> for PGP email its better to attach your public key to
-                the email, most of the emailing clients supports this.</small>
+            <small><strong>Note:</strong> If you want to test a PGP key, you may want to send your public key as an
+                attachment. Most email clients support this.</small>
         </p>
 
     </div>
