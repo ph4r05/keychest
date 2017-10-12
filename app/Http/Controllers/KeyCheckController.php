@@ -47,7 +47,7 @@ class KeyCheckController extends Controller
      */
     public function __construct(ScanManager $scanManager)
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
         $this->scanManager = $scanManager;
     }
 
