@@ -10,6 +10,7 @@
                     <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">GitHub account</a></li>
                     <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">PGP</a></li>
                     <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">Send us an e-mail</a></li>
+                    <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Offline detector</a></li>
                     <!--<li class="pull-right"><a href="#" title="Refresh" class="text-muted"><i class="fa fa-refresh"></i></a></li>-->
                 </ul>
                 <div class="tab-content">
@@ -34,25 +35,14 @@
                     </div>
 
                     <div id="tab_6" class="tab-pane">
-                        <div class="subdomains-wrapper">
-                            <h3>Send us an e-mail</h3>
-
-                            <p>
-                                For easy testing of <strong>PGP</strong> keys and <strong>SMIME</strong> certificates
-                                you can send us a signed email to the account below, we will check it and send you report back.
-                            </p>
-
-                            <div class="alert alert-info text-center">
-                                <h2 class="h2-nomarg"><a href="mailto:test@keychest.net" class="a-nounder">test@keychest.net</a></h2>
-                            </div>
-
-                            <p>
-                                <small><strong>Note:</strong> for PGP email its better to attach your public key to
-                                    the email, most of the emailing clients supports this.</small>
-                            </p>
-
-                        </div>
+                        <check-email></check-email>
                     </div>
+
+
+                    <div id="tab_7" class="tab-pane">
+                        <check-offline></check-offline>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -91,6 +81,8 @@
     import CheckGitHubKey from './CheckGitHubKey.vue';
     import CheckPGPKey from './CheckPGPKey.vue';
     import CheckTextKey from './CheckTextKey.vue';
+    import CheckEmail from './CheckEmail.vue';
+    import CheckOffline from './CheckOffline.vue';
 
     Vue.use(VueEvents);
     Vue.use(ToggleButton);
@@ -100,6 +92,8 @@
     Vue.component('check-github-key', CheckGitHubKey);
     Vue.component('check-pgp-key', CheckPGPKey);
     Vue.component('check-text-key', CheckTextKey);
+    Vue.component('check-email', CheckEmail);
+    Vue.component('check-offline', CheckOffline);
 
     export default {
         mixins: [mixin],

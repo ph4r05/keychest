@@ -13,12 +13,21 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 
+  font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+  font-size: 95%;
+  line-height: 140%;
+
   margin: 0;
   resize: none;
   outline: none;
   -moz-tab-size: 4;
   tab-size: 4;
+
   white-space: pre;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+
   word-wrap: normal;
   overflow: auto;
 }
