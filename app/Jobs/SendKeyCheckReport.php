@@ -124,10 +124,11 @@ class SendKeyCheckReport implements ShouldQueue
      * Processes results, fills in email template data.
      * @param $report
      */
-    protected function processResults($report){
+    protected function processResults(KeyCheckReport $report){
         $report->smimeKeys = [];
         $report->pgpKeys = [];
         $report->allSafe = true;
+        $report->checkTime = Carbon::now();
 
         foreach ($this->reportData->results as $result){
             $rtype = $result->type;

@@ -1,11 +1,11 @@
 @component('mail::message')
-# KeyChest Key Check Report
+# ROCA Key Vulnerability Report
 
-Email Key Check analysis complete.
+We have completed a test of an email signing key with the following result.
 
-@component('mail::panel')
+@component('mail::panel', ['type' => $allSafe ? 'success' : 'danger'])
 @if($allSafe)
-Your keys are safe!
+The key is secure
 @else
 We identified some issues with your keys.
 @endif
@@ -30,7 +30,7 @@ We identified some issues with your keys.
 
 
 @if(!empty($smimeKeys))
-## SMIME overview
+## Details of the key
 @foreach ($smimeKeys as $key)
 @component('mail::table')
 | Attribute     | Value   |
@@ -44,7 +44,7 @@ We identified some issues with your keys.
 @endforeach
 @endif
 
-Thank you for using our KeyChest key check service.
+Thank you for using our KeyChest key check service. The check was performed {{ $checkTime->toFormattedDateString() }}.
 
 @component('mail::button', ['url' => route('tester')])
 More information

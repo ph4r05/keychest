@@ -1,6 +1,6 @@
 <table class="panel" width="100%" cellpadding="0" cellspacing="0">
     <tr>
-        <td class="panel-content">
+        <td class="panel-content panel-{{ $type or 'default' }}">
             <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                     <td class="panel-item">

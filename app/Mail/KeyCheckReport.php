@@ -20,6 +20,11 @@ class KeyCheckReport extends Mailable
     /**
      * @var
      */
+    public $checkTime;
+
+    /**
+     * @var
+     */
     public $pgpKeys;
 
     /**
