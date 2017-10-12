@@ -1,6 +1,6 @@
 <template>
     <div class="subdomains-wrapper">
-        <h3>Send us e-mail</h3>
+        <h4>Send us e-mail</h4>
 
         <p>
             We have created an email responder for easy testing of <strong>PGP</strong> keys and <strong>S/MIME</strong>

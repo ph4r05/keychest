@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div style=""><h3>Paste your key</h3>
+        <div style="">
+            <h4>Paste your key</h4>
             <form @submit.prevent="keyTextCheck()" data-vv-scope="keyText">
                 <div class="form-group">
                     <p>

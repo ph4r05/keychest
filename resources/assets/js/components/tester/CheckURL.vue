@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="server-import"><h3>URL</h3>
+        <div class="server-import">
+            <h4>TLS server</h4>
             <form @submit.prevent="urlCheck()" data-vv-scope="url">
                 <div class="form-group">
                     <p>

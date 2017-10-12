@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="subdomains-wrapper">
-            <h3>GitHub account</h3>
+            <h4>GitHub account</h4>
             <form @submit.prevent="githubCheck()" data-vv-scope="github">
                 <div class="form-group">
                     <p>

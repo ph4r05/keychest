@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h3>Install Python test</h3>
+        <h4>Install Python test</h4>
 
         <p>
             If want to test your keys privately on your computers, or integrate the test into your application, please

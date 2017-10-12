@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="subdomains-wrapper">
-            <h3>PGP/GnuPG</h3>
+            <h4>PGP/GnuPG</h4>
             <form @submit.prevent="pgpCheck()" data-vv-scope="pgp">
                 <div class="form-group">
                     <p>

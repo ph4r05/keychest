@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="subdomains-wrapper">
-            <h3>File upload</h3>
+            <h4>File upload</h4>
             <form @submit.prevent="keyFileCheck()" data-vv-scope="keyFile">
                 <div class="form-group">
                     <p>
