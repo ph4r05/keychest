@@ -23,7 +23,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('github.githubNick') || isRequestInProgress"
-                    >Test the key</button>
+                    >Test key</button>
                 </div>
             </form>
         </div>
