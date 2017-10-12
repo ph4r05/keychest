@@ -45,11 +45,11 @@
                                 <td>{{ test.issuer }}</td>
                             </tr>
                             <tr v-if="test.created_at_utc">
-                                <th>Created at</th>
+                                <th>Created on</th>
                                 <td>{{ momentu(test.created_at_utc * 1000.).format('MMM Do YYYY') }}</td>
                             </tr>
                             <tr v-if="test.not_valid_after_utc">
-                                <th>Valid until</th>
+                                <th>Expiring on</th>
                                 <td>{{ momentu(test.not_valid_after_utc * 1000.).format('MMM Do YYYY') }}</td>
                             </tr>
                             <tr v-if="test.n">
