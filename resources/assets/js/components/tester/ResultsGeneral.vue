@@ -3,10 +3,10 @@
         <div style="" v-if="results"><h2>Results</h2>
 
             <div class="alert alert-success" v-if="allSafe">
-                No vulnerable key detected
+                The key(s) are secure
             </div>
             <div class="alert alert-danger" v-else="">
-                Vulnerable key detected
+                We detected insecure key(s)
             </div>
 
             <div v-for="(result, r_idx) in results.results" v-if="results.results">
@@ -21,7 +21,7 @@
                         <table class="table">
                             <tbody>
                             <tr v-if="test.type">
-                                <th>Key Type</th>
+                                <th>Key type</th>
                                 <td>{{ keyType(test.type) }}</td>
                             </tr>
                             <tr v-if="test.kid">
@@ -65,7 +65,8 @@
                     </div>
                 </div>
                 <div v-else="">
-                    Test could not be completed
+                    We encountered an error and couldn't complete the test. Please check you used a valid format of
+                    your key(s).
                 </div>
 
             </div>
