@@ -19,7 +19,7 @@
 
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-block btn-success"
+                    <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('keyFile.keyFile') || isRequestInProgress"
                     >Test the key</button>
                 </div>

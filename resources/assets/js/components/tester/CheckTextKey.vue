@@ -36,7 +36,7 @@
 
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-block btn-success"
+                    <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('keyText.keyText') || isRequestInProgress"
                     >Test the key</button>
                 </div>

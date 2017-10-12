@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-block btn-success"
+                    <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('pgp.pgp') || isRequestInProgress"
                     >Test the key</button>
                 </div>
