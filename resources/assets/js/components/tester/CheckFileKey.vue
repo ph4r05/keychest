@@ -5,7 +5,7 @@
             <form @submit.prevent="keyFileCheck()" data-vv-scope="keyFile">
                 <div class="form-group">
                     <p>
-                        Upload your public key with the form below.
+                        If you have your public RSA key in a file, you can upload the file with the form below.
                     </p>
                     <input type="file" placeholder="public key in text form" class="form-control"
                            @change="onFileChange"
@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('keyFile.keyFile') || isRequestInProgress"
-                    >Test the key</button>
+                    >Test key</button>
                 </div>
             </form>
         </div>
