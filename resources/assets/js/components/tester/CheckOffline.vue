@@ -1,8 +1,10 @@
 <template>
-    
     <div>
+        <h3>Offline detector</h3>
+
         <p>
-            There is also a way to test your public keys privately offline with use of our detection tool.
+            There is also a way to test your public keys privately offline with use of our detection tool implemented
+            in python.
         </p>
 
         <p>
@@ -39,6 +41,11 @@
 iont-detect my-cert.pem
 iont-detect my-pgp-key.asc</span>
         </div>
+
+        <p>
+            For more information please refer to the detector GIT repository and its readme:
+            <a href="https://github.com/crocs-muni">https://github.com/crocs-muni</a>
+        </p>
     </div>
 
 </template>
