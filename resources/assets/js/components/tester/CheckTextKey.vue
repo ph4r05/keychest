@@ -1,10 +1,12 @@
 <template>
     <div>
-        <div style=""><h3>Text input</h3>
+        <div style=""><h3>Paste your key</h3>
             <form @submit.prevent="keyTextCheck()" data-vv-scope="keyText">
                 <div class="form-group">
                     <p>
-                        Paste your <strong>public key</strong> to the field bellow
+                        If you can copy your <strong>public key</strong> into clipboard, you can test it by pasting it
+                        to the text box. Please check the public key is in one of the supported formats as listed
+                        below.
                     </p>
 
                     <textarea rows="10"
@@ -23,22 +25,22 @@
                 </div>
                 <div class="form-group">
                     <p>
-                        Supported formats:
+                        Supported formats are:
                     </p>
                     <ul>
-                        <li>X509 Certificate, PEM encoded</li>
-                        <li>RSA PEM encoded public key</li>
-                        <li>SSH public key</li>
-                        <li>PGP public key</li>
-                        <li>Raw RSA modulus (hex / decimal / base64 encoded)</li>
-                        <li>S/MIME PKCS7 Signature</li>
+                        <li>X509 Certificate, PEM encoded;</li>
+                        <li>RSA PEM encoded public key;</li>
+                        <li>SSH public key;</li>
+                        <li>PGP public key;</li>
+                        <li>Raw RSA modulus (hex / decimal / base64 encoded); and</li>
+                        <li>S/MIME PKCS7 Signature.</li>
                     </ul>
 
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('keyText.keyText') || isRequestInProgress"
-                    >Test the key</button>
+                    >Test key</button>
                 </div>
             </form>
         </div>
