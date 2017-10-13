@@ -83,7 +83,12 @@ Vue.component('tester', resolve => {
 
 console.log('Vue.js init');
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    mounted() {
+        this.$nextTick(() => {
+            window.Req.bodyVueLoaded(true);
+        })
+    },
 });
 
 // Fill in missing time zones
