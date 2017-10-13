@@ -49,13 +49,11 @@
             </form>
         </div>
 
-        <transition name="fade" v-on:after-leave="transitionHook">
-            <div class="row test-results" v-show="hasResults">
-                <results-general
-                        ref="gresults"
-                ></results-general>
-            </div>
-        </transition>
+        <div class="row">
+            <results-general
+                    ref="gresults"
+            ></results-general>
+        </div>
 
     </div>
 </template>
@@ -117,13 +115,14 @@
             },
 
             onStartSending(){
-                this.$refs.gresults.onReset();
                 this.sendingState = 1;
                 this.resultsError = false;
+                this.$refs.gresults.onReset();
             },
 
             onSendingFail(){
                 this.sendingState = -1;
+                this.$refs.gresults.onError();
             },
 
             onSendFinished(){
@@ -162,17 +161,14 @@
                 const onValid = () => {
                     return new Promise((resolve, reject) => {
                         this.onStartSending();
-                        Req.bodyProgress(true);
 
                         axios.post('/tester/file', data, config)
                             .then(res => {
                                 this.onSendFinished();
-                                Req.bodyProgress(false);
                                 resolve(res);
                             })
                             .catch(err => {
                                 this.onSendFinished();
-                                Req.bodyProgress(false);
                                 reject(new Error(err));
                             });
                     });
@@ -184,6 +180,7 @@
                     .then((result) => onValid())
                     .then((result) => this.onSubmited(result))
                     .catch((err) => {
+                        this.$refs.gresults.onError();
                         this.abortResults();
                         console.log(err);
                     })

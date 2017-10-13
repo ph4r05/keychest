@@ -5,6 +5,9 @@
         <div class="alert alert-info-2 alert-waiting scan-alert" v-if="isLoading">
             <span>Loading results, please wait...</span>
         </div>
+        <div class="alert alert-danger-2 scan-alert" v-else-if="errorFlag">
+            <span>Error during key processing, please try again later.</span>
+        </div>
 
         <div v-if="results"><h2>Results</h2>
 
@@ -127,6 +130,7 @@
                 sendingState: 0,
                 resultsAvailable: 0,
                 displayFlag: 0,
+                errorFlag: 0,
             }
         },
 
@@ -179,15 +183,20 @@
             onReset(){
                 this.results = null;
                 this.allSafe = true;
-                this.displayFlag = 0;
+                this.displayFlag = 1;
+                this.errorFlag = 0;
             },
 
             onWaitingForResults(){
                 this.displayFlag = 1;
             },
 
-            onError(){
+            onHide(){
+                this.displayFlag = 0;
+            },
 
+            onError(){
+                this.errorFlag = 1;
             },
 
             onResultsLoaded(data){

@@ -28,14 +28,12 @@
             </form>
         </div>
 
-        <transition name="fade" v-on:after-leave="transitionHook">
-            <div class="row test-results" v-show="hasResults">
-                <results-general
-                        ref="gresults"
-                        :github="true"
-                ></results-general>
-            </div>
-        </transition>
+        <div class="row">
+            <results-general
+                    ref="gresults"
+                    :github="true"
+            ></results-general>
+        </div>
 
     </div>
 </template>
@@ -97,9 +95,9 @@
             },
 
             onStartSending(){
-                this.$refs.gresults.onReset();
                 this.sendingState = 1;
                 this.resultsError = false;
+                this.$refs.gresults.onReset();
             },
 
             onSendingFail(){
@@ -122,19 +120,17 @@
                         const axos = Req.apiAxios();
 
                         this.onStartSending();
-                        Req.bodyProgress(true);
 
                         // Get github ssh keys first.
                         axos.get('https://api.github.com/users/' + this.githubNick + '/keys')
                             .then(response => this.githubCheckKeys(response.data))
                             .then(response => {
                                 this.onSendFinished();
-                                Req.bodyProgress(false);
                                 resolve(response);
                             })
                             .catch(e => {
                                 this.onSendingFail();
-                                Req.bodyProgress(false);
+                                this.$refs.gresults.onHide();
 
                                 if (!e){
                                     reject(e);
@@ -159,6 +155,7 @@
                         if (!err){
                             return;
                         }
+                        this.$refs.gresults.onError();
                         this.abortResults();
                         console.warn(err);
                     });
