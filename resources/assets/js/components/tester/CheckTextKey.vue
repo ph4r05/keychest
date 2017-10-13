@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div style="">
+        <div>
             <h4>Paste your key</h4>
             <form @submit.prevent="keyTextCheck()" data-vv-scope="keyText">
                 <div class="form-group">
@@ -46,13 +46,11 @@
             </form>
         </div>
 
-        <transition name="fade" v-on:after-leave="transitionHook">
-            <div class="row test-results" v-show="hasResults">
-                <results-general
+        <div class="row test-results" v-show="isRequestInProgress || hasResults">
+            <results-general
                     ref="gresults"
-                ></results-general>
-            </div>
-        </transition>
+            ></results-general>
+        </div>
 
     </div>
 </template>

@@ -1,6 +1,12 @@
 <template>
+    <transition name="fade">
     <div class="col-md-12">
-        <div style="" v-if="results"><h2>Results</h2>
+
+        <div class="alert alert-info-2 alert-waiting scan-alert" v-if="isLoading">
+            <span>Loading results, please wait...</span>
+        </div>
+
+        <div v-if="results"><h2>Results</h2>
 
             <div class="alert alert-info-2" v-if="numKeys == 0">
                 No keys detected
@@ -77,6 +83,7 @@
         </div>
 
     </div>
+    </transition>
 </template>
 <script>
     import _ from 'lodash';
@@ -142,6 +149,9 @@
                 }
                 return num;
             },
+            isLoading(){
+                return !this.hasResults;
+            }
         },
 
         methods: {
