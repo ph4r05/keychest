@@ -9,7 +9,7 @@
         </p>
 
         <div class="alert alert-info text-center">
-            <h2 class="h2-nomarg"><a href="mailto:test@keychest.net" class="a-nounder">test@keychest.net</a></h2>
+            <h2 class="h2-nomarg"><a href="mailto:roca@keychest.net" class="a-nounder">roca@keychest.net</a></h2>
         </div>
 
         <p>
