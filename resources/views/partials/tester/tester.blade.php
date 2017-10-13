@@ -5,19 +5,29 @@
                 <div class="row">
 
                     <div class="col-md-8 col-md-offset-2 text-center">
-                        <h1>ROCA Vulnerability Test Suite</h1>
+                        <h1 class="tc-rich-electric-blue">ROCA Vulnerability Test Suite</h1>
                     </div>
                     <div class="col-md-8 col-md-offset-2 text-center">
-                        <h3>Information and tools to test RSA keys for ROCA vulnerability</h3>
+                        <h3>Information and tools to test RSA keys for the ROCA vulnerability</h3>
                     </div>
 
                     <div class="col-md-12">
+                        <p>
+                            The ROCA vulnerability has been discovered by researchers at <a target="_blank"
+                            href="https://fi.muni.cz">
+                                Masaryk University (Brno, Czech Republic)</a>. Some members of the research team are
+                            also affiliated with <a href="https://enigmabridge.com">Enigma Bridge</a>. A subsequent close
+                            cooperation resulted in this test suite, which allows users of affected products to verify
+                            whether their encryption keys are still secure.
+                        </p>
                         <p>
                             This test suite provides information about the ROCA vulnerability, which is caused by
                             an error in RSA key generation in Infineon security chips. These computer chips are
                             used in a number of products and applications as detailed in the ROCA vulnerability
                             summary below.
+                        </p>
 
+                        <p>
                             You can use this test suit to check your RSA keys in a text form, by uploading a keystore
                             in one of the supported types, or by sending an email with a digital signature (S/MIME)
                             or your PGP key to an email responder. Use the form below to select the most suitable

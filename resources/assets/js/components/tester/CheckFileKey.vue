@@ -29,11 +29,13 @@
                         <li>ASC encoded PGP key, *.pgp, *.asc;</li>
                         <li>Java Key Store file (JKS);</li>
                         <li>PKCS7 signature with user certificate;</li>
-                        <li>LDIFF file - LDAP database dump. Any field ending with ";binary::" is attempted to decode as X509 certificate</li>
-                        <li>Text file (*.txt) with an RSA key modulus per line; the modulus can be
-                            a) a base64 encoded number, b) a hex coded number, c) a decimal coded number;</li>
+                        <li>LDIFF file - LDAP database dump. We try to decode any field ending with ";binary::" as
+                            X509 certificate;</li>
+                        <li>Text file (*.txt) with an RSA key modulus per line; the modulus can be a
+                            a) base64 encoded number, b) hex coded number, c) decimal coded number;</li>
                         <li>JSON file with RSA keys, a record per line; supported records are RSA moduli
-                            (the "mod" key), certificates (the "cert" key) in the base64 encoded DER format, or an array of certificates
+                            (the "mod" key), certificates (the "cert" key) in the base64 encoded DER format, or an
+                            array of certificates
                             (the "certs" key) in the base64 encoded DER format. </li>
                     </ul>
 
