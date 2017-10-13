@@ -53,7 +53,7 @@ class KeyCheckReport extends Mailable
     public function build()
     {
         return $this
-            ->subject(config('app.name') .' - ROCAHelp key check')
+            ->subject(config('app.name') .' - ROCA Key Vulnerability Test Report')
             ->markdown('emails.keytest.report');
     }
 }

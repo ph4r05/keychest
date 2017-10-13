@@ -7,15 +7,14 @@
             certificates. Simply send a digitally signed email or your PGP key to the address below and the
             responder will reply with a test report within a couple of minutes.
         </p>
+        <p>
+            <strong>Note:</strong> If you want to test a PGP key, you may want to rather send your public key as an
+            attachment. Most email clients support this.
+        </p>
 
         <div class="alert alert-info text-center">
             <h2 class="h2-nomarg"><a href="mailto:roca@keychest.net" class="a-nounder">roca@keychest.net</a></h2>
         </div>
-
-        <p>
-            <small><strong>Note:</strong> If you want to test a PGP key, you may want to send your public key as an
-                attachment. Most email clients support this.</small>
-        </p>
 
     </div>
 </template>
