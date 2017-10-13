@@ -5,7 +5,7 @@
             <form @submit.prevent="githubCheck()" data-vv-scope="github">
                 <div class="form-group">
                     <p>
-                        If you use RSA keys to login to your GitHub account, simply enter your GitHub login name and
+                        If you use RSA keys with your GitHub account, simply enter your GitHub login name and
                         we take care of the rest using your public GitHub data.
                     </p>
 
