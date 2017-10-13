@@ -136,7 +136,7 @@
                     </p>
                     <ul>
                         <li><a target="_blank" href="https://rocahelp.com">https://rocahelp.com</a> (or <a target="_blank"
-                                                                                                           href="https://keychest.net/roca">https://keychest.net/roca</a>a>)</li>
+                                                                                                           href="https://keychest.net/roca">https://keychest.net/roca</a>)</li>
                         <li><a target="_blank" href="https://keytester.cryptosense.com">https://keytester.cryptosense.com</a></li>
                     </ul>
 
