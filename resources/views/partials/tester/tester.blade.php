@@ -1,17 +1,4 @@
 <div class="row">
-
-    {{--<div class="row">--}}
-        {{--<div class="col-md-8 col-md-offset-2 text-center">--}}
-            {{--<h1>Iont Detector</h1>--}}
-        {{--</div>--}}
-    {{--</div>--}}
-
-    {{--<div class="row">--}}
-        {{--<div class="col-md-8 col-md-offset-2 text-center">--}}
-            {{--<h3>Public RSA key vulnerability checker</h3>--}}
-        {{--</div>--}}
-    {{--</div>--}}
-
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
