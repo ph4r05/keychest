@@ -2,7 +2,7 @@
     <!-- press release -->
     <div class="row">
         <div class="xcol-md-12">
-            <sbox cssBox="box-primary" :collapsed="true">
+            <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
                 <template slot="title">ROCA vulnerability summary</template>
 
                     <p>
