@@ -42,8 +42,6 @@
                         <check-pgp-key></check-pgp-key>
                     </div>
 
-
-
                     <div id="tab_7" class="tab-pane">
                         <check-offline></check-offline>
                     </div>
@@ -78,9 +76,6 @@
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
-    import VeeValidate from 'vee-validate';
-    import { mapFields } from 'vee-validate';
-    import pgpValidator from '../../lib/validator/pgp';
 
     import PressRelease from './TesterPressRelease.vue';
     import CheckFileKey from './CheckFileKey.vue';
@@ -91,8 +86,6 @@
     import CheckOffline from './CheckOffline.vue';
 
     Vue.use(VueEvents);
-    Vue.use(ToggleButton);
-    Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     Vue.component('roca-press-release', PressRelease);
     Vue.component('check-file-key', CheckFileKey);
@@ -129,7 +122,7 @@
 
         methods: {
             hookup(){
-                VeeValidate.Validator.extend('pgp', pgpValidator);
+
             },
 
             onStartSending(){
@@ -157,11 +150,4 @@
     }
 </script>
 <style scoped>
-    .h2-nomarg {
-        margin: 0;
-    }
-
-    .a-nounder {
-        text-decoration: none;
-    }
 </style>
