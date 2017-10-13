@@ -130,7 +130,8 @@ Route::get('home/enterprise', function () {
 })->name('enterprise');
 
 // Tester
-Route::get('tester', 'KeyCheckController@index')->name('tester');
+Route::get('tester', 'KeyCheckController@index');
+Route::get('roca', 'KeyCheckController@index')->name('tester');
 Route::post('tester/key', 'KeyCheckController@keyCheck')->name('tester.keyCheck');
 Route::get('tester/pgp', 'KeyCheckController@pgpCheck')->name('tester.pgpCheck');
 Route::post('tester/file', 'KeyCheckController@fileUpload')->name('tester.fileUpload');
