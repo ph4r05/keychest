@@ -1,6 +1,6 @@
 <template>
     <transition name="fade">
-    <div class="col-md-12">
+    <div class="col-md-12" v-if="displayFlag">
 
         <div class="alert alert-info-2 alert-waiting scan-alert" v-if="isLoading">
             <span>Loading results, please wait...</span>
@@ -126,6 +126,7 @@
 
                 sendingState: 0,
                 resultsAvailable: 0,
+                displayFlag: 0,
             }
         },
 
@@ -178,6 +179,15 @@
             onReset(){
                 this.results = null;
                 this.allSafe = true;
+                this.displayFlag = 0;
+            },
+
+            onWaitingForResults(){
+                this.displayFlag = 1;
+            },
+
+            onError(){
+
             },
 
             onResultsLoaded(data){

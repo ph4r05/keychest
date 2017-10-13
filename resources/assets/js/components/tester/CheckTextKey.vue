@@ -46,7 +46,7 @@
             </form>
         </div>
 
-        <div class="row test-results" v-show="isRequestInProgress || hasResults">
+        <div class="row">
             <results-general
                     ref="gresults"
             ></results-general>
@@ -87,6 +87,7 @@
 
                 sendingState: 0,
                 resultsAvailable: 0,
+                resultsError: false,
             }
         },
 
@@ -113,6 +114,7 @@
             onStartSending(){
                 this.$refs.gresults.onReset();
                 this.sendingState = 1;
+                this.resultsError = false;
             },
 
             onSendingFail(){
@@ -156,7 +158,7 @@
                     .then((result) => onValid())
                     .then((result) => this.onSubmited(result))
                     .catch(err => {
-                        this.unlistenWebsocket();
+                        this.abortResults();
                         console.log(err);
                     });
             },
@@ -166,7 +168,11 @@
                     try {
                         console.log(result);
                         const data = result.data;
-                        resolve(data)
+
+                        this.scheduleResultsTimeout();
+                        this.$refs.gresults.onWaitingForResults();
+
+                        resolve(data);
 
                     } catch (e){
                         console.warn(e);
@@ -182,7 +188,12 @@
                 console.log(data);
                 this.resultsAvailable = 1;
                 this.$refs.gresults.onResultsLoaded(data);
-            }
+            },
+
+            onResultWaitTimeout(){
+                this.resultsError = true;
+                this.$refs.gresults.onError();
+            },
 
         },
 
