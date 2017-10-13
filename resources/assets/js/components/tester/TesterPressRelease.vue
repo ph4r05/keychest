@@ -38,8 +38,9 @@
                 </p>
 
                 <p>
-                        The team will subsequently publish technical details of the security vulnerability at the ACM
-                        CCS 2017, a computer security conference, on 2nd November 2017 in Dallas, USA under the
+                        The team will subsequently publish technical details of the security vulnerability at the
+                    <a target="_blank" href="https://www.sigsac.org/ccs/CCS2017/agenda.html">ACM
+                        CCS 2017, a computer security conference, on 2nd November 2017 in Dallas, Texas, USA</a> under the
                         title: <i>The Return of Coppersmith's Attack: Practical Factorization of Widely Used RSA Moduli.
                     </i>
                 </p>
@@ -130,7 +131,7 @@
                         of tens of millions or more.
                     </p>
 
-                    <p><b>Assessment, mitigation</b></p>
+                    <p><b>Assessment and mitigation</b></p>
 
                 <p>
                     The vulnerability can’t be used for large-scale attacks but there is a practical method for targeted
@@ -151,7 +152,7 @@
                     </ul>
 
                     <p>
-                        A list of possible mitigation actions includes:
+                        A list of possible mitigation steps includes:
                     </p>
                     <ul>
                         <li>install security updates provided by manufacturers if available;</li>
