@@ -2,11 +2,11 @@
     <div class="col-md-12">
         <div style="" v-if="results"><h2>Results</h2>
 
-            <div class="alert alert-success" v-if="allSafe">
-                The key(s) are secure
+            <div class="alert alert-success2" v-if="allSafe">
+                The {{ pluralize('key', numKeys) }} are secure
             </div>
-            <div class="alert alert-danger" v-else="">
-                We detected insecure key(s)
+            <div class="alert alert-danger-2" v-else="">
+                We detected insecure {{ pluralize('key', numKeys) }}
             </div>
 
             <div v-for="(result, r_idx) in results.results" v-if="results.results">
@@ -83,6 +83,7 @@
     import Req from 'req';
     import ph4 from 'ph4';
     import testTools from './TesterTools';
+    import pluralize from 'pluralize';
 
     import ToggleButton from 'vue-js-toggle-button';
     import toastr from 'toastr';
@@ -128,6 +129,16 @@
             hasResults(){
                 return this.results !== null;
             },
+            resultsList(){
+                return this.results && this.results.results ?  this.results.results : [];
+            },
+            numKeys(){
+                let num = 0;
+                for(const [rkey, result] of Object.entries(this.resultsList)){
+                    num += result.tests ? _.size(result.tests) : 0;
+                }
+                return num;
+            },
         },
 
         methods: {
@@ -135,6 +146,7 @@
 
             },
 
+            pluralize,
             keyType: testTools.keyType,
             bitLen: testTools.bitLen,
 
