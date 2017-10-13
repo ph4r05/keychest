@@ -41,6 +41,20 @@ function bodyProgress(started){
 }
 
 /**
+ * Main body class - indicator of parent vue loading
+ * @param loaded if true main-vue-loading is added to the body
+ */
+function bodyVueLoaded(loaded){
+    const htmlBody = $("body");
+    if (loaded){
+        htmlBody.removeClass("main-vue-loading");
+    } else {
+        htmlBody.addClass("main-vue-loading");
+    }
+    return true;
+}
+
+/**
  * Submit new scan job
  * @param target
  * @param onLoaded
@@ -664,6 +678,7 @@ function switchTabPath(path){
 //
 export default {
     bodyProgress: bodyProgress,
+    bodyVueLoaded: bodyVueLoaded,
     findGetParameter: findGetParameter,
     submitJob: submitJob,
     getJobState: getJobState,
