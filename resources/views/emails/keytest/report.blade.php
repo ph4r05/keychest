@@ -1,5 +1,5 @@
 @component('mail::message')
-# ROCA Key Vulnerability Report
+# ROCA Key Vulnerability Test Report
 
 We have completed a test of your email signing key with the following definitive result.
 
