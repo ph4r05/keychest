@@ -46,3 +46,18 @@
 
 }
 
+[v-cloak].ph4-modal {
+  display: block;
+}
+
+.main-vue-loading .ph4-modal{
+  //display: block;
+}
+
+.loading-placeholder {
+  display: none;
+}
+
+.main-vue-loading .loading-placeholder{
+  display: block;
+}

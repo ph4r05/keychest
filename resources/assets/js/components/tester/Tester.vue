@@ -122,7 +122,7 @@
 
         methods: {
             hookup(){
-
+                $('#roca-placeholder').hide();
             },
 
             onStartSending(){

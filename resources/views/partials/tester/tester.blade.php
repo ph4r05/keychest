@@ -41,4 +41,13 @@
     </div>
 </div>
 
+<!-- Loading placeholder -->
+@component('partials.box', [
+    'title' => 'ROCA vulnerability summary',
+    'boxId' => 'roca-placeholder'
+])
+    <span>Loading, please wait...</span>
+@endcomponent
+
+<!-- Vue tester -->
 <tester></tester>
