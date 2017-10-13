@@ -2,7 +2,10 @@
     <div class="col-md-12">
         <div style="" v-if="results"><h2>Results</h2>
 
-            <div class="alert alert-success-2" v-if="allSafe">
+            <div class="alert alert-info-2" v-if="numKeys == 0">
+                No keys detected
+            </div>
+            <div class="alert alert-success-2" v-else-if="allSafe">
                 The {{ pluralize('key', numKeys) }} are secure
             </div>
             <div class="alert alert-danger-2" v-else="">
