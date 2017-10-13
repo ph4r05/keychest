@@ -112,60 +112,6 @@
 
             },
 
-            onFileChange(e){
-                const files = e.target.files || e.dataTransfer.files;
-                if (!files.length){
-                    return;
-                }
-
-                this.keyFile = files[0];
-            },
-
-            keyFileCheck(){
-                const data = new FormData();
-                data.append('file', this.keyFile);
-
-                const config = {
-                    onUploadProgress: (progressEvent) => {
-                        const percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
-                        console.log(percentCompleted);
-                    }
-                };
-
-                const onValid = () => {
-                    return new Promise((resolve, reject) => {
-                        this.onStartSending();
-                        Req.bodyProgress(true);
-
-                        axios.post('/tester/file', data, config)
-                            .then(res => {
-                                this.onSendFinished();
-                                Req.bodyProgress(false);
-                                resolve(res);
-                            })
-                            .catch(err => {
-                                this.onSendFinished();
-                                Req.bodyProgress(false);
-                                reject(new Error(err));
-                            });
-                    });
-                };
-
-                // Validate and submit
-                this.$validator.validateAll('keyFile')
-                    .then((result) => this.validCheck(result, 'Invalid Key File'))
-                    .then((result) => onValid())
-                    .then((result) => {
-                        console.log(result);
-                        // TODO: parse uuid
-                        // TODO: subscribe to uuid ws.channel
-                        // TODO: set timeout 20-30 seconds for uuid ws.channel, show error after expiration.
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    })
-            },
-
         },
 
         events: {
