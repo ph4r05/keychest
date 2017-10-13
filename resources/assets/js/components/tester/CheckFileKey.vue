@@ -19,6 +19,27 @@
 
                 </div>
                 <div class="form-group">
+                    <p>
+                        Supported formats:
+                    </p>
+                    <ul>
+                        <li>X509 Certificate, PEM/DER encoded;</li>
+                        <li>RSA PEM encoded private key, public key;</li>
+                        <li>SSH public key;</li>
+                        <li>ASC encoded PGP key, *.pgp, *.asc;</li>
+                        <li>Java Key Store file (JKS);</li>
+                        <li>PKCS7 signature with user certificate;</li>
+                        <li>LDIFF file - LDAP database dump. Any field ending with ";binary::" is attempted to decode as X509 certificate</li>
+                        <li>Text file (*.txt) with an RSA key modulus per line; the modulus can be
+                            a) a base64 encoded number, b) a hex coded number, c) a decimal coded number;</li>
+                        <li>JSON file with RSA keys, a record per line; supported records are RSA moduli
+                            (the "mod" key), certificates (the "cert" key) in the base64 encoded DER format, or an array of certificates
+                            (the "certs" key) in the base64 encoded DER format. </li>
+                    </ul>
+
+                </div>
+
+                <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('keyFile.keyFile') || isRequestInProgress"
                     >Test key</button>
