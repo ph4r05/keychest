@@ -68,6 +68,7 @@
     "vue-chartjs": "^2.8.1",
     "vue-events": "^3.0.1",
     "vue-js-toggle-button": "^1.2.0",
+    "vue-scrollto": "^2.7.8",
     "vue-select": "^2.3.0",
     "vue-slider-component": "^2.4.1",
     "vue-switches": "^2.0.1",
