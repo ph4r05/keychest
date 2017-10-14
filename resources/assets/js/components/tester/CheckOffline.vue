@@ -46,7 +46,7 @@ iont-detect my-pgp-key.asc</span>
 
         <p>
             For more information please refer to the detector GIT repository and its readme file at:
-            <a href="https://github.com/crocs-muni">https://github.com/crocs-muni</a>
+            <a href="https://github.com/crocs-muni/roca">https://github.com/crocs-muni/roca</a>
         </p>
     </div>
 
