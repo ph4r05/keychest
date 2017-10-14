@@ -28,7 +28,7 @@
             </form>
         </div>
 
-        <div class="row">
+        <div class="row result-row-gh">
             <results-general
                     ref="gresults"
                     :github="true"
@@ -47,6 +47,7 @@
     import mixin from './TesterMixin';
 
     import ToggleButton from 'vue-js-toggle-button';
+    import VueScrollTo from 'vue-scrollto';
     import toastr from 'toastr';
 
     import Vue from 'vue';
@@ -58,6 +59,7 @@
 
     Vue.use(VueEvents);
     Vue.use(ToggleButton);
+    Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     Vue.component('results-general', ResultsGeneral);
@@ -113,6 +115,8 @@
             },
 
             githubCheck(){
+                this.$scrollTo('.result-row-gh');
+
                 // Double query: github -> post keys for analysis
                 // Has internal catch logic - if there are no keys promise is rejected with false.
                 const onValid = () => {

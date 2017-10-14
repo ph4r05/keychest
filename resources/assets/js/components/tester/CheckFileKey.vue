@@ -49,7 +49,7 @@
             </form>
         </div>
 
-        <div class="row">
+        <div class="row result-row-file">
             <results-general
                     ref="gresults"
             ></results-general>
@@ -67,6 +67,7 @@
     import mixin from './TesterMixin';
 
     import ToggleButton from 'vue-js-toggle-button';
+    import VueScrollTo from 'vue-scrollto';
     import toastr from 'toastr';
 
     import Vue from 'vue';
@@ -78,7 +79,9 @@
 
     Vue.use(VueEvents);
     Vue.use(ToggleButton);
+    Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+
     Vue.component('results-general', ResultsGeneral);
 
     export default {
@@ -158,6 +161,7 @@
                     }
                 };
 
+                this.$scrollTo('.result-row-file');
                 const onValid = () => {
                     return new Promise((resolve, reject) => {
                         this.onStartSending();
