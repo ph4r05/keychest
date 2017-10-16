@@ -138,6 +138,10 @@ Route::post('tester/file', 'KeyCheckController@fileUpload')->name('tester.fileUp
 
 Route::domain('roca.keychest.net')->group(function () {
     Route::get('/', 'KeyCheckController@index');
+    Route::get('roca', 'KeyCheckController@index');
+    Route::post('tester/key', 'KeyCheckController@keyCheck');
+    Route::get('tester/pgp', 'KeyCheckController@pgpCheck');
+    Route::post('tester/file', 'KeyCheckController@fileUpload');
 });
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
