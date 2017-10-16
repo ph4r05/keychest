@@ -8,7 +8,7 @@ export default {
 
     validate(value, args) {
         // Either email or PGP key ID (hexa)
-        const re_id = new RegExp(/^\s*(0x)?([0-9a-fA-F]{4,16})\s*$/, '');
+        const re_id = new RegExp(/^\s*(0x)?([0-9a-fA-F]{4,40})\s*$/, '');
         const m1 = value.match(re_id);
         if (m1){
             return {valid: true, data: 1};
