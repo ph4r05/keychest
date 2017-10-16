@@ -34,14 +34,14 @@
         </p>
 
         <div class="alert alert-info">
-            <span class="code-block">pip install iont-detect</span>
+            <span class="code-block">pip install roca-detect</span>
         </div>
 
         <h3>Usage</h3>
         <div class="alert alert-info">
-            <span class="code-block">iont-detect --help
-iont-detect my-cert.pem
-iont-detect my-pgp-key.asc</span>
+            <span class="code-block">roca-detect --help
+roca-detect my-cert.pem
+roca-detect my-pgp-key.asc</span>
         </div>
 
         <p>
