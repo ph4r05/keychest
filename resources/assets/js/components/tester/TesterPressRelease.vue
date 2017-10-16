@@ -4,7 +4,7 @@
         <div class="xcol-md-12">
             <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
                 <template slot="title">ROCA vulnerability summary</template>
-                
+
                     <h3>ROCA - Critical vulnerability in Infineon security chips including TPM and smart cards</h3>
                     <h4>
                         Technical details: <a target="_blank" href="https://acmccs.github.io/session-H1/">The Return
@@ -13,7 +13,7 @@
                     </h4>
 
                     <p>
-                        A team comprising scientists at <a target="_blank" href="https://fi.muni.cz">Masaryk University
+                        A team comprising scientists at <a target="_blank" href="https://roca.crocs.fi.muni.cz">Masaryk University
                         (Czech Republic)</a>
                         and <a target="_blank" href="https://enigmabridge.com">Enigma Bridge Ltd (UK)</a>
                         has discovered and verified a serious vulnerability in the algorithm used to generate encryption

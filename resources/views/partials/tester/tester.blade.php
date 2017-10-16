@@ -14,9 +14,11 @@
                     <div class="col-md-12">
                         <p>
                             The ROCA vulnerability has been discovered by researchers at <a target="_blank"
-                            href="https://fi.muni.cz">
+                            href="https://roca.crocs.fi.muni.cz">
                                 Masaryk University (Brno, Czech Republic)</a>. Some members of the research team are
-                            also affiliated with <a href="https://enigmabridge.com">Enigma Bridge</a>. A subsequent close
+                            also affiliated with <a href="https://enigmabridge.com">Enigma Bridge</a>
+                            and <a href="http://www.dais.unive.it/~acadia/">Ca' Foscari University of Venice</a>.
+                            A subsequent close
                             cooperation resulted in this test suite, which allows users of affected products to verify
                             whether their encryption keys are still secure.
                         </p>
