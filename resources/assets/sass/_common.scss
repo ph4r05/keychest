@@ -7,3 +7,63 @@
 .alert .fa.fa-alert-move {
   padding-right: 5px;
 }
+
+.code-block {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+  font-size: 95%;
+  line-height: 140%;
+
+  margin: 0;
+  resize: none;
+  outline: none;
+  -moz-tab-size: 4;
+  tab-size: 4;
+
+  white-space: pre;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+
+  word-wrap: normal;
+  overflow: auto;
+}
+
+.alert.alert-success-2 {
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+  color: #3c763d !important;
+
+}
+
+.alert.alert-danger-2 {
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  color: #a94442 !important;
+
+}
+
+.alert.alert-info-2 {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
+
+[v-cloak].ph4-modal {
+  display: block;
+}
+
+.main-vue-loading .ph4-modal{
+  //display: block;
+}
+
+.loading-placeholder {
+  display: none;
+}
+
+.main-vue-loading .loading-placeholder{
+  display: block;
+}

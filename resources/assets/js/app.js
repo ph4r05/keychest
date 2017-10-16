@@ -30,5 +30,10 @@ Vue.component('help-trigger', require('./components/partials/HelpTrigger.vue'));
 
 console.log('Vue.js init');
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    mounted() {
+        this.$nextTick(() => {
+            window.Req.bodyVueLoaded(true);
+        })
+    },
 });

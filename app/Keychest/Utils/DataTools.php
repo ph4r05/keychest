@@ -303,4 +303,32 @@ class DataTools {
             return 'UTC';
         }
     }
+
+    /**
+     * Shortens large strings before dump.
+     * @param $input
+     * @return mixed
+     */
+    public static function shortenBeforeDump($input){
+        if (is_array($input)){
+            $newArr = [];
+            foreach ($input as $key => $value) {
+                $newArr[$key] = self::shortenBeforeDump($value);
+            }
+            return $newArr;
+
+        } elseif (is_string($input)){
+            $ln = strlen($input);
+            if ($ln < 300){
+                return $input;
+            }
+
+            return substr($input, 0, 150)
+                . ' ... ('.($ln - 300).') ...'
+                . substr($input, -150);
+
+        } else {
+            return $input;
+        }
+    }
 }

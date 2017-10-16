@@ -1,7 +1,7 @@
 <template>
     <div class="box" v-bind:class="[auxCss, cssBox]">
         <div class="box-header with-border">
-            <h3 class="box-title"><slot name="title"></slot></h3>
+            <h3 class="box-title" :data-widget="headerWidget"><slot name="title"></slot></h3>
 
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -36,7 +36,12 @@
 
             cssBox: {
                 required: false
-            }
+            },
+            headerCollapse: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
         },
 
         data: function() {
@@ -54,6 +59,9 @@
                 return {
                     'collapsed-box': this.collapsed
                 };
+            },
+            headerWidget(){
+                return this.headerCollapse ? 'collapse' : '';
             }
         },
 

@@ -76,11 +76,19 @@ Vue.component('servers-import', resolve => {
 Vue.component('account', resolve => {
     require.ensure([], require => resolve(require('./components/license/Account.vue')), 'account');
 });
+Vue.component('tester', resolve => {
+    require.ensure([], require => resolve(require('./components/tester/Tester.vue')), 'tester');
+});
 
 
 console.log('Vue.js init');
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    mounted() {
+        this.$nextTick(() => {
+            window.Req.bodyVueLoaded(true);
+        })
+    },
 });
 
 // Fill in missing time zones

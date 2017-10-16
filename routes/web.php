@@ -129,6 +129,20 @@ Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
 
+// Tester
+Route::get('tester', 'KeyCheckController@index');
+Route::get('roca', 'KeyCheckController@index')->name('tester');
+Route::post('tester/key', 'KeyCheckController@keyCheck')->name('tester.keyCheck');
+Route::get('tester/pgp', 'KeyCheckController@pgpCheck')->name('tester.pgpCheck');
+Route::post('tester/file', 'KeyCheckController@fileUpload')->name('tester.fileUpload');
+
+Route::domain('roca.keychest.net')->group(function () {
+    Route::get('/', 'KeyCheckController@index');
+    Route::get('roca', 'KeyCheckController@index');
+    Route::post('tester/key', 'KeyCheckController@keyCheck');
+    Route::get('tester/pgp', 'KeyCheckController@pgpCheck');
+    Route::post('tester/file', 'KeyCheckController@fileUpload');
+});
 
 //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
 #adminlte_routes
