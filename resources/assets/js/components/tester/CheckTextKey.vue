@@ -49,6 +49,7 @@
         <div class="row result-row-txt">
             <results-general
                     ref="gresults"
+                    :lastInput="keyText"
             ></results-general>
         </div>
 

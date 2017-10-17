@@ -119,6 +119,10 @@
                 required: false,
                 default: false,
             },
+            lastInput: {
+                type: String,
+                required: false,
+            },
 
         },
 
