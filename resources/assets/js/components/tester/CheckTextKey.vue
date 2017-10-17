@@ -29,10 +29,14 @@
                         Supported formats are:
                     </p>
                     <ul>
-                        <li>X509 Certificate, PEM encoded (include ASCII armor "-----BEGIN");</li>
-                        <li>SSH public RSA key (starting with "ssh rsa");</li>
-                        <li>RSA PEM encoded public key (include ASCII armor "-----BEGIN");</li>
-                        <li>PGP public key;</li>
+                        <li>X509 Certificate, PEM encoded (include ASCII armor "-----BEGIN");
+                            <a @click.prevent="exampleCert">example</a></li>
+                        <li>SSH public RSA key (starting with "ssh rsa");
+                            <a @click.prevent="exampleSsh">example</a></li>
+                        <li>RSA PEM encoded public key (include ASCII armor "-----BEGIN");
+                            <a @click.prevent="examplePub">example</a></li>
+                        <li>PGP public key;
+                            <a @click.prevent="examplePgp">example</a></li>
                         <li>Raw RSA modulus (hex / decimal / base64 encoded); and</li>
                         <li>S/MIME PKCS7 Signature.</li>
                     </ul>
@@ -63,6 +67,7 @@
     import Req from 'req';
     import ph4 from 'ph4';
     import mixin from './TesterMixin';
+    import tools from './TesterTools';
 
     import ToggleButton from 'vue-js-toggle-button';
     import VueScrollTo from 'vue-scrollto';
@@ -131,6 +136,19 @@
 
             transitionHook(){
 
+            },
+
+            exampleCert(){
+                this.keyText = tools.exampleCert();
+            },
+            exampleSsh(){
+                this.keyText = tools.exampleSshKey();
+            },
+            examplePgp(){
+                this.keyText = tools.examplePgpKey();
+            },
+            examplePub(){
+                this.keyText = tools.examplePubKey();
             },
 
             keyTextCheck(){
