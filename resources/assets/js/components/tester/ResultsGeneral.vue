@@ -12,7 +12,7 @@
         <div v-if="results"><h2>Results</h2>
 
             <div class="alert alert-warning-2" v-if="numKeys > 0 && onlyMod">
-                <strong>Warning:</strong> We detected raw RSA modulus in the data only.
+                <strong>Warning:</strong> We detected only a raw RSA modulus in the data.
                 You probably used a format which the checker did not understand.
             </div>
 
