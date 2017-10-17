@@ -16,13 +16,13 @@ export default  {
 
     keyType(ktype){
         if (ktype === 'ssh-rsa'){
-            return 'SSH RSA';
+            return 'SSH RSA key';
         } else if (ktype === 'mod-hex'){
-            return 'RSA modulus (hex)';
+            return 'RSA modulus (hex encoded)';
         } else if (ktype === 'mod-base64'){
-            return 'RSA modulus (base64)';
+            return 'RSA modulus (base64 encoded)';
         } else if (ktype === 'mod-dec'){
-            return 'RSA modulus (dec)';
+            return 'RSA modulus (decimal number)';
         } else if (ktype === 'pem-rsa-key'){
             return 'RSA key';
         } else if (ktype === 'pgp'){
