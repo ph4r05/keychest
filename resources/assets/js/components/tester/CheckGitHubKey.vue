@@ -216,6 +216,7 @@
             },
 
             onResultWaitTimeout(){
+                this.abortResults();
                 this.resultsError = true;
                 this.$refs.gresults.onError();
             },
