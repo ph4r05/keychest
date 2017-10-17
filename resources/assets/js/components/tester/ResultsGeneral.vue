@@ -11,13 +11,28 @@
 
         <div v-if="results"><h2>Results</h2>
 
+            <div class="alert alert-warning-2" v-if="numKeys > 0 && onlyMod">
+                <strong>Warning:</strong> We detected raw RSA modulus in the data only.
+                You probably used a format which the checker did not understand.
+            </div>
+
+            <div class="alert alert-info-2" v-if="wasSshWithoutPrefix">
+                <strong>Suggestion:</strong> Your input starts with "AAAA" with hints it might be a SSH key but due to missing
+                format information system did not recognize it. If it is a ssh key please prefix the key with "ssh rsa "
+            </div>
+
+            <div class="alert alert-info-2" v-if="wasHexAsn1">
+                <strong>Suggestion:</strong> Your input starts with "30" which hints it may be hex encoded key representation
+                which system did not recognize. Please use supported key formats.
+            </div>
+
             <div class="alert alert-info-2" v-if="numKeys == 0">
                 No keys detected
             </div>
-            <div class="alert alert-success-2" v-else-if="allSafe">
+            <div class="alert alert-success-2" v-else-if="allSafe && !wasSshWithoutPrefix && !wasHexAsn1 && !onlyMod">
                 The {{ pluralize('key', numKeys) }} {{ pluralize('is', numKeys) }} secure
             </div>
-            <div class="alert alert-danger-2" v-else="">
+            <div class="alert alert-danger-2" v-else-if="!allSafe">
                 We detected insecure {{ pluralize('key', numKeys) }}
             </div>
 
@@ -157,6 +172,26 @@
                     num += result.tests ? _.size(result.tests) : 0;
                 }
                 return num;
+            },
+            onlyMod(){
+                let all = 0;
+                let onlyMod = 0;
+                for(const [rkey, result] of Object.entries(this.resultsList)){
+                    for(const [tkey, test] of Object.entries(result.tests)) {
+                        if (_.startsWith(test.type, 'mod-')){
+                            onlyMod += 1;
+                        }
+                        all += 1;
+                    }
+
+                }
+                return all === onlyMod;
+            },
+            wasSshWithoutPrefix(){
+                return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, 'AAAA');
+            },
+            wasHexAsn1(){
+                return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, '30');
             },
             isLoading(){
                 return !this.hasResults;
