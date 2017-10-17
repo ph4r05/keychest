@@ -15,7 +15,7 @@
                 No keys detected
             </div>
             <div class="alert alert-success-2" v-else-if="allSafe">
-                The {{ pluralize('key', numKeys) }} are secure
+                The {{ pluralize('key', numKeys) }} {{ pluralize('is', numKeys) }} secure
             </div>
             <div class="alert alert-danger-2" v-else="">
                 We detected insecure {{ pluralize('key', numKeys) }}
