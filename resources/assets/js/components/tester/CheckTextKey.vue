@@ -31,7 +31,7 @@
                     <ul>
                         <li>X509 Certificate, PEM encoded (include ASCII armor "-----BEGIN");
                             <a @click.prevent="exampleCert">example</a></li>
-                        <li>SSH public RSA key (starting with "ssh rsa");
+                        <li>SSH public RSA key (starting with "ssh-rsa ");
                             <a @click.prevent="exampleSsh">example</a></li>
                         <li>RSA PEM encoded public key (include ASCII armor "-----BEGIN");
                             <a @click.prevent="examplePub">example</a></li>
