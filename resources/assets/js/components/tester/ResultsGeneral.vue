@@ -220,11 +220,21 @@
                         continue;
                     }
 
+                    const approved_tests = [];
                     for(const [tkey, test] of Object.entries(result.tests)){
                         if ('marked' in test){
                             this.allSafe &= !!!test.marked;
                         }
+
+                        const bl = testTools.bitLen(test.n);
+                        if (_.startsWith(test.type, 'mod-') && bl < 512){
+                            continue; // skip this key as it is probably just format error
+                        }
+
+                        approved_tests.push(test);
                     }
+
+                    result.tests = approved_tests;
                 }
 
             }
