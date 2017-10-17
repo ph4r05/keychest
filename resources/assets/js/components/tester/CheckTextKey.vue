@@ -29,9 +29,9 @@
                         Supported formats are:
                     </p>
                     <ul>
-                        <li>X509 Certificate, PEM encoded;</li>
-                        <li>RSA PEM encoded public key;</li>
-                        <li>SSH public key;</li>
+                        <li>X509 Certificate, PEM encoded (include ASCII armor "-----BEGIN");</li>
+                        <li>SSH public RSA key (starting with "ssh rsa");</li>
+                        <li>RSA PEM encoded public key (include ASCII armor "-----BEGIN");</li>
                         <li>PGP public key;</li>
                         <li>Raw RSA modulus (hex / decimal / base64 encoded); and</li>
                         <li>S/MIME PKCS7 Signature.</li>

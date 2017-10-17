@@ -24,8 +24,8 @@
                     </p>
                     <ul>
                         <li>X509 Certificate, PEM/DER encoded;</li>
+                        <li>SSH public RSA key;</li>
                         <li>RSA PEM encoded private key, public key;</li>
-                        <li>SSH public key;</li>
                         <li>ASC encoded PGP key, *.pgp, *.asc;</li>
                         <li>Java Key Store file (JKS);</li>
                         <li>PKCS7 signature with user certificate;</li>
