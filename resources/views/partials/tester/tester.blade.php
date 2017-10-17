@@ -15,12 +15,10 @@
                         <p>
                             The ROCA vulnerability has been discovered by researchers at <a target="_blank"
                             href="https://roca.crocs.fi.muni.cz">
-                                Masaryk University (Brno, Czech Republic)</a>. Some members of the research team are
-                            also affiliated with <a href="https://enigmabridge.com">Enigma Bridge</a>
-                            and <a href="http://www.dais.unive.it/~acadia/">Ca' Foscari University of Venice</a>.
-                            A subsequent close
-                            cooperation resulted in this test suite, which allows users of affected products to verify
-                            whether their encryption keys are still secure.
+                            Masaryk University (Brno, Czech Republic)</a>. As two of the researchers are
+                            also affiliated with <a target="_blank" href="https://enigmabridge.com">Enigma Bridge</a> we subsequently
+                            integrated a ROCA detection tool within this test suite. It allows users of affected products to verify
+                            security of their encryption keys.
                         </p>
                         <p>
                             This test suite provides information about the ROCA vulnerability, which is caused by
@@ -45,6 +43,10 @@
                             <strong>Privacy notice:</strong> Any data you provide on this page is deleted as soon
                             as we complete a requested test. We do not keep your keys or any other data generated
                             during testing.
+                        </p>
+
+                        <p>
+                            This service is provided by <a target="_blank" href="https://enigmabridge.com"><b>Enigma Bridge</b></a> and its <a target = "_blank" href="https://keychest.net"><b>KeyChest</b></a> - a key management platform with a simple certificate expiry monitoring with automatic key enrolment and discovery. Its certificate renewal capabilities significantly reduce labor and management cost. It uses a unique secure hardware encryption platform for physical security of private keys.
                         </p>
                     </div>
                 </div>
