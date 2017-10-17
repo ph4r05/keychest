@@ -13,7 +13,7 @@
                            name="githubNick"
                            v-model="githubNick"
                            data-vv-as="GitHub login"
-                           v-validate="{regex: /^[a-zA-Z0-9_]+$/, max: 32, required: true}" />
+                           v-validate="{regex: /^[a-zA-Z0-9_-]+$/, max: 32, required: true}" />
 
                     <i v-show="errors.has('github.githubNick')" class="fa fa-warning"></i>
                     <span v-show="errors.has('github.githubNick')" class="help is-danger"
