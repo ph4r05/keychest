@@ -6,7 +6,7 @@
             <span>Loading results, please wait...</span>
         </div>
         <div class="alert alert-danger-2 scan-alert" v-else-if="errorFlag">
-            <span>Error during key processing, please try again later.</span>
+            <span><strong>Error</strong> during the key processing, please refresh the page and try again.</span>
         </div>
 
         <div v-if="results"><h2>Results</h2>
@@ -194,7 +194,7 @@
                 return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, '30');
             },
             isLoading(){
-                return !this.hasResults;
+                return !this.hasResults && !this.errorFlag;
             }
         },
 
