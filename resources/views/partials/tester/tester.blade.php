@@ -1,3 +1,17 @@
+<!-- Logo -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <a class="" href="https://keychest.net">
+                    <img src="/images/logo2-rgb_keychest.png" alt="Certificate monitoring KeyChest logo" height="30" title="Keychest">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Intro info -->
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
