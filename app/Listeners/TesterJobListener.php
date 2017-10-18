@@ -48,7 +48,6 @@ class TesterJobListener implements ShouldQueue
         try {
             $jobData = $event->getData();
             $jobType = isset($jobData->jobType) ? $jobData->jobType : null;
-            Log::info('New event: ' . var_export($event->getJsonData(), true));
 
             if ($jobType == 'email') {
                 // Start the new user job

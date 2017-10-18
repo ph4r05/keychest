@@ -126,7 +126,6 @@ class KeyCheckController extends Controller
     public function fileUploadApi(Request $request)
     {
         $file = Input::get('file');
-        Log::info($file);
 
         $job = $this->newTest(Input::get('uuid'));
         $job->setKeyType('file');
