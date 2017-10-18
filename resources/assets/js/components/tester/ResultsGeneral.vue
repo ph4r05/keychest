@@ -17,7 +17,7 @@
             </div>
 
             <div class="alert alert-info-2" v-if="wasSshWithoutPrefix">
-                <strong>Suggestion:</strong> Your input starts with "AAAA" with hints it might be a SSH key but due to missing
+                <strong>Suggestion:</strong> Your input starts with "AAAA" which hints it might be a SSH key but due to missing
                 format information system did not recognize it. If it is a ssh key please prefix the key with "ssh-rsa "
             </div>
 
