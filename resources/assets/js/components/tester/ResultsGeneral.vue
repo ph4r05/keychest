@@ -48,7 +48,7 @@
                         <table class="table">
                             <tbody>
                             <tr v-if="test.type">
-                                <th>Key type</th>
+                                <th>Type / Interpretation</th>
                                 <td>{{ keyType(test.type) }}</td>
                             </tr>
                             <tr v-if="test.kid">
