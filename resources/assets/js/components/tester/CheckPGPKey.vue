@@ -27,8 +27,8 @@
                 </div>
                 
                 <div class="form-group">
-                    <small>Note: we use an external PGP key server for the key download which may happen to be overloaded.
-                        If you get a processing error, please try to use the email responder in the next tab instead.</small>
+                    Note: we use an external PGP key server for the key download which may happen to be overloaded.
+                        If you get a processing error, please try to use the email responder in the next tab instead.
                 </div>
             </form>
         </div>
