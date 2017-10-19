@@ -30,13 +30,13 @@
                     </p>
                     <ul>
                         <li>X509 Certificate, PEM encoded (include ASCII armor "-----BEGIN");
-                            <a @click.prevent="exampleCert">example</a></li>
+                            <a @click.prevent="exampleCert" href="#">example</a></li>
                         <li>SSH public RSA key (starting with "ssh-rsa ");
-                            <a @click.prevent="exampleSsh">example</a></li>
+                            <a @click.prevent="exampleSsh" href="#">example</a></li>
                         <li>RSA PEM encoded public key (include ASCII armor "-----BEGIN");
-                            <a @click.prevent="examplePub">example</a></li>
+                            <a @click.prevent="examplePub" href="#">example</a></li>
                         <li>PGP public key;
-                            <a @click.prevent="examplePgp">example</a></li>
+                            <a @click.prevent="examplePgp" href="#">example</a></li>
                         <li>Raw RSA modulus (hex / decimal / base64 encoded); and</li>
                         <li>S/MIME PKCS7 Signature.</li>
                     </ul>
