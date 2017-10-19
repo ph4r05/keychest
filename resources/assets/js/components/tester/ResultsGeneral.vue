@@ -23,11 +23,11 @@
                 <a href="#" @click.prevent="addSshRsa">Click here to add the prefix and try again</a>.</template>
             </div>
 
-            <div class="alert alert-info-2" v-if="wasCertBase">
-                <strong>Suggestion:</strong> Your input starts with "MII" which hints it might be a X509 certificate but due to missing
-                format information system did not recognize it.
+            <div class="alert alert-info-2" v-if="wasBaseAsn1">
+                <strong>Suggestion:</strong> Your input starts with "MII" which hints it might be a X509 certificate
+                or a public key but due to missing format information system did not recognize it.
                 <template v-if="textInput"><br/>
-                <a href="#" @click.prevent="addCertFormat">Click here to add ASCII armor and try again</a>.</template>
+                <a href="#" @click.prevent="addAsn1Format">Click here to add ASCII armor and try again</a>.</template>
             </div>
 
             <div class="alert alert-info-2" v-if="wasHexAsn1">
@@ -207,7 +207,7 @@
             wasHexAsn1(){
                 return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, '30');
             },
-            wasCertBase(){
+            wasBaseAsn1(){
                 return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, 'MII');
             },
             isLoading(){
@@ -242,11 +242,18 @@
                     _.join(_.map(lines, x => { return _.size(x) === 0 ? x : 'ssh-rsa ' + x }), '\n'));
             },
 
-            addCertFormat(){
+            addAsn1Format(){
                 this.$emit('updateInput',
                     '-----BEGIN CERTIFICATE-----\n' +
-                    this.lastInput +
-                    '\n-----END CERTIFICATE-----');
+                    _.trim(this.lastInput) +
+                    '\n-----END CERTIFICATE-----\n\n' +
+                    '-----BEGIN PUBLIC KEY-----\n' +
+                    _.trim(this.lastInput) +
+                    '\n-----END PUBLIC KEY-----\n\n' +
+                    '\n-----BEGIN RSA PUBLIC KEY-----\n\n' +
+                    _.trim(this.lastInput) +
+                    '\n-----END RSA PUBLIC KEY-----\n\n'
+                );
             },
 
             onReset(){
