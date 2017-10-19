@@ -18,7 +18,16 @@
 
             <div class="alert alert-info-2" v-if="wasSshWithoutPrefix">
                 <strong>Suggestion:</strong> Your input starts with "AAAA" which hints it might be a SSH key but due to missing
-                format information system did not recognize it. If it is a ssh key please prefix the key with "ssh-rsa "
+                format information system did not recognize it. "ssh-rsa " prefix is missing.
+                <template v-if="textInput"><br/>
+                <a href="#" @click.prevent="addSshRsa">Click here to add the prefix and try again</a>.</template>
+            </div>
+
+            <div class="alert alert-info-2" v-if="wasCertBase">
+                <strong>Suggestion:</strong> Your input starts with "MII" which hints it might be a X509 certificate but due to missing
+                format information system did not recognize it.
+                <template v-if="textInput"><br/>
+                <a href="#" @click.prevent="addCertFormat">Click here to add ASCII armor and try again</a>.</template>
             </div>
 
             <div class="alert alert-info-2" v-if="wasHexAsn1">
@@ -134,6 +143,11 @@
                 required: false,
                 default: false,
             },
+            textInput: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
             lastInput: {
                 type: String,
                 required: false,
@@ -193,6 +207,9 @@
             wasHexAsn1(){
                 return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, '30');
             },
+            wasCertBase(){
+                return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, 'MII');
+            },
             isLoading(){
                 return !this.hasResults && !this.errorFlag;
             }
@@ -217,6 +234,19 @@
 
             hasMarked(obj){
                 return 'marked' in obj;
+            },
+
+            addSshRsa(){
+                const lines = _.map(_.split(this.lastInput, '\n'), _.trim);
+                this.$emit('updateInput',
+                    _.join(_.map(lines, x => { return _.size(x) === 0 ? x : 'ssh-rsa ' + x }), '\n'));
+            },
+
+            addCertFormat(){
+                this.$emit('updateInput',
+                    '-----BEGIN CERTIFICATE-----\n' +
+                    this.lastInput +
+                    '\n-----END CERTIFICATE-----');
             },
 
             onReset(){

@@ -45,6 +45,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary"
                             :disabled="errors.has('keyText.keyText') || isRequestInProgress"
+                            ref="btnSubmit"
                     >Test key</button>
                 </div>
             </form>
@@ -54,6 +55,8 @@
             <results-general
                     ref="gresults"
                     :lastInput="keyText"
+                    :textInput="true"
+                    @updateInput="onInputUpdate"
             ></results-general>
         </div>
 
@@ -149,6 +152,10 @@
             },
             examplePub(){
                 this.keyText = tools.examplePubKey();
+            },
+            onInputUpdate(evt){
+                this.keyText = evt;
+                this.$refs.btnSubmit.click();
             },
 
             keyTextCheck(){
