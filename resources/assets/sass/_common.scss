@@ -36,14 +36,20 @@
   background-color: #dff0d8;
   border-color: #d6e9c6;
   color: #3c763d !important;
+}
 
+.alert.alert-success-2 a {
+  color: #3d773e !important;
 }
 
 .alert.alert-danger-2 {
   background-color: #f2dede;
   border-color: #ebccd1;
   color: #a94442 !important;
+}
 
+.alert.alert-danger-2 a {
+  color: #aa4543 !important;
 }
 
 .alert.alert-info-2 {
@@ -52,10 +58,18 @@
   color: #31708f;
 }
 
+.alert.alert-info-2 a {
+  color: #327190 !important;
+}
+
 .alert.alert-warning-2 {
   background-color: #fcf8e3;
   border-color: #faebcc;
   color: #8a6d3b;
+}
+
+.alert.alert-warning-2 a {
+  color: #8b6e3c !important;
 }
 
 [v-cloak].ph4-modal {
