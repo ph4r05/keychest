@@ -15,8 +15,8 @@
             </div>
 
             <div class="alert alert-warning-2" v-if="numKeys > 0 && onlyMod">
-                <strong>Warning:</strong> We detected only a raw RSA modulus in the data.
-                You probably used a format which the checker did not understand.
+                <strong>Warning:</strong> We detected only a raw RSA modulus in the data. If it is not the intended
+                format, please check the key and try again, as the checker did not recognise it.
             </div>
 
             <div class="alert alert-info-2" v-if="wasSshWithoutPrefix">
