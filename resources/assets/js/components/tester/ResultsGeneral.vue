@@ -39,7 +39,7 @@
                 <strong>Suggestion:</strong> Your input starts with "30" which hints it may be hex encoded key representation
                 which system did not recognize. Please use supported key formats.
                 <template v-if="textInput && wasHexOnly"><br/>
-                <a href="#" @click.prevent="switchBase64Format">Test - Click here to convert to possible formats and try again</a>
+                <a href="#" @click.prevent="switchBase64Format">Test - click here to convert to possible formats and try again</a>
                 (assuming there is only one key / certificate).
                 </template>
             </div>
@@ -288,8 +288,15 @@
 
             switchBase64Format(){
                 const inp = _.trim(this.lastInput || '').replace(/[:\s\n\t\r]/g, '');
-                const b64 = new Buffer(inp, 'hex').toString('base64');
-                this.$emit('updateInput', this.addPemArmor(b64));
+                try {
+                    const b64 = new Buffer(inp, 'hex').toString('base64');
+                    this.$emit('updateInput', this.addPemArmor(b64));
+
+                } catch(e){
+                    toastr.error('Error in the input data, cannot convert', 'Conversion failed', {
+                        timeOut: 2000, preventDuplicates: true
+                    });
+                }
             },
 
             switchCleanModulus(){
