@@ -10,6 +10,9 @@
         </div>
 
         <div v-if="results"><h2>Results</h2>
+            <div class="alert alert-warning-2" v-if="numKeys == 0">
+                No keys detected
+            </div>
 
             <div class="alert alert-warning-2" v-if="numKeys > 0 && onlyMod">
                 <strong>Warning:</strong> We detected only a raw RSA modulus in the data.
@@ -27,18 +30,31 @@
                 <strong>Suggestion:</strong> Your input starts with "MII" which hints it might be a X509 certificate
                 or a public key but due to missing format information system did not recognize it.
                 <template v-if="textInput"><br/>
-                <a href="#" @click.prevent="addAsn1Format">Click here to add ASCII armor and try again</a>.</template>
+                <a href="#" @click.prevent="addAsn1PemFormat">Click here to add ASCII armor and try again</a>
+                (assuming there is only one key / certificate).
+                </template>
             </div>
 
             <div class="alert alert-info-2" v-if="wasHexAsn1">
                 <strong>Suggestion:</strong> Your input starts with "30" which hints it may be hex encoded key representation
                 which system did not recognize. Please use supported key formats.
+                <template v-if="textInput && wasHexOnly"><br/>
+                <a href="#" @click.prevent="switchBase64Format">Test - Click here to convert to possible formats and try again</a>
+                (assuming there is only one key / certificate).
+                </template>
             </div>
 
-            <div class="alert alert-info-2" v-if="numKeys == 0">
-                No keys detected
+            <div class="alert alert-info-2" v-if="onlyMod && !wasHexAsn1 && wasHexOnly && !wasPureHexOnly">
+                <strong>Suggestion:</strong> The input contains only hex characters with another extra separators.
+                System probably did not recognize the input format. Please use supported key formats.
+                <template v-if="textInput && wasHexOnly"><br/>
+                If you know it is a RAW RSA modulus
+                <a href="#" @click.prevent="switchCleanModulus">click here to remove unneeded characters and try again</a>
+                (assuming there is only one modulus).
+                </template>
             </div>
-            <div class="alert alert-success-2" v-else-if="allSafe && !wasSshWithoutPrefix && !wasHexAsn1 && !onlyMod">
+
+            <div class="alert alert-success-2" v-else-if="numKeys > 0 && allSafe && !wasSshWithoutPrefix && !wasHexAsn1 && !onlyMod">
                 The {{ pluralize('key', numKeys) }} {{ pluralize('is', numKeys) }} secure
             </div>
             <div class="alert alert-danger-2" v-else-if="!allSafe">
@@ -202,13 +218,24 @@
                 return all === onlyMod;
             },
             wasSshWithoutPrefix(){
-                return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, 'AAAA');
+                return !this.errorFlag && this.results && this.lastInput &&
+                    _.startsWith(_.trim(this.lastInput), 'AAAA');
             },
             wasHexAsn1(){
-                return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, '30');
+                return !this.errorFlag && this.results && this.lastInput &&
+                    _.startsWith(_.trim(this.lastInput), '30');
             },
             wasBaseAsn1(){
-                return !this.errorFlag && this.results && this.lastInput && _.startsWith(this.lastInput, 'MII');
+                return !this.errorFlag && this.results && this.lastInput &&
+                    _.startsWith(_.trim(this.lastInput), 'MII');
+            },
+            wasHexOnly(){
+                return !this.errorFlag && this.results && this.lastInput &&
+                    /^[a-fA-f0-9:\s\n\t\r]+$/.test(this.lastInput);
+            },
+            wasPureHexOnly(){
+                return !this.errorFlag && this.results && this.lastInput &&
+                    /^[a-fA-f0-9]+$/.test(this.lastInput);
             },
             isLoading(){
                 return !this.hasResults && !this.errorFlag;
@@ -242,18 +269,32 @@
                     _.join(_.map(lines, x => { return _.size(x) === 0 ? x : 'ssh-rsa ' + x }), '\n'));
             },
 
-            addAsn1Format(){
-                this.$emit('updateInput',
-                    '-----BEGIN CERTIFICATE-----\n' +
-                    _.trim(this.lastInput) +
+            addPemArmor(inp){
+                const trimmed = _.trim(inp);
+                return '-----BEGIN CERTIFICATE-----\n' +
+                    trimmed +
                     '\n-----END CERTIFICATE-----\n\n' +
                     '-----BEGIN PUBLIC KEY-----\n' +
-                    _.trim(this.lastInput) +
+                    trimmed +
                     '\n-----END PUBLIC KEY-----\n\n' +
-                    '\n-----BEGIN RSA PUBLIC KEY-----\n\n' +
-                    _.trim(this.lastInput) +
+                    '\n-----BEGIN RSA PUBLIC KEY-----\n' +
+                    trimmed +
                     '\n-----END RSA PUBLIC KEY-----\n\n'
-                );
+            },
+
+            addAsn1PemFormat(){
+                this.$emit('updateInput', this.addPemArmor(this.lastInput));
+            },
+
+            switchBase64Format(){
+                const inp = _.trim(this.lastInput || '').replace(/[:\s\n\t\r]/g, '');
+                const b64 = new Buffer(inp, 'hex').toString('base64');
+                this.$emit('updateInput', this.addPemArmor(b64));
+            },
+
+            switchCleanModulus(){
+                const inp = _.trim(this.lastInput || '').replace(/[:\s\n\t\r]/g, '');
+                this.$emit('updateInput', inp);
             },
 
             onReset(){
