@@ -20,14 +20,14 @@
             </div>
 
             <div class="alert alert-info-2" v-if="wasSshWithoutPrefix">
-                <strong>Suggestion:</strong> Your input starts with "AAAA" which hints it might be a SSH key but due to missing
+                <strong>Suggestion:</strong> Your input looks like a SSH key but due to missing
                 format information system did not recognize it. "ssh-rsa " prefix is missing.
                 <template v-if="textInput"><br/>
                 <a href="#" @click.prevent="addSshRsa">Click here to add the prefix and try again</a>.</template>
             </div>
 
             <div class="alert alert-info-2" v-if="wasBaseAsn1">
-                <strong>Suggestion:</strong> Your input starts with "MII" which hints it might be a X509 certificate
+                <strong>Suggestion:</strong> Your input looks like X509 certificate
                 or a public key but due to missing format information system did not recognize it.
                 <template v-if="textInput"><br/>
                 <a href="#" @click.prevent="addAsn1PemFormat">Click here to add ASCII armor and try again</a>
@@ -36,19 +36,25 @@
             </div>
 
             <div class="alert alert-info-2" v-if="wasHexAsn1">
-                <strong>Suggestion:</strong> Your input starts with "30" which hints it may be hex encoded key representation
-                which system did not recognize. Please use supported key formats.
-                <template v-if="textInput && wasHexOnly"><br/>
-                <a href="#" @click.prevent="switchBase64Format">Test - click here to convert to possible formats and try again</a>
-                (assuming there is only one key / certificate).
+                <template v-if="!textInput">
+                    <strong>Suggestion:</strong>
+                    Your input starts with "30" which hints it may be hex encoded key representation
+                    which system did not recognize. Please use supported key formats.
+                </template>
+                <template v-else="">
+                    Tho format looks like PKCS#1 / ASN.1, which the checker doesn't understand.
+                    <template v-if="wasHexOnly">
+                        <a href="#" @click.prevent="switchBase64Format">Click here to try our auto-conversion.</a>
+                        Be careful, it is not fully tested.
+                    </template>
                 </template>
             </div>
 
             <div class="alert alert-info-2" v-if="onlyMod && !wasHexAsn1 && wasHexOnly && !wasPureHexOnly">
                 <strong>Suggestion:</strong> The input contains only hex characters with another extra separators.
-                System probably did not recognize the input format. Please use supported key formats.
+                System did not recognize the input format. Please use supported key formats.
                 <template v-if="textInput && wasHexOnly"><br/>
-                If you know it is a RAW RSA modulus
+                If you are sure it is a RAW RSA modulus
                 <a href="#" @click.prevent="switchCleanModulus">click here to remove unneeded characters and try again</a>
                 (assuming there is only one modulus).
                 </template>
