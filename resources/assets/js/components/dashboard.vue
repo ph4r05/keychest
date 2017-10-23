@@ -163,7 +163,7 @@
             <!-- Monthly planner -->
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-success">
+                    <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Yearly renewal calendar</template>
                         <p>
                             The following two charts provide information about the effort needed in the next 12 months to
@@ -205,7 +205,7 @@
             <a name="incidentSummary"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-success">
+                    <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Number of incidents per category</template>
                             <p>The table shows a summary of the number of active incidents per category.
                             Futher details are in the "Incidents" section of the dashboard.
@@ -273,7 +273,7 @@
             <!-- DNS lookup fails -->
             <div v-if="dnsFailedLookups.length > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" >
+                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">DNS configuration issues ({{dnsFailedLookups.length}})</template>
                         <p>Please check if the following domain names are correct. You may also need to verify
                             your DNS configuration at your DNS registrar and at your DNS servers.</p>
@@ -303,7 +303,7 @@
             <!-- TLS connection fails -->
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" >
+                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Unreachable servers ({{tlsErrors.length}})</template>
 
                         <p>We failed to connect to one or more servers using TLS protocol.</p>
@@ -348,7 +348,7 @@
             <!-- TLS trust errors -->
             <div v-if="len(tlsInvalidTrust) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" >
+                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Servers with configuration errors ({{ len(tlsInvalidTrust) }})</template>
                         <p>We detected security or configuration problems at following servers</p>
                         <div class="table-responsive table-xfull">
@@ -396,7 +396,7 @@
             <!-- TLS hostname errors -->
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" >
+                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Unused, default, or incorrect certificates ({{len(tlsInvalidHostname)}})</template>
                         <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
@@ -436,7 +436,7 @@
             <!-- TLS expired certificates -->
             <div v-if="len(expiredCertificates) > 0" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-danger">
+                    <sbox cssBox="box-danger" :headerCollapse="true">
                         <template slot="title">Servers with expired certificates ({{len(expiredCertificates)}})</template>
                         <p>Clients can't connect to following servers due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
@@ -491,7 +491,7 @@
             <a name="renewals"></a>
             <div v-if="showImminentRenewals" class="row">
                 <div class="xcol-md-12">
-                <sbox cssBox="box-success">
+                <sbox cssBox="box-success" :headerCollapse="true">
                     <template slot="title">Renewals due in next 28 days</template>
                     <p>Watch carefully dates in the following table to prevent downtime on your servers. Certificates expired
                     more than 28 days ago are excluded.</p>
@@ -534,7 +534,7 @@
             <!-- Expiring domains -->
             <div v-if="showExpiringDomains" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-success">
+                    <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Domain name expiration dates</template>
                         <p>The following domain names' registration expires within 90 days.</p>
                         <div class="table-responsive table-xfull">
@@ -566,7 +566,7 @@
             <!-- Domains without expiration date detected - important, not to mislead it is fine -->
             <div v-if="showDomainsWithUnknownExpiration" class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-warning">
+                    <sbox cssBox="box-warning" :headerCollapse="true">
                         <template slot="title">Domains with unknown expiration</template>
                         <p>We were unable to detect expiration domain date for the following domains:</p>
                         <div class="table-responsive table-xfull">
@@ -600,7 +600,7 @@
             <!-- Certificate types -->
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-success">
+                    <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Certificate overview</template>
                         <div class="form-group">
                             <p>
@@ -617,7 +617,7 @@
             <!-- Certificate issuers -->
             <div class="row" v-if="certIssuerTableData">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-success">
+                    <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Number of certificates per issuer</template>
                         <div class="table-responsive table-xfull" style="margin-bottom: 10px">
                         <table class="table table-bordered table-striped table-hover">
@@ -649,7 +649,7 @@
             <!-- Certificate domains -->
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-primary">
+                    <sbox cssBox="box-primary" :headerCollapse="true">
                         <template slot="title">Number of server names in SAN certificates</template>
                         <p>Certificates can be used for multiple servers (domain names).
                             The table shows how many servers can use a certain certificate.
@@ -726,7 +726,7 @@
             <a name="certs"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-primary" :collapsed="true" >
+                    <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Certificates under your management</template>
                         <div class="form-group">
                         <p>This is a list of all certificates that you control and are responsible for renewals.
@@ -785,7 +785,7 @@
             <a name="allCerts"></a>
             <div class="row">
                 <div class="xcol-md-12">
-                    <sbox cssBox="box-primary" :collapsed="true" >
+                    <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
                         <template slot="title">All certificates of your servers</template>
                         <div class="form-group">
                             <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
