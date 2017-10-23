@@ -13,7 +13,7 @@
   "devDependencies": {
     "acacha-forms": "^0.1.4",
     "accounting": "^0.4.1",
-    "admin-lte": "^2.3.11",
+    "admin-lte": "2.3.11",
     "axios": "^0.16.2",
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-runtime": "^6.23.0",
