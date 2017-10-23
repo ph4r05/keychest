@@ -8,9 +8,9 @@
         mixins:[
             TableSelectMixin
         ],
-        components:[
+        components: {
             TableSelectMixin
-        ]
+        }
     }
 
 </script>
