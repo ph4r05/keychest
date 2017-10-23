@@ -139,12 +139,13 @@
                 <div v-if="!allSafe && allBsiSafe" class="alert alert-info-2">
                     <a name="bsi_info"></a>
                     <strong>Security notice:</strong>
-                    All ROCA-fingerprinted public keys have a distinct algebraic structure that significantly reduces the amount
-                    of the entropy of the key and does not provide the expected security margin when compared to a
-                    randomly generated key of the same length. The keys with lengths of 3072 and 3584 are considered
-                    usable for qualified signature creation by German BSI
-                    [<a href="https://www.bsi.bund.de/SharedDocs/Zertifikate_CC/CC/Digitale_Signatur-Sichere_Signaturerstellungseinheiten/0833.html"
-                        rel="nofollow" target="_blank">link</a>].
+                    Keys with the ROCA vulnerability provide significantly lower level of security than expected for RSA keys of the given length.
+                    <p>
+                        Notice from German BSI: ROCA vulnerable keys with bit lengths of 3,072 and 3,584 are still
+                        considered suitable for qualified signature creation
+                        [<a href="https://www.bsi.bund.de/SharedDocs/Zertifikate_CC/CC/Digitale_Signatur-Sichere_Signaturerstellungseinheiten/0833.html"
+                        rel="nofollow" target="_blank">link to BSI</a>].
+                    </p>
                 </div>
 
             </div>
