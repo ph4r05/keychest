@@ -32,11 +32,11 @@
                           @vuetable:checkbox-toggled="onCheckboxToggled"
                           @vuetable:checkbox-toggled-all="onCheckboxToggled"
                 >
-                    <template slot="used" scope="props">
+                    <template slot="used" slot-scope="props">
                         <span class="label label-primary" v-if="props.rowData.used">Monitored</span>
                         <span class="label label-warning" v-else="">Not monitored</span>
                     </template>
-                    <template slot="actions" scope="props">
+                    <template slot="actions" slot-scope="props">
                         <button type="button" class="btn btn-subdom btn-success"
                                 v-if="!props.rowData.used" v-on:click="addToMonitoring(props.rowData)"
                         >Add to monitoring</button>

@@ -42,7 +42,7 @@
         @vuetable:checkbox-toggled="onCheckboxToggled"
         @vuetable:checkbox-toggled-all="onCheckboxToggled"
       >
-        <template slot="host" scope="props">
+        <template slot="host" slot-scope="props">
 
           <!-- IP scan host - special treating -->
           <template v-if="props.rowData.is_ip_host">
@@ -64,7 +64,7 @@
           <span class="label label-primary" title="Scanned" v-if="props.rowData.ip_scan_id">Scan</span>
         </template>
 
-        <template slot="errors" scope="props">
+        <template slot="errors" slot-scope="props">
           <span class="label label-danger" v-if="props.rowData.dns_error">DNS</span>
           <span class="label" v-bind:class="{
               'label-danger': props.rowData.tls_errors == props.rowData.tls_all,
@@ -73,14 +73,14 @@
           </span>
           <span class="label label-success" v-if="!props.rowData.dns_error && props.rowData.tls_errors == 0">ON</span>
         </template>
-        <template slot="dns" scope="props">
+        <template slot="dns" slot-scope="props">
           <div v-if="!props.rowData.dns_error">
             <span class="label label-primary" title="IPv4">{{props.rowData.dns_num_ipv4}}</span>
             <span class="label label-success" title="IPv6">{{props.rowData.dns_num_ipv6}}</span>
           </div>
           <span v-else="">-</span>
         </template>
-        <template slot="actions" scope="props">
+        <template slot="actions" slot-scope="props">
           <div class="custom-actions">
             <button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>
             <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>

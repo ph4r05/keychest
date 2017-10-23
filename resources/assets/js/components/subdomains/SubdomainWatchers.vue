@@ -36,7 +36,7 @@
                           @vuetable:checkbox-toggled="onCheckboxToggled"
                           @vuetable:checkbox-toggled-all="onCheckboxToggled"
                 >
-                    <template slot="actions" scope="props">
+                    <template slot="actions" slot-scope="props">
                         <div class="custom-actions">
                             <button class="btn btn-sm btn-primary"
                                     @click="editItemAction('edit-item', props.rowData, props.rowIndex)"><i class="glyphicon glyphicon-pencil"></i></button>
@@ -44,11 +44,11 @@
                                     @click="deleteItemAction('delete-item', props.rowData, props.rowIndex)"><i class="glyphicon glyphicon-trash"></i></button>
                         </div>
                     </template>
-                    <template slot="autoadd" scope="props">
+                    <template slot="autoadd" slot-scope="props">
                         <span class="label label-success" v-if="props.rowData.auto_fill_watches">On</span>
                         <span class="label label-default" v-else="">Off</span>
                     </template>
-                    <template slot="detected" scope="props">
+                    <template slot="detected" slot-scope="props">
                         <div v-if="formatResSize(props.rowData.sub_result_size) !== -1" class="text-right">
                             {{ props.rowData.sub_result_size }} </div>
                         <div v-else="" class="text-center">

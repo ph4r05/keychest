@@ -50,16 +50,16 @@
         @vuetable:checkbox-toggled="onCheckboxToggled"
         @vuetable:checkbox-toggled-all="onCheckboxToggled"
       >
-        <template slot="service" scope="props">
+        <template slot="service" slot-scope="props">
           {{ props.rowData.service_name }}<template v-if="props.rowData.service_port != 443">:{{ props.rowData.service_port }}</template>
         </template>
-        <template slot="iprange" scope="props">
+        <template slot="iprange" slot-scope="props">
           {{ props.rowData.ip_beg }} - {{ props.rowData.ip_end }}
         </template>
-        <template slot="range_size" scope="props">
+        <template slot="range_size" slot-scope="props">
           {{ getRangeSize(props.rowData) }}
         </template>
-        <template slot="actions" scope="props">
+        <template slot="actions" slot-scope="props">
           <div class="custom-actions">
             <button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>
             <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>
