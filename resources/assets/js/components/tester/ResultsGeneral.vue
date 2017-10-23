@@ -341,6 +341,9 @@
             onReset(){
                 this.results = null;
                 this.allSafe = true;
+                this.allBsiSafe = true;
+                this.numPositive = 0;
+                this.numPositiveBsi = 0;
                 this.displayFlag = 1;
                 this.errorFlag = 0;
             },
@@ -360,6 +363,9 @@
             onResultsLoaded(data){
                 this.results = data;
                 this.allSafe = true;
+                this.allBsiSafe = true;
+                this.numPositive = 0;
+                this.numPositiveBsi = 0;
                 console.log(data);
 
                 // Results processing.
