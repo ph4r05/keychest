@@ -60,11 +60,15 @@
                 </template>
             </div>
 
-            <div class="alert alert-success-2" v-else-if="numKeys > 0 && allSafe && !wasSshWithoutPrefix && !wasHexAsn1 && !onlyMod">
+            <div class="alert alert-success-2" v-if="numKeys > 0 && allSafe && !wasSshWithoutPrefix && !wasHexAsn1 && !onlyMod">
                 The {{ pluralize('key', numKeys) }} {{ pluralize('is', numKeys) }} secure
             </div>
+            <div class="alert alert-warning-2" v-else-if="!allSafe && allBsiSafe">
+                We detected {{ numPositive == 1 ? 'a' : '' }} fingerprinted {{ pluralize('key', numPositive) }} that does not provide the expected security level
+                - <a href="#bsi_info">more info</a>.
+            </div>
             <div class="alert alert-danger-2" v-else-if="!allSafe">
-                We detected insecure {{ pluralize('key', numKeys) }}
+                We detected insecure {{ pluralize('key', numPositive) }}
             </div>
 
             <div v-for="(result, r_idx) in results.results" v-if="results.results">
@@ -116,7 +120,11 @@
                             </tr>
                             <tr v-if="hasMarked(test)">
                                 <th>Test result</th>
-                                <td>{{ test.marked ? 'Vulnerable' : 'Safe' }}</td>
+                                <td>
+                                    <template v-if="!test.marked">Safe</template>
+                                    <template v-else-if="isBsiSafe(test.n)">Fingerprinted key. Does not provide the expected security level.</template>
+                                    <template v-else="">Vulnerable</template>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -125,6 +133,18 @@
                 <div v-else="">
                     We encountered an error and couldn't complete the test. Please check you used a valid format of
                     your key(s).
+                </div>
+
+                <!-- BSI info -->
+                <div v-if="!allSafe && allBsiSafe" class="alert alert-info-2">
+                    <a name="bsi_info"></a>
+                    <strong>Security notice:</strong>
+                    All ROCA-fingerprinted public keys have a distinct algebraic structure that significantly reduces the amount
+                    of the entropy of the key and does not provide the expected security margin when compared to a
+                    randomly generated key of the same length. The keys with lengths of 3072 and 3584 are considered
+                    usable for qualified signature creation by German BSI
+                    [<a href="https://www.bsi.bund.de/SharedDocs/Zertifikate_CC/CC/Digitale_Signatur-Sichere_Signaturerstellungseinheiten/0833.html"
+                        rel="nofollow" target="_blank">link</a>].
                 </div>
 
             </div>
@@ -181,6 +201,9 @@
             return {
                 results: null,
                 allSafe: true,
+                allBsiSafe: true,
+                numPositive: 0,
+                numPositiveBsi: 0,
 
                 sendingState: 0,
                 resultsAvailable: 0,
@@ -256,6 +279,11 @@
             pluralize,
             keyType: testTools.keyType,
             bitLen: testTools.bitLen,
+            isBsiSafeBl: testTools.isBsiConsideredSafe,
+
+            isBsiSafe(x){
+                return testTools.isBsiConsideredSafe(testTools.bitLen(x));
+            },
 
             length(x){
                 return x ? _.size(x) : 0;
@@ -352,14 +380,18 @@
 
                     const approved_tests = [];
                     for(const [tkey, test] of Object.entries(result.tests)){
-                        if ('marked' in test){
-                            this.allSafe &= !!!test.marked;
-                        }
+                        const marked = 'marked' in test ? !!test.marked : false;
 
-                        const bl = testTools.bitLen(test.n);
+                        const bl = testTools.bitLen(test.n) || 0;
                         if (_.startsWith(test.type, 'mod-') && bl < 512){
                             continue; // skip this key as it is probably just format error
                         }
+
+                        const bsiSafe = testTools.isBsiConsideredSafe(bl);
+                        this.allSafe &= !marked;
+                        this.allBsiSafe &= bsiSafe || !marked;
+                        this.numPositive += marked ? 1 : 0;
+                        this.numPositiveBsi += bsiSafe ? 0 : 1;
 
                         approved_tests.push(test);
                     }

@@ -46,6 +46,15 @@ export default  {
         }
     },
 
+    /**
+     * Returns true if for the given bit length the key is considered "safe" by BSI org (Germany).
+     * @param bitLen
+     * @returns {boolean}
+     */
+    isBsiConsideredSafe(bitLen){
+        return bitLen >= 3072 && bitLen <= 3936;
+    },
+
     exampleCert(){
         return '-----BEGIN CERTIFICATE-----\n' +
             'MIICpTCCAYwCCQC2u0PIfFaGMjANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAls\n' +
