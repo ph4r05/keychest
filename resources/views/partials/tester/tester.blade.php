@@ -62,6 +62,14 @@
                         <p>
                             This service is provided by <a target="_blank" href="https://enigmabridge.com"><b>Enigma Bridge</b></a> and its <a target = "_blank" href="https://keychest.net"><b>KeyChest</b></a> - a key management platform with a simple certificate expiry monitoring with automatic key enrolment and discovery. Its certificate renewal capabilities significantly reduce labor and management cost. It uses a unique secure hardware encryption platform for physical security of private keys.
                         </p>
+                        <p><b>Update (20th October)</b>: Gemalto IDPrime .NET smart cards have been generating weak RSA
+                            keys since 2008 or earlier - <a target="_blank" href="https://dan.enigmabridge.com/roca-vulnerability-impact-on-gemalto-idprime-net-smart-cards/">ROCA
+                                vulnerability impact on Gemalto IDPrime .NET smart cards</a>.</p>
+                        <p><b>Update (24th October)</b>: <a target="_blank" href="https://crocs.fi.muni.cz/">Researchers
+                                from Masaryk University</a> requested changes to texts explaining test results. We are
+                            updating these to provide more accurate guidance. Please visit their web page at <a target="_blank"
+                        href="https://crocs.fi.muni.cz/public/papers/rsa_ccs17">ROCA: Vulnerable RSA generation</a> for a detailed
+                        description of the impact of the ROCA vulnerability.</p>
                     </div>
                 </div>
             </div>
