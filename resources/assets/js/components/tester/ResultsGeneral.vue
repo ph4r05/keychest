@@ -61,14 +61,13 @@
             </div>
 
             <div class="alert alert-success-2" v-if="numKeys > 0 && allSafe && !wasSshWithoutPrefix && !wasHexAsn1 && !onlyMod">
-                The {{ pluralize('key', numKeys) }} {{ pluralize('is', numKeys) }} secure
+                The {{ pluralize('key', numKeys) }} {{ pluralize('is', numKeys) }} resistant to ROCA.
             </div>
             <div class="alert alert-warning-2" v-else-if="!allSafe && allBsiSafe">
-                We detected {{ numPositive == 1 ? 'a' : '' }} fingerprinted {{ pluralize('key', numPositive) }} that does not provide the expected security level
-                - <a href="#bsi_info">more info</a>.
+                The {{ pluralize('key', numPositive) }} {{ pluralize('is', numKeys) }} subject to ROCA, which significantly reduces {{ pluralize('its', numKeys) }} security.
             </div>
             <div class="alert alert-danger-2" v-else-if="!allSafe">
-                We detected insecure {{ pluralize('key', numPositive) }}
+                The {{ pluralize('key', numPositive) }} {{ pluralize('is', numKeys) }} subject to ROCA, which reduces {{ pluralize('its', numKeys) }} security beyond generally acceptable level.
             </div>
 
             <div v-for="(result, r_idx) in results.results" v-if="results.results">
@@ -122,8 +121,8 @@
                                 <th>Test result</th>
                                 <td>
                                     <template v-if="!test.marked">Safe</template>
-                                    <template v-else-if="isBsiSafe(test.n)">Fingerprinted key. Does not provide the expected security level.</template>
-                                    <template v-else="">Vulnerable</template>
+                                    <template v-else-if="isBsiSafe(test.n)">Subject to ROCA vulnerability, reduced security level.</template>
+                                    <template v-else="">Subject to ROCA vulnerability, insecure.</template>
                                 </td>
                             </tr>
                             </tbody>
@@ -136,15 +135,16 @@
                 </div>
 
                 <!-- BSI info -->
-                <div v-if="!allSafe && allBsiSafe" class="alert alert-info-2">
+                <div v-if="!allSafe" class="alert alert-info-2">
                     <a name="bsi_info"></a>
                     <strong>Security notice:</strong>
-                    All ROCA-fingerprinted public keys have a distinct algebraic structure that significantly reduces the amount
-                    of the entropy of the key and does not provide the expected security margin when compared to a
-                    randomly generated key of the same length. The keys with lengths of 3072 and 3584 are considered
-                    usable for qualified signature creation by German BSI
-                    [<a href="https://www.bsi.bund.de/SharedDocs/Zertifikate_CC/CC/Digitale_Signatur-Sichere_Signaturerstellungseinheiten/0833.html"
-                        rel="nofollow" target="_blank">link</a>].
+                    Keys with the ROCA vulnerability provide significantly lower level of security than expected for RSA keys of the given length.
+                    <p>
+                        Addendum: The BSI, German security evaluation agency, has evaluated the strength of RSA keys for impacted cards Atos CardOS V5.0 and concluded that
+                        'the key length 3,072 and 3,584 have a security level above 100 bit', the required security level for qualified signatures.
+                        [<a href="https://www.bsi.bund.de/SharedDocs/Zertifikate_CC/CC/Digitale_Signatur-Sichere_Signaturerstellungseinheiten/0833.html"
+                            rel="nofollow" target="_blank">link to BSI</a>].
+                    </p>
                 </div>
 
             </div>
