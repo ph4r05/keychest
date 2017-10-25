@@ -29,6 +29,7 @@
         "league/flysystem": "^1.0",
         "mlocati/ip-lib": "^1.4",
         "php-di/invoker": "^2.0",
+        "phpseclib/phpseclib": "~2.0",
         "predis/predis": "v1.1.1",
         "true/punycode": "~2.0",
         "webpatser/laravel-uuid": "^2.0"
