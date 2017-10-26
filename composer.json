@@ -15,7 +15,7 @@
         "barryvdh/laravel-ide-helper": "^2.3",
         "creativeorange/gravatar": "~1.0",
         "ellipsesynergie/api-response": "^0.15.0",
-        "graham-campbell/markdown": "^7.1",
+        "graham-campbell/markdown": "^8.0",
         "icanboogie/inflector": "^1.4",
         "influendo/laravel-survivor": "^1.0",
         "ircmaxell/random-lib": "^1.2",
