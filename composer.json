@@ -5,7 +5,7 @@
     "license": "no license",
     "type": "project",
     "require": {
-        "php": ">=5.6.4|~7.0",
+        "php": ">=7.0",
         "acacha/admin-lte-template-laravel": "^4.1",
         "acacha/filesystem": "^0.1.0",
         "acacha/helpers": "^0.1.3",
@@ -22,8 +22,8 @@
         "jackiedo/dotenv-editor": "^1.0",
         "laracasts/utilities": "~2.0",
         "laravel/browser-kit-testing": "^1.0.2",
-        "laravel/dusk": "^1.0",
-        "laravel/framework": "5.4.*",
+        "laravel/dusk": "^2.0",
+        "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4",
         "league/flysystem": "^1.0",
@@ -35,9 +35,10 @@
         "webpatser/laravel-uuid": "^2.0"
     },
     "require-dev": {
+        "filp/whoops": "~2.0",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7",
+        "phpunit/phpunit": "~6.0",
         "squizlabs/php_codesniffer": "^2.3"
     },
     "autoload": {
@@ -56,6 +57,10 @@
         }
     },
     "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
+        ],
         "post-root-package-install": [
             "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
