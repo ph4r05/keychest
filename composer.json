@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=7.0",
-        "acacha/admin-lte-template-laravel": "^4.1",
+        "acacha/admin-lte-template-laravel": "^5.0",
         "acacha/filesystem": "^0.1.0",
         "acacha/helpers": "^0.1.3",
         "acacha/laravel-social": "^0.1.9",
