@@ -125,6 +125,10 @@ Route::get('home/user-guide', function () {
     return view('userguide');
 })->name('user-guide');
 
+Route::get('home/apidoc', function () {
+    return view('apidoc');
+})->name('api');
+
 Route::get('home/enterprise', function () {
     return view('enterprise');
 })->name('enterprise');
