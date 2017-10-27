@@ -17,8 +17,10 @@ return [
     'home-page' => 'Intro Page',
     'content' => 'Stories',
     'userguide' => 'User Guide',
-    'enterprise' => "Enterprise",
+    'enterprise' => 'Enterprise',
+    'request' => 'Request KeyChest',
     'license' => 'Account',
+    'apidoc' => 'API',
 
 
     'dashboard_desc' => 'headlines, incidents, planning, and useful information',
@@ -28,4 +30,6 @@ return [
     'userguide_desc' => '',
     'enterprise_desc' => 'KeyChest Enterprise for teams and internal networks',
     'license_desc' => 'License and accout information',
+    'request_desc' => 'Benefits of KeyChest; customize your purchase order',
+    'apidoc_desc' => 'Automate certificates with our API',
 ];
