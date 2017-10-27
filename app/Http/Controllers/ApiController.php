@@ -258,7 +258,7 @@ class ApiController extends Controller
                     'ip' => $tlsScan->ip_scanned,
                     'certificate_found' =>
                         !!$cert,
-                    'certificate_fprint_sha256' =>
+                    'certificate_sha256' =>
                         $cert ? $cert->fprint_sha256 : null,
                     'renewal_due' =>
                         $cert ? Carbon::now()->addDays(28)->greaterThanOrEqualTo($cert->valid_to) : null,
@@ -266,7 +266,7 @@ class ApiController extends Controller
                         $cert ? Carbon::now()->greaterThanOrEqualTo($cert->valid_to) : null,
                     'renewal_utc' =>
                         $cert ? $cert->valid_to->getTimestamp() : null,
-                    'last_scan_at_utc' =>
+                    'last_scan_utc' =>
                         $tlsScan->last_scan_at->getTimestamp()
                 ]);
             }
