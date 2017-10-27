@@ -194,8 +194,8 @@ class ApiController extends Controller
         $server = DomainTools::normalizeUserDomainInput($domain);
         $parsed = parse_url($server);
 
-        if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
-            return response()->json(['status' => 'invalid-domain'], 406);
+        if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
+            return response()->json(['status' => 'invalid-domain', 'domain' => $parsed], 406);
         }
 
         // Add request for waiting object.
