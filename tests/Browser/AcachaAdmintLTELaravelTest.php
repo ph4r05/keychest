@@ -267,7 +267,8 @@ class AcachaAdmintLTELaravelTest extends DuskTestCase
                 ->click('#user_menu')
                 ->pause(500)
                 ->click('#logout')
-                ->pause(500);
+                ->pause(500)
+                ->assertGuest();
         });
     }
 
@@ -378,9 +379,8 @@ class AcachaAdmintLTELaravelTest extends DuskTestCase
             $browser->visit('password/reset')
                 ->type('email', $user->email)
                 ->press('Send Password Reset Link')
-                ->waitFor('#result')
-                ->pause(1000)
-                ->assertSee('We have e-mailed your password reset link!');
+                ->waitFor('div.alert-success')
+                ->assertSeeIn('div.alert-success', 'We have e-mailed your password reset link!');
         });
     }
 
