@@ -6,14 +6,14 @@
     <div class="tab-content">
         <div class="tab-pane active" id="tab_1">
 
-            <p>
+            <p class="tc-onyx">
             All API functions need an API key. The good news is that you can generate it yourself when you need it. You
             need two API calls to integrate KeyChest with Let's Encrypt or other certificate renewal clients.
             </p>
 
             <h3 class="mg-md tc-onyx">Claim API key</h3>
 
-            <p>The first API call registers a new API key. We recommend you generate a sufficiently long API key to ensure
+            <p class="tc-onyx">The first API call registers a new API key. We recommend you generate a sufficiently long API key to ensure
             it is unique for your KeyChest account.
                 <ul>
                 <li><p>
@@ -21,58 +21,137 @@
                 allowed characters are lower and upper case letters, digits, and "-" only (<i>[a-zA-Z0-9-]*</i>).
                 </p>
             </li>
-                <li><p><b>email</b> - a mandatory parameter, it will be used to access an existing account, or to create
+                <li><p class="tc-onyx"><b>email</b> - a mandatory parameter, it will be used to access an existing account, or to create
                     a new account.</p></li>
             </ul>
             </p>
 
-            <p><b>https://keychest.net/api/v1.0/access/claim?email=your@email.com&api_key=5b9b6ace-b950-11e7-bb9f-7fca73a26228
+            <p class="tc-onyx">
+                <b>Type of request: GET</b><br/>
+                <b class="tc-rich-electric-blue">https://keychest.net/api/v1.0/access/claim?email=your@email.com&api_key=5b9b6ace-b950-11e7-bb9f-7fca73a26228
                 </b></p>
 
-            An example response when the API key is created:
-            <p><b>
-                    {<br/>
-                    "status": "created",<br/>
-                    "user": "your@email.com",<br/>
-                    "apiKey": "5b9bd6adce-b950-11e7-bb9f-7fca73a24228"<br/>
-                    }
+            <p class="tc-onyx">
+                An example response when the API key is created:<br/>
+            <b>
+                {<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;"status": "created",<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;"user": "your@email.com",<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;"apiKey": "5b9bd6adce-b950-11e7-bb9f-7fca73a24228"<br/>
+                }
                 </b>
             </p>
 
-            <p>
-            An example response if the API key already exists:
+            <p class="tc-onyx">
+            An example response if the API key already exists:<br/>
+
+            <b>
+                {<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp; "status": "success"<br/>
+                }<br/>
+                </b></p>
+
+
+            <h3 class="mg-md tc-onyx">Register server for monitoring</h3>
+
+            <p class="tc-onyx">
+                Once you have an API key, you can register a new server for monitoring.
             </p>
 
-            <p><b>
+            <b>Type of request: POST</b><br/>
+            <b class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/add
+            </b>
+            <br/>JSON data<br/>
+            <b>
+            {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;"api_key":"5b9bd6adce-b950-11e7-bb9f-7fca73a24228",<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;"domain":"fish.enigmabridge.com"<br/>
+            }
+            </b>
+            </p>
+
+            <p class="tc-onyx">
+                An example response:<br/>
+
+                <b>
                     {<br/>
-                    "status": "success"<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"status": "success",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"id": "671d1b10-bb1d-11e7-bae1-571d93cf1c53",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"key": "da70d5e4864f57e910e66bd21c685b26",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"domain": "fish.enigmabridge.com"<br/>
                     }<br/>
                 </b></p>
 
 
-
+            <h3 class="mg-md tc-onyx">Get expiration time</h3>
 
             <p class="tc-onyx">
-tbd
+                Once again, you need a registered API key. This API call allows you to check when certificates for
+                a given domain name, and optionally a particular IP address expire.
+            </p>
+
+            <b>Type of request: GET</b><br/>
+            <b class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/expiration/&lt;you_domain_name&gt;
+            </b>
             </p>
 
             <p class="tc-onyx">
-            tbd
+                An example response:<br/>
+
+                <b>
+                    {<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"domain": "fish.enigmabridge.com",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"results": [<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"ip": "2001:41c9:1:41d::131",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_found": false,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_sha256": null,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_due": null,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"expired": null,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_utc": null,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"last_scan_utc": 1509094412<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;},<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"ip": "46.43.0.131",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_found": true,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_sha256": "1aa7cda60ba61810321bedc4793fadc80f7ca6a3e328d484b0d5eb8a9ef230de",<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_due": true,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"expired": false,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_utc": 1510216500,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"last_scan_utc": 1509099907<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"status": "success"<br/>
+                    }<br/>
+                </b></p>
+
+
+            <p class="tc-onyx">
+                If you have difficulties or encounter unexpected errors, please let us know. We get back to you as
+                soon as possible.
             </p>
+
             <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form-3"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&submitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
                     scrolling="no" height="410px" width="100%" frameborder="0" >
             </iframe>
 
         </div>
+
         <!-- /.tab-pane -->
+
+
         <div class="tab-pane" id="tab_2">
             <h3 class="mg-md tc-onyx">Reference guide</h3>
 
             <p class="tc-onyx">
-                tbd
+                A more detailed reference guide coming very soon.
             </p>
 
+            <p class="tc-onyx">
+                If you have difficulties or encounter unexpected errors, please let us know. We get back to you as
+                soon as possible.
+            </p>
 
             <iframe title="KeyChest license" class="freshwidget-embedded-form" id="freshwidget-embedded-form-4"
                     src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
