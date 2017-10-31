@@ -52,6 +52,41 @@
                     </p>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <a href="/content/letsencrypt_uptime"><img src="/images/letsencrypt-minutes-of-partial-disruptions-and-overall-uptime.png" alt="Certificate
+                    monitoring KeyChest - Letsencrypt uptime" class="img-responsive" /></a>
+                    <h3 class="mg-md tc-rich-electric-blue text-center">
+                        <a class="ltc-rich-electric-blue" href="/content/letsencrypt_uptime">Let's Encrypt Uptime Analysis</a><br>
+                    </h3>
+                    <p>
+                        We have analyzed status logs of Let's Encrypt production systems from January 2016 till September 2017
+                        to understand the reliability of Let's Encrypt issuance and validation services.
+                    </p>
+                </div>
+                <div class="col-sm-4">
+                    <a href="/content/infineon_key_generation"><img src="/images/TPM_infineon.png" alt="Certificate monitoring KeyChest - flawed key generation in Infineon security chips" class="img-responsive" /></a>
+                    <h3 class="mg-md tc-rich-electric-blue text-center">
+                        <a class="ltc-rich-electric-blue" href="/content/infineon_key_generation">ROCA bug - quantum effects</a><br>
+                    </h3>
+                    <p>
+                        Masaryk University has discovered a serious fault in RSA key generation inside Infineon security
+                        chips, which are used by tens of millions of devices and thousands of companies.
+                    </p>
+                </div>
+                <div class="col-sm-4">
+{{--
+                    <a href="/content/understand_spot_checks"><img src="/images/blue_lock_370x290.png" alt="Certificate monitoring KeyChest lock" class="img-responsive" /></a>
+                    <h3 class="mg-md tc-rich-electric-blue text-center">
+                        <a class="ltc-rich-electric-blue" href="/content/understand_spot_checks">Understand spot check results</a><br>
+                    </h3>
+                    <p>
+                        A detailed explanation of the results of our KeyChest spot checks.
+                    </p>
+--}}
+                </div>
+            </div>
         </div>
     </div>
     <!-- bloc-2 END -->
