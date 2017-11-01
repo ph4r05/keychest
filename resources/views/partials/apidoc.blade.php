@@ -37,18 +37,23 @@
                 </tr>
                 <tr>
                     <td>Request</td>
-                    <td><span class="tc-rich-electric-blue">https://keychest.net/api/v1.0/access/claim?email=your@email.com&api_key=5b9b6aceb95011e7bb9f7fca73a26228</span></td>
+                    <td><code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/access/claim?email=your@email.com&api_key=5b9b6aceb95011e7bb9f7fca73a26228</code></td>
                 </tr>
                 <tr><td>Response</td>
-                    <td>{<br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;"status": "created",<br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;"user": "your@email.com",<br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;"api-key": "5b9b6aceb95011e7bb9f7fca73a26228"<br/>
-                        }<br/>
-                    or<br/>
-                        {<br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;"status":"success"<br/>
-                        }
+                    <td>
+<pre>
+{
+    "status": "created",
+    "user": "your@email.com",
+    "api-key": "5b9b6aceb95011e7bb9f7fca73a26228"
+}
+</pre>
+                    or
+<pre>
+{
+    "status":"success"
+}
+</pre>
                     </td></tr>
                 <tr><td>Notes</td>
                 <td>
@@ -71,23 +76,28 @@
                 </tr>
                 <tr>
                     <td>Request</td>
-                    <td><span class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/add</span><br/>
-                        The body: JSON data<br/>
-                            {<br/>
-                            &nbsp;&nbsp;&nbsp;&nbsp;"api_key":"5b9b6aceb95011e7bb9f7fca73a26228",<br/>
-                            &nbsp;&nbsp;&nbsp;&nbsp;"domain":"fish.enigmabridge.com"<br/>
-                            }
+                    <td>
+                        <code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/add</code><br/>
+                        The body: JSON data
+<pre>
+{
+    "api_key":"5b9b6aceb95011e7bb9f7fca73a26228",
+    "domain":"fish.enigmabridge.com"
+}
+</pre>
                     </td>
                 </tr>
                 <tr>
                     <td>Response</td>
                     <td>
-                                {<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"status": "success",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"id": "671d1b10-bb1d-11e7-bae1-571d93cf1c53",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"key": "da70d5e4864f57e910e66bd21c685b26",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"domain": "fish.enigmabridge.com"<br/>
-                                }<br/>
+<pre>
+{
+    "status": "success",
+    "id": "671d1b10-bb1d-11e7-bae1-571d93cf1c53",
+    "key": "da70d5e4864f57e910e66bd21c685b26",
+    "domain": "fish.enigmabridge.com
+}
+</pre>
                     </td>
                 </tr>
                 <tr>
@@ -115,37 +125,40 @@
                 <tr>
                     <td>Request</td>
                     <td>
-                        <span class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/expiration/fish.enigmabridge.com?api_key=da70d5e4864f57e910e66bd21c685b26
-                        </span>
+                        <code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/expiration/fish.enigmabridge.com?api_key=da70d5e4864f57e910e66bd21c685b26
+                        </code>
                     </td>
                 </tr>
                 <tr>
                     <td>Response</td>
-                    <td><br/>
-                                {<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"domain": "fish.enigmabridge.com",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"results": [<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;{<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"ip": "2001:41c9:1:41d::131",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_found": false,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_sha256": null,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_due": null,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"expired": null,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_utc": null,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"last_scan_utc": 1509094412<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;},<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;{<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"ip": "46.43.0.131",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_found": true,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"certificate_sha256": "1aa7cda60ba61810321bedc4793fadc80f7ca6a3e328d484b0d5eb8a9ef230de",<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_due": true,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"expired": false,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"renewal_utc": 1510216500,<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;"last_scan_utc": 1509099907<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;],<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;"status": "success"<br/>
-                                }<br/>
+                    <td>
+<pre>
+{
+    "domain": "fish.enigmabridge.com",
+    "results": [
+        {
+            "ip": "2001:41c9:1:41d::131",
+            "certificate_found": false,
+            "certificate_sha256": null,
+            "renewal_due": null,
+            "expired": null,
+            "renewal_utc": null,
+            "last_scan_utc": 1509094412
+        },
+        {
+            "ip": "46.43.0.131",
+            "certificate_found": true,
+            "certificate_sha256": "1aa7cda60ba61810321bedc4793fadc80f7ca6a3e328d484b0d5eb8a9ef230de",
+            "renewal_due": true,
+            "expired": false,
+            "renewal_utc": 1510216500,
+            "last_scan_utc": 1509099907
+        }
+    ],
+    "status": "success"
+}
+</pre>
+
                     </td>
                 </tr>
                 <tr>
