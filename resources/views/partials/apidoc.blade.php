@@ -76,7 +76,7 @@
 {
     "status": "created",
     "user": "your@email.com",
-    "api-key": "5b9b6aceb95011e7bb9f7fca73a26228"
+    "api_key": "5b9b6aceb95011e7bb9f7fca73a26228"
 }
 </pre>
                     </td></tr>
@@ -116,7 +116,7 @@
 {
     "status": "created",
     "user": "your@email.com",
-    "api-key": "5b9b6aceb95011e7bb9f7fca73a26228"
+    "api_key": "5b9b6aceb95011e7bb9f7fca73a26228"
 }
 </pre>
                     or
