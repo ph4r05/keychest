@@ -397,7 +397,7 @@
 
             <p class="tc-onyx">
                 A reference guide is available at our API web site
-                <a target="_blank" href="https://api.enigmabridge.com">api.enigmabridge.com</a>.
+                <a target="_blank" href="https://api.enigmabridge.com/api/#keychest">api.enigmabridge.com</a>.
             </p>
 
 
