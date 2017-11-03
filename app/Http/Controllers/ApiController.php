@@ -246,6 +246,10 @@ class ApiController extends Controller
             $subRes = collect();
             $md = $hr->getValidityModel();
 
+            $expired_found = false;
+            $renewal_due = false;
+            $certificate_found = false;
+
             foreach ($md->getTlsScans() as $tlsScan) {
                 if (!empty($ip) && $ip != $tlsScan->ip_scanned) {
                     continue;
@@ -253,6 +257,16 @@ class ApiController extends Controller
 
                 $certId = $tlsScan->cert_id_leaf;
                 $cert = $md->getCerts()->get($certId, null);
+
+                if ($cert) {
+                    $certificate_found = true;
+                    if (Carbon::now()->greaterThanOrEqualTo($cert->valid_to)){
+                        $expired_found = true;
+                    }
+                    if (Carbon::now()->addDays(28)->greaterThanOrEqualTo($cert->valid_to)){
+                        $renewal_due = true;
+                    }
+                }
 
                 $subRes->push([
                     'ip' => $tlsScan->ip_scanned,
@@ -271,7 +285,11 @@ class ApiController extends Controller
                 ]);
             }
 
+            $respArr += ['certificate_found' => $certificate_found];
+            $respArr += ['renewal_due' => $renewal_due];
+            $respArr += ['expired_found' => $expired_found];
             $respArr['results'] = $subRes->all();
+
             return response()->json($respArr + ['status' => 'success'], 200);
 
         } catch (InvalidHostname $e){
