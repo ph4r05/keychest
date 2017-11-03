@@ -13,31 +13,102 @@
                 personalization needed.
             </p>
             <p class="tc-onyx">
-                There are three calls you need for integration:
+                There are three types of calls you need for integration:
             </p>
             <ul>
-                <li><p>Claim API key - one-off call, where your client requests its own unique API key.</p></li>
+                <li><p>Claim API key - one-off call, where your client requests its own unique API key. There
+                    are two versions - POST and GET. The difference is whether the client generates its own
+                    API key (POST) or KeyChest creates one and sends it back.</p></li>
                 <li><p>Add server - submit a domain name for monitoring.</p></li>
                 <li><p>Check expiration - check whether a certificate needs to be renewed.</p></li>
             </ul>
 
             <p class="tc-onyx">
-                We recommend the client keeps two pieces of information as its state. The first item is its API key.
-                The second is a timestamp of its last execution, which can be compared against "last scan" timestamps
-                returned by the "Check expiration" API call.
+                We recommend the client keeps two pieces of information as its state. The first item is its
+                API key. The second is a timestamp of its last execution, which can be compared against
+                "last scan" timestamps returned by the "Check expiration" API call.
             </p>
 
+            <h3>Examples using curl</h3>
+
+            <p>
+                <b>Step 1: get an API key</b>
+            </p>
+            <code>
+                curl https://keychest.net/api/v1.0/access/claim/me@myemail.com
+            </code>
+            <p>
+                If you are familiar with <code>jq</code>, you can get a new API key with the following command:
+            </p>
+            <code>curl -s https://keychest.net/api/v1.0/access/claim/me@myemail.com | jq -r '.api_key'</code>
+
+            <br/><br/>
+            <p>
+                <b>Step 2: register for monitoring</b>
+            </p>
+            <code>
+                curl -s -X POST -H "Content-Type: application/json" -d '{"api_key":"5b9b6aceb95011e7bb9f7fca73a26228", "domain":"fish.enigmabridge.com"}' https://keychest.net/api/v1.0/servers/add
+            </code>
+
+            <br/><br/>
+            <p>
+                <b>Step 3: check expiration</b>
+            </p>
+            <code>
+                curl -s https://keychest.net/api/v1.0/servers/expiration/fish.enigmabridge.com?api_key=da70d5e4864f57e910e66bd21c685b26
+            </code>
+
+            <h3>List of basic API functions</h3>
 
             <table class="table">
                 <tr>
                     <th>Register/check API key </th>
-                    <th>GET request<br/>The client has
-                        to create its <i>api_key</i> and send it to the KeyChest with an <i>email</i> identifying a
-                        user account.</th>
+                    <th>GET request<br/>The client requests KeyChest to generate an API key for a user account
+                        identified with the <i>email</i>.</th>
                 </tr>
                 <tr>
                     <td>Request</td>
-                    <td><code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/access/claim?email=your@email.com&api_key=5b9b6aceb95011e7bb9f7fca73a26228</code></td>
+                    <td><code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/access/claim/your@email.com</code></td>
+                </tr>
+                <tr><td>Response</td>
+                    <td>
+<pre>
+{
+    "status": "created",
+    "user": "your@email.com",
+    "api-key": "5b9b6aceb95011e7bb9f7fca73a26228"
+}
+</pre>
+                    </td></tr>
+                <tr><td>Notes</td>
+                    <td>
+                        <p>
+                        <p><b>email</b> - a mandatory parameter, it will be used to access an existing account,
+                            or to create a new account.</p>
+                        <br/>
+                        <p>
+                            A successful response returns the "status" value of "created".
+                        </p>
+                    </td></tr>
+
+
+                <tr>
+                    <th>Register/check API key </th>
+                    <th>POST request<br/>The client has
+                        to create its <i>api_key</i> and send it to the KeyChest with an <i>email</i>
+                        identifying a user account.</th>
+                </tr>
+                <tr>
+                    <td>Request</td>
+                    <td><code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/access/claim</code><br/>
+                        The content-type header must be: <i>application/json</i>, and the body contains JSON data.
+<pre>
+{
+    "email":"your@email.com",
+    "api_key":"5b9b6aceb95011e7bb9f7fca73a26228"
+}
+</pre>
+                    </td>
                 </tr>
                 <tr><td>Response</td>
                     <td>
@@ -58,11 +129,12 @@
                 <tr><td>Notes</td>
                 <td>
                         <p>
-                                <b>api_key</b> - a mandatory parameter, the value must be at least 16 characters and no more than 64 characters,
-                                allowed characters are lower and upper case letters, digits, and "-". (i.e., [a-zA-Z0-9-]* )
+                                <b>api_key</b> - a mandatory parameter, the value must be at least 16
+                            characters and no more than 64 characters, allowed characters are lower and
+                            upper case letters, digits, and "-". (i.e., [a-zA-Z0-9-]* )
                             </p>
-                        <p><b>email</b> - a mandatory parameter, it will be used to access an existing account, or to create
-                                a new account.</p>
+                        <p><b>email</b> - a mandatory parameter, it will be used to access an existing
+                            account, or to create a new account.</p>
                     <br/>
                     <p>
                         A successful response returns the "status" value of "created", or "success" - depending on whether
@@ -78,7 +150,7 @@
                     <td>Request</td>
                     <td>
                         <code class="tc-rich-electric-blue">https://keychest.net/api/v1.0/servers/add</code><br/>
-                        The body: JSON data
+                        The content-type header must be: <i>application/json</i>, and the body contains JSON data.
 <pre>
 {
     "api_key":"5b9b6aceb95011e7bb9f7fca73a26228",
@@ -135,6 +207,9 @@
 <pre>
 {
     "domain": "fish.enigmabridge.com",
+    "certificate_found":true,
+    "renewal_due":true,
+    "expired_found":false,
     "results": [
         {
             "ip": "2001:41c9:1:41d::131",
@@ -173,6 +248,12 @@
                             Each entry in the array contains information for one IP address, with particular
                             items of: <i>certificate_found</i>, <i>renewal_due</i>, <i>expired</i>, and the time
                             of the last update <i>last_scan_utc</i>.
+                        </p>
+                        <p>
+                            The top-level data items <i>certificate_found</i>, <i>renewal_due</i>, <i>expired</i>
+                            summarize the detailed results for simplistic processing. The values of
+                            <i>renewal_due</i>, <i>expired</i> are <i>true</i> if at least one entry in the
+                            array has this value.
                         </p>
                     </td>
                 </tr>
