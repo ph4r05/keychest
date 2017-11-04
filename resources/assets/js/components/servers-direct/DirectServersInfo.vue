@@ -1,5 +1,5 @@
 <template>
-    <help-modal id="directServersInfoModal" title="Direct Servers">
+    <help-modal id="directServersInfoModal" title="Private Networks">
         <p>
             This list shows all servers currently being watched. Tests will be run against IP addresses
             resolved directly for the domain names below.
