@@ -7,7 +7,7 @@
     </div>
 
     <div v-show="loadingState != 0">
-      <h3>Monitored Direct Servers <help-trigger id="directServersInfoModal"></help-trigger></h3>
+      <h3>Monitored Private Networks <help-trigger id="directServersInfoModal"></help-trigger></h3>
       <server-info></server-info>
 
       <div class="row">
@@ -317,8 +317,8 @@ export default {
                 this.$emit('onServerDeleted', data);
                 this.$events.fire('on-server-deleted', data);
                 toastr.success(isMore ?
-                    'Direct Servers deleted successfully.':
-                    'Direct Server deleted successfully.', 'Success');
+                    'Private Servers deleted successfully.':
+                    'Private Server deleted successfully.', 'Success');
             }).bind(this);
 
             this.moreParams.deleteState = 2;
