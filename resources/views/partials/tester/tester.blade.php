@@ -89,11 +89,13 @@
 
                         <br/>
                         <p>
-                            It's free here as a cloud service. Just click the image above, or <a href="{{url('/register')}}">this link to register</a>.
+                            It's free here as a cloud service. Just click the image above, or
+                            <a href="{{url('/register')}}">this link to register</a>.
                         </p>
 
                         <p>
-                            You can learn more about KeyChest at its <a href="{{url("/#detail")}}">landing page</a>.
+                            You can learn more about KeyChest at the <a href="{{url("/#detail")}}">landing page of this
+                                website</a>.
                         </p>
 
                     </div>
