@@ -81,8 +81,8 @@
 
                         <p>
                             KeyChest is currently growing into a complete key management platform with an integrated
-                            certificate renewal functions. It understands you don't want to understand its complicated
-                            technology when developing your online business.
+                            certificate renewal functions. It understands you don't need to know the complicated
+                            technology of TLS/HTTPS when want to focus on your online business.
                         </p>
 
                         <a href="{{url('/register')}}"><img src="/images/keychest_dashboard.png" class="img-responsive"/></a>
