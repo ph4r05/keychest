@@ -25,7 +25,7 @@
                         <h3>Information and tools to test RSA keys for the ROCA vulnerability</h3>
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <p>
                             The ROCA vulnerability has been discovered by researchers at <a target="_blank"
                             href="https://roca.crocs.fi.muni.cz">
@@ -59,9 +59,6 @@
                             during testing.
                         </p>
 
-                        <p>
-                            This service is provided by <a target="_blank" href="https://enigmabridge.com"><b>Enigma Bridge</b></a> and its <a target = "_blank" href="https://keychest.net"><b>KeyChest</b></a> - a key management platform with a simple certificate expiry monitoring with automatic key enrolment and discovery. Its certificate renewal capabilities significantly reduce labor and management cost. It uses a unique secure hardware encryption platform for physical security of private keys.
-                        </p>
                         <p><b>Update (20th October)</b>: Gemalto IDPrime .NET smart cards have been generating weak RSA
                             keys since 2008 or earlier - <a target="_blank" href="https://dan.enigmabridge.com/roca-vulnerability-impact-on-gemalto-idprime-net-smart-cards/">ROCA
                                 vulnerability impact on Gemalto IDPrime .NET smart cards</a>.</p>
@@ -70,6 +67,37 @@
                             updating these to provide more accurate guidance. Please visit their web page at <a target="_blank"
                         href="https://crocs.fi.muni.cz/public/papers/rsa_ccs17">ROCA: Vulnerable RSA generation</a> for a detailed
                         description of the impact of the ROCA vulnerability.</p>
+                    </div>
+                    <div class="col-md-6" style="background-color: #ecf0f5;">
+                        <p>
+                            This service is provided by <a target="_blank" href="https://enigmabridge.com"><b>Enigma Bridge</b></a>
+                            and powered by <a target = "_blank" href="https://keychest.net/#detail"><b>KeyChest</b></a>.
+                        </p>
+                        <p>
+                            KeyChest is a powerful expiry monitoring service for HTTPS certificates. Once you provide it
+                            with your company registered domain name, it will automatically detect all relevant certificates
+                            and start watching their expiry.
+                        </p>
+
+                        <p>
+                            KeyChest is currently growing into a complete key management platform with an integrated
+                            certificate renewal functions. It understands you don't need to know the complicated
+                            technology of TLS/HTTPS when want to focus on your online business.
+                        </p>
+
+                        <a href="{{url('/register')}}"><img src="/images/keychest_dashboard.png" class="img-responsive"/></a>
+
+                        <br/>
+                        <p>
+                            It's free here as a cloud service. Just click the image above, or
+                            <a href="{{url('/register')}}">this link to register</a>.
+                        </p>
+
+                        <p>
+                            You can learn more about KeyChest at the <a href="{{url("/#detail")}}">landing page of this
+                                website</a>.
+                        </p>
+
                     </div>
                 </div>
             </div>

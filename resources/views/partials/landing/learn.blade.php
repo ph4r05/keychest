@@ -3,7 +3,9 @@
         <div class="row">
             <div class="col-sm-12">
                 <h1 class="mg-md tc-rich-electric-blue">
+                    <a name="detail">
                     Welcome to KeyChest certificate monitoring
+                    </a>
                 </h1>
                 <div class="row">
                     <div class="col-sm-6">
@@ -339,7 +341,7 @@
                     </div>
                     <div class="col-sm-4">
                         <h5 class=" mg-clear tc-rich-electric-blue">
-                            <strong>in testing</strong>
+                            <strong>yes</strong>
                         </h5>
                     </div>
                 </div>
@@ -512,12 +514,14 @@
                             <li>Strategy for enterprise version published - 14 July 2017</li>
                             <li>Independent scanners (KeyChest Enterprise) - 7 August 2017</li>
                             <li>Dashboard update according to feedback - 10 August 2017</li>
-                            <li><i>Integration with Slack (KeyChest Enterprise) - ?? September 2017</i>
+                            <li>IP address-based scanning (KeyChest Enterprise) - mid-October 2017</li>
+                            <li>Detailed scanning results for each IP address - early-October 2017</li>
+                            <li>ROCA vulnerability testing - 16 October 2017</li>
+                            <li><a href="https://api.enigmabridge.com/api/#keychest">Essential RESTful API</a> - 30 October 2017</li>
+                            <li><i>Integration with Slack - ?? November 2017</i>
                             </li>
-                            <li><i>Detailed scanning results for each IP address - ?? September 2017</i></li>
-                            <li><i>IP address-based scanning (KeyChest Enterprise) - ?? August 2017</i></li>
-                            <li><i>Essential RESTful API - ?? September 2017</i></li>
-                            <li><i>User/roles (KeyChest Enterprise) - ?? September 2017</i></li>
+                            <li><i>Ansible integration for certificate renewal - ?? November 2017</i></li>
+                            <li><i>User/roles (KeyChest Enterprise) - ?? November 2017</i></li>
                         </ul>
 
                     </div>
