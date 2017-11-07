@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Request\ParamRequest;
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\Results\UserSelfRegistrationResult;
@@ -17,6 +18,8 @@ use App\Keychest\Services\Results\ApiKeySelfRegistrationResult;
 use App\Keychest\Services\Exceptions\CouldNotRegisterNewUserException;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
+use PhpParser\Node\Param;
+use Webpatser\Uuid\Uuid;
 
 
 /**
@@ -234,11 +237,30 @@ class UserController extends Controller
 
     /**
      * Claim new API key access - limited functionality until verified / confirmed.
+     * Automatically generates API key for the user - UUID.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param ParamRequest $request
+     * @param $email
      * @return \Illuminate\Http\JsonResponse
      */
-    public function claimAccess(Request $request){
+    public function claimAccessEmail(ParamRequest $request, $email){
+        $request->addExtraParam('email', $email);
+        $this->validate($request, [
+            'email' => 'bail|required|email|max:255',
+        ]);
+
+        $email = Input::get('email');
+        $apiKey = Uuid::generate()->string;
+        return $this->claimAccessInternal($request, $email, $apiKey);
+    }
+
+    /**
+     * Claim new API key access - limited functionality until verified / confirmed.
+     *
+     * @param ParamRequest|Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function claimAccess(ParamRequest $request){
         $this->validate($request, [
             'email' => 'bail|required|email|max:255',
             'api_key' => [
@@ -250,12 +272,25 @@ class UserController extends Controller
             ]
         ]);
 
+        $email = Input::get('email');
+        $apiKey = Input::get('api_key');
+
+        return $this->claimAccessInternal($request, $email, $apiKey);
+    }
+
+    /**
+     * Claim new API key access.
+     * Called by public interface methods after input validation.
+     *
+     * @param ParamRequest $request
+     * @param $email
+     * @param $apiKey
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function claimAccessInternal(ParamRequest $request, $email, $apiKey){
         $bailResponse = response()->json(['status' => 'not-allowed'], 405);
         $errorResponse = response()->json(['status' => 'error'], 503);
         $successResponse = response()->json(['status' => 'success'], 200);
-
-        $email = Input::get('email');
-        $apiKey = Input::get('api_key');
 
         // Load user by the email, user has to exist before this call.
         // If user does not exist and system policy allows it a new user is created.
