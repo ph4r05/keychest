@@ -38,4 +38,29 @@ class HomeController extends Controller
 
         return view('adminlte::home');
     }
+
+    /**
+     * Simple user guide view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function userGuide(){
+        return view('userguide');
+    }
+
+    /**
+     * Simple API doc view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function apiDoc(){
+        return view('apidoc');
+    }
+
+    /**
+     * Simple enterprise view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function enterprise(){
+        return view('enterprise');
+    }
+
 }
