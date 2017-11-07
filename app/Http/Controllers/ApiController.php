@@ -228,14 +228,14 @@ class ApiController extends Controller
         $this->validate($request, [
             'domain' => 'bail|required|min:3',
             'ip' => 'ip',
-            'requestId' => 'max:64',
+            'request_id' => 'max:64',
         ]);
-        $requestId = Input::get('requestId');
+        $requestId = Input::get('request_id');
         $ip = Input::get('ip');
 
         $respArr = ['domain' => $domain];
         $respArr += $ip ? ['ip' => $ip] : [];
-        $respArr += $requestId ? ['requestId' => $requestId] : [];
+        $respArr += $requestId ? ['request_id' => $requestId] : [];
 
         try {
             $hr = $this->analysisManager->loadHost($domain, true, false, false);
