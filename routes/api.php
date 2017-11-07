@@ -26,6 +26,7 @@ Route::group(['prefix' => 'v1.0', 'middleware' => 'api.response'], function () {
 
     // Easy client registration.
     Route::get('access/claim', 'UserController@claimAccess');
+    Route::post('access/claim', 'UserController@claimAccess');
 
     // All API methods accessible
     Route::group(['middleware' => 'auth:ph4-token'], function(){
