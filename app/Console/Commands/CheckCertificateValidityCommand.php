@@ -191,7 +191,7 @@ class CheckCertificateValidityCommand extends Command
             return false; // account is too fresh to get any reports
         }
 
-        if ($firstEmail || $diffFromTargetHrs < -12.0){
+        if ($diffFromTargetHrs < -12.0){
             return false;  // window for sending email passed
         }
 
