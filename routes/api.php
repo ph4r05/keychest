@@ -48,6 +48,10 @@ Route::group(['prefix' => 'v1.0', 'middleware' => 'api.response'], function () {
     Route::group(['prefix' => 'tester'], function (){
         Route::post('file', 'KeyCheckController@fileUploadApi');
     });
+
+    // Catch all route - keep as a last record
+    Route::any('/', 'ApiController@index');
+    Route::any( '{catchall}', 'ApiController@indexCatch')->where('catchall', '(.*)');
 });
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:api'], function () {

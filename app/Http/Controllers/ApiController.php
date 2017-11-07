@@ -131,6 +131,29 @@ class ApiController extends Controller
     // API related part
 
     /**
+     * Index API
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request){
+        return response()->json([
+            'html_docs' => route('apidoc'),
+        ], 200);
+    }
+
+    /**
+     * Index API - catch all route
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function indexCatch(Request $request){
+        return response()->json([
+            'error' => 'endpoint not found',
+            'html_docs' => route('apidoc'),
+        ], 404);
+    }
+
+    /**
      * Basic API auth test
      * @param Request $request
      * @return null
