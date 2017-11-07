@@ -152,9 +152,11 @@ class CheckCertificateValidityCommand extends Command
         $nowServerLocal = Carbon::now('UTC');
 
         $lastSentSL = $user->last_email_report_sent_at;  // server local
+        $createdAt = $user->created_at;
+        $createdAtDays = $nowServerLocal->diffInSeconds($createdAt) / 3600.0 / 24.0;
         $firstEmail = $lastSentSL ? false : true;
         $diffLastSentSec = $firstEmail ? false : $nowServerLocal->diffInSeconds($lastSentSL);
-        $diffLastSentDays = $diffLastSentSec / 3600.0 / 24.0;
+        $diffLastSentDays = $firstEmail ? false : $diffLastSentSec / 3600.0 / 24.0;
 
         // If sent just recently - do not send again, 1 day boundary
         if (!$firstEmail && $diffLastSentDays <= 2.0){
@@ -185,7 +187,11 @@ class CheckCertificateValidityCommand extends Command
             return false;  // target will come soon
         }
 
-        if ($diffFromTargetHrs < -12.0){
+        if ($firstEmail && $createdAtDays < 0.75){
+            return false; // account is too fresh to get any reports
+        }
+
+        if ($firstEmail || $diffFromTargetHrs < -12.0){
             return false;  // window for sending email passed
         }
 
