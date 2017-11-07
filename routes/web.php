@@ -63,7 +63,12 @@ Route::get('content/letsencrypt_numbers_to_know', function () {
 Route::get('content/understand_spot_checks', function () {
     return view('stories.understand_spot_checks');
 });
-
+Route::get('content/letsencrypt_uptime', function () {
+    return view('stories.letsencrypt_uptime');
+});
+Route::get('content/infineon_key_generation', function () {
+    return view('stories.infineon_key_generation');
+});
 // Redirects
 Route::get('content/keychest_spot_check.html', function(){
     return Redirect::to('content/keychest_spot_check', 301);
@@ -124,6 +129,10 @@ Route::post('home/account/close', 'UserController@closeAccount')->name('close-ac
 Route::get('home/user-guide', function () {
     return view('userguide');
 })->name('user-guide');
+
+Route::get('home/apidoc', function () {
+    return view('apidoc');
+})->name('api');
 
 Route::get('home/enterprise', function () {
     return view('enterprise');

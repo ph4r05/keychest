@@ -315,7 +315,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'created',
             'user' => $user->email,
-            'apiKey' => $apiKeyObj->api_key
+            'api_key' => $apiKeyObj->api_key
         ], 200);
     }
 

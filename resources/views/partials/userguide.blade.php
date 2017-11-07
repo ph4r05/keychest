@@ -109,7 +109,7 @@
               Please have a look at your <a href="{{ url('/home/license') }}">license tab </a> to find out more
               about features and scanning parameters for your account.
           </p>
-         <h3 class="mg-md tc-rich-electric-blue">Current Restrictions</h3>
+         <h3 class="mg-md tc-rich-electric-blue">Current restrictions</h3>
           <p class="tc-onyx">
             The system is currently under intensive development and we add features as they are requested by
             you, KeyChest users. This section lists some of the restrictions we are aware of and will improve or completely

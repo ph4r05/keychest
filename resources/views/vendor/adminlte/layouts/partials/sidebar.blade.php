@@ -59,6 +59,10 @@
         <hr/>
 
         <ul class="sidebar-menu">
+            <li class="{{ Request::path() ==  'home/apidoc' ? 'active' : ''  }}">
+                <a href="{{ url('home/apidoc') }}"><i class='fa fa-podcast'></i> <span>{{ trans('admin.apidoc') }}</span></a>
+            </li>
+
             <li class="{{ Request::path() ==  'home/user-guide' ? 'active' : ''  }}">
                 <a href="{{ url('home/user-guide') }}"><i class='fa fa-info'></i> <span>{{ trans('admin.userguide') }}</span></a>
             </li>

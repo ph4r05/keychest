@@ -1,13 +1,13 @@
-<div class="nav-tabs-custom">
+<div class="nav-tabs-custom tc-onyx">
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Account</a></li>
         <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">License</a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_1">
-            <h3 class="mg-md tc-onyx">Account summary</h3>
+            <h3 class="mg-md">Account summary</h3>
 
-            <p class="tc-onyx">
+            <p>
                 KeyChest accounts are linked to email addresses. This allows you to login with different methods so long
                 as they provide the same email address.
             </p>
@@ -22,7 +22,7 @@
                     :init-closed-at="{{ (Auth::user()->closed_at ? strtotime(Auth::user()->closed_at) : 0) }}"
             ></account>
 
-            <p class="tc-onyx">
+            <p>
             Please use the following form, if you have any question, comment, or a suggestion for a new feature or change.
             </p>
             <iframe title="KeyChest feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form-1"
@@ -33,9 +33,9 @@
         </div>
         <!-- /.tab-pane -->
         <div class="tab-pane" id="tab_2">
-            <h3 class="mg-md tc-onyx">License details</h3>
+            <h3 class="mg-md">License details</h3>
 
-            <p class="tc-onyx">
+            <p>
                 Please use the form below if you have any questions regarding system restrictions, your license, or changing its terms.
             </p>
 
@@ -57,11 +57,11 @@
                 </tr>
             </table>
 
-            <p class="tc-onyx">
+            <p>
             Each type of the license will carry certain restrictions. The following tables shows a list of particular restrictions
             applicable to your license.
             </p>
-                <h3 class="mg-md tc-onyx">Selected restrictions</h3>
+                <h3 class="mg-md">Selected restrictions</h3>
 
             <table class="tg table">
                 <tr>

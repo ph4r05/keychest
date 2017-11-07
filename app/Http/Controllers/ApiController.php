@@ -194,8 +194,8 @@ class ApiController extends Controller
         $server = DomainTools::normalizeUserDomainInput($domain);
         $parsed = parse_url($server);
 
-        if (empty($id) || empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
-            return response()->json(['status' => 'invalid-domain'], 406);
+        if (empty($parsed) || !DomainTools::isValidParsedUrlHostname($parsed)){
+            return response()->json(['status' => 'invalid-domain', 'domain' => $parsed], 406);
         }
 
         // Add request for waiting object.
@@ -246,6 +246,10 @@ class ApiController extends Controller
             $subRes = collect();
             $md = $hr->getValidityModel();
 
+            $expired_found = false;
+            $renewal_due = false;
+            $certificate_found = false;
+
             foreach ($md->getTlsScans() as $tlsScan) {
                 if (!empty($ip) && $ip != $tlsScan->ip_scanned) {
                     continue;
@@ -254,11 +258,21 @@ class ApiController extends Controller
                 $certId = $tlsScan->cert_id_leaf;
                 $cert = $md->getCerts()->get($certId, null);
 
+                if ($cert) {
+                    $certificate_found = true;
+                    if (Carbon::now()->greaterThanOrEqualTo($cert->valid_to)){
+                        $expired_found = true;
+                    }
+                    if (Carbon::now()->addDays(28)->greaterThanOrEqualTo($cert->valid_to)){
+                        $renewal_due = true;
+                    }
+                }
+
                 $subRes->push([
                     'ip' => $tlsScan->ip_scanned,
                     'certificate_found' =>
                         !!$cert,
-                    'certificate_fprint_sha256' =>
+                    'certificate_sha256' =>
                         $cert ? $cert->fprint_sha256 : null,
                     'renewal_due' =>
                         $cert ? Carbon::now()->addDays(28)->greaterThanOrEqualTo($cert->valid_to) : null,
@@ -266,12 +280,16 @@ class ApiController extends Controller
                         $cert ? Carbon::now()->greaterThanOrEqualTo($cert->valid_to) : null,
                     'renewal_utc' =>
                         $cert ? $cert->valid_to->getTimestamp() : null,
-                    'last_scan_at_utc' =>
+                    'last_scan_utc' =>
                         $tlsScan->last_scan_at->getTimestamp()
                 ]);
             }
 
+            $respArr += ['certificate_found' => $certificate_found];
+            $respArr += ['renewal_due' => $renewal_due];
+            $respArr += ['expired_found' => $expired_found];
             $respArr['results'] = $subRes->all();
+
             return response()->json($respArr + ['status' => 'success'], 200);
 
         } catch (InvalidHostname $e){

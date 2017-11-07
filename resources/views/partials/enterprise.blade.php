@@ -70,7 +70,7 @@
     </tr>
     <tr>
         <td class="tg-9hbo">Integration</td>
-        <td class="tg-ytze">✖</td>
+        <td class="tg-ytze">✖ (coming as subscriptions)</td>
         <td class="tg-i218">✔</td>
     </tr>
     <tr>
@@ -109,19 +109,19 @@ List prices have a limited validity so please <a target="_blank" href="https://e
         <td class="tg-6k2t">n/a</td>
     </tr>
     <tr>
-        <td class="tg-9hbo">Public cloud  managed instance</td>
+        <td class="tg-9hbo">Dedicated public cloud  managed instance</td>
         <td class="tg-b21a">$1,000 / yr</td>
         <td class="tg-b21a">$100 / mth</td>
         <td class="tg-yw4l">minimum term 2 months</td>
     </tr>
     <tr>
-        <td class="tg-v4ss">Private managed instance</td>
+        <td class="tg-v4ss">Dedicated private managed instance</td>
         <td class="tg-m2nm">$1,000 / yr</td>
         <td class="tg-m2nm">$100 / mth</td>
         <td class="tg-6k2t">minimum term 6 months</td>
     </tr>
     <tr>
-        <td class="tg-9hbo" colspan="4">Enterprise version (managed instance in public or private cloud)</td>
+        <th class="tg-9hbo" colspan="4">Enterprise version (managed instance in public or private cloud)</th>
     </tr>
     <tr>
         <td class="tg-v4ss">Site license</td>
