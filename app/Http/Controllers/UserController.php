@@ -248,8 +248,7 @@ class UserController extends Controller
         $this->validate($request, [
             'email' => 'bail|required|email|max:255',
         ]);
-
-        $email = Input::get('email');
+        
         $apiKey = Uuid::generate()->string;
         return $this->claimAccessInternal($request, $email, $apiKey);
     }
