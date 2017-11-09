@@ -51,12 +51,12 @@
   export default {
     mixins: [initialitzeIcheck, redirect],
     data: function () {
-      let form = new Form({ username: '', password: '', remember: '' })
+      let form = new Form({ username: '', password: '', remember: '' });
       if (this.name === 'email') {
-        form = new Form({ email: '', password: '', remember: '' })
+        form = new Form({ email: '', password: '', remember: '' });
       }
       return {
-        form: form,
+        form: form
       }
     },
     props: {
@@ -121,7 +121,9 @@
       }
     },
     mounted () {
-      this.initialitzeICheck('remember')
+        this.$nextTick(() => {
+            this.initialitzeICheck('remember');
+        });
     },
   }
 
