@@ -168,9 +168,10 @@
                 @endif
 
                 <!-- Control Sidebar Toggle Button -->
-                <li>
-                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                </li>
+                {{-- Control sidebar is disabled for now until good usecase justifies its presence --}}
+                {{--<li>--}}
+                    {{--<a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>--}}
+                {{--</li>--}}
             </ul>
         </div>
     </nav>
