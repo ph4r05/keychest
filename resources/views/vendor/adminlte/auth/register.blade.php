@@ -28,7 +28,7 @@
             <div class="register-box-body">
                 <p class="login-box-msg">{{ trans('adminlte_lang::message.registermember') }}</p>
 
-                <a href="{{ url('/login') }}" class="text-center">{{ trans('adminlte_lang::message.membreship') }}</a>
+                <a href="{{ url('/login') }}" class="text-center">{{ trans('adminlte_lang::message.membership') }}</a>
 
                 <register-form></register-form>
 
