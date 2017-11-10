@@ -10,8 +10,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CredentialsManagerTest extends TestCase
 {
-    use CreatesApplication;
-
     /**
      * A basic test example.
      *
