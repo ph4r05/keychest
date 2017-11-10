@@ -12,11 +12,6 @@ class CredentialsManagerTest extends TestCase
 {
     use CreatesApplication;
 
-    protected function setUp()
-    {
-        $this->app = $this->createApplication();
-    }
-
     /**
      * A basic test example.
      *
