@@ -96,3 +96,10 @@
   background-position: 1% 50%;
 }
 
+.login-background {
+  background: url(../images/keychest_background.png) no-repeat center center fixed !important;
+  background-size: cover !important;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+}

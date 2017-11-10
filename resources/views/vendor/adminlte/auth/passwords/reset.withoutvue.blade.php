@@ -11,8 +11,8 @@
     <div id="app">
         <div class="login-box">
             <div class="login-logo">
-                <a href="{{ url('/home') }}"><b>KeyChest</b> Dashboard</a>
-            </div><!-- /.login-logo -->
+                <a href="{{ url('/home') }}" style="color:#00a7d7"><b>KeyChest</b> Dashboard</a>
+ m           </div><!-- /.login-logo -->
 
             @if (session('status'))
                 <div class="alert alert-success">
@@ -63,7 +63,7 @@
                 </form>
 
                 <a href="{{ url('/login') }}">Log in</a><br>
-                <a href="{{ url('/register') }}" class="text-center">{{ trans('adminlte_lang::message.membreship') }}</a>
+                <a href="{{ url('/register') }}" class="text-center">{{ trans('adminlte_lang::message.membership') }}</a>
 
             </div><!-- /.login-box-body -->
 

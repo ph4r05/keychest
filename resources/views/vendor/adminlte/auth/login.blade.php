@@ -5,14 +5,13 @@
 @endsection
 
 @section('content')
-<body class="hold-transition login-page">
-    <div id="app" v-cloak>
+<body class="hold-transition login-page login-background">
+    <div id="app" v-cloak>;
         <div class="login-box">
-            <div class="register-logo" style="background: #fff; opacity: 0.6;" >
-                <a href="{{ url('/') }}"><b>KeyChest</b> Dashboard</a><br/>
-                <div style="color:#00a7d7;font-size:18px"><b>Discovers your TLS/HTTPS Certificates</b></div>
+            <div class="register-logo" >
+                <a href="{{ url('/') }}" style="color:#00a7d7"><b>KeyChest</b> dashboard</a><br/>
+                <div style="color:white; font-size:16px"><b>Your TLS/HTTPS certificates in one place</b></div>
             </div> <!-- end of register-logo -->
-
         @if (count($errors) > 0)
             <div class="alert alert-danger">
                 <strong>Whoops!</strong> {{ trans('adminlte_lang::message.someproblems') }}<br><br>

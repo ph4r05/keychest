@@ -10,7 +10,7 @@
     <div id="app" v-cloak>
         <div class="register-box">
             <div class="register-logo">
-                <a href="{{ url('/home') }}"><b>KeyChest</b> Dashboard</a>
+                <a href="{{ url('/home') }}" style="color: #00a7d7;"><b>KeyChest</b> Dashboard</a>
             </div>
 
             @if (count($errors) > 0)
@@ -74,7 +74,7 @@
 
                 @include('adminlte::auth.partials.social_login')
 
-                <a href="{{ url('/login') }}" class="text-center">{{ trans('adminlte_lang::message.membreship') }}</a>
+                <a href="{{ url('/login') }}" class="text-center">{{ trans('adminlte_lang::message.membership') }}</a>
             </div><!-- /.form-box -->
         </div><!-- /.register-box -->
     </div>

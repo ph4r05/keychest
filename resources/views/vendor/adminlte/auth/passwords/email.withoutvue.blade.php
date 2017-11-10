@@ -11,7 +11,7 @@
 
         <div class="login-box">
             <div class="login-logo">
-                <a href="{{ url('/home') }}"><b>KeyChest</b> Dashboard</a>
+                <a href="{{ url('/home') }}" style="color:#00a7d7"><b>KeyChest</b> Dashboard</a>
             </div><!-- /.login-logo -->
 
             @if (session('status'))
