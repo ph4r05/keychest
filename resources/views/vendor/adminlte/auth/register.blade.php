@@ -9,7 +9,7 @@
 <body class="login-background hold-transition register-page ">
     <div id="app" v-cloak>
         <div class="register-box">
-            <div class="register-logo" style="opacity: 1;" >
+            <div class="register-logo">
                 <a href="{{ url('/') }}" style="color:#00a7d7"><b>KeyChest</b> dashboard</a><br/>
                 <div style="color:white; font-size:16px"><b>Your TLS/HTTPS certificates in one place</b></div>
             </div>
