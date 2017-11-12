@@ -27,12 +27,6 @@
   </div>
   <div class="row">
    <div class="col-xs-8">
-    <!--<div class="checkbox icheck">-->
-     <!--<label onClick="void(0)" style="cursor: pointer" >-->
-      <!--<input type="checkbox" name="remember" v-model="form.remember"> {{ trans('adminlte_lang_message.remember') }}-->
-     <!--</label>-->
-    <!--</div>-->
-
      <div class="toggl-box">
       <label>
       <toggle-button v-model="form.remember" id="chk-remember" color="#00a7d7"
@@ -93,18 +87,6 @@
         if (this.name === 'email') return 'glyphicon-envelope'
         return 'glyphicon-user'
       },
-      mobile: function() {
-          return /ipad|iphone|ipod|android|blackberry|windows phone|opera mini|silk/i.test(navigator.userAgent);
-      }
-    },
-    watch: {
-      'form.remember': function (value) {
-        if (value) {
-          $('input').iCheck('check')
-        } else {
-          $('input').iCheck('uncheck')
-        }
-      }
     },
     methods: {
       submit () {
@@ -134,22 +116,12 @@
         this.form.errors.clear(name)
       }
     },
-    mounted () {
-//        this.$nextTick(() => {
-//            this.initialitzeICheck('remember');
-//        });
-    },
   }
 
 </script>
 
 <style scoped>
-.mobile-remember {
-  cursor: pointer;
-}
-
 .toggl-box {
   margin-top: 10px;
 }
-
 </style>

@@ -27,22 +27,12 @@
   </div>
   <div class="row">
    <div class="col-xs-8">
-    <!--<label>-->
-     <!--<div class="checkbox_register icheck">-->
-      <!--<label data-toggle="modal" data-target="#termsModal">-->
-       <!--<input type="checkbox" name="terms" v-model="form.terms" class="has-error">-->
-       <!--<a href="#" :class="{ 'text-danger': form.errors.has('terms') }" v-text="trans('adminlte_lang_message.conditions')"></a>-->
-      <!--</label>-->
-     <!--</div>-->
-    <!--</label>-->
-
     <div class="toggl-box">
      <toggle-button v-model="form.terms" id="chk-terms" color="#00a7d7" class="has-error"></toggle-button>
      <label data-toggle="modal" data-target="#termsModal">
       <a href="#" :class="{ 'text-danger': form.errors.has('terms') }" v-text="trans('adminlte_lang_message.conditions')"></a>
      </label>
     </div>
-
    </div>
    <div class="col-xs-4 xcol-xs-push-1">
     <button type="submit" class="btn btn-primary btn-block btn-flat" :disabled="form.errors.any()" v-text="trans('adminlte_lang_message.register')"><i v-if="form.submitting" class="fa fa-refresh fa-spin"></i> </button>
@@ -59,9 +49,8 @@
 
 <script>
 
-  import Form from 'acacha-forms'
-  import initialitzeIcheck from './InitializeIcheck'
-  import redirect from './redirect'
+  import Form from 'acacha-forms';
+  import redirect from './redirect';
 
   import ToggleButton from 'vue-js-toggle-button';
   import Vue from 'vue';
@@ -69,19 +58,10 @@
   Vue.use(ToggleButton);
 
   export default {
-    mixins: [initialitzeIcheck, redirect],
+    mixins: [redirect],
     data: function () {
       return {
         form: new Form({ name: '', email: '', password: '', password_confirmation: '', terms: '' })
-      }
-    },
-    watch: {
-      'form.terms': function (value) {
-        if (value) {
-          $('input').iCheck('check')
-        } else {
-          $('input').iCheck('uncheck')
-        }
       }
     },
     methods: {
@@ -99,15 +79,12 @@
       },
       clearErrors (name) {
         if (name === 'password_confirmation') {
-          name = 'password'
-          this.form.errors.clear('password_confirmation')
+          name = 'password';
+          this.form.errors.clear('password_confirmation');
         }
-        this.form.errors.clear(name)
+        this.form.errors.clear(name);
       }
     },
-    mounted () {
-      //this.initialitzeICheck('terms')
-    }
   }
 
 </script>
