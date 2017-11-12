@@ -26,17 +26,25 @@
    <input type="password" class="form-control" :placeholder="trans('adminlte_lang_message.retypepassword')" name="password_confirmation" v-model="form.password_confirmation"/>
   </div>
   <div class="row">
-   <div class="col-xs-7">
-    <label>
-     <div class="checkbox_register icheck">
-      <label data-toggle="modal" data-target="#termsModal">
-       <input type="checkbox" name="terms" v-model="form.terms" class="has-error">
-       <a href="#" :class="{ 'text-danger': form.errors.has('terms') }" v-text="trans('adminlte_lang_message.conditions')"></a>
-      </label>
-     </div>
-    </label>
+   <div class="col-xs-8">
+    <!--<label>-->
+     <!--<div class="checkbox_register icheck">-->
+      <!--<label data-toggle="modal" data-target="#termsModal">-->
+       <!--<input type="checkbox" name="terms" v-model="form.terms" class="has-error">-->
+       <!--<a href="#" :class="{ 'text-danger': form.errors.has('terms') }" v-text="trans('adminlte_lang_message.conditions')"></a>-->
+      <!--</label>-->
+     <!--</div>-->
+    <!--</label>-->
+
+    <div class="toggl-box">
+     <toggle-button v-model="form.terms" id="chk-terms" color="#00a7d7" class="has-error"></toggle-button>
+     <label data-toggle="modal" data-target="#termsModal">
+      <a href="#" :class="{ 'text-danger': form.errors.has('terms') }" v-text="trans('adminlte_lang_message.conditions')"></a>
+     </label>
+    </div>
+
    </div>
-   <div class="col-xs-4 col-xs-push-1">
+   <div class="col-xs-4 xcol-xs-push-1">
     <button type="submit" class="btn btn-primary btn-block btn-flat" :disabled="form.errors.any()" v-text="trans('adminlte_lang_message.register')"><i v-if="form.submitting" class="fa fa-refresh fa-spin"></i> </button>
    </div>
   </div>
@@ -54,6 +62,11 @@
   import Form from 'acacha-forms'
   import initialitzeIcheck from './InitializeIcheck'
   import redirect from './redirect'
+
+  import ToggleButton from 'vue-js-toggle-button';
+  import Vue from 'vue';
+
+  Vue.use(ToggleButton);
 
   export default {
     mixins: [initialitzeIcheck, redirect],
@@ -93,8 +106,14 @@
       }
     },
     mounted () {
-      this.initialitzeICheck('terms')
+      //this.initialitzeICheck('terms')
     }
   }
 
 </script>
+
+<style scoped>
+.toggl-box {
+  margin-top: 10px;
+}
+</style>
