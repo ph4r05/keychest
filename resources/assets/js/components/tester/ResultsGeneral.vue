@@ -67,7 +67,7 @@
                 The {{ pluralize('key', numPositive) }} {{ pluralize('is', numKeys) }} subject to ROCA, which significantly reduces {{ pluralize('its', numKeys) }} security.
             </div>
             <div class="alert alert-danger-2" v-else-if="!allSafe">
-                The {{ pluralize('key', numPositive) }} {{ pluralize('is', numKeys) }} subject to ROCA, which reduces {{ pluralize('its', numKeys) }} security bellow generally acceptable level.
+                The {{ pluralize('key', numPositive) }} {{ pluralize('is', numKeys) }} subject to ROCA, which reduces the security bellow generally acceptable level.
             </div>
 
             <div v-for="(result, r_idx) in results.results" v-if="results.results">
