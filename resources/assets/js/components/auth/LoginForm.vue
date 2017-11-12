@@ -27,10 +27,16 @@
   </div>
   <div class="row">
    <div class="col-xs-8">
-    <div class="checkbox icheck">
-     <label>
-      <input type="checkbox" name="remember" v-model="form.remember"> {{ trans('adminlte_lang_message.remember') }}
-     </label>
+    <!--<div class="checkbox icheck">-->
+     <!--<label onClick="void(0)" style="cursor: pointer" >-->
+      <!--<input type="checkbox" name="remember" v-model="form.remember"> {{ trans('adminlte_lang_message.remember') }}-->
+     <!--</label>-->
+    <!--</div>-->
+
+     <div class="toggl-box">
+      <label>
+      <toggle-button v-model="form.remember" id="chk-remember" color="#00a7d7"
+      ></toggle-button> Remember me</label>
     </div>
    </div>
    <div class="col-xs-4">
@@ -47,6 +53,11 @@
   import Form from 'acacha-forms'
   import initialitzeIcheck from './InitializeIcheck'
   import redirect from './redirect'
+
+  import ToggleButton from 'vue-js-toggle-button';
+  import Vue from 'vue';
+
+  Vue.use(ToggleButton);
 
   export default {
     mixins: [initialitzeIcheck, redirect],
@@ -81,6 +92,9 @@
       icon: function () {
         if (this.name === 'email') return 'glyphicon-envelope'
         return 'glyphicon-user'
+      },
+      mobile: function() {
+          return /ipad|iphone|ipod|android|blackberry|windows phone|opera mini|silk/i.test(navigator.userAgent);
       }
     },
     watch: {
@@ -121,10 +135,21 @@
       }
     },
     mounted () {
-        this.$nextTick(() => {
-            this.initialitzeICheck('remember');
-        });
+//        this.$nextTick(() => {
+//            this.initialitzeICheck('remember');
+//        });
     },
   }
 
 </script>
+
+<style scoped>
+.mobile-remember {
+  cursor: pointer;
+}
+
+.toggl-box {
+  margin-top: 10px;
+}
+
+</style>

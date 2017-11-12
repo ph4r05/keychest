@@ -9,7 +9,8 @@ export default {
                 compObj.iCheck({
                     checkboxClass: 'icheckbox_square-blue',
                     radioClass: 'iradio_square-blue',
-                    increaseArea: '20%'
+                    increaseArea: '20%',
+                    tap: true
                 });
             }, 10);
 
