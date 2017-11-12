@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\CheckCertificateValidityCommand;
+use App\Console\Commands\MigrateGenerateCommand;
 use App\Console\Commands\Setup;
 use App\Console\Commands\SetupEcho;
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,6 +18,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         CheckCertificateValidityCommand::class,
+        MigrateGenerateCommand::class,
         Setup::class,
         SetupEcho::class,
     ];

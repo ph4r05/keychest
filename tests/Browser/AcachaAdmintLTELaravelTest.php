@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\GeneratedDatabaseMigrations;
 
 /**
  * Class AcachaAdmintLTELaravelTest.
@@ -14,7 +15,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
  */
 class AcachaAdmintLTELaravelTest extends DuskTestCase
 {
-    use DatabaseMigrations;
+    use GeneratedDatabaseMigrations;
 
     /**
      * Test Landing Page.

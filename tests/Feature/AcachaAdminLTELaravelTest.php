@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use ReflectionException;
+use Tests\GeneratedDatabaseMigrations;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -18,7 +19,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
  */
 class AcachaAdminLTELaravelTest extends TestCase
 {
-    use DatabaseMigrations;
+    use GeneratedDatabaseMigrations;
 
     /**
      * Set up tests.
