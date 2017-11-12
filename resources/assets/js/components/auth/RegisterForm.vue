@@ -28,7 +28,7 @@
   <div class="row">
    <div class="col-xs-8">
     <div class="toggl-box">
-     <toggle-button v-model="form.terms" id="chk-terms" color="#00a7d7" class="has-error"></toggle-button>
+     <toggle-button @change="onChkChange" id="chk-terms" color="#00a7d7" class="has-error"></toggle-button>
      <label data-toggle="modal" data-target="#termsModal">
       <a href="#" :class="{ 'text-danger': form.errors.has('terms') }" v-text="trans('adminlte_lang_message.conditions')"></a>
      </label>
@@ -65,6 +65,14 @@
       }
     },
     methods: {
+      onChkChange(evt){
+          this.$nextTick(() => {
+              this.form.terms = evt.value ? true : '';
+              if (evt.value) {
+                  Vue.delete(this.form.errors.errors, 'terms'); // reactivity fix
+              }
+          });
+      },
       submit () {
         this.form.post('/register')
           .then(response => {

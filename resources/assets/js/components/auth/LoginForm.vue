@@ -29,7 +29,7 @@
    <div class="col-xs-8">
      <div class="toggl-box">
       <label>
-      <toggle-button v-model="form.remember" id="chk-remember" color="#00a7d7"
+      <toggle-button @change="onChkChange" id="chk-remember" color="#00a7d7"
       ></toggle-button> Remember me</label>
     </div>
    </div>
@@ -89,6 +89,9 @@
       },
     },
     methods: {
+      onChkChange(evt){
+       this.form.remember = evt.value ? true : '';
+      },
       submit () {
         this.form.post('/login')
           .then(response => {
