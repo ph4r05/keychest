@@ -8,6 +8,8 @@
 
 namespace App\Keychest\Database;
 
+use Illuminate\Support\Facades\Crypt;
+
 /**
  * Encryptable Eloquent attributes with app password and standard Crypt facade.
  *
