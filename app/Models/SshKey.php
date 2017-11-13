@@ -8,16 +8,21 @@
 
 namespace App\Models;
 
+use App\Keychest\Database\Encryptable;
 use Illuminate\Database\Eloquent\Model;
 
 
 class SshKey extends Model
 {
+    use Encryptable;
+
     const TABLE = 'ssh_keys';
 
     protected $guarded = array();
 
     protected $table = self::TABLE;
+
+    protected $encryptable = ['priv_key'];
 
     public function getDates()
     {
