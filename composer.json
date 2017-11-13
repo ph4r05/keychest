@@ -31,7 +31,9 @@
         "php-di/invoker": "^2.0",
         "phpseclib/phpseclib": "~2.0",
         "predis/predis": "v1.1.1",
+        "spomky-labs/php-aes-gcm": "^1.2",
         "true/punycode": "~2.0",
+        "vjroby/laravel-pbkdf2": "^0.2.2",
         "webpatser/laravel-uuid": "^2.0"
     },
     "require-dev": {
