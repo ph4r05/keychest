@@ -21,6 +21,7 @@ return [
     'request' => 'Request KeyChest',
     'license' => 'Account',
     'apidoc' => 'API',
+    'management' => 'Management',
 
 
     'dashboard_desc' => 'headlines, incidents, planning, and useful information',
@@ -32,4 +33,5 @@ return [
     'license_desc' => 'License and accout information',
     'request_desc' => 'Benefits of KeyChest; customize your purchase order',
     'apidoc_desc' => 'Automate certificates with our API',
+    'management_desc' => 'Certificate auto management',
 ];
