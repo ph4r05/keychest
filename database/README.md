@@ -8,14 +8,19 @@ This choice has been made because KC Master is the primary data processing tool
 with data intensive operations with the database. I find Alembic very easy to use.
 E.g., it supports generating new revisions (diff) from the running database.  
  
-Laravel migrations are not used for primary migration logic. The migrations 
-are used only to bootstrap the database during initial installation, 
-from that point the Alembic is the main manager. In the future releases the 
-Laravel Migrations will be completely replaced by the Alembic bootstrapping. 
+Laravel migrations are not used for a primary migration logic. The Laravel migrations 
+are used only for models managed solely by the Laravel, i.e. unused by the KC Master
+(e.g., social users table). No KC Master can depend on those and vice versa. Once
+such dependency is made it has to be converted to Alembic.
+The Alembic is the main manager. 
 
-However for the PHP testing we need a way to build in memory sqlite database.
-For this purpose a there is a migrations generator command that automatically 
-generates migrations from the DB into `migrations_tests` directory.   
+Example: `Users` is a Laravel model by origin but many other relations used by KC Master
+depend on it (foreign keys) thus it is being managed by Alembic. Laravel Migrations are not 
+used for `Users` table.
+
+However for the PHP testing purposes we need a way to build in memory sqlite database with
+complete model.  For this purpose a there is a migrations generator command that automatically 
+generates PHP migrations from the DB into `migrations_tests` directory.   
  
 These migration files are used to build in memory testing database if test cases uses the 
 following trait:
