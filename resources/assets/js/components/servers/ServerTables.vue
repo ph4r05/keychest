@@ -132,6 +132,8 @@ import axios from 'axios';
 import Req from 'req';
 import Blob from 'w3c-blob';
 import FileSaver from 'file-saver';
+import toastr from 'toastr';
+import swal from 'sweetalert2';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';

@@ -59,6 +59,7 @@
     import axios from 'axios';
     import Req from 'req';
     import toastr from 'toastr';
+    import swal from 'sweetalert2';
 
     export default {
         data () {

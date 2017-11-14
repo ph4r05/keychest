@@ -106,6 +106,8 @@ import pluralize from 'pluralize';
 import _ from 'lodash';
 import Req from 'req';
 import ph4 from 'ph4';
+import toastr from 'toastr';
+import swal from 'sweetalert2';
 
 import Vue from 'vue';
 import VueEvents from 'vue-events';

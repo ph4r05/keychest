@@ -91,6 +91,7 @@
     import pluralize from 'pluralize';
     import Req from 'req';
     import toastr from 'toastr';
+    import swal from 'sweetalert2';
     import Psl from 'ph4-psl';
 
     import Vue from 'vue';
