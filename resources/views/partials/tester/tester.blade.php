@@ -12,7 +12,7 @@
 </div>
 
 <!-- Intro info -->
-<div class="row">
+<div class="row" style="font-family:Verdana">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -67,22 +67,27 @@
                             updating these to provide more accurate guidance. Please visit their web page at <a target="_blank"
                         href="https://crocs.fi.muni.cz/public/papers/rsa_ccs17">ROCA: Vulnerable RSA generation</a> for a detailed
                         description of the impact of the ROCA vulnerability.</p>
+                        <p><b>Update (14th November)</b>: The Spanish government has revoked all electronic ID-card (DNIe)
+                            certificates issued after May 2015. The official statement in Spanish is at
+                            <a target="_blank" href="https://www.dnielectronico.es/PortalDNIe/">"Direccion General de la Policia - DNI y Pasaporte" portal</a>.</p>
                     </div>
                     <div class="col-md-6" style="background-color: #ecf0f5;">
                         <p>
-                            This service is provided by <a target="_blank" href="https://enigmabridge.com"><b>Enigma Bridge</b></a>
-                            and powered by <a target = "_blank" href="https://keychest.net/#detail"><b>KeyChest</b></a>.
+                            This service is provided by <a target="_blank" href="https://enigmabridge.com">Enigma Bridge</a>
+                            and powered by <a target = "_blank" href="https://keychest.net/#detail">KeyChest</a>.
+                            It uses <a target="_blank" href="https://github.com/crocs-muni/roca">the official ROCA detection tool</a>.
                         </p>
                         <p>
-                            KeyChest is a powerful expiry monitoring service for HTTPS certificates. Once you provide it
-                            with your company registered domain name, it will automatically detect all relevant certificates
-                            and start watching their expiry.
+                            KeyChest is a certificate management service for HTTPS certificates. It automatically discovers
+                            new certificates and adds them to its reports. The certificate renewal system uses an Ansible
+                            integration and removes the need for keeping Let's Encrypt clients up-to-date on each of
+                            your servers. It simply provides keys and certificate when needed.
                         </p>
 
                         <p>
-                            KeyChest is currently growing into a complete key management platform with an integrated
-                            certificate renewal functions. It understands you don't need to know the complicated
-                            technology of TLS/HTTPS when want to focus on your online business.
+                            The <a target="_blank" href="https://api.enigmabridge.com/api/?shell#keychest">KeyChest
+                                RESTful API</a> allows automation of independent monitoring with a self-registration of
+                            new clients. It provides expiry information for each detected IP address.
                         </p>
 
                         <a href="{{url('/register')}}"><img src="/images/keychest_dashboard.png" class="img-responsive"/></a>
