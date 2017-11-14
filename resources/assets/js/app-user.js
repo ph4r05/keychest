@@ -84,22 +84,31 @@ Vue.component('tester', resolve => {
 Vue.use(VueRouter);
 
 console.log('Vue.js init');
+
+// Main router
 const router = new VueRouter({
     //mode: 'history'
 });
 
+// Main Vuex
+import { sync } from 'vuex-router-sync'
+import store from './store';
+const unsync = sync(store, router); // done. Returns an unsync callback fn
+
 const app = new Vue({
     el: '#app',
+    router,
+    store,
     mounted() {
         this.$nextTick(() => {
             window.Req.bodyVueLoaded(true);
         })
     },
-    router
 });
 
 window.VueMain = app;
 window.VueRouter = router;
+window.VueStore = store;
 
 // Fill in missing time zones
 window.Req.timezoneCheck();
