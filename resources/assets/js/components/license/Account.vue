@@ -313,8 +313,8 @@
             },
             switchEdit(field){
                 if (field==='notifEmail'
-                    && this.formFields.fields.notifEmail
-                    && this.formFields.fields.notifEmail.failed)
+                    && this.formFields.notifEmail
+                    && this.formFields.notifEmail.failed)
                 {
                     return;
                 }
