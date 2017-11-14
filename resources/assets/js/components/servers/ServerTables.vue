@@ -104,7 +104,7 @@
             <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
         </div>
         <span>Selected {{numSelected}} {{ pluralize('server', numSelected) }} </span>
-        <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServers('download-servers')" >
+        <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServers" >
           Download all servers
         </button>
       </div>
