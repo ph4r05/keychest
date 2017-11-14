@@ -5,6 +5,8 @@
             <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
                 <template slot="title">ROCA vulnerability summary</template>
 
+                <p>Date of release: 16th October, 12:00pm BST</p>
+
                     <h3>ROCA - Critical vulnerability in Infineon security chips including TPM and smart cards</h3>
                     <h4>
                         Technical details: <a target="_blank" href="https://acmccs.github.io/session-H1/">The Return
