@@ -11,7 +11,6 @@ require('./bootstrap');
 import _ from 'lodash';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import VueResource from 'vue-resource';
 import Req from 'req';
 
 window.Vue = Vue;
@@ -75,12 +74,20 @@ Vue.component('servers-import', resolve => {
 Vue.component('account', resolve => {
     require.ensure([], require => resolve(require('./components/license/Account.vue')), 'account');
 });
+Vue.component('management', resolve => {
+    require.ensure([], require => resolve(require('./components/management_root.vue')), 'management');
+});
 Vue.component('tester', resolve => {
     require.ensure([], require => resolve(require('./components/tester/Tester.vue')), 'tester');
 });
 
+Vue.use(VueRouter);
 
 console.log('Vue.js init');
+const router = new VueRouter({
+    //mode: 'history'
+});
+
 const app = new Vue({
     el: '#app',
     mounted() {
@@ -88,9 +95,11 @@ const app = new Vue({
             window.Req.bodyVueLoaded(true);
         })
     },
+    router
 });
 
 window.VueMain = app;
+window.VueRouter = router;
 
 // Fill in missing time zones
 window.Req.timezoneCheck();
