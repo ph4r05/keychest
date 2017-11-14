@@ -4,12 +4,14 @@
             <h3 class="box-title" :data-widget="headerWidget"><slot name="title"></slot></h3>
 
             <div class="box-tools pull-right">
+                <slot name="widgets"></slot>
                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
                     <i v-if="collapsed" class="fa fa-plus"></i>
                     <i v-else="" class="fa fa-minus"></i>
                 </button>
                 <button v-if="remove" type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                    <i class="fa fa-times"></i></button>
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
         </div>
 
