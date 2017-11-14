@@ -54,7 +54,12 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .copy('node_modules/admin-lte/plugins','public/plugins')
     .copy('node_modules/icheck/skins/square/blue.png','public/css')
     .copy('node_modules/icheck/skins/square/blue@2x.png','public/css')
-    .extract(['vue', 'jquery', 'jquery-ui', 'axios', 'lodash', 'es6-promise', 'moment', 'moment-timezone'])
+    .extract([
+        'es6-promise',
+        'vue', 'vuex', 'vue-router', 'vue-resource', 'vue-events',
+        'jquery', 'jquery-ui', 'lodash', 'axios',
+        'sweetalert2', 'toastr', 'pluralize',
+        'moment', 'moment-timezone'])
     .sourceMaps();
 
 mix.babel([
