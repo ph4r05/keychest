@@ -93,6 +93,7 @@
     import toastr from 'toastr';
     import swal from 'sweetalert2';
     import Psl from 'ph4-psl';
+    import bswitch from 'bootstrap-switch';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';

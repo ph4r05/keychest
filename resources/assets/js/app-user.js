@@ -21,7 +21,6 @@ require('moment-timezone');
 require('./common.js');
 
 require('jquery-ui/ui/effects/effect-shake');
-require('bootstrap-switch');
 
 /**
  * Admin LTE
