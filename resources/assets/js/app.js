@@ -7,11 +7,11 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
-window.Req = require('req').default;
-window.toastr = require('toastr');
-window.Moment = require('moment');
-window.pluralize = require('pluralize');
+import Vue from 'vue';
+import Req from 'req';
+
+window.Vue = Vue;
+window.Req = Req;
 
 require('./common.js');
 require('jquery-ui/ui/effects/effect-shake');
@@ -37,3 +37,6 @@ const app = new Vue({
         })
     },
 });
+
+window.VueMain = app;
+

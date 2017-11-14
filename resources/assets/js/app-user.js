@@ -7,14 +7,15 @@
 
 // __webpack_public_path__ = '/';  // quick hack for Vue2 lazy loaded components. Not needed now.
 require('./bootstrap');
-import _ from 'lodash';
 
-window.Vue = require('vue');
-window.Req = require('req').default;
-window.Moment = require('moment');
-window.toastr = require('toastr');
-window.swal = require('sweetalert2');
-window.pluralize = require('pluralize');
+import _ from 'lodash';
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import VueResource from 'vue-resource';
+import Req from 'req';
+
+window.Vue = Vue;
+window.Req = Req;
 
 require('moment-timezone');
 require('./common.js');
@@ -26,7 +27,6 @@ require('bootstrap-switch');
  * Admin LTE
  */
 require('admin-lte');
-require('icheck');
 
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
@@ -90,6 +90,8 @@ const app = new Vue({
         })
     },
 });
+
+window.VueMain = app;
 
 // Fill in missing time zones
 window.Req.timezoneCheck();
