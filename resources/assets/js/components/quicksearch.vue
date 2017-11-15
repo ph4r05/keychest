@@ -192,7 +192,7 @@
                  v-bind:class="{
                     'alert-danger': this.results.whois.expires_at_days <= 28,
                     'alert-warning': this.results.whois.expires_at_days > 28}" >
-                <strong>Warning</strong>: domain <u>{{ results.whois.domain }}</u> expires in
+                <strong>Warning!</strong> Domain <u>{{ results.whois.domain }}</u> expires in
                 {{ Math.floor(results.whois.expires_at_days) }}
                 {{ pluralize('day', Math.floor(results.whois.expires_at_days)) }}.
                 Consider domain renewal. <span v-if="!isMonitored">Start watching now.</span>
@@ -203,10 +203,10 @@
                 <p><strong>Warning!</strong>
                     We detected only {{ Math.round(100 * (100 - (100.0 * results.downtimeTls.downtime / results.downtimeTls.size))) / 100.0 }} %
                     uptime. You were "not secure" for at least {{ Math.round(results.downtimeTls.downtime / 3600.0) }}
-                    {{ pluralize('hour', Math.round(results.downtimeTls.downtime / 3600.0)) }}
+                    {{ pluralize('hour', Math.round(results.downtimeTls.downtime / 3600.0)) }}.
                     <span v-if="results.downtimeTls.downtime > 3600*24*3">
                          ({{ Math.round(results.downtimeTls.downtime / 24.0 / 3600.0) }}
-                        {{ pluralize('day',Math.round(results.downtimeTls.downtime / 24.0 / 3600.0)) }})</span>.
+                        {{ pluralize('day',Math.round(results.downtimeTls.downtime / 24.0 / 3600.0)) }}).</span>
                     <span v-if="!isMonitored">Start watching now.</span>
                     </p>
             </div>
