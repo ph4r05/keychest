@@ -18,5 +18,13 @@ return [
     'enabled_api_self_register' => env('APP_ENABLED_API_SELF_REGISTER', false),
     'enabled_user_auto_register' => env('APP_ENABLED_USER_AUTO_REGISTER', false),
 
+    'ssh_key_pool_size' => env('SSH_KEY_POOL_SIZE', 100),
+    'ssh_key_free_max_age_days' => env('SSH_KEY_FREE_MAX_AGE_DAYS', 14),
+    'ssh_key_sizes' => json_decode(env('SSH_KEY_SIZES', '[2048,3072]')),
+
+    'wrk_ssh_pool_conn' => env('WORK_SSH_POOL_CONN', 'database'),
+    'wrk_ssh_pool_queue' => env('WORK_SSH_POOL_QUEUE', 'sshpool'),
+    'wrk_ssh_pool_gen_conn' => env('WORK_SSH_POOL_GEN_CONN', 'database'),
+    'wrk_ssh_pool_gen_queue' => env('WORK_SSH_POOL_GEN_QUEUE', 'sshpool'),
 ];
 

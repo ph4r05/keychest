@@ -13,16 +13,19 @@ class GeneratedSshKey
 {
     public $privateKey;
     public $publicKey;
+    public $bitSize;
 
     /**
      * GeneratedSshKey constructor.
      * @param $privateKey
      * @param $publicKey
+     * @param int $bitSize
      */
-    public function __construct($privateKey, $publicKey)
+    public function __construct($privateKey, $publicKey, $bitSize=0)
     {
         $this->privateKey = $privateKey;
         $this->publicKey = $publicKey;
+        $this->bitSize = $bitSize;
     }
 
     /**
@@ -34,14 +37,6 @@ class GeneratedSshKey
     }
 
     /**
-     * @param mixed $privateKey
-     */
-    public function setPrivateKey($privateKey)
-    {
-        $this->privateKey = $privateKey;
-    }
-
-    /**
      * @return mixed
      */
     public function getPublicKey()
@@ -50,14 +45,41 @@ class GeneratedSshKey
     }
 
     /**
+     * @return mixed
+     */
+    public function getBitSize()
+    {
+        return $this->bitSize;
+    }
+
+    /**
+     * @param mixed $privateKey
+     * @return GeneratedSshKey
+     */
+    public function setPrivateKey($privateKey)
+    {
+        $this->privateKey = $privateKey;
+        return $this;
+    }
+
+    /**
      * @param mixed $publicKey
+     * @return GeneratedSshKey
      */
     public function setPublicKey($publicKey)
     {
         $this->publicKey = $publicKey;
+        return $this;
     }
 
-
-
+    /**
+     * @param mixed $bitSize
+     * @return GeneratedSshKey
+     */
+    public function setBitSize($bitSize)
+    {
+        $this->bitSize = $bitSize;
+        return $this;
+    }
 
 }
