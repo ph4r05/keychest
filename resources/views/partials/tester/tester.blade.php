@@ -67,8 +67,9 @@
                             updating these to provide more accurate guidance. Please visit their web page at <a target="_blank"
                         href="https://crocs.fi.muni.cz/public/papers/rsa_ccs17">ROCA: Vulnerable RSA generation</a> for a detailed
                         description of the impact of the ROCA vulnerability.</p>
-                        <p><b>Update (14th November)</b>: The Spanish government has revoked all electronic ID-card (DNIe)
-                            certificates issued after May 2015. The official statement in Spanish is at
+                        <p><b>Update (14th November)</b>: The Spanish government has said it would "deactivate" all
+                            electronic ID-card (DNIe) certificates issued after May 2015i. It hasn't happened yet.
+                        The official statement in Spanish is at
                             <a target="_blank" href="https://www.dnielectronico.es/PortalDNIe/">"Direccion General de la Policia - DNI y Pasaporte" portal</a>.</p>
                     </div>
                     <div class="col-md-6" style="background-color: #ecf0f5;">
