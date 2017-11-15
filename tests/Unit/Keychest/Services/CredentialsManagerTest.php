@@ -17,15 +17,20 @@ class CredentialsManagerTest extends TestCase
      */
     public function testRsaKeyGenerator()
     {
-        $this->assertTrue(true);
-        $cmag = $this->app->make(CredentialsManager::class);
+        $credentialsManager = $this->app->make(CredentialsManager::class);
+        $bitSizes = [1024, 1024, 2048];
 
-        $genKey = $cmag->generateSshKey(1024);
-        $this->assertNotNull($genKey);
+        foreach($bitSizes as $bitSize) {
+            $genKey = $credentialsManager->generateSshKey($bitSize);
+            $this->assertNotNull($genKey);
 
-        $this->assertNotNull($genKey->getPrivateKey());
-        $this->assertNotNull($genKey->getPublicKey());
-        $this->assertStringStartsWith('ssh-rsa ', $genKey->getPublicKey());
-        $this->assertContains('BEGIN RSA PRIVATE KEY', $genKey->getPrivateKey());
+            $this->assertNotNull($genKey->getPrivateKey());
+            $this->assertNotNull($genKey->getPublicKey());
+            $this->assertStringStartsWith('ssh-rsa ', $genKey->getPublicKey());
+            $this->assertContains('BEGIN RSA PRIVATE KEY', $genKey->getPrivateKey());
+            $this->assertGreaterThan(100, strlen($genKey->getPublicKey()));
+            $this->assertGreaterThan(100, strlen($genKey->getPrivateKey()));
+        }
     }
+
 }
