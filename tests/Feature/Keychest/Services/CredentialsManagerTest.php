@@ -3,7 +3,9 @@
 namespace Tests\Feature\Keychest\Services;
 
 use App\Keychest\Services\CredentialsManager;
+use App\Keychest\Services\Exceptions\SshKeyAllocationException;
 use App\Models\SshKey;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Tests\CreatesApplication;
@@ -55,4 +57,44 @@ class CredentialsManagerTest extends TestCase
         $this->assertNotEquals($sshKey->getPrivateKey(), $loaded->privk);
         $this->assertEquals($loadedElo->getAttributes()['priv_key'], $loaded->privk);
     }
+
+    /**
+     * Tests ssh key allocation from the pool.
+     */
+    public function testSshKeyAllocationEmpty(){
+        $credentialsManager = $this->app->make(CredentialsManager::class);
+        $user = (new User(['name'=>'tester', 'email'=>'test@keychest.net']));
+        $user->save();
+
+        $this->expectException(SshKeyAllocationException::class);
+        $credentialsManager->allocateSshKeyToUser(1024, $user);
+    }
+
+    /**
+     * Test valid allocation.
+     */
+    public function testSshKeyAllocation(){
+        $credentialsManager = $this->app->make(CredentialsManager::class);
+        $user = (new User(['name'=>'tester', 'email'=>'test@keychest.net']));
+        $user->save();
+        $bitSize = 512;
+
+        for($i=0; $i<5; $i++) {
+            $key = $credentialsManager->generateSshPoolKey($bitSize);
+            $this->assertNotNull($key);
+        }
+
+        for($i=0; $i<5; $i++) {
+            $key = $credentialsManager->allocateSshKeyToUser($bitSize, $user);
+            $this->assertNotNull($key);
+            $this->assertEquals($user->id, $key->user_id);
+            $this->assertEquals($bitSize, $key->bit_size);
+            $this->assertStringStartsWith('-----BEGIN', $key->priv_key);
+        }
+
+        // 6th - exception.
+        $this->expectException(SshKeyAllocationException::class);
+        $credentialsManager->allocateSshKeyToUser($bitSize, $user);
+    }
+
 }

@@ -18,7 +18,7 @@ class CredentialsManagerTest extends TestCase
     public function testRsaKeyGenerator()
     {
         $credentialsManager = $this->app->make(CredentialsManager::class);
-        $bitSizes = [1024, 1024, 2048];
+        $bitSizes = [512, 1024, 1024, 2048];
 
         foreach($bitSizes as $bitSize) {
             $genKey = $credentialsManager->generateSshKey($bitSize);

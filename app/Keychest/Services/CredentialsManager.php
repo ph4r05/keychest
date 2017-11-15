@@ -11,6 +11,7 @@ namespace App\Keychest\Services;
 use App\Keychest\DataClasses\GeneratedSshKey;
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\Exceptions\CertificateAlreadyInsertedException;
+use App\Keychest\Services\Exceptions\SshKeyAllocationException;
 use App\Keychest\Utils\ApiKeyLogger;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DomainTools;
@@ -147,4 +148,46 @@ class CredentialsManager
         return $toGenerate;
     }
 
+    /**
+     * Allocates one SSH key to the user from the pregenerated SSH key pool.
+     *
+     * @param $bitSize
+     * @param $user
+     * @return mixed
+     */
+    public function allocateSshKeyToUser($bitSize, $user){
+        $maxFreeKeyAgeDays = intval(config('keychest.ssh_key_free_max_age_days'));
+        $threshold = $maxFreeKeyAgeDays > 0 ? Carbon::now()->subDays($maxFreeKeyAgeDays) : null;
+
+        // Pessimistic locking.
+        // Optimistic locking variant would be:
+        //  - until success / attempt reaches the maximum
+        //  - - query random free ID from the database
+        //  - - UPDATE ssh_keys
+        //              SET rec_version = rec_version + 1, user_id = $user_id
+        //              WHERE rec_version == $rec_version AND user_id is NULL and ID = $id // make sure still free
+        //
+        //  - - check number of affected rows by the query. If 1 then success.
+        //  - - load final key once again, last check (redundant, just get fresh eloquent model), return.
+        return DB::transaction(function() use ($bitSize, $user, $threshold) {
+            $candidate = SshKey::query()
+                ->whereNull('user_id')
+                ->where('rec_version', '=', 0)
+                ->where('created_at', '>=', $threshold)
+                ->where('bit_size', '=', $bitSize)
+                ->inRandomOrder()
+                ->lockForUpdate()
+                ->first();
+
+            if (empty($candidate)){
+                throw new SshKeyAllocationException('Could not find any suitable candidate key');
+            }
+
+            $candidate->user_id = $user->id;
+            $candidate->rec_version += 1;
+            $candidate->save();
+            return $candidate;
+
+        }, 5);
+    }
 }
