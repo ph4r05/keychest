@@ -33,8 +33,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command(CheckCertificateValidityCommand::class)  // ['--id=2']
+         $schedule->command(CheckCertificateValidityCommand::class)
              ->everyTenMinutes()
+             ->withoutOverlapping();
+
+         $schedule->command(CheckSshKeyPoolCommand::class, ['--max-keys=20'])
+             ->everyMinute()
              ->withoutOverlapping();
     }
 
