@@ -2,6 +2,14 @@
 
 Used components / endpoints configuration
 
+## Horizon
+
+https://laravel.com/docs/5.5/horizon
+
+```
+php artisan vendor:publish --provider="Laravel\Horizon\HorizonServiceProvider"
+```
+
 ## Admin LTE
 
 https://github.com/acacha/adminlte-laravel

@@ -24,6 +24,7 @@
         "laravel/browser-kit-testing": "^1.0.2",
         "laravel/dusk": "^2.0",
         "laravel/framework": "5.5.*",
+        "laravel/horizon": "^1.0",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4",
         "league/flysystem": "^1.0",
