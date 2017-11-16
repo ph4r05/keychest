@@ -16,11 +16,11 @@
                     <div class="create-server-bar">
                         <div class="pull-right-nope form-group">
                             <router-link :to="{name: 'addHost'}" tag="button"
-                                         class="btn btn-sm btn-success btn-block">Add</router-link>
+                                         class="btn btn-sm btn-success btn-block"
+                            >Add Host</router-link>
                         </div>
                     </div>
 
-                    <!--<add-server></add-server>-->
                 </div>
                 <div class="col-md-5">
                     <filter-bar
@@ -125,7 +125,6 @@
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
     import FilterBar from '../partials/FilterBar.vue';
-//    import AddServer from './AddServer.vue';
 //    import EditServer from './EditServer.vue';
 //    import ServerInfo from './ServerInfo.vue';
 
@@ -133,7 +132,6 @@
     Vue.use(VueRouter);
     Vue.use(Vue2Filters);
     Vue.component('filter-bar', FilterBar);
-//    Vue.component('add-server', AddServer);
 //    Vue.component('edit-server', EditServer);
 //    Vue.component('server-info', ServerInfo);
 
