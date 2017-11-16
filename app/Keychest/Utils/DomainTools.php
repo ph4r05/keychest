@@ -9,6 +9,7 @@
 namespace App\Keychest\Utils;
 
 
+use App\Keychest\Utils\Exceptions\HostSpecParseException;
 use Illuminate\Support\Collection;
 
 
@@ -263,6 +264,16 @@ class DomainTools {
     }
 
     /**
+     * Returns true if port is in valid range.
+     * @param $p
+     * @return bool
+     */
+    public static function isValidPort($p){
+        $p = intval($p);
+        return $p > 0 && $p <= 65535;
+    }
+
+    /**
      * Tests parsed hostname for validity
      * @param $parsed
      * @return bool
@@ -502,6 +513,52 @@ class DomainTools {
         $aOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $a));
         $bOct = array_map($numConv, explode($aCat == 2 ? '.' : ':', $b));
         return DataTools::compareArrays($aOct, $bOct);
+    }
+
+    /**
+     * Parses host spec addr[:port]
+     * @param $str
+     * @return HostSpec
+     * @throws HostSpecParseException
+     */
+    public static function hostSpecParse($str){
+        $mIpv4 = null;
+        $mIpv6 = null;
+        $mHostname = null;
+
+        $ip4Match = preg_match(
+            '/^\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})(?::([0-9]{1,5}))?\s*$/', $str, $mIpv4);
+        $ip6Match = preg_match(
+            '/^\s*\[([0-9a-fA-F:.]+)\]:([0-9]{1,5})\s*$/', $str, $mIpv6);
+        $hostMatch = preg_match(
+            '/^\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+([a-z]{2,63})\b(?::([0-9]{1,5}))?$/', $str, $mHostname);
+
+        if ($hostMatch){
+            return new HostSpec($mHostname[1], $mHostname[5], HostSpec::ADDR_DOMAIN);
+        }
+
+        if ($ip6Match){
+            return new HostSpec($mIpv6[1], $mIpv6[2], HostSpec::ADDR_IPv6);
+        }
+
+        if ($ip4Match){
+            return new HostSpec($mIpv4[1], $mIpv4[2], HostSpec::ADDR_IPv4);
+        }
+
+        throw new HostSpecParseException('HostSpec parse error');
+    }
+
+    /**
+     * Parses host spec addr[:port], returns null on parse error.
+     * @param $str
+     * @return HostSpec|null
+     */
+    public static function tryHostSpecParse($str){
+        try {
+            return self::hostSpecParse($str);
+        } catch(HostSpecParseException $e){
+            return null;
+        }
     }
 
 }
