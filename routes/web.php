@@ -129,7 +129,9 @@ Route::post('home/account/close', 'UserController@closeAccount')->name('close-ac
 Route::get('home/user-guide', 'HomeController@userGuide')->name('user-guide');
 Route::get('home/apidoc', 'HomeController@apiDoc')->name('apidoc');
 Route::get('home/enterprise', 'HomeController@enterprise')->name('enterprise');
-Route::get('home/management', 'ManagementController@managementIndex')->name('management');
+
+// Management
+Route::get('home/management', 'Management\ManagementController@managementIndex')->name('management');
 
 // Tester
 Route::get('tester', 'KeyCheckController@index');

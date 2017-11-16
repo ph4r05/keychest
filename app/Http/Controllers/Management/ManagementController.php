@@ -5,14 +5,15 @@
  * https://github.com/laravel/framework/blob/5.3/src/Illuminate/Auth/Console/stubs/make/controllers/HomeController.stub
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Management;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests;
 
 
 /**
  * Class ManagementController
- * @package App\Http\Controllers
+ * @package App\Http\Controllers\Management
  */
 class ManagementController extends Controller
 {
