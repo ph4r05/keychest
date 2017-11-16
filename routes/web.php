@@ -132,6 +132,7 @@ Route::get('home/enterprise', 'HomeController@enterprise')->name('enterprise');
 
 // Management
 Route::get('home/management', 'Management\ManagementController@managementIndex')->name('management');
+Route::post('home/management/hosts/add', 'Management\HostController@addHost');
 
 // Tester
 Route::get('tester', 'KeyCheckController@index');

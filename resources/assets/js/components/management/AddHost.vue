@@ -21,7 +21,8 @@
                     <div class="form-group">
                         <label for="host_name">Host name</label>
                         <input type="text" id="host_name" name="host_name"
-                               class="form-control" placeholder="host name"/>
+                               class="form-control" placeholder="host name"
+                               v-model="formData.host_name"/>
                     </div>
 
                     <div class="form-group">
@@ -30,6 +31,7 @@
                                class="form-control" placeholder="server.com:22"
                                v-validate="{max: 255, required: true, host_spec: true}"
                                data-vv-as="Host address"
+                               v-model="formData.host_addr"
                         />
 
                         <i v-show="errors.has('host_addr')" class="fa fa-warning"></i>
@@ -106,6 +108,11 @@
         data () {
             return {
                 sentState: 0,
+                formData: {
+                    host_name: '',
+                    host_addr: '',
+                    agent_id: ''
+                }
             }
         },
 
@@ -134,30 +141,43 @@
             },
 
             hostCheck(){
-                const onValid = () => {
-                    this.onSaveClick();
-                };
-
                 this.$validator.validateAll()
-                    .then((result) => onValid())
+                    .then((result) => this.onSave())
+                    .then((result) => this.onResult())
                     .catch((err) => {
                         console.warn(err);
+                        toastr.error('Host could not be saved', 'Save fail', {
+                            timeOut: 2000, preventDuplicates: true
+                        });
                     });
             },
 
-            onSaveClick(){
-                this.sentState = 1;
-                setTimeout(() => {
-                    this.sentState = 2;
+            onSave() {
+                return new Promise((resolve, reject) => {
 
+                    this.sentState = 1;
+                    const params = this.formData;
+                    axios.post('/home/management/hosts/add', params)
+                        .then(res => {
+                            this.sentState = 2;
+                            resolve(res);
+                        })
+                        .catch(err => {
+                            this.sentState = 0;
+                            reject(new Error(err));
+                        });
+                });
+            },
+
+            onResult(res){
+                return new Promise((resolve, reject) => {
                     Vue.nextTick( () => {
                         setTimeout(() => {
+                            console.log(res);
                             this.$scrollTo('.config-host');
                         }, 100);
                     });
-
-
-                }, 3000);
+                });
             }
         },
 
