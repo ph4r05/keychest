@@ -268,7 +268,7 @@ class DomainTools {
      * @param $p
      * @return bool
      */
-    public static function isValidPort($p){
+    public static function isPortValid($p){
         $p = intval($p);
         return $p > 0 && $p <= 65535;
     }
@@ -534,7 +534,7 @@ class DomainTools {
             '/^\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+([a-z]{2,63})\b(?::([0-9]{1,5}))?$/', $str, $mHostname);
 
         if ($hostMatch){
-            return new HostSpec($mHostname[1], $mHostname[5], HostSpec::ADDR_DOMAIN);
+            return new HostSpec($mHostname[1] . $mHostname[4], $mHostname[5], HostSpec::ADDR_DOMAIN);
         }
 
         if ($ip6Match){

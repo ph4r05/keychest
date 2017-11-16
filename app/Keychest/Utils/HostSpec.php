@@ -45,6 +45,60 @@ class HostSpec {
         $this->addrType = $addrType;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getAddr()
+    {
+        return $this->addr;
+    }
+
+    /**
+     * @param mixed $addr
+     * @return HostSpec
+     */
+    public function setAddr($addr)
+    {
+        $this->addr = $addr;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * @param mixed $port
+     * @return HostSpec
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddrType()
+    {
+        return $this->addrType;
+    }
+
+    /**
+     * @param mixed $addrType
+     * @return HostSpec
+     */
+    public function setAddrType($addrType)
+    {
+        $this->addrType = $addrType;
+        return $this;
+    }
+
 
 }
 
