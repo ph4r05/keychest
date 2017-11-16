@@ -28,7 +28,7 @@
                         <label for="host_name">Host address</label>
                         <input type="text" id="host_addr" name="host_addr"
                                class="form-control" placeholder="server.com:22"
-                               v-validate="{max: 255, required: true}"
+                               v-validate="{max: 255, required: true, host_spec: true}"
                                data-vv-as="Host address"
                         />
 
@@ -93,6 +93,7 @@
     import VueScrollTo from 'vue-scrollto';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
+    import hostSpecValidator from '../../lib/validator/hostspec';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
@@ -108,6 +109,12 @@
             }
         },
 
+        mounted() {
+            this.$nextTick(() => {
+                this.hookup();
+            })
+        },
+
         computed: {
             isRequestInProgress(){
                 return false;
@@ -118,6 +125,10 @@
         },
 
         methods: {
+            hookup(){
+                VeeValidate.Validator.extend('host_spec', hostSpecValidator);
+            },
+
             back() {
                 this.$router.back();
             },
@@ -149,6 +160,7 @@
                 }, 3000);
             }
         },
+
         events: {
 
         }
