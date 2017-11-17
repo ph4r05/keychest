@@ -127,8 +127,8 @@
                 <tr v-if="!hasDnsProblem && scanIp && ips.length > 1">
                     <!-- Other IP addresses -->
                     <td colspan="3">
-                        We found <span v-if="anotherIps.length < 2">an</span> additional network {{ pluralize('address', anotherIps.length) }} for <b>{{ curJob.scan_host }}</b>.
-                    Click to test.
+                        We found <span v-if="anotherIps.length < 2">an</span> additional network {{ pluralize('address', anotherIps.length) }}
+                        for <b>{{ curJob.scan_host }}</b>, click to test.
                     <span v-for="ip in anotherIps"> &nbsp;<a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a></span>.
                 </td>
                 </tr>
