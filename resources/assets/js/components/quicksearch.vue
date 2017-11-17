@@ -180,7 +180,7 @@
                     watching changes. <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length === 1">
-                    The server sent only its own certificate, a certificate of the issuing CA is missing (aka bundle).
+                    The server sent only its own certificate, a certificate of the issuing CA (i.e., the "bundle") is missing.
                     Check the server's configuration, re-test, and <a href="/register?start_watching=1">start watching</a> changes.
                     <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
@@ -194,7 +194,7 @@
                             v-if="tlsScan.certs_ids.length === 0">it sent no certificate.</span><span
                             v-else-if="!tlsScanHostCert">we couldn't create secure connection (TLS handshake).</span><span
                             v-else-if="tlsScan.certs_ids.length === 1 && tlsScanLeafCert">it sent only its own certificate.
-                    A certificate of the issuing CA is missing (aka bundle).</span><!--
+                    A certificate of the issuing CA (i.e., the "bundle") is missing.</span><!--
                     -->
                 </div>
             </div>
