@@ -97,8 +97,10 @@
                 <!-- Overall validity status, else-ifs from the most urgent to least -->
                 <tr v-bind:class="defconStyle">
                     <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
-                        Certificate expired. Your server is down and HSTS prevents all connections. Start watching to see
-                        changes or get in touch for help.</td>
+                        The certificate expired. Your server is down and HSTS prevents all connections.
+                        <a href="/register?start_watching=1">Start watching it</a> to prevent another downtime or
+                        <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a>
+                        for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
                         Certificate expired. Web browsers will show a warning page that the server is not secure and
                         potentially dangerous. Start watching to see changes or get in touch for help.</td>
