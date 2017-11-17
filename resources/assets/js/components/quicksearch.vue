@@ -124,6 +124,14 @@
                         to your annual planner.</span><span v-else="">This domain is also in your
                         dashboard.</span></td>
                 </tr>
+                <tr v-if="!hasDnsProblem && scanIp && ips.length > 1">
+                    <!-- Other IP addresses -->
+                    <td colspan="3">
+                        We found <span v-if="anotherIps.length < 2">an</span> additional network {{ pluralize('address', anotherIps.length) }} for {{ curJob.scan_host }}.
+                    Click to test.
+                    <span v-for="ip in anotherIps"> &nbsp;<a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a></span>.
+                </td>
+                </tr>
                 <tr v-if="showResultsTable && !jobSubmittedNow && curJob">
                     <td colspan="3">
                         <!-- Label for loaded test (performed previously) -->
@@ -235,13 +243,6 @@
             <!-- Redirect - scan that too? -->
             <div class="alert alert-info" v-if="!tlsScanError && didYouMeanUrl">
                 We detected a redirection. Click to check destination server <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a>.
-            </div>
-
-            <!-- Other IP addresses -->
-            <div class="alert alert-info" v-if="!hasDnsProblem && scanIp && ips.length > 1">
-                We have found additional network {{ pluralize('address', anotherIps.length) }} for {{ curJob.scan_host }}.
-                Please click on a particular address to test it.<br>
-                <span v-for="ip in anotherIps"> &nbsp;<a v-bind:href="newScanUrl(null, ip.ip)">{{ ip.ip }}</a></span>.
             </div>
 
             <!-- Neighbours -->
