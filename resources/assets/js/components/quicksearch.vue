@@ -59,7 +59,7 @@
             <!-- UX - nice message for missing TLS -->
             <div class="alert alert-danger" v-else-if="tlsScanError && tlsScan && tlsScan.err_code == 2">
                 There is no server (HTTPS/TLS or any other) <u>{{ curJob.scan_host }}</u> at the network address
-                <span v-if="scanIpIsIpv6">IPv6 {{ scanIp }}.<br>If {{ curJob.scan_host }} is correct, you may
+                <span v-if="scanIpIsIpv6">IPv6 {{ scanIp }}.<br>If <b>{{ curJob.scan_host }}</b> is correct, you may
                 not be able to renew Let&#39;s Encrypt certificates, see more at <a target="_blank"
                  href="https://community.letsencrypt.org/t/preferring-ipv6-for-challenge-validation-of-dual-homed-hosts/34774">
                         letsencrypt.org</a>.</span>
