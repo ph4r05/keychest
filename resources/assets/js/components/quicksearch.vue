@@ -31,12 +31,12 @@
         </div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info" style="display: none">
-            <span v-if="jobSubmittedNow && !wsFinished">Waiting for spot check to finish ...</span>
+            <span v-if="jobSubmittedNow && !wsFinished">Waiting for the spot check to finish ...</span>
             <span v-else-if="!jobSubmittedNow || wsFinished">Loading test results</span>
         </div>
 
         <div class="alert alert-default scan-alert" id="search-success" style="display: none">
-            <strong>Success!</strong> Spot check finished.
+            <strong>Success!</strong> The spot check has finished.
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
