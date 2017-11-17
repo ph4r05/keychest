@@ -115,11 +115,14 @@
                         <a href="/register?start_watching=1">Start watching it</a> and plan your certificate renewals or
                         <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.</td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
-                        All looks good, well done! Our compliments for using HSTS. <span v-if="!isMonitored">Start
-                        tracking to avoid downtimes.</span></td>
+                        All looks good, well done! Our compliments for using HSTS.
+                        <span v-if="!isMonitored"><a target="_blank" href="/register?start_watching=1">Add the domain</a>
+                            to your annual planner.</span><span v-else="">This domain is also in your
+                        dashboard.</span></td>
                     <td colspan="3" v-else>
-                        All looks good, well done! <span v-if="!isMonitored">Start watching to stay on top of your
-                        certificates.</span></td>
+                        All looks good, well done! <span v-if="!isMonitored"><a href="/register?start_watching=1">Add the domain</a>
+                        to your annual planner.</span><span v-else="">This domain is also in your
+                        dashboard.</span></td>
                 </tr>
                 <tr v-if="showResultsTable && !jobSubmittedNow && curJob">
                     <td colspan="3">
