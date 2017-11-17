@@ -102,11 +102,14 @@
                         <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a>
                         for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
-                        Certificate expired. Web browsers will show a warning page that the server is not secure and
-                        potentially dangerous. Start watching to see changes or get in touch for help.</td>
-                    <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<2">
-                        Certificate expires in less than 2 days. Renew it now to avoid downtime! Start watching to see
-                        changes or get in touch for help.</td>
+                        The certificate expired. Web browsers will show a warning page that the server is not secure and
+                        potentially dangerous. <a href="/register?start_watching=1">Start watching it</a> to prevent another
+                        downtime or <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get
+                        in touch</a> for help.</td>
+                    <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<7">
+                        The certificate expires in less than 7 days. Renew it now to avoid downtime!
+                        <a href="/register?start_watching=1">Start watching it</a> to stay on top of all your certificates
+                        or <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
                         Certificate expires in less than 28 days. Plan renewal now! Start watching to see
                         changes or get in touch for help.</td>
