@@ -217,10 +217,10 @@
                  v-bind:class="{
                     'alert-danger': this.results.whois.expires_at_days <= 28,
                     'alert-warning': this.results.whois.expires_at_days > 28}" >
-                <strong>Warning!</strong> Domain <u>{{ results.whois.domain }}</u> expires in
+                <strong>Warning!</strong> Domain <b>{{ results.whois.domain }}</b> expires in
                 {{ Math.floor(results.whois.expires_at_days) }}
                 {{ pluralize('day', Math.floor(results.whois.expires_at_days)) }}.
-                Consider domain renewal. <span v-if="!isMonitored">Start watching now.</span>
+                Consider domain renewal.
             </div>
 
             <!-- Downtime -->
