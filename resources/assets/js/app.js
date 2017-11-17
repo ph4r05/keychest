@@ -7,6 +7,7 @@
 
 require('./bootstrap');
 
+import 'babel-polyfill';
 import Vue from 'vue';
 import Req from 'req';
 

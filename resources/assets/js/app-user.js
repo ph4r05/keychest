@@ -8,6 +8,7 @@
 // __webpack_public_path__ = '/';  // quick hack for Vue2 lazy loaded components. Not needed now.
 require('./bootstrap');
 
+import 'babel-polyfill';
 import _ from 'lodash';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
