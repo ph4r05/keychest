@@ -147,18 +147,18 @@
 
             <!-- Start tracking -->
             <transition name="fade" v-on:after-leave="transition_hook">
-            <div v-if="showTrackingButton" id="start-tracking-wrapper">
-                <div class="form-group start-tracking">
-                    <a v-if="Laravel.authGuest"
-                       class="btn btn-primary btn-block btn-lg"
-                       href="/register?start_watching=1">Start watching</a>
-                    <a id="start-tracking-button" v-else=""
-                       class="btn btn-primary btn-block btn-lg"
-                       v-bind:disabled="addingStatus==2"
-                       v-on:click.stop="startTracking"
-                    >Start watching</a>
+                <div v-if="showTrackingButton" id="start-tracking-wrapper">
+                    <div class="form-group start-tracking">
+                        <a v-if="Laravel.authGuest"
+                           class="btn btn-primary btn-block btn-lg"
+                           href="/register?start_watching=1">Start watching</a>
+                        <a id="start-tracking-button" v-else=""
+                           class="btn btn-primary btn-block btn-lg"
+                           v-bind:disabled="addingStatus==2"
+                           v-on:click.stop="startTracking"
+                        >Start watching</a>
+                    </div>
                 </div>
-            </div>
             </transition>
             <!-- end of start tracking -->
 
@@ -241,8 +241,8 @@
             <!-- LE validity < 30 days (disabled temporarily) -->
             <div class="alert alert-warning" v-if="false && showLeWarning">
                 <p><strong>Warning!</strong> This is a Let's Encrypt certificate but
-                    the validity is less than 30 days.In the correct setting this should not happen.
-                    Feel free to contact us for help.</p>
+                    the validity is less than 30 days. In the correct setting this should not happen.
+                    <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Feel free to contact our support for help</a>.</p>
             </div>
 
             <!-- Redirect - scan that too? -->
