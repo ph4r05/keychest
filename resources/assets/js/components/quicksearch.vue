@@ -856,11 +856,11 @@
                 if (this.tlsScanHostCert) {
                     if (this.tlsScanHostCert.is_expired) {
                         this.form.defcon = 1;
-                        this.form.textStatus = 'ERROR';
+                        this.form.textStatus = 'REPAIR';
                     } else {
-                        if (this.tlsScanHostCert.valid_to_days < 2) {
+                        if (this.tlsScanHostCert.valid_to_days < 7) {
                             this.form.defcon = 2;
-                            this.form.textStatus = 'WARNING';
+                            this.form.textStatus = 'RENEW';
                         } else if (this.tlsScanHostCert.valid_to_days < 28) {
                             this.form.defcon = 3;
                             this.form.textStatus = 'PLAN';
