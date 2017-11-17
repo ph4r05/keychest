@@ -80,10 +80,6 @@
                     <a :href="didYouMeanUrlFull()">{{ didYouMeanUrl }}</a> instead?</div>
             </div>
 
-            <!-- Label for loaded test (performed previously) -->
-            <h5 class="loaded-test-label" v-if="showResultsTable && !jobSubmittedNow && curJob"
-            >We tested the server on {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}</h5>
-
             <!-- Brief results table -->
             <table class="table" v-if="showResultsTable">
                 <tbody>
@@ -118,6 +114,15 @@
                     <td colspan="3" v-else>
                         All looks good, well done! <span v-if="!isMonitored">Start watching to stay on top of your
                         certificates.</span></td>
+                </tr>
+                <tr v-if="showResultsTable && !jobSubmittedNow && curJob">
+                    <td colspan="3">
+                        <!-- Label for loaded test (performed previously) -->
+                        <span class="loaded-test-label">
+                            <i>Cached results, the spot check was completed on {{ new Date(curJob.created_at_utc * 1000).toLocaleString() }}.</i>
+                        </span>
+
+                    </td>
                 </tr>
 
                 </tbody>
