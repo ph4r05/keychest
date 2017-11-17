@@ -167,24 +167,27 @@
             <div class="alert alert-danger" v-if="errTrusted">
                 <div v-if="tlsScanHostCert && tlsScanHostCert.is_self_signed">
                     The server sent a self-signed certificate. Check its configuration, re-test, and start watching
-                    changes. Get in touch for help.
+                    changes. <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScanHostCert.is_ca">
                     The server's certificate has a CA flag and can be used only for issuing other certificates, not
-                    for server authentication. Check the server's configuration, re-test, and start watching changes.
-                    Get in touch for help.
+                    for server authentication. Check the server's configuration, re-test, and
+                    <a href="/register?start_watching=1">start watching</a> changes.
+                    <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length > 1">
                     We couldn't verify the certificate chain sent by the server. Check the server's configuration, re-test, and start
-                    watching changes. Get in touch for help.
+                    watching changes. <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length === 1">
                     The server sent only its own certificate, a certificate of the issuing CA is missing (aka bundle).
-                    Check the server's configuration, re-test, and start watching changes. Get in touch for help.
+                    Check the server's configuration, re-test, and <a href="/register?start_watching=1">start watching</a> changes.
+                    <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert">
                     We couldn't verify the server as it didn't send any certificates. Check its configuration, re-test,
-                    and start watching changes. Get in touch for help.
+                    and <a href="/register?start_watching=1">start watching</a> changes.
+                    <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else="">
                     <strong>Error: </strong>Server is not trusted as <span
