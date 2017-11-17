@@ -10,7 +10,7 @@
         <div class="login-box">
             <div class="register-logo" >
                 <a href="{{ url('/') }}" style="color:#00a7d7"><b>KeyChest</b> dashboard</a><br/>
-                <div style="color:white; font-size:16px"><b>Your TLS/HTTPS certificates in one place</b></div>
+                <div style="color:white; font-size:16px"><b>One place for your TLS/HTTPS certificates</b></div>
             </div> <!-- end of register-logo -->
         @if (count($errors) > 0)
             <div class="alert alert-danger">
