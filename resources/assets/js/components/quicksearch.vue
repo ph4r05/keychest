@@ -111,8 +111,9 @@
                         <a href="/register?start_watching=1">Start watching it</a> to stay on top of all your certificates
                         or <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.</td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
-                        Certificate expires in less than 28 days. Plan renewal now! Start watching to see
-                        changes or get in touch for help.</td>
+                        The certificate expires in less than 28 days. Plan renewal now!
+                        <a href="/register?start_watching=1">Start watching it</a> and plan your certificate renewals or
+                        <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.</td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
                         All looks good, well done! Our compliments for using HSTS. <span v-if="!isMonitored">Start
                         tracking to avoid downtimes.</span></td>
