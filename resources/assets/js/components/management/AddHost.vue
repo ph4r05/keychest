@@ -140,9 +140,13 @@
                 this.$router.back();
             },
 
-            hostCheck(){
-                this.$validator.validateAll()
-                    .then((result) => this.onSave())
+            async hostCheck(){
+                const validResult = await this.$validator.validateAll();
+                if (!validResult){
+                    return;
+                }
+
+                this.onSave()
                     .then((result) => this.onResult())
                     .catch((err) => {
                         console.warn(err);
