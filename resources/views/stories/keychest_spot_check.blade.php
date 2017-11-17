@@ -94,7 +94,7 @@
 							<p>
 								<strong>time validity</strong> — we check how long till the certificate expires. There
 								are three possible warning messages you can see: PLAN (if the expiration date is in less
-								than 28 days), WARNING (if the expiration is in less than 2 days), or ERROR (the server
+								than 28 days), WARNING (if the expiration is in less than 7 days), or ERROR (the server
 								is not available).
 							</p>
 						</li>
