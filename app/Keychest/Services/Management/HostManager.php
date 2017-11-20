@@ -56,7 +56,7 @@ class HostManager
      * @param $user
      * @return ManagedHost
      */
-    public function addHost(HostSpec $hostSpec, User $user){
+    public function addHost(HostDbSpec $hostSpec, User $user){
         $host = new ManagedHost([
             'host_name' => $hostSpec->getName(),
             'host_addr' => $hostSpec->getAddress(),
@@ -67,7 +67,7 @@ class HostManager
         return $host;
     }
 
-    public function getHost(HostSpec $hostSpec, User $user=null){
+    public function getHostBySpecQuery(HostDbSpec $hostSpec, User $user=null){
 
     }
 }

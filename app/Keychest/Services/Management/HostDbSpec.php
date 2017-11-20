@@ -9,12 +9,28 @@
 namespace App\Keychest\Services\Management;
 
 
-class HostSpec
+class HostDbSpec
 {
     protected $name;
     protected $address;
     protected $port;
     protected $agent;
+
+    /**
+     * HostDbSpec constructor.
+     * @param $name
+     * @param $address
+     * @param $port
+     * @param $agent
+     */
+    public function __construct($name=null, $address=null, $port=null, $agent=null)
+    {
+        $this->name = $name;
+        $this->address = $address;
+        $this->port = $port;
+        $this->agent = $agent;
+    }
+
 
     /**
      * @return mixed
@@ -26,7 +42,7 @@ class HostSpec
 
     /**
      * @param mixed $name
-     * @return HostSpec
+     * @return HostDbSpec
      */
     public function setName($name)
     {
@@ -44,7 +60,7 @@ class HostSpec
 
     /**
      * @param mixed $address
-     * @return HostSpec
+     * @return HostDbSpec
      */
     public function setAddress($address)
     {
@@ -62,7 +78,7 @@ class HostSpec
 
     /**
      * @param mixed $port
-     * @return HostSpec
+     * @return HostDbSpec
      */
     public function setPort($port)
     {
@@ -80,7 +96,7 @@ class HostSpec
 
     /**
      * @param mixed $agent
-     * @return HostSpec
+     * @return HostDbSpec
      */
     public function setAgent($agent)
     {
