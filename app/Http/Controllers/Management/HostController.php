@@ -10,9 +10,14 @@ namespace App\Http\Controllers\Management;
 use App\Http\Controllers\Controller;
 use App\Http\Request\ParamRequest;
 use App\Http\Requests;
+use App\Keychest\Services\CredentialsManager;
+use App\Keychest\Services\Management\HostDbSpec;
+use App\Keychest\Services\Management\HostManager;
 use App\Keychest\Utils\DomainTools;
 use App\Rules\HostSpecObjRule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Validation\Rule;
 
 
 /**
@@ -22,12 +27,24 @@ use Illuminate\Support\Facades\Input;
 class HostController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
+     * @var HostManager
      */
-    public function __construct()
+    protected $hostManager;
+
+    /**
+     * @var CredentialsManager
+     */
+    protected $credentialsManager;
+
+    /**
+     * Create a new controller instance.
+     * @param HostManager $hostManager
+     */
+    public function __construct(HostManager $hostManager, CredentialsManager $credentialsManager)
     {
         $this->middleware('auth');
+        $this->hostManager = $hostManager;
+        $this->credentialsManager = $credentialsManager;
     }
 
     /**
@@ -45,14 +62,46 @@ class HostController extends Controller
 
         $this->validate($request, [
             'host_addr' => 'required',
+            'host_name' => 'present|max:160',
+            'bit_size' => [
+                'optional',
+                Rule::in([2048, 3072])
+            ],
             'host_spec_obj' => new HostSpecObjRule()
         ], [], [
             'host_addr' => 'Host Address',
             'host_spec_obj' => 'Host Address']
         );
 
+        // Host Db spec for storage.
+        $user = Auth::getUser();
+        $agentId = null;  // TODO: get from req, check permissions on agent_id for the given user
+        $hostName = Input::get('host_name');
+        $hostDbSpec = new HostDbSpec($hostName, $hostSpec->getAddr(), $hostSpec->getPort(), $agentId);
+
+        // Duplicity detection
+        $exHost = $this->hostManager->getHostBySpecQuery($hostDbSpec, $user)->first();
+        if (!empty($exHost)){
+            return response()->json(['status' => 'already-present'], 410);
+        }
+
+        // Add host
+        $dbHost = $this->hostManager->addHost($hostDbSpec, $user);
+
+        // Associate SSH credentials
+        $sshKey = $dbHost->sshKey;
+        if (empty($sshKey)) {
+            $bitSize = Input::get('bit_size', 2048);
+            $sshKey = $this->credentialsManager->allocateSshKeyToUser($bitSize, $user);
+            $dbHost->sshKey()->associate($sshKey);
+            $dbHost->save();
+        }
+
         return response()->json([
-                'state' => 'success'
+                'state' => 'success',
+                'host_id' => $dbHost->id,
+                'ssh_key_uuid' => $sshKey->key_id,
+                'ssh_key_public' => $sshKey->pub_key
             ], 200);
     }
 

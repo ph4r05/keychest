@@ -70,12 +70,13 @@
                     </div>
                 </transition>
 
-                <div class="config-host">
-                    Saved! Here Please configure SSH key:
+                <div class="config-host alert alert-info-2" v-if="response">
+                    <p>Please add the following SSH key to your <span class="code-block">~/.ssh/authorized_keys</span>:</p>
+                    <p class="code-block ssh-key">{{ response.ssh_key_public }}</p>
                 </div>
             </div>
 
-            <!-- TODO: on add, show instructions for SSH keys add, host configuration -->
+
         </sbox>
 
     </div>
@@ -112,7 +113,8 @@
                     host_name: '',
                     host_addr: '',
                     agent_id: ''
-                }
+                },
+                response: null,
             }
         },
 
@@ -147,12 +149,19 @@
                 }
 
                 this.onSave()
-                    .then((result) => this.onResult())
+                    .then((result) => this.onResult(result))
                     .catch((err) => {
                         console.warn(err);
-                        toastr.error('Host could not be saved', 'Save fail', {
-                            timeOut: 2000, preventDuplicates: true
-                        });
+                        if (err && err.code === 410){
+                            toastr.error('Host record is already present', 'Save fail', {
+                                timeOut: 2000, preventDuplicates: true
+                            });
+
+                        } else {
+                            toastr.error('Host could not be saved', 'Save fail', {
+                                timeOut: 2000, preventDuplicates: true
+                            });
+                        }
                     });
             },
 
@@ -168,7 +177,9 @@
                         })
                         .catch(err => {
                             this.sentState = 0;
-                            reject(new Error(err));
+                            const error = new Error(err);
+                            error.code = err && err.response ? err.response.status : 0;
+                            reject(error);
                         });
                 });
             },
@@ -176,10 +187,12 @@
             onResult(res){
                 return new Promise((resolve, reject) => {
                     Vue.nextTick( () => {
+                        this.response = res.data;
+
                         setTimeout(() => {
-                            console.log(res);
                             this.$scrollTo('.config-host');
                         }, 100);
+
                     });
                 });
             }
@@ -191,5 +204,7 @@
     }
 </script>
 <style>
-
+.config-host .ssh-key {
+    word-wrap: break-word !important;
+}
 </style>

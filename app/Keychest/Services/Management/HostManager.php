@@ -9,6 +9,7 @@
 namespace App\Keychest\Services\Management;
 
 use App\Keychest\DataClasses\GeneratedSshKey;
+use App\Keychest\DataClasses\HostRecord;
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\Exceptions\CertificateAlreadyInsertedException;
 use App\Keychest\Services\Exceptions\SshKeyAllocationException;
@@ -57,17 +58,46 @@ class HostManager
      * @return ManagedHost
      */
     public function addHost(HostDbSpec $hostSpec, User $user){
+        // Soft delete query
+        $trashedElem = $this->getHostBySpecQuery($hostSpec, $user)->onlyTrashed()->first();
+        if (!empty($trashedElem)){
+            $trashedElem->restore();
+            return $trashedElem;
+        }
+
+        // Insert a new host record
         $host = new ManagedHost([
             'host_name' => $hostSpec->getName(),
             'host_addr' => $hostSpec->getAddress(),
-            'ssh_port' => $hostSpec->getPort(),
+            'ssh_port' => !empty($hostSpec->getPort()) ? $hostSpec->getPort() : 22,
             'user_id' => $user->id
         ]);
         $host->save();
         return $host;
     }
 
+    /**
+     * Loads host by defined specs
+     * @param HostDbSpec $hostSpec
+     * @param User|null $user
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function getHostBySpecQuery(HostDbSpec $hostSpec, User $user=null){
+        $q = ManagedHost::query()
+            ->where('host_addr', '=', $hostSpec->getAddress())
+            ->where('ssh_port', '=', !empty($hostSpec->getPort()) ? $hostSpec->getPort() : 22);
 
+        if (empty($hostSpec->getAgent())){
+            $q = $q->whereNull('agent_id');
+        } else {
+            $q = $q->where('agent_id', '=', $hostSpec->getAgent());
+        }
+
+        if (!empty($user)){
+            $q = $q->where('user_id', '=', $user->id);
+        }
+
+        $q = $q->with(['sshKey']);
+        return $q;
     }
 }
