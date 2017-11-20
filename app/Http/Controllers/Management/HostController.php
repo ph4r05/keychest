@@ -13,8 +13,11 @@ use App\Http\Requests;
 use App\Keychest\Services\CredentialsManager;
 use App\Keychest\Services\Management\HostDbSpec;
 use App\Keychest\Services\Management\HostManager;
+use App\Keychest\Utils\DataTools;
+use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
 use App\Rules\HostSpecObjRule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Validation\Rule;
@@ -45,6 +48,40 @@ class HostController extends Controller
         $this->middleware('auth');
         $this->hostManager = $hostManager;
         $this->credentialsManager = $credentialsManager;
+    }
+
+    /**
+     * Get all managed hosts
+     */
+    public function getHosts(){
+        $curUser = Auth::user();
+        $userId = $curUser->getAuthIdentifier();
+
+        $sort = strtolower(trim(Input::get('sort')));
+        $filter = strtolower(trim(Input::get('filter')));
+        $per_page = intval(trim(Input::get('per_page')));
+        $return_all = intval(trim(Input::get('return_all')));
+        $sort_parsed = DataTools::vueSortToDb($sort);
+
+
+        // server list load
+        $query = $this->hostManager->loadHostList($userId);
+        if (!empty($filter)){
+            $query = $query->where(function(Builder $query) use($filter) {
+                $query->where('host_name', 'like', '%'. $filter . '%')
+                    ->orWhere('host_addr', 'like', '%'. $filter . '%');
+            });
+        }
+
+        $query = DbTools::sortQuery($query, $sort_parsed);
+
+        $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
+        if ($return_all){
+            $page_size = config('keychest.max_servers');
+        }
+
+        $ret = $query->paginate($page_size); // type: \Illuminate\Pagination\LengthAwarePaginator
+        return response()->json($ret, 200);
     }
 
     /**

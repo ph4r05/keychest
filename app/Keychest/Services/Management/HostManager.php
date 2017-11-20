@@ -52,6 +52,21 @@ class HostManager
     }
 
     /**
+     * Builds query to load host list.
+     *
+     * @param null $userId
+     * @return \Illuminate\Database\Query\Builder|static
+     */
+    public function loadHostList($userId=null){
+        $query = ManagedHost::query();
+        if ($userId){
+            $query = $query->where('user_id', '=', $userId);
+        }
+
+        return $query;
+    }
+
+    /**
      * Creates a new host from the specification.
      * @param $hostSpec
      * @param $user
