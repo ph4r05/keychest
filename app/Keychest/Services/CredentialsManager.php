@@ -60,6 +60,7 @@ class CredentialsManager
         $rsa = new RSA();
         $rsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
         $rsa->setPrivateKeyFormat(RSA::PRIVATE_FORMAT_PKCS1);
+        $rsa->setComment('KeyChest-management-key');
         $key = $rsa->createKey($bits);
         return new GeneratedSshKey($key['privatekey'], $key['publickey'], $bits);
     }
