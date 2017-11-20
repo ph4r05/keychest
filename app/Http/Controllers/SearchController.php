@@ -321,11 +321,9 @@ class SearchController extends Controller
             return null;
         }
 
-        $whoisTable = (new WhoisResult())->getTable();
-        $domainsTable = (new BaseDomain())->getTable();
-
+        $domainsTable = BaseDomain::TABLE;
         $q = WhoisResult::query()
-            ->from($whoisTable . ' AS s')
+            ->from(WhoisResult::TABLE . ' AS s')
             ->select(['s.*', $domainsTable.'.domain_name AS domain'])
             ->join($domainsTable, $domainsTable.'.id', '=', 's.domain_id')
             ->where('s.id', $job->whois_check_id);

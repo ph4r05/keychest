@@ -66,9 +66,7 @@ class ServersController extends Controller
         $per_page = intval(trim(Input::get('per_page')));
         $return_all = intval(trim(Input::get('return_all')));
         $sort_parsed = DataTools::vueSortToDb($sort);
-
-        $watchTbl = (new WatchTarget())->getTable();
-        $watchAssocTbl = (new WatchAssoc())->getTable();
+        $watchAssocTbl = WatchAssoc::TABLE;
 
         // start watching from registration before server load
         $this->checkStartWatching();

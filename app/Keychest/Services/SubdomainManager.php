@@ -131,8 +131,8 @@ class SubdomainManager {
     }
 
     public function getHostsWithInvSuffix($host, $userId, $withDot, $enabledOnly){
-        $assocTbl = (new SubdomainWatchAssoc())->getTable();
-        $domainTbl = (new SubdomainWatchTarget())->getTable();
+        $assocTbl = SubdomainWatchAssoc::TABLE;
+        $domainTbl = SubdomainWatchTarget::TABLE;
 
         $q = SubdomainWatchAssoc::query()
             ->select('d.*',

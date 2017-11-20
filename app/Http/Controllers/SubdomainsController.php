@@ -67,7 +67,7 @@ class SubdomainsController extends Controller
         $unfinished = intval(trim(Input::get('unfinished', 0)));
         $sort_parsed = DataTools::vueSortToDb($sort);
 
-        $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
+        $watchAssocTbl = SubdomainWatchAssoc::TABLE;
         $query = $this->baseLoadQuery($userId);
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
@@ -97,7 +97,7 @@ class SubdomainsController extends Controller
 
         $domains = collect(Input::get('domains'));
 
-        $watchTbl = (new SubdomainWatchTarget())->getTable();
+        $watchTbl = SubdomainWatchTarget::TABLE;
         $query = $this->baseLoadQuery($userId);
         $query = $query->whereIn($watchTbl.'.id', $domains);
         $res = $query->get();
@@ -131,9 +131,9 @@ class SubdomainsController extends Controller
         $curUser = Auth::user();
         $userId = $curUser->getAuthIdentifier();
 
-        $watchTbl = (new SubdomainWatchTarget())->getTable();
-        $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
-        $watchResTbl = (new SubdomainResults())->getTable();
+        $watchTbl = SubdomainWatchTarget::TABLE;
+        $watchAssocTbl = SubdomainWatchAssoc::TABLE;
+        $watchResTbl = SubdomainResults::TABLE;
 
         $q = SubdomainResults::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchResTbl.'.watch_id')
@@ -592,10 +592,10 @@ class SubdomainsController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     protected function baseLoadQuery($userId){
-        $watchTbl = (new SubdomainWatchTarget())->getTable();
-        $watchAssocTbl = (new SubdomainWatchAssoc())->getTable();
-        $watchResTbl = (new SubdomainResults())->getTable();
-        $lastScanTbl = (new LastScanCache())->getTable();
+        $watchTbl = SubdomainWatchTarget::TABLE;
+        $watchAssocTbl = SubdomainWatchAssoc::TABLE;
+        $watchResTbl = SubdomainResults::TABLE;
+        $lastScanTbl = LastScanCache::TABLE;
 
         $query = SubdomainWatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')

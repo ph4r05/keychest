@@ -85,8 +85,8 @@ class ServerManager {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getUserHostsQuery($userId){
-        $watchTbl = (new WatchTarget())->getTable();
-        $watchAssocTbl = (new WatchAssoc())->getTable();
+        $watchTbl = WatchTarget::TABLE;
+        $watchAssocTbl = WatchAssoc::TABLE;
 
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
@@ -268,12 +268,12 @@ class ServerManager {
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function loadServerErrorsQuery($userId=null){
-        $watchTbl = (new WatchTarget())->getTable();
-        $watchAssocTbl = (new WatchAssoc())->getTable();
-        $dnsTable = (new DnsResult())->getTable();
-        $dnsEntryTable = (new DnsEntry())->getTable();
-        $tlsScanTbl = (new HandshakeScan())->getTable();
-        $lastScanTbl = (new LastScanCache())->getTable();
+        $watchTbl = WatchTarget::TABLE;
+        $watchAssocTbl = WatchAssoc::TABLE;
+        $dnsTable = DnsResult::TABLE;
+        $dnsEntryTable = DnsEntry::TABLE;
+        $tlsScanTbl = HandshakeScan::TABLE;
+        $lastScanTbl = LastScanCache::TABLE;
 
         $qsl = WatchTarget::query()
             ->select('w.id')
@@ -369,10 +369,10 @@ class ServerManager {
 //                    ON sl.id = watch_target.id
 //        ----------------------------------------------------------------------------
 
-        $watchTbl = (new WatchTarget())->getTable();
-        $watchAssocTbl = (new WatchAssoc())->getTable();
-        $dnsTable = (new DnsResult())->getTable();
-        $serviceTable = (new WatchService())->getTable();
+        $watchTbl = WatchTarget::TABLE;
+        $watchAssocTbl = WatchAssoc::TABLE;
+        $dnsTable = DnsResult::TABLE;
+        $serviceTable = WatchService::TABLE;
 
         // Server error query
         $qsl = $this->loadServerErrorsQuery($userId);
