@@ -9,15 +9,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class ManagedHost extends Model
 {
+    use SoftDeletes;
+
     const TABLE = 'managed_hosts';
 
-    protected $guarded = array();
-
     protected $table = self::TABLE;
+
+    protected $guarded = array();
 
     public function getDates()
     {
@@ -25,10 +28,18 @@ class ManagedHost extends Model
     }
 
     /**
-     * Get the user that owns the phone.
+     * Get the user that owns the entity.
      */
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+    /**
+     * Ssh key associated to the host.
+     */
+    public function sshKey()
+    {
+        return $this->belongsTo('App\Models\SshKey', 'ssh_key_id');
     }
 }

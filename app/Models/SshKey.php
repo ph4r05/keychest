@@ -18,9 +18,9 @@ class SshKey extends Model
 
     const TABLE = 'ssh_keys';
 
-    protected $guarded = array();
-
     protected $table = self::TABLE;
+
+    protected $guarded = array();
 
     protected $encryptable = ['priv_key'];
 
