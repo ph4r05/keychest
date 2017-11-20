@@ -15,7 +15,7 @@
                 Add a new managed server.
             </p>
 
-            <div class="table-responsive">
+            <div class="">
                 <form @submit.prevent="hostCheck()">
 
                     <div class="form-group">
