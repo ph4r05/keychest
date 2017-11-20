@@ -358,9 +358,9 @@ export default {
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Remove'
-            }).then((function () {
+            }).then(() => {
                 this.onDeleteServerConfirmed(data);
-            }).bind(this)).catch(() => {});
+            }).catch(() => {});
         },
         onDeleteServers(){
             swal({
@@ -370,21 +370,21 @@ export default {
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Remove'
-            }).then((function () {
+            }).then(() => {
                 this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
-            }).bind(this)).catch(() => {});
+            }).catch(() => {});
         },
         onDeleteServerConfirmed(data, isMore){
-            const onFail = (function(){
+            const onFail = () => {
                 this.moreParams.deleteState = -1;
                 swal('Delete error', 'Server delete failed :(', 'error');
-            }).bind(this);
+            };
 
-            const onSuccess = (function(data){
+            const onSuccess = data => {
                 this.moreParams.deleteState = 1;
                 Vue.nextTick(() => {
                     this.$refs.vuetable.refresh();
-                    if (isMore){
+                    if (isMore) {
                         this.$refs.vuetable.uncheckAll();
                     }
                 });
@@ -392,9 +392,9 @@ export default {
                 this.$emit('onServerDeleted', data);
                 this.$events.fire('on-server-deleted', data);
                 toastr.success(isMore ?
-                    'Servers deleted successfully.':
+                    'Servers deleted successfully.' :
                     'Server deleted successfully.', 'Success');
-            }).bind(this);
+            };
 
             this.moreParams.deleteState = 2;
             axios.post('/home/servers/del' + (isMore ? 'More' : ''), data)

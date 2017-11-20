@@ -81,24 +81,24 @@
                     return;
                 }
 
-                const onFail = (function(){
+                const onFail = () => {
                     this.sentState = -1;
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     this.sentState = 0;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('This host is already being monitored.', 'Already present');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     this.sentState = 1;
                     this.serverItem = {};
                     this.$emit('onServerUpdated', data);
                     this.$events.fire('on-server-updated', data);
                     $("#update-item").modal('hide');
                     toastr.success('Server Updated Successfully.', 'Success');
-                }).bind(this);
+                };
 
                 this.sentState = 2;
                 axios.post('/home/servers/update', this.serverItem)

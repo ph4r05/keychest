@@ -84,15 +84,15 @@
             },
 
             importServers(data){
-                const onFail = (function(){
+                const onFail = (() => {
                     Vue.nextTick(() => {
                         Req.bodyProgress(false);
                         toastr.error('Could not import servers.', 'Invalid input', {timeOut: 2000, preventDuplicates: true});
                         this.$events.fire('on-manual-refresh');
                     });
-                }).bind(this);
+                });
 
-                const onSuccess = (function(data){
+                const onSuccess = () => {
                     Vue.nextTick(() => {
                         this.inputData = data['transformed'];
                         this.importState = 1;
@@ -110,7 +110,7 @@
                             this.$events.fire('on-manual-refresh');
                         }
                     });
-                }).bind(this);
+                };
 
                 Req.bodyProgress(true);
                 axios.post('/home/servers/import', {'data': data})

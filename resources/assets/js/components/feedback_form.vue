@@ -80,15 +80,15 @@
                     return;
                 }
 
-                let onSuccess = (function(){
+                let onSuccess = () => {
                     this.sentState = 1;
                     $email.val('');
                     $message.val('');
-                }).bind(this);
+                };
 
-                let onFail = (function(){
+                let onFail = () => {
                     this.sentState = -1;
-                }).bind(this);
+                };
 
                 this.sentState = 2;
                 axios.post(this.Laravel.urlFeedback, {'email': email, 'message': message})

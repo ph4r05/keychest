@@ -286,9 +286,9 @@ export default {
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Remove'
-            }).then((function () {
+            }).then(() => {
                 this.onDeleteServerConfirmed(data);
-            }).bind(this)).catch(() => {});
+            }).catch(() => {});
         },
         onDeleteServers(){
             swal({
@@ -297,17 +297,17 @@ export default {
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Remove'
-            }).then((function () {
+            }).then(() => {
                 this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
-            }).bind(this)).catch(() => {});
+            }).catch(() => {});
         },
         onDeleteServerConfirmed(data, isMore){
-            const onFail = (function(){
+            const onFail = () => {
                 this.moreParams.deleteState = -1;
                 swal('Delete error', 'Direct Server delete failed :(', 'error');
-            }).bind(this);
+            };
 
-            const onSuccess = (function(data){
+            const onSuccess = data => {
                 this.moreParams.deleteState = 1;
                 Vue.nextTick(() => {
                     this.$refs.vuetable.refresh();
@@ -321,7 +321,7 @@ export default {
                 toastr.success(isMore ?
                     'Private Servers deleted successfully.':
                     'Private Server deleted successfully.', 'Success');
-            }).bind(this);
+            };
 
             this.moreParams.deleteState = 2;
             axios.post('/home/networks/del' + (isMore ? 'More' : ''), data)

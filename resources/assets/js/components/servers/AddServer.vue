@@ -137,33 +137,33 @@
                 this.checkWildcard(this.newItem.server);
             },
             createItemInt(){
-                const onFail = (function(){
+                const onFail = () => {
                     this.sentState = -1;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('Error while adding the server, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     this.sentState = 0;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('This host is already being monitored.', 'Already present');
-                }).bind(this);
+                };
 
-                const onTooMany = (function(data){
+                const onTooMany = data => {
                     this.sentState = 0;
-                    $('#add-server-wrapper').effect( "shake" );
+                    $('#add-server-wrapper').effect("shake");
                     toastr.error('We are sorry but you just reached maximum number of '
                         + data['max_limit'] + ' monitored servers.', 'Too many servers');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     this.sentState = 1;
                     this.resetInput();
                     this.$emit('onServerAdded', data);
                     this.$events.fire('on-server-added', data);
                     this.hideModal();
                     toastr.success('Server Added Successfully.', 'Success', {preventDuplicates: true});
-                }).bind(this);
+                };
 
                 this.sentState = 2;
                 axios.post('/home/servers/add', this.newItem)

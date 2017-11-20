@@ -249,16 +249,16 @@
             },
 
             loadData(){
-                const onFail = (function(){
+                const onFail = () => {
                     this.loadingState = -1;
                     toastr.error('Error while loading, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     this.loadingState = 1;
                     this.results = data;
                     setTimeout(this.processData, 0);
-                }).bind(this);
+                };
 
                 this.loadingState = 0;
                 axios.get('/home/subs/res')
@@ -330,28 +330,28 @@
                 const newItem = isMore ? {'servers': rowData} : {'server': rowData.name};
 
                 // TODO: refactor to use common code with AddServer.vue
-                const onFail = (function(){
+                const onFail = () => {
                     Req.bodyProgress(false);
                     toastr.error(isMore ?
                         'Error while adding the servers, please, try again later' :
                         'Error while adding the server, please, try again later', 'Error');
-                }).bind(this);
+                };
 
-                const onDuplicate = (function(){
+                const onDuplicate = () => {
                     Req.bodyProgress(false);
                     toastr.error('This host is already being monitored.', 'Already present');
-                }).bind(this);
+                };
 
-                const onTooMany = (function(data){
+                const onTooMany = data => {
                     Req.bodyProgress(false);
                     toastr.error('We are sorry but you just reached maximum number of '
                         + data['max_limit'] + ' monitored servers.', 'Too many servers');
-                }).bind(this);
+                };
 
-                const onSuccess = (function(data){
+                const onSuccess = data => {
                     rowData.used = true;
                     Req.bodyProgress(false);
-                    if (isMore){
+                    if (isMore) {
                         Vue.nextTick(() => {
                             this.$refs.vuetable.uncheckAll();
                         });
@@ -362,7 +362,7 @@
                     toastr.success(isMore ?
                         'Server Added Successfully.' :
                         'Servers Added Successfully.', 'Success', {preventDuplicates: true});
-                }).bind(this);
+                };
 
                 Req.bodyProgress(true);
                 axios.post('/home/servers/add' + (isMore ? 'More' : ''), newItem)
