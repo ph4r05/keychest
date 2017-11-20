@@ -196,6 +196,7 @@ return [
         Influendo\LaravelSurvivor\SurvivorServiceProvider::class,
         Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
 
+        Tremby\LaravelGitVersion\GitVersionServiceProvider::class,
         /*
          * Application Service Providers...
          */

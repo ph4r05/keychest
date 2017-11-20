@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <div class="row voffset-lg">
+                <div class="row voffset-md">
                     <div class="col-sm-10">
                         <p class="mg-md ">
                             We are&nbsp;<a class="ltc-rich-electric-blue" href="https://enigmabridge.com" target="_blank"
@@ -11,6 +11,7 @@
                             <br/>
                             <a href="{{ url('/terms') }}">Terms of Service</a>
                             | <a href="{{ url('/privacy-policy') }}">Privacy Policy</a>
+                            | <span>KeyChest Professional ({{\Tremby\LaravelGitVersion\GitVersionHelper::getVersion()}})</span>
                         </p>
                     </div>
                     <div class="col-sm-2">
