@@ -43,22 +43,23 @@
                              :multi-sort="true"
                              :per-page="50"
                              :append-params="moreParams"
-                             @vuetable:cell-clicked="onCellClicked"
+                             detail-row-component="detail-row"
                              @vuetable:pagination-data="onPaginationData"
                              @vuetable:loaded="onLoaded"
                              @vuetable:loading="onLoading"
                              @vuetable:checkbox-toggled="onCheckboxToggled"
                              @vuetable:checkbox-toggled-all="onCheckboxToggled"
                 >
-                    <template slot="host" slot-scope="props">
+                    <template slot="host" slot-scope="props" @click="$parent.$emit('cell-clicked')">
                         {{ props.rowData.host_name }}
                     </template>
-                    <template slot="errors" slot-scope="props">
+                    <template slot="errors" slot-scope="props" @click="console.log('nahaha')">
 
                     </template>
                     <template slot="actions" slot-scope="props">
                         <div class="custom-actions">
                             <!--<button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>-->
+                            <button class="btn btn-sm btn-primary" @click="onDetailToggle(props)"><i class="glyphicon glyphicon-info-sign"></i></button>
                             <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>
                         </div>
                     </template>
@@ -122,11 +123,13 @@
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
     import FilterBar from '../partials/FilterBar.vue';
+    import DetailRow from './HostsDetail.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
     Vue.use(Vue2Filters);
     Vue.component('filter-bar', FilterBar);
+    Vue.component('detail-row', DetailRow);
 
     export default {
         components: {
@@ -237,8 +240,8 @@
             onChangePage (page) {
                 this.$refs.vuetable.changePage(page);
             },
-            onCellClicked (data, field, event) {
-
+            onDetailToggle (data) {
+                this.$refs.vuetable.toggleDetailRow(data.rowData.id);
             },
             onFilterSet(filterText){
                 this.moreParams = {
@@ -271,9 +274,6 @@
             },
             onEditServer(data) {
                 this.$refs.editServer.onEditServer(data);
-            },
-            onCellClicked(){
-
             },
             serversLoaded(response) {
                 Req.bodyProgress(false);
