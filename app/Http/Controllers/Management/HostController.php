@@ -65,7 +65,7 @@ class HostController extends Controller
 
 
         // server list load
-        $query = $this->hostManager->loadHostList($userId);
+        $query = $this->hostManager->loadHostListQuery($userId);
         if (!empty($filter)){
             $query = $query->where(function(Builder $query) use($filter) {
                 $query->where('host_name', 'like', '%'. $filter . '%')
