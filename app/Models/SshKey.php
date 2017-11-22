@@ -20,7 +20,7 @@ class SshKey extends Model
 
     protected $table = self::TABLE;
 
-    protected $guarded = array();
+    protected $guarded = ['priv_key'];
 
     protected $encryptable = ['priv_key'];
 
