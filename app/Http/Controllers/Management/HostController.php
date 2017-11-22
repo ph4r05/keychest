@@ -17,9 +17,12 @@ use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
 use App\Rules\HostSpecObjRule;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 
@@ -63,7 +66,6 @@ class HostController extends Controller
         $return_all = intval(trim(Input::get('return_all')));
         $sort_parsed = DataTools::vueSortToDb($sort);
 
-
         // server list load
         $query = $this->hostManager->loadHostListQuery($userId);
         if (!empty($filter)){
@@ -73,6 +75,7 @@ class HostController extends Controller
             });
         }
 
+        $query = $query->with(['sshKey']);
         $query = DbTools::sortQuery($query, $sort_parsed);
 
         $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
@@ -81,7 +84,10 @@ class HostController extends Controller
         }
 
         $ret = $query->paginate($page_size); // type: \Illuminate\Pagination\LengthAwarePaginator
-        return response()->json($ret, 200);
+        $retArr = $ret->toArray();
+        $retArr['data'] = $this->processListResults(collect($retArr['data']));
+
+        return response()->json($retArr, 200);
     }
 
     /**
@@ -142,6 +148,20 @@ class HostController extends Controller
             ], 200);
     }
 
+    /**
+     * Processes result of the load list, removes private key from the listing.
+     * @param Collection $col
+     * @return mixed
+     */
+    protected function processListResults($col){
+        $col = $col->transform(function($value, $key) {
+            if (isset($value['ssh_key'])){
+                unset($value['ssh_key']['priv_key']);
+            }
+            return $value;
+        });
 
+        return $col;
+    }
 
 }
