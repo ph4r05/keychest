@@ -2,14 +2,11 @@
 
 namespace App\Providers;
 
+use App\Keychest\Queue\Ph4DatabaseConnector;
 use App\Keychest\Queue\Ph4RedisConnector;
 use App\Keychest\Queue\Ph4Worker;
-
-
-use Illuminate\Support\ServiceProvider;
-
-
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Support\ServiceProvider;
 
 
 class QueueServiceProvider extends ServiceProvider
@@ -35,6 +32,7 @@ class QueueServiceProvider extends ServiceProvider
     public function registerConnectors($manager)
     {
         $this->registerPh4RedisConnector($manager);
+        $this->registerPh4DatabaseConnector($manager);
     }
 
     /**
@@ -47,6 +45,19 @@ class QueueServiceProvider extends ServiceProvider
     {
         $manager->addConnector('ph4redis', function () {
             return new Ph4RedisConnector($this->app['redis']);
+        });
+    }
+
+    /**
+     * Register the database queue connector.
+     *
+     * @param  \Illuminate\Queue\QueueManager  $manager
+     * @return void
+     */
+    protected function registerPh4DatabaseConnector($manager)
+    {
+        $manager->addConnector('ph4database', function () {
+            return new Ph4DatabaseConnector($this->app['db']);
         });
     }
 

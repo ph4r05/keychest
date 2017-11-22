@@ -7,15 +7,16 @@ return [
     'max_scan_records' => env('APP_MAX_SCAN_RECORDS', 100),
     'max_scan_range' => env('APP_MAX_SCAN_RANGE', 256),
 
-    'wrk_weekly_report_conn' => env('WORK_WEEKLY_REPORT_CONN', 'database'),
+    'wrk_weekly_report_conn' => env('WORK_WEEKLY_REPORT_CONN', 'ph4database'),
     'wrk_weekly_report_queue' => env('WORK_WEEKLY_REPORT_QUEUE', 'default'),
-    'wrk_weekly_emails_conn' => env('WORK_WEEKLY_EMAILS_CONN', 'database'),
+    'wrk_weekly_emails_conn' => env('WORK_WEEKLY_EMAILS_CONN', 'ph4database'),
     'wrk_weekly_emails_queue' => env('WORK_WEEKLY_EMAILS_QUEUE', 'emails'),
-    'wrk_key_check_emails_conn' => env('WORK_KEY_CHECK_EMAILS_CONN', 'database'),
+    'wrk_key_check_emails_conn' => env('WORK_KEY_CHECK_EMAILS_CONN', 'ph4database'),
     'wrk_key_check_emails_queue' => env('WORK_KEY_CHECK_EMAILS_QUEUE', 'default'),
 
     'enabled_ip_scanning' => env('APP_ENABLED_IP_SCANNING', false),
     'enabled_api_self_register' => env('APP_ENABLED_API_SELF_REGISTER', false),
     'enabled_user_auto_register' => env('APP_ENABLED_USER_AUTO_REGISTER', false),
+
 ];
 
