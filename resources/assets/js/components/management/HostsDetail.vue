@@ -1,7 +1,7 @@
 <template>
     <div @click="onClick">
-        <div class="table-responsive" ref="tbl">
-            <table class="table table-condensed">
+        <div class="table-responsive table-wrapper" ref="tbl">
+            <table class="table table-condensed table-hosts">
                 <tbody>
                     <tr>
                         <th class="col-md-2">Host name</th>
@@ -10,6 +10,9 @@
                     <tr>
                         <th>Host address</th>
                         <td>{{ rowData.host_addr }}:{{ rowData.ssh_port }}</td>
+                    </tr>
+                    <tr v-if="rowData.ssh_key">
+                        <th colspan="2">SSH key</th>
                     </tr>
                 </tbody>
             </table>
@@ -62,42 +65,15 @@
 <style scoped>
     .config-host .ssh-key {
         word-wrap: break-word !important;
+        font-size: 85%;
     }
 
-    @media (min-width: 2000px){
-        .config-host {
-            max-width: 1600px;
-        }
+    .config-host {
+        max-width: 500px;
     }
 
-    @media (min-width: 1440px) and (max-width: 2000px){
-        .config-host {
-            max-width: 1300px;
-        }
-    }
-
-    @media (min-width: 960px) and (max-width: 1440px){
-        .config-host {
-            max-width: 900px;
-        }
-    }
-
-    @media (min-width: 769px) and (max-width: 960px){
-        .config-host {
-            max-width: 750px;
-        }
-    }
-
-    @media (min-width: 481px) and (max-width: 768px){
-        .config-host {
-            max-width: 400px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .config-host {
-            max-width: 400px;
-        }
+    .table-wrapper{
+        margin-top: 14px;
     }
 
 </style>
