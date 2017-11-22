@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="host_name">Host address</label>
+                        <label for="host_addr">Host address</label>
                         <input type="text" id="host_addr" name="host_addr"
                                class="form-control" placeholder="server.com:22"
                                v-validate="{max: 255, required: true, host_spec: true}"
@@ -203,7 +203,7 @@
         }
     }
 </script>
-<style>
+<style scoped>
 .config-host .ssh-key {
     word-wrap: break-word !important;
 }
