@@ -5,7 +5,7 @@
 
             <div class="box-tools pull-right">
                 <slot name="widgets"></slot>
-                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                <button v-if="headerCollapse" type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
                     <i v-if="collapsed" class="fa fa-plus"></i>
                     <i v-else="" class="fa fa-minus"></i>
                 </button>
@@ -42,7 +42,7 @@
             headerCollapse: {
                 type: Boolean,
                 required: false,
-                default: false,
+                default: true,
             },
         },
 
