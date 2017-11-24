@@ -1,7 +1,7 @@
 <template>
     <div class="mgmt-add-host row">
 
-        <sbox cssBox="box-success" :headerCollapse="false">
+        <sbox cssBox="box-primary" :headerCollapse="false">
             <template slot="title">Add managed host</template>
             <template slot="widgets">
                 <button type="button" class="btn btn-box-tool"
@@ -48,7 +48,7 @@
 
                     <transition>
                         <div class="form-group" v-if="sentState == 0">
-                            <button type="submit" class="btn btn-block btn-primary btn-block"
+                            <button type="submit" class="btn btn-block btn-success btn-block"
                                     :disabled="hasErrors || isRequestInProgress"
                             >Save Server</button>
                         </div>
