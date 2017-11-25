@@ -54,13 +54,13 @@ class HostManager
     /**
      * Builds query to load host list.
      *
-     * @param null $userId
+     * @param null $ownerId
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadHostListQuery($userId=null){
+    public function loadHostListQuery($ownerId=null){
         $query = ManagedHost::query();
-        if ($userId){
-            $query = $query->where('user_id', '=', $userId);
+        if ($ownerId){
+            $query = $query->where('owner_id', '=', $ownerId);
         }
 
         return $query;
@@ -85,7 +85,7 @@ class HostManager
             'host_name' => $hostSpec->getName(),
             'host_addr' => $hostSpec->getAddress(),
             'ssh_port' => !empty($hostSpec->getPort()) ? $hostSpec->getPort() : 22,
-            'user_id' => $user->id
+            'owner_id' => $user->primary_owner_id
         ]);
         $host->save();
         return $host;
@@ -109,7 +109,7 @@ class HostManager
         }
 
         if (!empty($user)){
-            $q = $q->where('user_id', '=', $user->id);
+            $q = $q->where('owner_id', '=', $user->primary_owner_id);
         }
 
         $q = $q->with(['sshKey']);

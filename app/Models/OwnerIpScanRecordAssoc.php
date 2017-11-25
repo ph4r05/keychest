@@ -8,23 +8,17 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\Model;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-class UserWatchTarget extends Pivot
+class OwnerIpScanRecordAssoc extends Model
 {
-    // use SoftDeletes;
-
-    const TABLE = 'user_watch_target';
+    use SoftDeletes;
 
     protected $guarded = array();
 
-    protected $table = self::TABLE;
-
-    protected $foreignKey = 'user_id';
-
-    protected $relatedKey = 'watch_id';
+    protected $table = OwnerIpScanRecord::TABLE;
 
     public function getDates()
     {

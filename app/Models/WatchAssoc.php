@@ -10,7 +10,7 @@ class WatchAssoc extends Model
 {
     // use SoftDeletes;
 
-    const TABLE = 'user_watch_target';
+    const TABLE = 'owner_watch_target';
 
     protected $guarded = array();
 

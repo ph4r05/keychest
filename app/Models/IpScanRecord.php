@@ -33,15 +33,15 @@ class IpScanRecord extends Model
     }
 
     /**
-     * Associated users
+     * Associated owners
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function users()
+    public function owners()
     {
-        return $this->belongsToMany('App\Models\User',
-            'user_ip_scan_record',
+        return $this->belongsToMany('App\Models\Owner',
+            'owner_ip_scan_record',
             'ip_scan_record_id',
-            'user_id')->using('App\Models\UserIpScanRecord');
+            'owner_id')->using('App\Models\OwnerIpScanRecord');
     }
 
     /**

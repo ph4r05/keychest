@@ -81,7 +81,7 @@ class CredentialsManager
             'bit_size' => $sshKey->getBitSize(),
             'key_type' => 0,
             'storage_type' => 0,
-            'user_id' => null,
+            'owner_id' => null,
             'rec_version' => 0,
             'created_at' => $now,
             'updated_at' => $now
@@ -105,7 +105,7 @@ class CredentialsManager
         $threshold = Carbon::now()->subDays($maxFreeKeyAgeDays);
         return DB::transaction(function() use ($threshold) {
             $deletedRows = SshKey
-                ::whereNull('user_id')
+                ::whereNull('owner_id')
                 ->where('rec_version', '=', 0)
                 ->where('created_at', '<', $threshold)
                 ->delete();
@@ -123,7 +123,7 @@ class CredentialsManager
         $threshold = $maxFreeKeyAgeDays > 0 ? Carbon::now()->subDays($maxFreeKeyAgeDays) : null;
 
         $q = SshKey::query()
-            ->whereNull('user_id')
+            ->whereNull('owner_id')
             ->where('rec_version', '=', 0);
 
         if (!empty($threshold)){
@@ -165,14 +165,14 @@ class CredentialsManager
         //  - until success / attempt reaches the maximum
         //  - - query random free ID from the database
         //  - - UPDATE ssh_keys
-        //              SET rec_version = rec_version + 1, user_id = $user_id
-        //              WHERE rec_version == $rec_version AND user_id is NULL and ID = $id // make sure still free
+        //              SET rec_version = rec_version + 1, owner_id = $owner_id
+        //              WHERE rec_version == $rec_version AND owner_id is NULL and ID = $id // make sure still free
         //
         //  - - check number of affected rows by the query. If 1 then success.
         //  - - load final key once again, last check (redundant, just get fresh eloquent model), return.
         return DB::transaction(function() use ($bitSize, $user, $threshold) {
             $candidate = SshKey::query()
-                ->whereNull('user_id')
+                ->whereNull('owner_id')
                 ->where('rec_version', '=', 0)
                 ->where('created_at', '>=', $threshold)
                 ->where('bit_size', '=', $bitSize)
@@ -184,7 +184,7 @@ class CredentialsManager
                 throw new SshKeyAllocationException('Could not find any suitable candidate key');
             }
 
-            $candidate->user_id = $user->id;
+            $candidate->owner_id = $user->primary_owner_id;
             $candidate->rec_version += 1;
             $candidate->save();
             return $candidate;

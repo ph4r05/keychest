@@ -327,10 +327,10 @@ class ScanManager {
     /**
      * Returns the query builder for the active watchers for the user id.
      *
-     * @param $userId
+     * @param $owner_id
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getActiveWatcher($userId){
+    public function getActiveWatcher($owner_id){
         $watchTbl = WatchTarget::TABLE;
         $watchAssocTbl = WatchAssoc::TABLE;
         $baseDomainTbl = BaseDomain::TABLE;
@@ -339,7 +339,7 @@ class ScanManager {
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
             ->select($watchTbl.'.*', $watchAssocTbl.'.*', $watchTbl.'.id as wid', $baseDomainTbl.'.domain_name AS domain')
             ->leftJoin($baseDomainTbl, $baseDomainTbl.'.id', '=', $watchTbl.'.top_domain_id')
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->where($watchAssocTbl.'.owner_id', '=', $owner_id)
             ->whereNull($watchAssocTbl.'.deleted_at')
             ->whereNull($watchAssocTbl.'.disabled_at');
         return $query;

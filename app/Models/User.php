@@ -59,7 +59,7 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\WatchTarget',
             null,
             'user_id',
-            'watch_id')->using('App\Models\UserWatchTarget');
+            'watch_id')->using('App\Models\OwnerWatchTarget');
     }
 
     /**
@@ -80,6 +80,14 @@ class User extends Authenticatable
      */
     public function latestDnsScan(){
         return $this->belongsTo('\App\Models\DnsResult', 'last_dns_scan_id');
+    }
+
+    /**
+     * Primary owner
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function primaryOwner(){
+        return $this->belongsTo('\App\Models\Owner', 'primary_owner_id');
     }
 
     /**
@@ -109,7 +117,7 @@ class User extends Authenticatable
      */
     public function ipScanRecords()
     {
-        return $this->belongsToMany('App\Models\IpScanRecord')->using('App\Models\UserIpScanRecord');
+        return $this->belongsToMany('App\Models\IpScanRecord')->using('App\Models\OwnerIpScanRecord');
     }
 
     /**

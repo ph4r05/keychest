@@ -11,7 +11,7 @@ namespace App\Keychest\Services;
 use App\Keychest\Utils\IpRange;
 
 use App\Models\IpScanRecord;
-use App\Models\UserIpScanRecord;
+use App\Models\OwnerIpScanRecord;
 
 
 use Exception;
@@ -45,17 +45,17 @@ class IpScanManager {
 
     /**
      * Returns list of the records
-     * @param null|int $userId
+     * @param null|int $ownerId
      * @param bool $withAll if true, service, lastResult and watchTarget are co-fetched
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
-    public function getRecords($userId=null, $withAll=true){
+    public function getRecords($ownerId=null, $withAll=true){
         $q = IpScanRecord::query()
-            ->join(UserIpScanRecord::TABLE, function(JoinClause $query) use ($userId) {
+            ->join(OwnerIpScanRecord::TABLE, function(JoinClause $query) use ($ownerId) {
                 $query->on('ip_scan_record_id', '=', IpScanRecord::TABLE.'.id');
 
-                if (!empty($userId)){
-                    $query->where('user_id', '=', $userId);
+                if (!empty($ownerId)){
+                    $query->where('owner_id', '=', $ownerId);
                 }
 
                 $query->whereNull('deleted_at')
@@ -63,10 +63,10 @@ class IpScanManager {
             })
             ->select([
                 IpScanRecord::TABLE . '.*',
-                UserIpScanRecord::TABLE . '.*',
+                OwnerIpScanRecord::TABLE . '.*',
                 IpScanRecord::TABLE . '.id AS record_id',
-                UserIpScanRecord::TABLE . '.id as assoc_id',
-                UserIpScanRecord::TABLE . '.id as id'
+                OwnerIpScanRecord::TABLE . '.id as assoc_id',
+                OwnerIpScanRecord::TABLE . '.id as id'
             ]);
 
         if ($withAll) {
@@ -78,11 +78,11 @@ class IpScanManager {
 
     /**
      * Returns number of records already used by the user
-     * @param $userId
+     * @param $ownerId
      * @return int
      */
-    public function numRecordsUsed($userId){
-        return $this->getRecords($userId, false)->get()->count();
+    public function numRecordsUsed($ownerId){
+        return $this->getRecords($ownerId, false)->get()->count();
     }
 
     /**
@@ -146,12 +146,12 @@ class IpScanManager {
     /**
      * Returns matches that intersect the criteria for the given user
      * @param $criteria
-     * @param null $userId
+     * @param null $ownerId
      * @param bool $withAll
      * @return Collection
      */
-    public function hasScanIntersection($criteria, $userId=null, $withAll=false){
-        $q = $this->getRecords($userId, $withAll);
+    public function hasScanIntersection($criteria, $ownerId=null, $withAll=false){
+        $q = $this->getRecords($ownerId, $withAll);
 
         $criteria_fields = ['service_name', 'service_port'];
         foreach ($criteria_fields as $fld){

@@ -50,12 +50,12 @@ class ServerManager {
 
     /**
      * Returns number of hosts used by the user
-     * @param null $userId
+     * @param null $ownerId
      * @return int
      */
-    public function numHostsUsed($userId){
+    public function numHostsUsed($ownerId){
         return WatchAssoc::query()
-            ->where('user_id', $userId)
+            ->where('owner_id', $ownerId)
             ->whereNull('deleted_at')
             ->whereNull('disabled_at')->count();
     }
@@ -73,37 +73,37 @@ class ServerManager {
         }
 
         $criteria = $this->buildCriteria($parsed, $server);
-        $userId = empty($curUser) ? null : $curUser->getAuthIdentifier();
+        $ownerId = empty($curUser) ? null : $curUser->primary_owner_id;
 
-        $allMatchingHosts = $this->getAllHostsWithAssociationsBy($criteria, $userId);
+        $allMatchingHosts = $this->getAllHostsWithAssociationsBy($criteria, $ownerId);
         return !$this->allHostsEnabled($allMatchingHosts);
     }
 
     /**
      * Returns query for loading users hosts.
-     * @param $userId
+     * @param $ownerId
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getUserHostsQuery($userId){
+    public function getUserHostsQuery($ownerId){
         $watchTbl = WatchTarget::TABLE;
         $watchAssocTbl = WatchAssoc::TABLE;
 
         $query = WatchAssoc::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchAssocTbl.'.watch_id')
             ->select($watchTbl.'.*', $watchAssocTbl.'.*')
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->where($watchAssocTbl.'.owner_id', '=', $ownerId)
             ->whereNull($watchAssocTbl.'.deleted_at');
         return $query;
     }
 
     /**
      * Returns all host associations for the given user
-     * @param $userId
+     * @param $ownerId
      * @param Collection $hosts collection of host ids to restrict
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getHostAssociations($userId, $hosts=null){
-        $query = WatchAssoc::query()->where('user_id', $userId);
+    public function getHostAssociations($ownerId, $hosts=null){
+        $query = WatchAssoc::query()->where('owner_id', $ownerId);
         if (!empty($hosts) && $hosts->isNotEmpty()){
             $query->whereIn('watch_id', $hosts);
         }
@@ -115,11 +115,11 @@ class ServerManager {
      * Builds query to load hosts by the defined criteria.
      *
      * @param $criteria
-     * @param $userId user ID criteria for the match
+     * @param $ownerId user ID criteria for the match
      * @param $assoc Collection association loaded for the given user
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getHostsQueryBy($criteria=null, $userId=null, $assoc=null){
+    public function getHostsQueryBy($criteria=null, $ownerId=null, $assoc=null){
         $query = WatchTarget::query();
 
         if (!empty($criteria)) {
@@ -128,8 +128,8 @@ class ServerManager {
             }
         }
 
-        if (!empty($userId)){
-            $assoc = $this->getHostAssociations($userId);
+        if (!empty($ownerId)){
+            $assoc = $this->getHostAssociations($ownerId);
         }
 
         if (!empty($assoc)){
@@ -142,24 +142,24 @@ class ServerManager {
     /**
      * Used to load hosts for update / add to detect duplicates
      * @param $criteria
-     * @param $userId user ID criteria for the match
+     * @param $ownerId user ID criteria for the match
      * @param $assoc Collection association loaded for the given user
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getHostsBy($criteria=null, $userId=null, $assoc=null){
-        return $this->getHostsQueryBy($criteria, $userId, $assoc)->get();
+    public function getHostsBy($criteria=null, $ownerId=null, $assoc=null){
+        return $this->getHostsQueryBy($criteria, $ownerId, $assoc)->get();
     }
 
     /**
      * Loads all hosts associated to the user, augments host records with the association record.
      * @param $criteria
-     * @param $userId
+     * @param $owner_id
      * @param $assoc Collection
      * @return Collection
      */
-    function getAllHostsWithAssociationsBy($criteria, $userId=null, $assoc=null){
-        if (!empty($userId)) {
-            $assoc = $this->getHostAssociations($userId);
+    function getAllHostsWithAssociationsBy($criteria, $owner_id=null, $assoc=null){
+        if (!empty($owner_id)) {
+            $assoc = $this->getHostAssociations($owner_id);
         }
         $hosts = $this->getHostsBy($criteria, null, $assoc);
         return $this->augmentHostsWithAssoc($hosts, $assoc);
@@ -264,10 +264,10 @@ class ServerManager {
 
     /**
      * Load server errors for the user
-     * @param int|null $userId
+     * @param int|null $ownerId
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
-    public function loadServerErrorsQuery($userId=null){
+    public function loadServerErrorsQuery($ownerId=null){
         $watchTbl = WatchTarget::TABLE;
         $watchAssocTbl = WatchAssoc::TABLE;
         $dnsTable = DnsResult::TABLE;
@@ -296,10 +296,10 @@ class ServerManager {
                 $join->on('xh.id', '=', 'ls.scan_id');
             });
 
-        if ($userId){
+        if ($ownerId){
             $qsl = $qsl
                 ->join($watchAssocTbl, $watchAssocTbl.'.watch_id', '=', 'w.id')
-                ->where($watchAssocTbl.'.user_id', '=', $userId)
+                ->where($watchAssocTbl.'.owner_id', '=', $ownerId)
                 ->whereNull($watchAssocTbl.'.deleted_at');
         }
 
@@ -317,11 +317,11 @@ class ServerManager {
      * Possible optimizations:
      *  - extract last tls scan info to a separate joinable table so no aggregation on MAX(last_scan_at) is needed
      *  - if tls_errors is not in the sort field, we can load all IDs by the side, cache it, match on it on the query.
-     * @param null $userId
+     * @param null $ownerId
      * @param int $filterIpServers can exclude / include the IP servers
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadServerList($userId=null, $filterIpServers=self::FILTER_INCLUDE){
+    public function loadServerList($ownerId=null, $filterIpServers=self::FILTER_INCLUDE){
 //        The SQL built here is like this:
 //        ----------------------------------------------------------------------------
 //        SELECT `watch_target`.*,
@@ -375,7 +375,7 @@ class ServerManager {
         $serviceTable = WatchService::TABLE;
 
         // Server error query
-        $qsl = $this->loadServerErrorsQuery($userId);
+        $qsl = $this->loadServerErrorsQuery($ownerId);
 
         // Basic loading query
         $query = WatchTarget::query()
@@ -403,9 +403,9 @@ class ServerManager {
                     $join->addBinding($qsl->getBindings());
                 });
 
-        if ($userId){
+        if ($ownerId){
             $query = $query
-                ->where($watchAssocTbl.'.user_id', '=', $userId)
+                ->where($watchAssocTbl.'.owner_id', '=', $ownerId)
                 ->whereNull($watchAssocTbl.'.deleted_at')
                 ->whereNull($watchAssocTbl.'.disabled_at');
         }

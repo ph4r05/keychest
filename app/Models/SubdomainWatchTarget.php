@@ -20,15 +20,6 @@ class SubdomainWatchTarget extends Model
     protected $assoc = null;
 
     /**
-     * Get the user that owns the watch record.
-     * @deprecated - converted to many-to-many relationship.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\Models\User', 'user_id');
-    }
-
-    /**
      * Gets the top domain associated with Whois check
      */
     public function topDomain()
@@ -39,13 +30,13 @@ class SubdomainWatchTarget extends Model
     /**
      * Watch targets that belongs to the user
      */
-    public function users()
+    public function owners()
     {
         return $this->belongsToMany(
-            'App\Models\User',
-            'user_watch_target',
+            'App\Models\Owner',
+            'owner_watch_target',
             'watch_id',
-            'user_id');
+            'owner_id');
     }
 
     public function getDates()

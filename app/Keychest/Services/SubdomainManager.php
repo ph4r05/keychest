@@ -59,12 +59,12 @@ class SubdomainManager {
 
     /**
      * Returns number of hosts used by the user
-     * @param null $userId
+     * @param null $ownerId
      * @return int
      */
-    public function numDomainsUsed($userId){
+    public function numDomainsUsed($ownerId){
         return SubdomainWatchAssoc::query()
-            ->where('user_id', $userId)
+            ->where('owner_id', $ownerId)
             ->whereNull('deleted_at')
             ->whereNull('disabled_at')->count();
     }
@@ -82,20 +82,20 @@ class SubdomainManager {
         }
 
         $criteria = $this->buildCriteria($parsed, $server);
-        $userId = empty($curUser) ? null : $curUser->getAuthIdentifier();
+        $ownerId = empty($curUser) ? null : $curUser->primary_owner_id;
 
-        $allMatchingHosts = $this->getAllHostsBy($criteria, $userId);
+        $allMatchingHosts = $this->getAllHostsBy($criteria, $ownerId);
         return !$this->allHostsEnabled($allMatchingHosts);
     }
 
     /**
      * Returns all host associations for the given user
-     * @param $userId
+     * @param $ownerId
      * @param Collection $hosts collection of host ids to restrict
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getHostAssociations($userId, $hosts=null){
-        $query = SubdomainWatchAssoc::query()->where('user_id', $userId);
+    public function getHostAssociations($ownerId, $hosts=null){
+        $query = SubdomainWatchAssoc::query()->where('owner_id', $ownerId);
         if (!empty($hosts) && $hosts->isNotEmpty()){
             $query->whereIn('watch_id', $hosts);
         }
@@ -106,11 +106,11 @@ class SubdomainManager {
     /**
      * Used to load hosts for update / add to detect duplicates
      * @param $criteria
-     * @param $userId user ID criteria for the match
+     * @param $ownerId user ID criteria for the match
      * @param $assoc Collection association loaded for the given user
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getHostsByQuery($criteria=null, $userId=null, $assoc=null){
+    public function getHostsByQuery($criteria=null, $ownerId=null, $assoc=null){
         $query = SubdomainWatchTarget::query();
 
         if (!empty($criteria)) {
@@ -119,8 +119,8 @@ class SubdomainManager {
             }
         }
 
-        if (!empty($userId)){
-            $assoc = $this->getHostAssociations($userId);
+        if (!empty($ownerId)){
+            $assoc = $this->getHostAssociations($ownerId);
         }
 
         if (!empty($assoc)){
@@ -130,7 +130,7 @@ class SubdomainManager {
         return $query;
     }
 
-    public function getHostsWithInvSuffix($host, $userId, $withDot, $enabledOnly){
+    public function getHostsWithInvSuffix($host, $ownerId, $withDot, $enabledOnly){
         $assocTbl = SubdomainWatchAssoc::TABLE;
         $domainTbl = SubdomainWatchTarget::TABLE;
 
@@ -143,7 +143,7 @@ class SubdomainManager {
             )
             ->from($assocTbl. ' AS a')
             ->join($domainTbl. ' AS d', 'd.id', '=', 'a.watch_id')
-            ->where('a.user_id', $userId);
+            ->where('a.owner_id', $ownerId);
 
         if ($enabledOnly){
             $q = $q->whereNull('a.deleted_at');
@@ -192,24 +192,24 @@ class SubdomainManager {
     /**
      * Used to load hosts for update / add to detect duplicates
      * @param $criteria
-     * @param $userId user ID criteria for the match
+     * @param $ownerId user ID criteria for the match
      * @param $assoc Collection association loaded for the given user
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getHostsBy($criteria=null, $userId=null, $assoc=null){
-        return $this->getHostsByQuery($criteria, $userId, $assoc)->get();
+    public function getHostsBy($criteria=null, $ownerId=null, $assoc=null){
+        return $this->getHostsByQuery($criteria, $ownerId, $assoc)->get();
     }
 
     /**
      * Loads all hosts associated to the user, augments host records with the association record.
      * @param $criteria
-     * @param $userId
+     * @param $ownerId
      * @param $assoc Collection
      * @return Collection
      */
-    function getAllHostsBy($criteria, $userId=null, $assoc=null){
-        if (!empty($userId)) {
-            $assoc = $this->getHostAssociations($userId);
+    function getAllHostsBy($criteria, $ownerId=null, $assoc=null){
+        if (!empty($ownerId)) {
+            $assoc = $this->getHostAssociations($ownerId);
         }
         $hosts = $this->getHostsBy($criteria, null, $assoc);
         return $this->augmentHostsWithAssoc($hosts, $assoc);

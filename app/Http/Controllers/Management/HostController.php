@@ -58,7 +58,7 @@ class HostController extends Controller
      */
     public function getHosts(){
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
@@ -67,7 +67,7 @@ class HostController extends Controller
         $sort_parsed = DataTools::vueSortToDb($sort);
 
         // server list load
-        $query = $this->hostManager->loadHostListQuery($userId);
+        $query = $this->hostManager->loadHostListQuery($ownerId);
         if (!empty($filter)){
             $query = $query->where(function(Builder $query) use($filter) {
                 $query->where('host_name', 'like', '%'. $filter . '%')

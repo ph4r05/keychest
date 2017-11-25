@@ -27,8 +27,8 @@ class ManagedHostGroup extends Model
     /**
      * Get the user that owns the phone.
      */
-    public function user()
+    public function owner()
     {
-        return $this->belongsTo('App\Models\User', 'user_id');
+        return $this->belongsTo('App\Models\Owner', 'owner_id');
     }
 }

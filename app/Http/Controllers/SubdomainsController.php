@@ -59,7 +59,7 @@ class SubdomainsController extends Controller
     public function getList()
     {
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
@@ -68,7 +68,7 @@ class SubdomainsController extends Controller
         $sort_parsed = DataTools::vueSortToDb($sort);
 
         $watchAssocTbl = SubdomainWatchAssoc::TABLE;
-        $query = $this->baseLoadQuery($userId);
+        $query = $this->baseLoadQuery($ownerId);
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
         }
@@ -93,12 +93,12 @@ class SubdomainsController extends Controller
      */
     public function getDomains(){
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $domains = collect(Input::get('domains'));
 
         $watchTbl = SubdomainWatchTarget::TABLE;
-        $query = $this->baseLoadQuery($userId);
+        $query = $this->baseLoadQuery($ownerId);
         $query = $query->whereIn($watchTbl.'.id', $domains);
         $res = $query->get();
         Log::info(var_export($res->all(), true));
@@ -114,9 +114,9 @@ class SubdomainsController extends Controller
      */
     public function getUnfinishedDomains(){
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $query = $this->baseLoadQuery($userId);
+        $query = $this->baseLoadQuery($ownerId);
         $query = $query->whereNull('rs.result_size');
         $res = $query->get();
 
@@ -129,7 +129,7 @@ class SubdomainsController extends Controller
      */
     public function getDiscoveredSubdomainsList(){
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $watchTbl = SubdomainWatchTarget::TABLE;
         $watchAssocTbl = SubdomainWatchAssoc::TABLE;
@@ -138,7 +138,7 @@ class SubdomainsController extends Controller
         $q = SubdomainResults::query()
             ->join($watchTbl, $watchTbl.'.id', '=', $watchResTbl.'.watch_id')
             ->join($watchAssocTbl, $watchAssocTbl.'.watch_id', '=', $watchTbl.'.id')
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->where($watchAssocTbl.'.owner_id', '=', $ownerId)
             ->whereNull($watchAssocTbl.'.deleted_at');
 
         $allHosts = collect();
@@ -155,7 +155,7 @@ class SubdomainsController extends Controller
         })->values();
 
         // load all existing hosts
-        $allUserHosts = $this->serverManager->getUserHostsQuery($userId)->get();
+        $allUserHosts = $this->serverManager->getUserHostsQuery($ownerId)->get();
         $allUserHostNames = $allUserHosts->pluck('scan_host')->unique();
         $allUserHostNamesMap = $allUserHostNames->flip();
 
@@ -187,7 +187,7 @@ class SubdomainsController extends Controller
 
         $maxHosts = config('keychest.max_active_domains');
         if ($maxHosts){
-            $numHosts = $this->manager->numDomainsUsed(Auth::user()->getAuthIdentifier());
+            $numHosts = $this->manager->numDomainsUsed(Auth::user()->primary_owner_id);
             if ($numHosts >= $maxHosts) {
                 return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
             }
@@ -219,7 +219,7 @@ class SubdomainsController extends Controller
     public function addMore()
     {
         $maxHosts = config('keychest.max_active_domains');
-        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->primary_owner_id);
         if ($maxHosts && $numHosts >= $maxHosts){
             return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
         }
@@ -239,9 +239,9 @@ class SubdomainsController extends Controller
         $host = trim(Input::get('host'));
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $enabledHosts = $this->manager->getHostsWithInvSuffix($host, $userId, true, true)->get();
+        $enabledHosts = $this->manager->getHostsWithInvSuffix($host, $ownerId, true, true)->get();
         if ($enabledHosts->isNotEmpty()){
             return response()->json([
                 'status' => 'existing',
@@ -269,7 +269,7 @@ class SubdomainsController extends Controller
 
         // DB Job data
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
         $newServerDb = [
             'created_at' => Carbon::now(),
         ];
@@ -282,7 +282,7 @@ class SubdomainsController extends Controller
 
         // Duplicity detection, soft delete manipulation
         $hosts = $this->manager->getAllHostsBy($criteria);   // load all matching host records
-        $hostAssoc = $this->manager->getHostAssociations($userId, $hosts->pluck('id'));
+        $hostAssoc = $this->manager->getHostAssociations($ownerId, $hosts->pluck('id'));
         $userHosts = $this->manager->filterHostsWithAssoc($hosts, $hostAssoc);
 
         if ($this->manager->allHostsEnabled($userHosts)){
@@ -299,7 +299,7 @@ class SubdomainsController extends Controller
         $assoc = null;
         if ($userHosts->isEmpty()) {
             $assocInfo = [
-                'user_id' => $userId,
+                'owner_id' => $ownerId,
                 'watch_id' => $hostRecord->id,
                 'auto_fill_watches' => $autoFill
             ];
@@ -332,9 +332,9 @@ class SubdomainsController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $assoc = SubdomainWatchAssoc::where('id', $id)->where('user_id', $userId)->get()->first();
+        $assoc = SubdomainWatchAssoc::where('id', $id)->where('owner_id', $ownerId)->get()->first();
         if (empty($assoc) || !empty($assoc->deleted_at)){
             return response()->json(['status' => 'not-deleted'], 422);
         } else {
@@ -356,11 +356,11 @@ class SubdomainsController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $affected = SubdomainWatchAssoc
             ::whereIn('id', $ids->all())
-            ->where('user_id', $userId)
+            ->where('owner_id', $ownerId)
             ->update([
                 'deleted_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -390,9 +390,9 @@ class SubdomainsController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $curAssoc = SubdomainWatchAssoc::query()->where('id', $id)->where('user_id', $userId)->first();
+        $curAssoc = SubdomainWatchAssoc::query()->where('id', $id)->where('owner_id', $ownerId)->first();
         if (empty($curAssoc)){
             return response()->json(['status' => 'not-found'], 404);
         }
@@ -420,7 +420,7 @@ class SubdomainsController extends Controller
 
         // Duplicity detection, host might be already monitored in a different association record.
         $newHosts = $this->manager->getAllHostsBy($criteriaNew);   // load all matching host records
-        $hostNewAssoc = $this->manager->getHostAssociations($userId, $newHosts->pluck('id'));
+        $hostNewAssoc = $this->manager->getHostAssociations($ownerId, $newHosts->pluck('id'));
         $userNewHosts = $this->manager->filterHostsWithAssoc($newHosts, $hostNewAssoc);
         if ($this->manager->allHostsEnabled($userNewHosts)){
             return response()->json(['status' => 'already-present'], 410);
@@ -450,7 +450,7 @@ class SubdomainsController extends Controller
 
             // New association record
             $assocInfo = [
-                'user_id' => $userId,
+                'owner_id' => $ownerId,
                 'watch_id' => $newHost->id,
                 'created_at' => Carbon::now(),
                 'auto_fill_watches' => $autoFill
@@ -539,7 +539,7 @@ class SubdomainsController extends Controller
         })->values();
 
         $maxHosts = config('keychest.max_active_domains');
-        $numHosts = $this->manager->numDomainsUsed(Auth::user()->getAuthIdentifier());
+        $numHosts = $this->manager->numDomainsUsed(Auth::user()->primary_owner_id);
         $num_added = 0;
         $num_present = 0;
         $num_blacklisted = 0;
@@ -588,10 +588,10 @@ class SubdomainsController extends Controller
 
     /**
      * Builds query for basic load
-     * @param $userId
+     * @param $ownerId
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
-    protected function baseLoadQuery($userId){
+    protected function baseLoadQuery($ownerId){
         $watchTbl = SubdomainWatchTarget::TABLE;
         $watchAssocTbl = SubdomainWatchAssoc::TABLE;
         $watchResTbl = SubdomainResults::TABLE;
@@ -608,7 +608,7 @@ class SubdomainsController extends Controller
             ->select($watchTbl.'.*', $watchAssocTbl.'.*', $watchTbl.'.id AS wid',
                 'rs.scan_status AS sub_scan_status', 'rs.last_scan_at AS sub_last_scan_at',
                 'rs.result_size AS sub_result_size', 'rs.result AS sub_result')
-            ->where($watchAssocTbl.'.user_id', '=', $userId)
+            ->where($watchAssocTbl.'.owner_id', '=', $ownerId)
             ->whereNull($watchAssocTbl.'.deleted_at');
         return $query;
     }

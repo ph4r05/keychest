@@ -59,7 +59,7 @@ class ServersController extends Controller
     public function getList()
     {
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
@@ -72,7 +72,7 @@ class ServersController extends Controller
         $this->checkStartWatching();
 
         // server list load
-        $query = $this->serverManager->loadServerList($userId);
+        $query = $this->serverManager->loadServerList($ownerId);
         if (!empty($filter)){
             $query = $query->where('scan_host', 'like', '%' . $filter . '%');
         }
@@ -105,7 +105,7 @@ class ServersController extends Controller
         $server = DomainTools::normalizeUserDomainInput($server);
 
         $maxHosts = config('keychest.max_servers');
-        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->primary_owner_id);
         if ($maxHosts && $numHosts >= $maxHosts){
             return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
         }
@@ -134,7 +134,7 @@ class ServersController extends Controller
     public function addMore()
     {
         $maxHosts = config('keychest.max_servers');
-        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->primary_owner_id);
         if ($maxHosts && $numHosts >= $maxHosts){
             return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
         }
@@ -177,7 +177,7 @@ class ServersController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
         $newServerDb = [
             'created_at' => Carbon::now(),
         ];
@@ -190,7 +190,7 @@ class ServersController extends Controller
 
         // Duplicity detection, soft delete manipulation
         $hosts = $this->serverManager->getAllHostsWithAssociationsBy($criteria);   // load all matching host records
-        $hostAssoc = $this->serverManager->getHostAssociations($userId, $hosts->pluck('id'));
+        $hostAssoc = $this->serverManager->getHostAssociations($ownerId, $hosts->pluck('id'));
         $userHosts = $this->serverManager->filterHostsWithAssoc($hosts, $hostAssoc);
 
         if ($this->serverManager->allHostsEnabled($userHosts)){
@@ -206,7 +206,7 @@ class ServersController extends Controller
         // Association not present -> create a new one
         if ($userHosts->isEmpty()) {
             $assocInfo = [
-                'user_id' => $userId,
+                'owner_id' => $ownerId,
                 'watch_id' => $hostRecord->id,
             ];
 
@@ -232,9 +232,9 @@ class ServersController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $assoc = WatchAssoc::where('id', $id)->where('user_id', $userId)->get()->first();
+        $assoc = WatchAssoc::where('id', $id)->where('owner_id', $ownerId)->get()->first();
         if (empty($assoc) || !empty($assoc->deleted_at)){
             return response()->json(['status' => 'not-deleted'], 422);
         } else {
@@ -255,12 +255,12 @@ class ServersController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
 
         $affected = WatchAssoc
             ::whereIn('id', $ids->all())
-            ->where('user_id', $userId)
+            ->where('owner_id', $ownerId)
             ->update([
                 'deleted_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -287,9 +287,9 @@ class ServersController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $curAssoc = WatchAssoc::query()->where('id', $id)->where('user_id', $userId)->first();
+        $curAssoc = WatchAssoc::query()->where('id', $id)->where('owner_id', $ownerId)->first();
         if (empty($curAssoc)){
             return response()->json(['status' => 'not-found'], 404);
         }
@@ -306,7 +306,7 @@ class ServersController extends Controller
 
         // Duplicity detection, host might be already monitored in a different association record.
         $newHosts = $this->serverManager->getAllHostsWithAssociationsBy($criteriaNew);   // load all matching host records
-        $hostNewAssoc = $this->serverManager->getHostAssociations($userId, $newHosts->pluck('id'));
+        $hostNewAssoc = $this->serverManager->getHostAssociations($ownerId, $newHosts->pluck('id'));
         $userNewHosts = $this->serverManager->filterHostsWithAssoc($newHosts, $hostNewAssoc);
         if ($this->serverManager->allHostsEnabled($userNewHosts)){
             return response()->json(['status' => 'already-present'], 410);
@@ -334,7 +334,7 @@ class ServersController extends Controller
 
             // New association record
             $assocInfo = [
-                'user_id' => $userId,
+                'owner_id' => $ownerId,
                 'watch_id' => $newHost->id,
                 'created_at' => Carbon::now()
             ];
@@ -395,7 +395,7 @@ class ServersController extends Controller
         })->values();
 
         $maxHosts = config('keychest.max_servers');
-        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->getAuthIdentifier());
+        $numHosts = $this->serverManager->numHostsUsed(Auth::user()->primary_owner_id);
         $num_added = 0;
         $num_present = 0;
         $num_failed = 0;

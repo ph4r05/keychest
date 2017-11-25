@@ -30,9 +30,9 @@ class ManagedHost extends Model
     /**
      * Get the user that owns the entity.
      */
-    public function user()
+    public function owner()
     {
-        return $this->belongsTo('App\Models\User', 'user_id');
+        return $this->belongsTo('App\Models\Owner', 'owner_id');
     }
 
     /**

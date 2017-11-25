@@ -10,7 +10,7 @@ class SubdomainWatchAssoc extends Model
 {
     // use SoftDeletes;
 
-    const TABLE = 'user_subdomain_watch_target';
+    const TABLE = 'owner_subdomain_watch_target';
 
     protected $guarded = array();
 

@@ -12,8 +12,8 @@ use App\Keychest\Utils\DomainTools;
 
 
 use App\Models\IpScanRecord;
-use App\Models\UserIpScanRecord;
-use App\Models\UserIpScanRecordAssoc;
+use App\Models\OwnerIpScanRecord;
+use App\Models\OwnerIpScanRecordAssoc;
 
 
 use Carbon\Carbon;
@@ -82,15 +82,15 @@ class NetworksController extends Controller
      */
     public function ipScanList(){
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         $sort = strtolower(trim(Input::get('sort')));
         $filter = strtolower(trim(Input::get('filter')));
         $per_page = intval(trim(Input::get('per_page')));
         $sort_parsed = DataTools::vueSortToDb($sort);
-        $watchAssocTbl = UserIpScanRecord::TABLE;
+        $watchAssocTbl = OwnerIpScanRecord::TABLE;
 
-        $query = $this->ipScanManager->getRecords($userId);
+        $query = $this->ipScanManager->getRecords($ownerId);
         if (!empty($filter)){
             $query = $query->where('service_name', 'like', '%' . $filter . '%');
         }
@@ -120,7 +120,7 @@ class NetworksController extends Controller
 
         $maxHosts = config('keychest.max_scan_records');
         if ($maxHosts){
-            $numHosts = $this->ipScanManager->numRecordsUsed(Auth::user()->getAuthIdentifier());
+            $numHosts = $this->ipScanManager->numRecordsUsed(Auth::user()->primary_owner_id);
             if ($numHosts >= $maxHosts) {
                 return response()->json(['status' => 'too-many', 'max_limit' => $maxHosts], 429);
             }
@@ -168,9 +168,13 @@ class NetworksController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $assoc = UserIpScanRecordAssoc::where('id', $id)->where('user_id', $userId)->get()->first();
+        $assoc = OwnerIpScanRecordAssoc
+            ::where('id', $id)
+            ->where('owner_id', $ownerId)
+            ->get()->first();
+
         if (empty($assoc) || !empty($assoc->deleted_at)){
             return response()->json(['status' => 'not-deleted'], 422);
         } else {
@@ -192,11 +196,11 @@ class NetworksController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
-        $affected = UserIpScanRecordAssoc
+        $affected = OwnerIpScanRecordAssoc
             ::whereIn('id', $ids->all())
-            ->where('user_id', $userId)
+            ->where('owner_id', $ownerId)
             ->update([
                 'deleted_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
@@ -224,10 +228,14 @@ class NetworksController extends Controller
         }
 
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         // Load existing association being edited - will be modified, has to exist.
-        $curAssoc = UserIpScanRecordAssoc::query()->where('id', $id)->where('user_id', $userId)->first();
+        $curAssoc = OwnerIpScanRecordAssoc::query()
+            ->where('id', $id)
+            ->where('owner_id', $ownerId)
+            ->first();
+
         if (empty($curAssoc)){
             return response()->json(['status' => 'not-found'], 404);
         }
@@ -316,10 +324,10 @@ class NetworksController extends Controller
 
         // DB Job data
         $curUser = Auth::user();
-        $userId = $curUser->getAuthIdentifier();
+        $ownerId = $curUser->primary_owner_id;
 
         // Already covered?
-        $overlaps = $this->ipScanManager->hasScanIntersection($criteria, $userId, false);
+        $overlaps = $this->ipScanManager->hasScanIntersection($criteria, $ownerId, false);
         $overlaps = $overlaps->pluck('record_id')->whereNotIn(null, $ignoreOverlaps);
         if ($overlaps->isNotEmpty()){
             return -6;
@@ -335,8 +343,8 @@ class NetworksController extends Controller
 
         if(!$isNew){
             // Soft delete manipulation - fetch user association and reassoc if exists
-            $assoc = UserIpScanRecordAssoc::query()
-                ->where('user_id', '=', $userId)
+            $assoc = OwnerIpScanRecordAssoc::query()
+                ->where('owner_id', '=', $ownerId)
                 ->where('ip_scan_record_id', '=', $scanRecord->id)
                 ->withTrashed()
                 ->first();
@@ -354,7 +362,7 @@ class NetworksController extends Controller
         }
 
         // Creating new association.
-        $scanRecord->users()->attach($userId, [
+        $scanRecord->users()->attach($ownerId, [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'auto_fill_watches' => 1,

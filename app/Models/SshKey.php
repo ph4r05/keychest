@@ -22,6 +22,8 @@ class SshKey extends Model
 
     protected $guarded = ['priv_key'];
 
+    protected $hidden = ['priv_key'];
+
     protected $encryptable = ['priv_key'];
 
     public function getDates()
@@ -32,8 +34,8 @@ class SshKey extends Model
     /**
      * Get the user that owns the phone.
      */
-    public function user()
+    public function owner()
     {
-        return $this->belongsTo('App\Models\User', 'user_id');
+        return $this->belongsTo('App\Models\Owner', 'owner_id');
     }
 }
