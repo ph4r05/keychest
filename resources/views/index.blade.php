@@ -5,8 +5,10 @@
 @endsection
 
 @section('content')
+    @include('partials.landing.errors')
+
     <!-- loading placeholder -->
-	@include('partials.landing.loading_placeholder')
+    @include('partials.landing.loading_placeholder')
 
     <!-- Vue search component -->
     <quicksearch-main></quicksearch-main>
