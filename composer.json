@@ -33,11 +33,12 @@
         "phpseclib/phpseclib": "~2.0",
         "predis/predis": "v1.1.1",
         "spomky-labs/php-aes-gcm": "^1.2",
+        "tremby/laravel-git-version": "^1.1.1",
         "true/punycode": "~2.0",
         "venturecraft/revisionable": "^1.28",
         "vjroby/laravel-pbkdf2": "^0.2.2",
         "webpatser/laravel-uuid": "^2.0",
-        "tremby/laravel-git-version": "^1.1.1"
+        "zizaco/entrust": "^1.9.1"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
