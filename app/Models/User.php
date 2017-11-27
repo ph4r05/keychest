@@ -7,12 +7,15 @@ use App\Models\WatchTarget;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable
 {
     const TABLE = 'users';
 
-    use Notifiable, SoftDeletes;
+    use Notifiable;
+    use SoftDeletes { restore as private restoreInt; }
+    use EntrustUserTrait { restore as private restoreEntrustInt; }
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +51,27 @@ class User extends Authenticatable
         return array('created_at', 'updated_at', 'deleted_at', 'closed_at', 'last_email_report_sent_at',
             'last_email_no_servers_sent_at', 'last_email_report_enqueued_at',
             'last_login_at', 'cur_login_at', 'last_action_at', 'auto_created_at', 'verified_at', 'blocked_at');
+    }
+
+    /**
+     * Restore a soft-deleted model instance.
+     *
+     * @return bool|null
+     */
+    public function restore(){
+        $res = $this->restoreInt();
+        return $res;
+    }
+
+    /**
+     * Restore a soft-deleted model instance.
+     * https://github.com/Zizaco/entrust/issues/742
+     *
+     * @return bool|null
+     */
+    public function restoreEntrust(){
+        $res = $this->restoreEntrustInt();
+        return $res;
     }
 
     /**
