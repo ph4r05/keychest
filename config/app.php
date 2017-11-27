@@ -195,8 +195,9 @@ return [
         GrahamCampbell\Markdown\MarkdownServiceProvider::class,
         Influendo\LaravelSurvivor\SurvivorServiceProvider::class,
         Jackiedo\DotenvEditor\DotenvEditorServiceProvider::class,
-
         Tremby\LaravelGitVersion\GitVersionServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -261,6 +262,7 @@ return [
         'Markdown' => GrahamCampbell\Markdown\Facades\Markdown::class,
         'Uuid' => Webpatser\Uuid\Uuid::class,
         'DotenvEditor' => Jackiedo\DotenvEditor\Facades\DotenvEditor::class,
+
 
         /*
          * Acacha Llum Aliases...
