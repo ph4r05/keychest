@@ -60,9 +60,10 @@ class User extends Authenticatable
     public function watchTargets()
     {
         return $this->belongsToMany('App\Models\WatchTarget',
-            null,
-            'user_id',
-            'watch_id')->using('App\Models\OwnerWatchTarget');
+            OwnerWatchTarget::TABLE,
+            'owner_id',
+            'watch_id',
+            'primary_owner_id')->using('App\Models\OwnerWatchTarget');
     }
 
     /**
