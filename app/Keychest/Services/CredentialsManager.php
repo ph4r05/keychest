@@ -185,6 +185,7 @@ class CredentialsManager
             }
 
             $candidate->owner_id = $user->primary_owner_id;
+            $candidate->user_id = $user->id;
             $candidate->rec_version += 1;
             $candidate->save();
             return $candidate;
