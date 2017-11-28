@@ -918,7 +918,7 @@
                     return {};
                 }
 
-                return this.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
+                return Req.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
             },
 
             tlsCerts(){
@@ -1605,13 +1605,13 @@
                             {
                                 data: tlsIssuerUnz[1],
                                 backgroundColor: this.chartColors[0],
-                                //backgroundColor: this.takeMod(this.chartColors, tlsIssuerUnz[0].length),
+                                //backgroundColor: Req.takeMod(this.chartColors, tlsIssuerUnz[0].length),
                                 label: 'Detected on servers'
                             },
                             {
                                 data: allIssuerUnz[1],
                                 backgroundColor: this.chartColors[2],
-                                //backgroundColor: this.takeMod(this.chartColors, allIssuerUnz[0].length),
+                                //backgroundColor: Req.takeMod(this.chartColors, allIssuerUnz[0].length),
                                 label: 'From CT logs only'
                             }],
                         labels: allIssuerUnz[0]
@@ -1657,13 +1657,13 @@
                             {
                                 data: unzipped[0][1],
                                 backgroundColor: this.chartColors[0],
-                                //backgroundColor: this.takeMod(this.chartColors, unzipped[0][1].length),
+                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[0][1].length),
                                 label: 'Watched servers'
                             },
                             {
                                 data: unzipped[1][1],
                                 backgroundColor: this.chartColors[2],
-                                //backgroundColor: this.takeMod(this.chartColors, unzipped[1][1].length),
+                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[1][1].length),
                                 label: 'All issued certificates (CT)'
                             }],
                         labels: _.map(unzipped[0][0], this.getCountCategoryLabel)
@@ -1693,13 +1693,13 @@
                             {
                                 data: unzipped[2][1],
                                 backgroundColor: this.chartColors[0],
-                                //backgroundColor: this.takeMod(this.chartColors, unzipped[2][1].length),
+                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[2][1].length),
                                 label: 'Watched servers'
                             },
                             {
                                 data: unzipped[3][1],
                                 backgroundColor: this.chartColors[2],
-                                //backgroundColor: this.takeMod(this.chartColors, unzipped[3][1].length),
+                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[3][1].length),
                                 label: 'All issued certificates (CT)'
                             }],
                         labels: _.map(unzipped[2][0], this.getCountCategoryLabel)
@@ -1968,11 +1968,11 @@
                 // after this function all datasets will have all keys, with given default value if it was not there before
                 const keys = {};
                 _.forEach(groups, x => {
-                    _.assign(keys, this.listToSet(_.unzip(x)[0]));
+                    _.assign(keys, Req.listToSet(_.unzip(x)[0]));
                 });
 
                 _.forEach(groups, x => {
-                    const curSet = this.listToSet(_.unzip(x)[0]);
+                    const curSet = Req.listToSet(_.unzip(x)[0]);
                     _.forEach(keys, (val, key) => {
                         if (!(key in curSet)){
                             const curDefault = _.isFunction(missing) ?
@@ -1988,7 +1988,7 @@
                 // modifies the given groups so they have same labels and fills missing for missing pieces
                 const keys = {};
                 _.forEach(groups, x => {
-                    _.assign(keys, this.listToSet(_.keys(x)));
+                    _.assign(keys, Req.listToSet(_.keys(x)));
                 });
 
                 _.forEach(groups, grp => {
@@ -2006,7 +2006,7 @@
                 // returns a new object
                 const keys = {};
                 _.forEach(groups, x => {
-                    _.assign(keys, this.listToSet(_.keys(x)));
+                    _.assign(keys, Req.listToSet(_.keys(x)));
                 });
 
                 return _.reduce(keys, (acc, tmp, key) => {
@@ -2047,28 +2047,6 @@
                 });
                 return groups;
             },
-
-            //
-            // Universal utility methods
-            //
-
-            listToSet(lst){
-                const st = {};
-                for(const idx in lst){
-                    st[lst[idx]] = true;
-                }
-                return st;
-            },
-
-            takeMod(set, len){
-                const ret = [];
-                const ln = set.length;
-                for(let i = 0; i<len; i++){
-                    ret.push(set[i % ln]);
-                }
-                return ret;
-            },
-
         }
     }
 </script>

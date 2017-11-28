@@ -701,6 +701,7 @@ export default {
     normalizeValue: normalizeValue,
     capitalizeFirstWord: capitalizeFirstWord,
     takeMod: takeMod,
+    listToSet: listToSet,
 
     certIssuer: certIssuer,
     normalizeIssuer: normalizeIssuer,
