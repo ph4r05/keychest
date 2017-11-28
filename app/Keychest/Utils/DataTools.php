@@ -349,4 +349,69 @@ class DataTools {
             return isset($m[1]) ? ucfirst($m[1]) : '';
         }, $r);
     }
+
+    /**
+     * @param $data
+     * @param $col
+     * @param null $normalizer
+     * @param null $newField
+     * @return Collection
+     */
+    public static function normalizeValue($data, $col, $normalizer=null, $newField=null){
+        $newField = $newField ?: $col.'_norm';
+        $normalizer = $normalizer ?: 'DataTools::capitalizeFirstWord';
+        $data = collect($data);
+
+        $vals = $data->pluck($col);
+
+        // group by normalized striped form of the field
+        $grps = $vals->groupBy(function($x){
+            return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $x));
+        });
+
+        // find the representative in the group - group by on subgroups, most frequent subgroup wins
+        $subg = $grps->map(function($item, $key){
+            // a,a,a,a, b,b,b -> a: [a,a,a,a], b: [b,b,b]
+            return $item->groupBy(function($x){
+                return $x;
+            })->mapWithKeys(function($item, $key){
+                return [$key => count($item)];
+            });
+        });
+
+        // map back all variants of the field to the normalized key - used for normalization
+        $normMap = collect();
+        foreach ($subg as $key => $val){
+            foreach ($val as $sample => $x) {
+                $normMap[$sample] = $key;
+            }
+        }
+
+        // mapped -> representant
+        $repr = $subg->map(function($x, $key) {
+            if (count($x) === 1){
+                return $x->keys()[0];
+            }
+
+            return $x->keys()->reduce(function($acc, $key) use ($x){
+                if (!$acc){
+                    return $key;
+                }
+                return $x[$key] > $x[$acc] ? $key : $acc;
+            });
+        });
+
+        // a bit of polishing of the representants
+        $frep = $repr->map(function($item, $key) use ($normalizer){
+            return $normalizer($item);
+        });
+
+        // normalization step -> add a new field
+        return $data->map(function($item, $key) use ($col, $newField, $frep, $normMap) {
+            $curField = is_callable($col) ? $col($item) : $item[$col];
+            $item[$newField] = $frep[$normMap[$curField]];
+            return $item;
+        });
+
+    }
 }

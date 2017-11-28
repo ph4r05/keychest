@@ -3,6 +3,7 @@
 namespace Tests\Unit\Keychest\Services;
 
 use App\Keychest\Services\CredentialsManager;
+use App\Keychest\Utils\CertificateTools;
 use App\Keychest\Utils\DataTools;
 use Tests\CreatesApplication;
 use Tests\TestCase;

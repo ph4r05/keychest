@@ -11,6 +11,7 @@ namespace App\Keychest\Utils;
 
 use App\Keychest\Utils\Exceptions\MultipleCertificatesException;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class CertificateTools
@@ -46,5 +47,17 @@ class CertificateTools
         $n = preg_replace('/[iI]nc\.?$/', 'Inc.', $n);
         $n = preg_replace('/([a-zA-Z0-9]) Inc\.$/', '\\1, Inc.', $n);
         return $n;
+    }
+
+    /**
+     * @param $data
+     * @param string $col
+     * @param null $newCol
+     * @return Collection
+     */
+    public static function normalizeIssuerOrgs($data, $col='', $newCol=null){
+        return DataTools::normalizeValue($data, $col, function($x){
+            return CertificateTools::normalizeIssuerOrg($x);
+        }, $newCol);
     }
 }
