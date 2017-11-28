@@ -78,6 +78,9 @@ Vue.component('account', resolve => {
 Vue.component('management', resolve => {
     require.ensure([], require => resolve(require('./components/management_root.vue')), 'management');
 });
+Vue.component('cost_management', resolve => {
+    require.ensure([], require => resolve(require('./components/costManagement.vue')), 'cost_management');
+});
 Vue.component('tester', resolve => {
     require.ensure([], require => resolve(require('./components/tester/Tester.vue')), 'tester');
 });

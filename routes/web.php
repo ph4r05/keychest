@@ -130,6 +130,10 @@ Route::get('home/user-guide', 'HomeController@userGuide')->name('user-guide');
 Route::get('home/apidoc', 'HomeController@apiDoc')->name('apidoc');
 Route::get('home/enterprise', 'HomeController@enterprise')->name('enterprise');
 
+Route::get('home/cost-management', 'CostManagementController@index')->name('cost-management');
+Route::get('home/cost-management/data', 'CostManagementController@loadActiveCerts')
+    ->name('cost-management-data');
+
 // Management
 Route::get('home/management', 'Management\ManagementController@managementIndex')->name('management');
 Route::get('home/management/hosts', 'Management\HostController@getHosts');
