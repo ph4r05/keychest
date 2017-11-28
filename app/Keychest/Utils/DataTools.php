@@ -331,4 +331,22 @@ class DataTools {
             return $input;
         }
     }
+
+    /**
+     * Capitalizes first word if is all in the same case
+     * TERENA -> Terena
+     * terena -> Terena
+     * cloudFlare -> cloudFlare
+     * @param str
+     * @returns {string}
+     */
+    public static function capitalizeFirstWord($str){
+        $r = preg_replace_callback('/^([A-Z]+)\b/', function($m) {
+            return isset($m[1]) ? ucfirst(strtolower($m[1])) : '';
+        }, $str);
+
+        return preg_replace_callback('/^([a-z]+)\b/', function($m) {
+            return isset($m[1]) ? ucfirst($m[1]) : '';
+        }, $r);
+    }
 }

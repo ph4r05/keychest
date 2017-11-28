@@ -32,5 +32,19 @@ class CertificateTools
         return $pem;
     }
 
+    /**
+     * Simple normalization of the certificate issuer organization for better matching and consistency.
+     * @param $issuerOrg
+     * @return mixed
+     */
+    public static function normalizeIssuerOrg($issuerOrg){
+        if (empty($issuerOrg)){
+            return $issuerOrg;
+        }
 
+        $n = DataTools::capitalizeFirstWord($issuerOrg);
+        $n = preg_replace('/[iI]nc\.?$/', 'Inc.', $n);
+        $n = preg_replace('/([a-zA-Z0-9]) Inc\.$/', '\\1, Inc.', $n);
+        return $n;
+    }
 }
