@@ -90,7 +90,6 @@ class CostManagementController extends Controller
             'status' => 'success',
             'watches' => $this->thinWatches($md->getActiveWatches()),
             'wids' => $md->getActiveWatchesIds(),
-            'dns' => $md->getDnsScans(),
             'tls' => $md->getTlsScans(),
 
             // Watch id -> [leaf certs ids] map.
