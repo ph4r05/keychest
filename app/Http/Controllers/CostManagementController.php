@@ -10,9 +10,12 @@ use App\Http\Requests;
 use App\Keychest\DataClasses\ValidityDataModel;
 use App\Keychest\Services\AnalysisManager;
 use App\Keychest\Services\ScanManager;
+use App\Keychest\Utils\CertificateTools;
+use App\Keychest\Utils\Pricelist\CertificatePriceListProcessor;
 use App\Keychest\Utils\DataTools;
 
 
+use App\Models\CertificatePriceList;
 use Barryvdh\Debugbar\LaravelDebugbar;
 use Barryvdh\Debugbar\Middleware\Debugbar;
 use Carbon\Carbon;
@@ -85,18 +88,38 @@ class CostManagementController extends Controller
         $this->analysisManager->loadCerts($md, false);
         stop_measure('loadCerts');
 
+        $priceList = CertificatePriceList::query()->get();
+        $priceProc = new CertificatePriceListProcessor($priceList);
+
+        $precerts = $this->thinCertsModel($md->getCerts());
+        $precerts->transform(function($item, $key) use ($priceProc){
+            $item->issuer_o = CertificateTools::normalizeIssuerOrg($item->issuer_o);
+
+            $priceRule = $priceProc->findMatch($item);
+            if (empty($priceRule)){
+                $item->price_default = true;
+                $priceProc->priceCertificate($item, $priceProc->defaultRule());
+
+            } else {
+                $priceProc->priceCertificate($item, $priceRule);
+            }
+
+            return $item;
+        });
+
         // Search based on crt.sh search.
         $data = [
             'status' => 'success',
             'watches' => $this->thinWatches($md->getActiveWatches()),
             'wids' => $md->getActiveWatchesIds(),
             'tls' => $md->getTlsScans(),
+            'price_list' => $priceList,
 
             // Watch id -> [leaf certs ids] map.
             // Watch id mapping to the leaf certificates found by the latest TLS scan.
             'watch_to_tls_certs' => $md->getWatch2certsTls(),
 
-            'certificates' => $this->thinCertsModel($md->getCerts())
+            'certificates' => $precerts
         ];
 
         stop_measure('loadCosts');
