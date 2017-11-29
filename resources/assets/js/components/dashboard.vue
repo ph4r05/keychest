@@ -851,6 +851,7 @@
     import sprintf from 'sprintf-js';
     import Psl from 'ph4-psl';
     import Req from 'req';
+    import ReqD from 'req-data';
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
@@ -1107,7 +1108,7 @@
             },
 
             certDomainsTableData(){
-                return _.toPairs(this.flipGroups(this.certDomainDataset, {}));
+                return _.toPairs(ReqD.flipGroups(this.certDomainDataset, {}));
             },
         },
 
@@ -1585,12 +1586,12 @@
             },
 
             certIssuersGraph(){
-                const tlsIssuerStats = this.groupStats(this.tlsCertIssuers, 'count');
-                const allIssuerStats = this.groupStats(this.allCertIssuers, 'count');
-                this.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
-                this.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
+                const tlsIssuerStats = ReqD.groupStats(this.tlsCertIssuers, 'count');
+                const allIssuerStats = ReqD.groupStats(this.allCertIssuers, 'count');
+                ReqD.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
+                ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
                 this.certIssuerTableData = _.sortBy(
-                    this.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
+                    ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
                     x => {
                         return -1 * _.max(_.tail(x));
                     }
@@ -1645,8 +1646,8 @@
                     });
                 });
 
-                this.mergeGroupStatsKeys(dataGraphs);
-                this.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
+                ReqD.mergeGroupStatsKeys(dataGraphs);
+                ReqD.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
                 const unzipped = _.map(dataGraphs, _.unzip);
 
                 // Normal domains
@@ -1904,148 +1905,6 @@
                 return _.groupBy(certSet, x=> {
                     return this.getCountCategory(_.size(x.alt_slds));
                 });
-            },
-
-            groupStats(grouped, sort){
-                // processes groupBy result and returns [[key1, size1], [key2, size2], ...]
-                const agg = [];
-                for(const [curLabel, val] of Object.entries(grouped)){
-                    agg.push([curLabel, val.length]);  // zip
-                }
-
-                let sorted = agg;
-                if (sort && (sort === 'label' || sort === 1)){
-                    sorted = _.sortBy(sorted, x => { return x[0]; });
-                } else if (sort && (sort === 'count' || sort === 2)){
-                    sorted = _.sortBy(sorted, x => { return x[1]; });
-                }
-
-                return sorted;
-            },
-
-            mergeGroupStatsKeys(groups){
-                // [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
-                // after this function all datasets will have all keys, with defaul value 0 if it was not there before
-                return this.mergeGroupKeys(groups, 0);
-            },
-
-            mergeGroupStatValues(groups){
-                // [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
-                // returns a new single dataset [[l1, c1, c2], ...]
-
-                // key array
-                const keys = _.reduce(groups, (acc, x)=>{
-                    return _.union(acc, _.unzip(x)[0]);
-                }, []);
-
-                const ret = [];
-                const grpObjs = _.map(groups, _.fromPairs);
-
-                _.forEach(keys, key => {
-                    const cur = [key];
-                    _.forEach(grpObjs, grp => {
-                        cur.push(key in grp ? grp[key] : 0);
-                    });
-                    ret.push(cur);
-                });
-                return ret;
-            },
-
-            mergeGroupStats(groups){
-                // merges multiple datasets with zip-ed group structure, taking maximum count
-                const x = _.reduce(groups, (result, value, key) => {
-                    const cur = _.fromPairs(value);
-                    return _.mergeWith(result, cur, (objValue, srcValue, key, object, source) => {
-                        return _.max([objValue, srcValue]);
-                    });
-                }, {});
-
-                return _.toPairs(x);
-            },
-
-            mergeGroupKeys(groups, missing){
-                // [g1 => [[l1,obj1], [l2,obj2]], ...]
-                // after this function all datasets will have all keys, with given default value if it was not there before
-                const keys = {};
-                _.forEach(groups, x => {
-                    _.assign(keys, Req.listToSet(_.unzip(x)[0]));
-                });
-
-                _.forEach(groups, x => {
-                    const curSet = Req.listToSet(_.unzip(x)[0]);
-                    _.forEach(keys, (val, key) => {
-                        if (!(key in curSet)){
-                            const curDefault = _.isFunction(missing) ?
-                                missing(key, val, curSet, x) : missing;
-                            x.push([key, curDefault]);
-                        }
-                    });
-                });
-            },
-
-            mergeGroups(groups, missing){
-                // [g1 => [gg1=>obj, gg2=>obj, ...], g2 => ..., ...]
-                // modifies the given groups so they have same labels and fills missing for missing pieces
-                const keys = {};
-                _.forEach(groups, x => {
-                    _.assign(keys, Req.listToSet(_.keys(x)));
-                });
-
-                _.forEach(groups, grp => {
-                    for(const curLabel in keys){
-                        if (!(curLabel in grp)){
-                            grp[curLabel] = _.isFunction(missing) ? missing(curLabel, grp) : missing;
-                        }
-                    }
-                });
-            },
-
-            flipGroups(groups, missing){
-                // transforms [g1 => [gg1=>obj, gg2=>obj, ...], g2 => ..., ...]
-                // to         [gg1=> [g1=>obj, g2=>obj,... ], gg2=> [] ]
-                // returns a new object
-                const keys = {};
-                _.forEach(groups, x => {
-                    _.assign(keys, Req.listToSet(_.keys(x)));
-                });
-
-                return _.reduce(keys, (acc, tmp, key) => {
-                    acc[key] =
-                        _.mapValues(groups, (gval, gkey) => {
-                            return key in gval ? gval[key] : (_.isFunction(missing) ? missing(gval, groups) : missing);
-                        });
-
-                    return acc;
-                }, {});
-            },
-
-            mergedGroupStatSort(groups, fields, ordering){
-                // [[[g1,c1], [g2, c2]], ...]
-                // sorts each dataset separately based on the global ordering
-
-                // finds global ordering on the group keys by the count
-                const mixed = this.mergeGroupStats(groups);
-
-                // global ordering on the mixed dataset, get ranking for the keys
-                const ordered = _.orderBy(mixed, fields, ordering);
-
-                // ranking on the keys: key -> ranking
-                const ranking = _.zipObject(
-                    _.unzip(ordered)[0],
-                    _.range(ordered.length));
-
-                // sort by global ranking, in-place sorting. for
-                _.forEach(groups, (grp, idx) => {  // grp is the dataset
-                    groups[idx].sort(Req.keyToCompare(y => {  // y is [g1, c1]
-                        return ranking[y[0]];
-                    }));
-
-                    // returns new object - does not touch original ones
-                    // groups[idx] = _.sortBy(grp, y => {  // y is [g1, c1]
-                    //     return ranking[y[0]];
-                    // });
-                });
-                return groups;
             },
         }
     }
