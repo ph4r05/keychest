@@ -61,6 +61,7 @@
     "pluralize": "^6.0.0",
     "psl": "^1.1.20",
     "req": "file:resources/assets/js/lib/req",
+    "req-data": "file:resources/assets/js/lib/req-data",
     "sprintf-js": "^1.1.1",
     "sweetalert2": "^6.11.1",
     "toastr": "^2.1.2",
