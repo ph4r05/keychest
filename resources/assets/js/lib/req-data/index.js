@@ -39,10 +39,13 @@ export default {
         return this.mergeGroupKeys(groups, 0);
     },
 
+    /**
+     * [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
+     * returns a new single dataset [[l1, c1, c2], ...]
+     * @param groups
+     * @returns {Array}
+     */
     mergeGroupStatValues(groups) {
-        // [g1 => [[l1,c1], [l2,c2]], ...]  - array of ziped datasets
-        // returns a new single dataset [[l1, c1, c2], ...]
-
         // key array
         const keys = _.reduce(groups, (acc, x) => {
             return _.union(acc, _.unzip(x)[0]);
