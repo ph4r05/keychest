@@ -4,7 +4,11 @@ import ph4 from 'ph4';
 
 export default {
     /**
-     * processes groupBy result and returns [[key1, size1], [key2, size2], ...]
+     * Processes groupBy result [key1: val1, key2: val2, ...]
+     * and returns [[key1, size1], [key2, size2], ...]
+     *
+     * Mainly for the sorting purposes for UI.
+     * 
      * @param grouped
      * @param sort
      * @returns {Array}
@@ -24,6 +28,8 @@ export default {
             sorted = _.sortBy(sorted, x => {
                 return x[1];
             });
+        } else if (_.isFunction(sort)){
+            sorted = _.sortBy(sorted, sort);
         }
 
         return sorted;
