@@ -46,15 +46,15 @@ class CertificatePriceListProcessor
     {
         $this->priceList = $priceList;
         foreach($priceList as $entry){
-            if ($entry->name == '*'){
+            if ($entry->issuer_org == '*'){
                 $this->default = $entry;
                 continue;
             }
 
-            if (starts_with($entry->name, ['/'])){
+            if (starts_with($entry->issuer_org, ['/'])){
                 $this->regexes[] = $entry;
             } else {
-                $this->matchMap[strtolower($entry->name)] = $entry;
+                $this->matchMap[strtolower($entry->issuer_org)] = $entry;
             }
         }
     }
