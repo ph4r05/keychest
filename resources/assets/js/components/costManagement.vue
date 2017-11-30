@@ -89,6 +89,7 @@
                 dataProcessStart: 0,
                 results: null,
                 certIssuerTableData: null,
+                certPriceData: null,
 
                 chartColors: [
                     '#00c0ef',
@@ -244,13 +245,64 @@
             },
 
             certIssuersGen(certSet){
-                const grp = _.groupBy(certSet, x => {
+                return _.groupBy(certSet, x => {
                     return x.issuerOrgNorm;
                 });
-                return grp; //return _.sortBy(grp, [x => {return x[0].issuerOrg; }]);
+            },
+
+            groupByCertParams(certSet){
+                // certificate group [c1,c2,c3,...]
+                // group by (is_ev, is_wildcard) tuple, 00,01,10,11
+                return _.assign({0: [], 1: [], 2:[], 3:[]},
+                    _.groupBy(certSet, x => {
+                        return Number(!!x.is_ev << 1 || !!x.is_wildcard);
+                    }));
+            },
+
+            groupedCostCerts(certSet){
+                return _.mapValues(certSet, (val, key) => {
+                    const paramGrouped = this.groupByCertParams(val);
+                    const evgrpData = _.mapValues(paramGrouped, (x, xx) => {
+                        return [
+                            // cert count
+                            _.size(x),
+                            // cert sum price
+                            _.reduce(x, (acc, val, key) => {
+                                return _.isNumber(val.price) ? acc + val.price : acc;
+                            }, 0.0)
+                        ];
+                    });
+
+
+                    return {
+                        'evg': paramGrouped,
+                        'num_price': evgrpData,
+                        'total_num': _.sumBy(_.values(evgrpData), x => { return x[0]; }),
+                        'total_price': _.sumBy(_.values(evgrpData), x => { return x[1]; }),
+                    }
+                });
             },
 
             certIssuersGraph(){
+                // CA -> sub table normal, EV, wildcard
+                // group by vendor, group by ev, wildcard values
+                // View idea:
+                //   - View per issuer org (grouping)
+                //   - per issuer: # of normal, ev, wildcard certs, ev+wild;
+                //   -     numbers + price
+                //   -     total sum of numbers + price
+
+                // groupedCostCerts(allCertIssuers) -> [issuer -> [ [00] -> [], [01] -> [], ... ], ...]
+                const tlsPriceData = this.groupedCostCerts(this.tlsCertIssuers);
+                const allPriceData = this.groupedCostCerts(this.allCertIssuers);
+                console.log(allPriceData);
+
+                this.certPriceData = _.map([tlsPriceData, allPriceData], x => {
+                    return _.sortBy(_.toPairs(x), y => {
+                        return y.total_num;
+                    });
+                });
+
                 const tlsIssuerStats = ReqD.groupStats(this.tlsCertIssuers, 'count');
                 const allIssuerStats = ReqD.groupStats(this.allCertIssuers, 'count');
                 ReqD.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
