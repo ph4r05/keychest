@@ -23,37 +23,119 @@
         <transition name="fade" v-on:after-leave="transition_hook">
             <div v-if="loadingState == 10">
 
+                <!-- Certificate price list -->
+                <div class="row" v-if="certPriceData">
+                    <div class="xcol-md-12">
+                        <sbox cssBox="box-success" :headerCollapse="true">
+                            <template slot="title">Certificate expenses estimation</template>
+                            <div class="table-responsive table-xfull" style="margin-bottom: 10px">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2">Provider</th>
+                                        <th colspan="2">TLS certs</th>
+                                        <th colspan="2">All issued certificates (CT)</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th>Type</th>
+                                        <th>Units</th>
+                                        <th>Price</th>
+                                        <th>Units</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
 
-            <!-- Certificate issuers -->
-            <div class="row" v-if="certIssuerTableData">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Number of certificates per issuer</template>
-                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Provider</th>
-                                    <th>Watched servers</th>
-                                    <th>All issued certificates (CT)</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="curDat in certIssuerTableData">
-                                    <td> {{ curDat[0] }} </td>
-                                    <td> {{ curDat[1] }} </td>
-                                    <td> {{ curDat[2] }} </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                    <template v-for="curDat in certPriceData">
+                                        <tr>
+                                            <td colspan="4"> {{ curDat[0] }} </td>
+                                        </tr>
 
-                        <div class="form-group">
-                            <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
-                        </div>
-                    </sbox>
+                                        <tr>
+                                            <td></td>
+                                            <td>DV</td>
+                                            <td>{{ curDat[1].num_price[0][0] }}</td>
+                                            <td>$ {{ curDat[1].num_price[0][1] }}</td>
+                                            <td>{{ curDat[2].num_price[0][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[0][1] }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td>DV + Wildcard</td>
+                                            <td>{{ curDat[1].num_price[1][0] }}</td>
+                                            <td>$ {{ curDat[1].num_price[1][1] }}</td>
+                                            <td>{{ curDat[2].num_price[1][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[1][1] }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td>EV</td>
+                                            <td>{{ curDat[1].num_price[2][0] }}</td>
+                                            <td>$ {{ curDat[1].num_price[2][1] }}</td>
+                                            <td>{{ curDat[2].num_price[2][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[2][1] }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td>EV + Wildcard</td>
+                                            <td>{{ curDat[1].num_price[3][0] }}</td>
+                                            <td>$ {{ curDat[1].num_price[3][1] }}</td>
+                                            <td>{{ curDat[2].num_price[3][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[3][1] }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td>Total</td>
+                                            <td>{{ curDat[1].total_num }}</td>
+                                            <td>$ {{ curDat[1].total_price }}</td>
+                                            <td>{{ curDat[2].total_num }}</td>
+                                            <td >$ {{ curDat[2].total_price }}</td>
+                                        </tr>
+
+                                    </template>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </sbox>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Certificate issuers -->
+                <div class="row" v-if="certIssuerTableData">
+                    <div class="xcol-md-12">
+                        <sbox cssBox="box-success" :headerCollapse="true">
+                            <template slot="title">Number of certificates per issuer</template>
+                            <div class="table-responsive table-xfull" style="margin-bottom: 10px">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Provider</th>
+                                        <th>Watched servers</th>
+                                        <th>All issued certificates (CT)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="curDat in certIssuerTableData">
+                                        <td> {{ curDat[0] }} </td>
+                                        <td> {{ curDat[1] }} </td>
+                                        <td> {{ curDat[2] }} </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="form-group">
+                                <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
+                            </div>
+                        </sbox>
+                    </div>
+                </div>
             </div>
         </transition>
     </div>
@@ -295,13 +377,24 @@
                 // groupedCostCerts(allCertIssuers) -> [issuer -> [ [00] -> [], [01] -> [], ... ], ...]
                 const tlsPriceData = this.groupedCostCerts(this.tlsCertIssuers);
                 const allPriceData = this.groupedCostCerts(this.allCertIssuers);
-                console.log(allPriceData);
 
-                this.certPriceData = _.map([tlsPriceData, allPriceData], x => {
-                    return _.sortBy(_.toPairs(x), y => {
-                        return y.total_num;
-                    });
+                ReqD.mergeGroups([tlsPriceData, allPriceData], {
+                    'evg': [],
+                    'num_price': {0:[0,0], 1:[0,0], 2:[0,0], 3:[0,0] },
+                    'total_num': 0,
+                    'total_price': 0,
                 });
+
+                const tlsPriceDataPairs = _.toPairs(tlsPriceData);
+                const allPriceDataPairs = _.toPairs(allPriceData);
+
+                this.certPriceData = _.sortBy(
+                    ReqD.mergeGroupStatValues([tlsPriceDataPairs, allPriceDataPairs]),
+                    x => {
+                        return -1 * _.max(_.map(_.tail(x)), xx => {
+                            return xx.total_num;
+                        });
+                    });
 
                 const tlsIssuerStats = ReqD.groupStats(this.tlsCertIssuers, 'count');
                 const allIssuerStats = ReqD.groupStats(this.allCertIssuers, 'count');
