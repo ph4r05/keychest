@@ -62,7 +62,8 @@ class ScanManager {
                 'valid_from', 'valid_to', 'created_at', 'updated_at', 'cname', 'subject',
                 'issuer', 'is_ca', 'is_self_signed', 'parent_id', 'is_le', 'is_cloudflare',
                 'is_precert', 'is_precert_ca',
-                'alt_names', 'source', 'is_ev', 'is_cn_wildcard', 'is_alt_wildcard', 'issuer_o')
+                'alt_names', 'source',
+                'is_ov', 'is_ev', 'is_cn_wildcard', 'is_alt_wildcard', 'issuer_o', 'alt_names_cnt')
             ->whereIn('id', $ids);
     }
 
