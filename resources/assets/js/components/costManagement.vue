@@ -16,7 +16,7 @@
             </div>
 
             <div class="alert alert-success scan-alert" id="search-success" style="display: none">
-                <strong>Success!</strong> Scan finished.
+                <strong>Success!</strong> Computation finished.
             </div>
         </div>
 
@@ -29,75 +29,128 @@
                         <sbox cssBox="box-success" :headerCollapse="true">
                             <template slot="title">Certificate expenses estimation</template>
                             <div class="table-responsive table-xfull" style="margin-bottom: 10px">
+
+
+
                                 <table class="table table-bordered table-striped table-hover">
                                     <thead>
                                     <tr>
-                                        <th colspan="2">Provider</th>
-                                        <th colspan="2">TLS certs</th>
-                                        <th colspan="2">All issued certificates (CT)</th>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
+                                        <th>Provider</th>
                                         <th>Type</th>
-                                        <th>Units</th>
+                                        <th>Units in use</th>
+                                        <th>Units unused</th>
                                         <th>Price</th>
-                                        <th>Units</th>
-                                        <th>Price</th>
+                                        <th>KeyChest managed</th>
+                                        <th>Saving</th>
                                     </tr>
                                     </thead>
                                     <tbody>
 
                                     <template v-for="curDat in certPriceData">
-                                        <tr>
-                                            <td colspan="4"> {{ curDat[0] }} </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td></td>
+                                        <tr v-if="(curDat[1].num_price[0][0]+curDat[2].num_price[0][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
                                             <td>DV</td>
                                             <td>{{ curDat[1].num_price[0][0] }}</td>
-                                            <td>$ {{ curDat[1].num_price[0][1] }}</td>
-                                            <td>{{ curDat[2].num_price[0][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[0][1] }}</td>
+                                            <td>{{ curDat[2].num_price[0][0] - curDat[1].num_price[0][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[0][1]  }}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[0][1]  }}</td>
                                         </tr>
 
-                                        <tr>
-                                            <td></td>
-                                            <td>DV + Wildcard</td>
+                                        <tr v-if="(curDat[1].num_price[1][0]+curDat[2].num_price[1][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
+                                            <td>DV [*]</td>
                                             <td>{{ curDat[1].num_price[1][0] }}</td>
-                                            <td>$ {{ curDat[1].num_price[1][1] }}</td>
-                                            <td>{{ curDat[2].num_price[1][0] }}</td>
+                                            <td>{{ curDat[2].num_price[1][0] - curDat[1].num_price[1][0] }}</td>
                                             <td>$ {{ curDat[2].num_price[1][1] }}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[1][1]  }}</td>
                                         </tr>
 
-                                        <tr>
-                                            <td></td>
+                                        <tr v-if="(curDat[1].num_price[2][0]+curDat[2].num_price[2][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
                                             <td>EV</td>
                                             <td>{{ curDat[1].num_price[2][0] }}</td>
-                                            <td>$ {{ curDat[1].num_price[2][1] }}</td>
-                                            <td>{{ curDat[2].num_price[2][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[2][1] }}</td>
+                                            <td>{{ curDat[2].num_price[2][0] - curDat[1].num_price[2][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[2][1]}}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[2][1]  }}</td>
                                         </tr>
 
-                                        <tr>
-                                            <td></td>
-                                            <td>EV + Wildcard</td>
+                                        <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
+                                            <td>EV [*]</td>
                                             <td>{{ curDat[1].num_price[3][0] }}</td>
-                                            <td>$ {{ curDat[1].num_price[3][1] }}</td>
-                                            <td>{{ curDat[2].num_price[3][0] }}</td>
+                                            <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
                                             <td>$ {{ curDat[2].num_price[3][1] }}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[3][1]  }}</td>
                                         </tr>
 
-                                        <tr>
-                                            <td></td>
-                                            <td>Total</td>
-                                            <td>{{ curDat[1].total_num }}</td>
-                                            <td>$ {{ curDat[1].total_price }}</td>
-                                            <td>{{ curDat[2].total_num }}</td>
-                                            <td >$ {{ curDat[2].total_price }}</td>
+                                        <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
+                                            <td>OV !!! fix indexes</td>
+                                            <td>{{ curDat[1].num_price[3][0] }}</td>
+                                            <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[3][1] }}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[3][1]  }}</td>
+                                        </tr>
+
+                                        <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
+                                            <td>OV [*] !!!! fix indexes</td>
+                                            <td>{{ curDat[1].num_price[3][0] }}</td>
+                                            <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[3][1] }}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[3][1]  }}</td>
                                         </tr>
 
                                     </template>
+                                    <tr>
+                                        <td colspan="4">Laber cost estimate (sum_used_certs * 0.5*hourly)</td>
+                                        <td >$ 11000 </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="4"><b>Total annual cost of certificate management</b> </td>
+                                        <td><b>$ 99000</b></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7"><b>KeyChest managed certificates</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">KeyChest License cost</td>
+                                        <td >$ 4000 </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><b>Cost with savings from unused certificates</b></td>
+                                        <td><b>$ 59000</b></td>
+                                        <td></td>
+                                        <td><b>$ 40000</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><b>Cost with savings with KeyChest managed certificates</b></td>
+                                        <td><b>$ 19000</b></td>
+                                        <td></td>
+                                        <td ><b>$ 40000</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><b>Total cost with KeyChest</b></td>
+                                        <td><b>$ 19000</b> </td>
+                                        <td><b>Total saving is 90%</b></td>
+                                        <td><b>$ 80000</b></td>
+                                    </tr>
 
                                     </tbody>
                                 </table>
