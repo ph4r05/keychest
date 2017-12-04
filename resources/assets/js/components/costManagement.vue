@@ -69,7 +69,7 @@
                                     <tr>
                                         <td colspan="4" class="vcenter">
                                             Labor cost estimate (sum_used_certs * 0.5 *
-                                            <div class="input-group input-group-sm input-group-inline">
+                                            <div class="input-group input-group-sm input-group-inline valign-middle">
                                                 <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
                                                 <input type="text" class="form-control" size="3"
                                                        title="hourly payment for cert management"
