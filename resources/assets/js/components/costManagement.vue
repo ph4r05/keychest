@@ -52,8 +52,11 @@
                                                 <td>{{ certTypeLabels[idx-1] }}</td>
                                                 <td>{{ curDat[1].num_price[idx-1][0] }}</td>
                                                 <td>{{ curDat[2].num_price[idx-1][0] - curDat[1].num_price[idx-1][0] }}</td>
-                                                <td colspan="2">$ {{ curDat[2].num_price[idx-1][1]  }}</td>
-                                                <td><input type="checkbox" name="terms"></td>
+                                                <td colspan="2">$ {{ curDat[2].num_price[idx-1][1] }}</td>
+                                                <td>
+                                                    <input type="checkbox" title="KeyChest managed"
+                                                           v-model="curDat[2].mods[idx-1].kcman">
+                                                </td>
                                             </tr>
                                         </template>
                                     </template>
@@ -362,11 +365,16 @@
                             }, 0.0)
                         ];
                     });
-
+                    const model = _.mapValues(paramGrouped, (x, xx) => {
+                        return {
+                            'kcman': xx < 4
+                        };
+                    });
 
                     return {
                         'evg': paramGrouped,
                         'num_price': evgrpData,
+                        'mods': model,
                         'total_num': _.sumBy(_.values(evgrpData), x => { return x[0]; }),
                         'total_price': _.sumBy(_.values(evgrpData), x => { return x[1]; }),
                     }
