@@ -39,77 +39,26 @@
                                         <th>Type</th>
                                         <th>Units in use</th>
                                         <th>Units unused</th>
-                                        <th>Price</th>
+                                        <th colspan="2">Price</th>
                                         <th>KeyChest managed</th>
-                                        <th>Saving</th>
                                     </tr>
                                     </thead>
                                     <tbody>
 
-                                    <template v-for="curDat in certPriceData">
-                                        <tr v-if="(curDat[1].num_price[0][0]+curDat[2].num_price[0][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>DV</td>
-                                            <td>{{ curDat[1].num_price[0][0] }}</td>
-                                            <td>{{ curDat[2].num_price[0][0] - curDat[1].num_price[0][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[0][1]  }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[0][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[1][0]+curDat[2].num_price[1][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>DV [*]</td>
-                                            <td>{{ curDat[1].num_price[1][0] }}</td>
-                                            <td>{{ curDat[2].num_price[1][0] - curDat[1].num_price[1][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[1][1] }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[1][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[2][0]+curDat[2].num_price[2][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>OV</td>
-                                            <td>{{ curDat[1].num_price[2][0] }}</td>
-                                            <td>{{ curDat[2].num_price[2][0] - curDat[1].num_price[2][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[2][1] }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[2][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>OV [*]</td>
-                                            <td>{{ curDat[1].num_price[3][0] }}</td>
-                                            <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[3][1] }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[3][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[4][0]+curDat[2].num_price[4][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>EV</td>
-                                            <td>{{ curDat[1].num_price[4][0] }}</td>
-                                            <td>{{ curDat[2].num_price[4][0] - curDat[1].num_price[4][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[4][1]}}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[4][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[5][0]+curDat[2].num_price[5][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>EV [*]</td>
-                                            <td>{{ curDat[1].num_price[5][0] }}</td>
-                                            <td>{{ curDat[2].num_price[5][0] - curDat[1].num_price[5][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[5][1] }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[5][1]  }}</td>
-                                        </tr>
-
+                                    <template v-for="(curDat, datIdx) in certPriceData">
+                                        <template v-for="idx in 6">
+                                            <tr v-if="(curDat[1].num_price[idx-1][0]+curDat[2].num_price[idx-1][0]>0)" >
+                                                <td>{{ curDat[0] }}</td>
+                                                <td>{{ certTypeLabels[idx-1] }}</td>
+                                                <td>{{ curDat[1].num_price[idx-1][0] }}</td>
+                                                <td>{{ curDat[2].num_price[idx-1][0] - curDat[1].num_price[idx-1][0] }}</td>
+                                                <td colspan="2">$ {{ curDat[2].num_price[idx-1][1]  }}</td>
+                                                <td><input type="checkbox" name="terms"></td>
+                                            </tr>
+                                        </template>
                                     </template>
                                     <tr>
-                                        <td colspan="4">Laber cost estimate (sum_used_certs * 0.5*hourly)</td>
+                                        <td colspan="4">Labor cost estimate (sum_used_certs * 0.5*hourly)</td>
                                         <td >$ 11000 </td>
                                         <td></td>
                                         <td></td>
@@ -125,7 +74,8 @@
                                         <td colspan="7"></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="7"><b>KeyChest managed certificates</b></td>
+                                        <td colspan="6"><b>KeyChest managed certificates</b></td>
+                                        <th>Saving</th>
                                     </tr>
                                     <tr>
                                         <td colspan="4">KeyChest License cost</td>
@@ -225,6 +175,7 @@
                 results: null,
                 certIssuerTableData: null,
                 certPriceData: null,
+                certTypeLabels: ['DV', 'DV [*]', 'OV', 'OV [*]', 'EV', 'EV [*]'],
 
                 chartColors: [
                     '#00c0ef',
@@ -376,6 +327,7 @@
             },
 
             postLoad(){
+                this.certPricing();
                 this.certIssuersGraph();
             },
 
@@ -421,7 +373,7 @@
                 });
             },
 
-            certIssuersGraph(){
+            certPricing(){
                 // CA -> sub table normal, EV, wildcard
                 // group by vendor, group by ev, wildcard values
                 // View idea:
@@ -429,7 +381,6 @@
                 //   - per issuer: # of normal, ev, wildcard certs, ev+wild;
                 //   -     numbers + price
                 //   -     total sum of numbers + price
-
                 // groupedCostCerts(allCertIssuers) -> [issuer -> [ [00] -> [], [01] -> [], ... ], ...]
                 const tlsPriceData = this.groupedCostCerts(this.tlsCertIssuers);
                 const allPriceData = this.groupedCostCerts(this.allCertIssuers);
@@ -451,7 +402,9 @@
                             return xx.total_num;
                         });
                     });
+            },
 
+            certIssuersGraph(){
                 const tlsIssuerStats = ReqD.groupStats(this.tlsCertIssuers, 'count');
                 const allIssuerStats = ReqD.groupStats(this.allCertIssuers, 'count');
                 ReqD.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
