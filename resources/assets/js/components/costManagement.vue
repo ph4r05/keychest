@@ -259,7 +259,7 @@
             },
 
             certsOpsCost(){
-                return this.certsOpsCount * this.hourlyPay;
+                return this.certsOpsCount * this.hourlyPay * 0.5;
             },
 
             totalCostWithoutKc(){
@@ -280,7 +280,7 @@
                     return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
                         return subAcc + subVal[0] * !val[2].mods[subKey].kcman; // managed? then 0 units
                     }, 0.0);
-                }, 0.0) * this.hourlyPay;
+                }, 0.0) * this.hourlyPay * 0.5;
             },
 
             totalCostWithKc(){
