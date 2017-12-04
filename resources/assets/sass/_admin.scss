@@ -35,3 +35,16 @@ table tbody tr:hover td.warning-hi {
 .helpsub {
   font-size: 75%;
 }
+
+.input-group-inline {
+  display: inline-table;
+}
+
+table th .vcenter,
+table td .vcenter,
+table th.vcenter,
+table td.vcenter
+{
+  display: table-cell;
+  vertical-align: middle;
+}

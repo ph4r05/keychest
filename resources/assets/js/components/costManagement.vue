@@ -61,15 +61,29 @@
                                         </template>
                                     </template>
                                     <tr>
-                                        <td colspan="4">Labor cost estimate (sum_used_certs * 0.5*hourly)</td>
-                                        <td >$ 11000 </td>
+                                        <td colspan="4">Total certificate cost</td>
+                                        <td >$ {{ certsCostTotal }} </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="vcenter">
+                                            Labor cost estimate (sum_used_certs * 0.5 *
+                                            <div class="input-group input-group-sm input-group-inline">
+                                                <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                                                <input type="text" class="form-control" size="3"
+                                                       title="hourly payment for cert management"
+                                                       v-model="hourlyPay">
+                                            </div> hourly)
+                                        </td>
+                                        <td >$ {{ certsOpsCost }} </td>
                                         <td></td>
                                         <td></td>
                                     </tr>
 
                                     <tr>
-                                        <td colspan="4"><b>Total annual cost of certificate management</b> </td>
-                                        <td><b>$ 99000</b></td>
+                                        <th colspan="4">Total annual cost of certificate management </th>
+                                        <td><b>$ {{ totalCostWithoutKc }}</b></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -77,32 +91,22 @@
                                         <td colspan="7"></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="6"><b>KeyChest managed certificates</b></td>
+                                        <th colspan="4">KeyChest managed certificates</th>
+                                        <th>Cost</th>
+                                        <th></th>
                                         <th>Saving</th>
                                     </tr>
                                     <tr>
                                         <td colspan="4">KeyChest License cost</td>
-                                        <td >$ 4000 </td>
+                                        <td >$ {{ kcLicense }} </td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4"><b>Cost with savings from unused certificates</b></td>
-                                        <td><b>$ 59000</b></td>
-                                        <td></td>
-                                        <td><b>$ 40000</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4"><b>Cost with savings with KeyChest managed certificates</b></td>
-                                        <td><b>$ 19000</b></td>
-                                        <td></td>
-                                        <td ><b>$ 40000</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4"><b>Total cost with KeyChest</b></td>
-                                        <td><b>$ 19000</b> </td>
-                                        <td><b>Total saving is 90%</b></td>
-                                        <td><b>$ 80000</b></td>
+                                        <th colspan="4">Total cost with KeyChest</th>
+                                        <td><b>$ {{ totalCostWithKc }} </b> </td>
+                                        <td><b>Total saving is {{ formatFloat(savingPercent) }}%</b></td>
+                                        <td><b>$ {{ totalSaving }} </b></td>
                                     </tr>
 
                                     </tbody>
@@ -150,6 +154,7 @@
     import _ from 'lodash';
     import axios from 'axios';
     import moment from 'moment';
+    import numeral from 'numeral';
     import sprintf from 'sprintf-js';
     import Psl from 'ph4-psl';
     import Req from 'req';
@@ -175,6 +180,7 @@
             return {
                 loadingState: 0,
                 dataProcessStart: 0,
+                hourlyPay: 25,
                 results: null,
                 certIssuerTableData: null,
                 certPriceData: null,
@@ -230,6 +236,65 @@
                 return this.certIssuersGen(this.certs);
             },
 
+            kcLicense(){
+                return 4000.;  // may depend on another variables (e.g. number of managed certs)
+            },
+
+            certsCostUnused(){
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + (val[2].total_price - val[1].total_price);  // using CT - TLS detected
+                }, 0.0);
+            },
+
+            certsCostTotal(){
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + val[2].total_price;  // using CT
+                }, 0.0);
+            },
+
+            certsOpsCount(){
+                return _.isEmpty(this.certPriceData) ? 0 :  _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + val[1].total_num;  // using TLS scan for management numbers
+                }, 0.0);
+            },
+
+            certsOpsCost(){
+                return this.certsOpsCount * this.hourlyPay;
+            },
+
+            totalCostWithoutKc(){
+                return this.certsCostTotal + this.certsOpsCost;
+            },
+
+            certsUnmanagedCost(){
+                // Cost with managed by KC - subtract those managed by KC
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
+                            return subAcc + subVal[1] * !val[2].mods[subKey].kcman; // managed? then 0 cost
+                    }, 0.0);
+                }, 0.0);
+            },
+
+            certsManagedOpsCost(){
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
+                        return subAcc + subVal[0] * !val[2].mods[subKey].kcman; // managed? then 0 units
+                    }, 0.0);
+                }, 0.0) * this.hourlyPay;
+            },
+
+            totalCostWithKc(){
+                return this.kcLicense + this.certsManagedOpsCost + this.certsUnmanagedCost;
+            },
+
+            savingPercent(){
+                return 100.0 * this.totalCostWithoutKc / this.totalCostWithKc;
+            },
+
+            totalSaving(){
+                return this.totalCostWithoutKc - this.totalCostWithKc;
+            },
+
         },
 
         mounted() {
@@ -253,6 +318,10 @@
 
             recomp(){
                 this.$emit('onRecompNeeded');
+            },
+
+            formatFloat(x){
+                return (numeral(x).format('0'));
             },
 
             loadData(){
