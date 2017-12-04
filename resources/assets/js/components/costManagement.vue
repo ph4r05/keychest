@@ -67,39 +67,39 @@
                                             <td>$ {{ curDat[2].num_price[1][1]  }}</td>
                                         </tr>
 
-                                        <tr v-if="(curDat[1].num_price[2][0]+curDat[2].num_price[2][0]>0)" >
+                                        <tr v-if="(curDat[1].num_price[4][0]+curDat[2].num_price[4][0]>0)" >
                                             <td>{{ curDat[0] }}</td>
                                             <td>EV</td>
+                                            <td>{{ curDat[1].num_price[4][0] }}</td>
+                                            <td>{{ curDat[2].num_price[4][0] - curDat[1].num_price[4][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[4][1]}}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[4][1]  }}</td>
+                                        </tr>
+
+                                        <tr v-if="(curDat[1].num_price[5][0]+curDat[2].num_price[5][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
+                                            <td>EV [*]</td>
+                                            <td>{{ curDat[1].num_price[5][0] }}</td>
+                                            <td>{{ curDat[2].num_price[5][0] - curDat[1].num_price[5][0] }}</td>
+                                            <td>$ {{ curDat[2].num_price[5][1] }}</td>
+                                            <td><input type="checkbox" name="terms"></td>
+                                            <td>$ {{ curDat[2].num_price[5][1]  }}</td>
+                                        </tr>
+
+                                        <tr v-if="(curDat[1].num_price[2][0]+curDat[2].num_price[2][0]>0)" >
+                                            <td>{{ curDat[0] }}</td>
+                                            <td>OV</td>
                                             <td>{{ curDat[1].num_price[2][0] }}</td>
                                             <td>{{ curDat[2].num_price[2][0] - curDat[1].num_price[2][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[2][1]}}</td>
+                                            <td>$ {{ curDat[2].num_price[2][1] }}</td>
                                             <td><input type="checkbox" name="terms"></td>
                                             <td>$ {{ curDat[2].num_price[2][1]  }}</td>
                                         </tr>
 
                                         <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
                                             <td>{{ curDat[0] }}</td>
-                                            <td>EV [*]</td>
-                                            <td>{{ curDat[1].num_price[3][0] }}</td>
-                                            <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[3][1] }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[3][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>OV !!! fix indexes</td>
-                                            <td>{{ curDat[1].num_price[3][0] }}</td>
-                                            <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
-                                            <td>$ {{ curDat[2].num_price[3][1] }}</td>
-                                            <td><input type="checkbox" name="terms"></td>
-                                            <td>$ {{ curDat[2].num_price[3][1]  }}</td>
-                                        </tr>
-
-                                        <tr v-if="(curDat[1].num_price[3][0]+curDat[2].num_price[3][0]>0)" >
-                                            <td>{{ curDat[0] }}</td>
-                                            <td>OV [*] !!!! fix indexes</td>
+                                            <td>OV [*]</td>
                                             <td>{{ curDat[1].num_price[3][0] }}</td>
                                             <td>{{ curDat[2].num_price[3][0] - curDat[1].num_price[3][0] }}</td>
                                             <td>$ {{ curDat[2].num_price[3][1] }}</td>
@@ -387,10 +387,13 @@
 
             groupByCertParams(certSet){
                 // certificate group [c1,c2,c3,...]
-                // group by (is_ev, is_wildcard) tuple, 00,01,10,11
-                return _.assign({0: [], 1: [], 2:[], 3:[]},
+                // group by: 0th bit - wildcard flag, rest - validation (ev=2, ov=1, dv=0)
+                return _.assign({0: [], 1: [], 2:[], 3:[], 4:[], 5:[]},
                     _.groupBy(certSet, x => {
-                        return Number(!!x.is_ev << 1 || !!x.is_wildcard);
+                        // due to inclusive property EV contains also OV.
+                        const validation = (!!x.is_ev) ? 2 : ((!!x.is_ov) ? 1 : 0);
+                        const is_wildcard = (!!x.is_cn_wildcard) || (!!x.is_alt_wildcard);
+                        return Number(is_wildcard | (validation << 1));
                     }));
             },
 
@@ -433,7 +436,7 @@
 
                 ReqD.mergeGroups([tlsPriceData, allPriceData], {
                     'evg': [],
-                    'num_price': {0:[0,0], 1:[0,0], 2:[0,0], 3:[0,0] },
+                    'num_price': {0:[0,0], 1:[0,0], 2:[0,0], 3:[0,0], 4:[0,0], 5:[0,0] },
                     'total_num': 0,
                     'total_price': 0,
                 });
