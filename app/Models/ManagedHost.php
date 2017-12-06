@@ -42,4 +42,16 @@ class ManagedHost extends Model
     {
         return $this->belongsTo('App\Models\SshKey', 'ssh_key_id');
     }
+
+    /**
+     * Associated hosts
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function groups()
+    {
+        return $this->belongsToMany('App\Models\ManagedHostToGroup',
+            ManagedHostToGroup::TABLE,
+            'host_id',
+            'group_id')->using('App\Models\ManagedHostToGroupPivot');
+    }
 }

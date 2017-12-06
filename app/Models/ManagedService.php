@@ -9,15 +9,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-class ManagedHostGroup extends Model
+class ManagedService extends Model
 {
-    const TABLE = 'managed_host_groups';
+    use SoftDeletes;
 
-    protected $guarded = array();
+    const TABLE = 'managed_services';
 
     protected $table = self::TABLE;
+
+    protected $guarded = array();
 
     public function getDates()
     {
@@ -25,7 +28,7 @@ class ManagedHostGroup extends Model
     }
 
     /**
-     * Get the user that owns the phone.
+     * Get the user that owns the entity.
      */
     public function owner()
     {
@@ -33,14 +36,14 @@ class ManagedHostGroup extends Model
     }
 
     /**
-     * Associated hosts
+     * Associated solutions
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function hosts()
+    public function solutions()
     {
-        return $this->belongsToMany('App\Models\ManagedHost',
-            ManagedHostToGroup::TABLE,
-            'group_id',
-            'host_id')->using('App\Models\ManagedHostToGroupPivot');
+        return $this->belongsToMany('App\Models\ManagedSolution',
+            ManagedServiceToSolution::TABLE,
+            'service_id',
+            'solution_id')->using('App\Models\ManagedServiceToSolutionPivot');
     }
 }
