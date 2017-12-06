@@ -98,31 +98,81 @@
                 <tr v-bind:class="defconStyle">
                     <td colspan="3" v-if="tlsScanHostCert.is_expired && tlsScan.hsts_present">
                         The certificate expired. Your server is down and HSTS prevents all connections.
-                        <a href="/register?start_watching=1">Start watching it</a> to prevent another downtime or
-                        <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a>
-                        for help.</td>
+
+                        <template v-if="showTrackingButton">
+                            <a v-if="Laravel.authGuest" href="/register?start_watching=1">Start watching it</a>
+                            <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking">Start watching it</a>
+                            to prevent another downtime or
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.
+                        </template>
+                        <template v-else="">
+                            This domain is also in your dashboard.
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
+                        </template>
+                    </td>
                     <td colspan="3" v-else-if="tlsScanHostCert.is_expired">
                         The certificate expired. Web browsers will show a warning page that the server is not secure and
-                        potentially dangerous. <a href="/register?start_watching=1">Start watching it</a> to prevent another
-                        downtime or <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get
-                        in touch</a> for help.</td>
+                        potentially dangerous.
+
+                        <template v-if="showTrackingButton">
+                            <a v-if="Laravel.authGuest" href="/register?start_watching=1">Start watching it</a>
+                            <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking">Start watching it</a>
+                            to prevent another downtime or
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.
+                        </template>
+                        <template v-else="">
+                            This domain is also in your dashboard.
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
+                        </template>
+                    </td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<7">
                         The certificate expires in less than 7 days. Renew it now to avoid downtime!
-                        <a href="/register?start_watching=1">Start watching it</a> to stay on top of all your certificates
-                        or <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.</td>
+                        <template v-if="showTrackingButton">
+                            <a v-if="Laravel.authGuest" href="/register?start_watching=1">Start watching it</a>
+                            <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking">Start watching it</a>
+                            to stay on top of all your certificates or
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.
+                        </template>
+                        <template v-else="">
+                            This domain is also in your dashboard.
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
+                        </template>
+                    </td>
                     <td colspan="3" v-else-if="tlsScanHostCert.valid_to_days<28">
                         The certificate expires in less than 28 days. Plan renewal now!
-                        <a href="/register?start_watching=1">Start watching it</a> and plan your certificate renewals or
-                        <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a> for help.</td>
+                        <template v-if="showTrackingButton">
+                            <a v-if="Laravel.authGuest" href="/register?start_watching=1">Start watching it</a>
+                            <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking">Start watching it</a>
+                            and plan your certificate renewals or
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">get in touch</a>
+                        </template>
+                        <template v-else="">
+                            This domain is also in your dashboard.
+                            <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
+                        </template>
+                    </td>
                     <td colspan="3" v-else-if="tlsScan.hsts_present">
                         All looks good, well done! Our compliments for using HSTS.
-                        <span v-if="!isMonitored"><a target="_blank" href="/register?start_watching=1">Add the domain</a>
-                            to your annual planner.</span><span v-else="">This domain is also in your
-                        dashboard.</span></td>
+                        <template v-if="showTrackingButton">
+                            <a v-if="Laravel.authGuest" href="/register?start_watching=1">Add the domain</a>
+                            <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >Add the domain</a>
+                            to your annual planner.
+                        </template>
+                        <template v-else="">
+                            This domain is also in your dashboard.
+                        </template>
+                    </td>
                     <td colspan="3" v-else>
-                        All looks good, well done! <span v-if="!isMonitored"><a href="/register?start_watching=1">Add the domain</a>
-                        to your annual planner.</span><span v-else="">This domain is also in your
-                        dashboard.</span></td>
+                        All looks good, well done!
+                        <template v-if="showTrackingButton">
+                            <a v-if="Laravel.authGuest" href="/register?start_watching=1">Add the domain</a>
+                            <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >Add the domain</a>
+                            to your annual planner.
+                        </template>
+                        <template v-else="">
+                            This domain is also in your dashboard.
+                        </template>
+                    </td>
                 </tr>
                 <tr v-if="!hasDnsProblem && scanIp && ips.length > 1">
                     <!-- Other IP addresses -->
@@ -166,27 +216,69 @@
             <!-- Cert not trusted -->
             <div class="alert alert-danger" v-if="errTrusted">
                 <div v-if="tlsScanHostCert && tlsScanHostCert.is_self_signed">
-                    The server sent a self-signed certificate. Check its configuration, re-test, and start watching
-                    changes. <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
+                    The server sent a self-signed certificate.
+                    <template v-if="showTrackingButton">
+                        Check its configuration, re-test, and
+                        <a v-if="Laravel.authGuest" href="/register?start_watching=1">start watching</a>
+                        <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >start watching</a>
+                        changes.
+                    </template>
+                    <template v-else="">
+                        Check its configuration and re-test. This domain is also in your dashboard.
+                    </template>
+                    <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScanHostCert.is_ca">
                     The server's certificate has a CA flag and can be used only for issuing other certificates, not
-                    for server authentication. Check the server's configuration, re-test, and
-                    <a href="/register?start_watching=1">start watching</a> changes.
+                    for server authentication.
+                    <template v-if="showTrackingButton">
+                        Check its configuration, re-test, and
+                        <a v-if="Laravel.authGuest" href="/register?start_watching=1">start watching</a>
+                        <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >start watching</a>
+                        changes.
+                    </template>
+                    <template v-else="">
+                        Check its configuration and re-test. This domain is also in your dashboard.
+                    </template>
                     <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length > 1">
-                    We couldn't verify the certificate chain sent by the server. Check the server's configuration, re-test, and start
-                    watching changes. <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
+                    We couldn't verify the certificate chain sent by the server.
+                    <template v-if="showTrackingButton">
+                        Check its configuration, re-test, and
+                        <a v-if="Laravel.authGuest" href="/register?start_watching=1">start watching</a>
+                        <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >start watching</a>
+                        changes.
+                    </template>
+                    <template v-else="">
+                        Check its configuration and re-test. This domain is also in your dashboard.
+                    </template>
+                    <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert && tlsScan.certs_ids.length === 1">
                     The server sent only its own certificate, a certificate of the issuing CA (i.e., the "bundle") is missing.
-                    Check the server's configuration, re-test, and <a href="/register?start_watching=1">start watching</a> changes.
+                    <template v-if="showTrackingButton">
+                        Check its configuration, re-test, and
+                        <a v-if="Laravel.authGuest" href="/register?start_watching=1">start watching</a>
+                        <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >start watching</a>
+                        changes.
+                    </template>
+                    <template v-else="">
+                        Check its configuration and re-test. This domain is also in your dashboard.
+                    </template>
                     <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else-if="tlsScanHostCert">
-                    We couldn't verify the server as it didn't send any certificates. Check its configuration, re-test,
-                    and <a href="/register?start_watching=1">start watching</a> changes.
+                    We couldn't verify the server as it didn't send any certificates.
+                    <template v-if="showTrackingButton">
+                        Check its configuration, re-test, and
+                        <a v-if="Laravel.authGuest" href="/register?start_watching=1">start watching</a>
+                        <a v-else="" v-bind:disabled="addingStatus==2" v-on:click.stop="startTracking" >start watching</a>
+                        changes.
+                    </template>
+                    <template v-else="">
+                        Check its configuration and re-test. This domain is also in your dashboard.
+                    </template>
                     <a target="_blank" href="https://enigmabridge.freshdesk.com/support/tickets/new">Get in touch</a> for help.
                 </div>
                 <div v-else="">
