@@ -36,6 +36,10 @@
             validate: {
                 type: String,
                 default: ''
+            },
+            url: {
+                type: String,
+                required: true
             }
         },
 
@@ -121,7 +125,7 @@
                 ref="autocomp"
                 v-model="newTag"
                 anchor="name"
-                url=""
+                :url="url"
                 @onEnter="onAdd"
                 @onTab="onAdd"
                 @on188="onAdd"
