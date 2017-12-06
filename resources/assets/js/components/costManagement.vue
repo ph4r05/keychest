@@ -83,7 +83,7 @@
                                     </tr>-->
                                     <tr>
                                         <td colspan="2">Estimate of IT support time (labour cost)</td>
-                                        <td colspan="2" align="right">{{this.hourlyPay}} hours</td>
+                                        <td colspan="2" align="right">{{ hourlyPay }} hours</td>
                                         <td align="right">${{ certsOpsCost }} </td>
                                         <td></td>
                                     </tr>
@@ -106,7 +106,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="4">Certificate cost</td>
-                                        <td align="right">${{ formatTableNumber(totalCostWithKc-kcLicense) }} </td>
+                                        <td align="right">${{ formatTableNumber(totalCostWithKc - kcLicense) }} </td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -505,47 +505,6 @@
                         return -1 * _.max(_.tail(x));
                     }
                 );
-
-                const tlsIssuerUnz = _.unzip(tlsIssuerStats);
-                const allIssuerUnz = _.unzip(allIssuerStats);
-                const graphCertTypes = {
-                    type: 'horizontalBar',
-                    data: {
-                        datasets: [
-                            {
-                                data: tlsIssuerUnz[1],
-                                backgroundColor: this.chartColors[0],
-                                //backgroundColor: Req.takeMod(this.chartColors, tlsIssuerUnz[0].length),
-                                label: 'Detected on servers'
-                            },
-                            {
-                                data: allIssuerUnz[1],
-                                backgroundColor: this.chartColors[2],
-                                //backgroundColor: Req.takeMod(this.chartColors, allIssuerUnz[0].length),
-                                label: 'From CT logs only'
-                            }],
-                        labels: allIssuerUnz[0]
-                    },
-                    options: {
-                        scaleBeginAtZero: true,
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Certificate issuers'
-                        },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
-
-                setTimeout(() => {
-                    new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
-                }, 1000);
             },
 
             cleanResults(){
