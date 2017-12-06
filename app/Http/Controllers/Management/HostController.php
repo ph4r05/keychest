@@ -12,6 +12,7 @@ use App\Http\Request\ParamRequest;
 use App\Http\Requests;
 use App\Keychest\Services\CredentialsManager;
 use App\Keychest\Services\Management\HostDbSpec;
+use App\Keychest\Services\Management\HostGroupManager;
 use App\Keychest\Services\Management\HostManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
@@ -38,6 +39,11 @@ class HostController extends Controller
     protected $hostManager;
 
     /**
+     * @var HostGroupManager
+     */
+    protected $hostGroupManager;
+
+    /**
      * @var CredentialsManager
      */
     protected $credentialsManager;
@@ -45,11 +51,16 @@ class HostController extends Controller
     /**
      * Create a new controller instance.
      * @param HostManager $hostManager
+     * @param HostGroupManager $hostGroupManager
+     * @param CredentialsManager $credentialsManager
      */
-    public function __construct(HostManager $hostManager, CredentialsManager $credentialsManager)
+    public function __construct(HostManager $hostManager,
+                                HostGroupManager $hostGroupManager,
+                                CredentialsManager $credentialsManager)
     {
         $this->middleware('auth');
         $this->hostManager = $hostManager;
+        $this->hostGroupManager = $hostGroupManager;
         $this->credentialsManager = $credentialsManager;
     }
 
@@ -139,6 +150,10 @@ class HostController extends Controller
             $dbHost->sshKey()->associate($sshKey);
             $dbHost->save();
         }
+
+        // Add group host-id with only this particular host.
+        $group = $this->hostGroupManager->addSingleHostGroup($user->primary_owner_id);
+        $dbHost->groups()->save($group);
 
         return response()->json([
                 'state' => 'success',

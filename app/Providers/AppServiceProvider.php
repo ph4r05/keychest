@@ -9,6 +9,7 @@ use App\Keychest\Services\CredentialsManager;
 use App\Keychest\Services\EmailManager;
 use App\Keychest\Services\IpScanManager;
 use App\Keychest\Services\LicenseManager;
+use App\Keychest\Services\Management\HostGroupManager;
 use App\Keychest\Services\Management\HostManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
@@ -83,6 +84,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(HostManager::class, function(Application $app){
             return new HostManager($app);
+        });
+        $this->app->bind(HostGroupManager::class, function(Application $app){
+            return new HostGroupManager($app);
         });
     }
 }
