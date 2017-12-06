@@ -41,6 +41,8 @@ class ManagedHostGroup extends Model
         return $this->belongsToMany('App\Models\ManagedHost',
             ManagedHostToGroup::TABLE,
             'group_id',
-            'host_id')->using('App\Models\ManagedHostToGroupPivot');
+            'host_id')
+            ->withTimestamps()
+            ->using('App\Models\ManagedHostToGroupPivot');
     }
 }

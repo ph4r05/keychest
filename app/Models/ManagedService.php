@@ -44,6 +44,8 @@ class ManagedService extends Model
         return $this->belongsToMany('App\Models\ManagedSolution',
             ManagedServiceToSolution::TABLE,
             'service_id',
-            'solution_id')->using('App\Models\ManagedServiceToSolutionPivot');
+            'solution_id')
+            ->withTimestamps()
+            ->using('App\Models\ManagedServiceToSolutionPivot');
     }
 }

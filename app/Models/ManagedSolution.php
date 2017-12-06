@@ -44,6 +44,8 @@ class ManagedSolution extends Model
         return $this->belongsToMany('App\Models\ManagedHostGroup',
             ManagedSolutionToGroup::TABLE,
             'solution_id',
-            'group_id')->using('App\Models\ManagedSolutionToGroupPivot');
+            'group_id')
+            ->withTimestamps()
+            ->using('App\Models\ManagedSolutionToGroupPivot');
     }
 }
