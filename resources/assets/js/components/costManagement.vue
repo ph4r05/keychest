@@ -30,17 +30,33 @@
                             <template slot="title">Certificate expenses estimation</template>
                             <div class="table-responsive table-xfull" style="margin-bottom: 10px">
 
-
+                            <p>
+                                And some text.
+                            </p>
+                                <table>
+                                    <tr>
+                                        <td>Hourly cost of your IT support for  certificate management&nbsp;&nbsp;</td>
+                                        <td><div class="input-group input-group-sm input-group-inline valign-middle">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                                            <input type="text" class="form-control" size="3"
+                                                   title="hourly payment for cert management"
+                                                   v-model="hourlyPay">
+                                        </div></td>
+                                    </tr>
+                                </table>
+                                <p>
+                                    bla
+                                </p>
 
                                 <table class="table table-bordered table-striped table-hover">
                                     <thead>
                                     <tr>
                                         <th>Provider</th>
                                         <th>Type</th>
-                                        <th>Units in use</th>
-                                        <th>Units unused</th>
-                                        <th colspan="2">Price</th>
-                                        <th>KeyChest managed</th>
+                                        <th align="center">Units in use</th>
+                                        <th align="center">Units unused</th>
+                                        <th align="center">Price</th>
+                                        <th align="center">KeyChest managed</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -50,63 +66,58 @@
                                             <tr v-if="(curDat[1].num_price[idx-1][0]+curDat[2].num_price[idx-1][0]>0)" >
                                                 <td>{{ curDat[0] }}</td>
                                                 <td>{{ certTypeLabels[idx-1] }}</td>
-                                                <td>{{ curDat[1].num_price[idx-1][0] }}</td>
-                                                <td>{{ curDat[2].num_price[idx-1][0] - curDat[1].num_price[idx-1][0] }}</td>
-                                                <td colspan="2">$ {{ curDat[2].num_price[idx-1][1] }}</td>
-                                                <td>
-                                                    <input type="checkbox" title="KeyChest managed"
+                                                <td align="right">{{ curDat[1].num_price[idx-1][0] }}</td>
+                                                <td align="right">{{ curDat[2].num_price[idx-1][0] - curDat[1].num_price[idx-1][0] }}</td>
+                                                <td align="right">${{ formatTableNumber(curDat[2].num_price[idx-1][1]) }}</td>
+                                                <td align="center">
+                                                    <input disabled="disabled" type="checkbox" title="KeyChest managed"
                                                            v-model="curDat[2].mods[idx-1].kcman">
                                                 </td>
                                             </tr>
                                         </template>
                                     </template>
+<!--                                    <tr>
+                                        <td colspan="4"><b>Current annual certificate cost estimate</b></td>
+                                        <td align="right">$ {{ certsCostTotal }} </td>
+                                        <td></td>
+                                    </tr>-->
                                     <tr>
-                                        <td colspan="4">Total certificate cost</td>
-                                        <td >$ {{ certsCostTotal }} </td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" class="vcenter">
-                                            Labor cost estimate (sum_used_certs * 0.5 *
-                                            <div class="input-group input-group-sm input-group-inline valign-middle">
-                                                <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                                                <input type="text" class="form-control" size="3"
-                                                       title="hourly payment for cert management"
-                                                       v-model="hourlyPay">
-                                            </div> hourly)
-                                        </td>
-                                        <td >$ {{ certsOpsCost }} </td>
-                                        <td></td>
+                                        <td colspan="2">Estimate of IT support time (labour cost)</td>
+                                        <td colspan="2" align="right">{{this.hourlyPay}} hours</td>
+                                        <td align="right">${{ certsOpsCost }} </td>
                                         <td></td>
                                     </tr>
 
                                     <tr>
-                                        <th colspan="4">Total annual cost of certificate management </th>
-                                        <td><b>$ {{ totalCostWithoutKc }}</b></td>
-                                        <td></td>
+                                        <th colspan="4">Current annual cost of certificate management </th>
+                                        <td align="right"><b>${{ formatTableNumber(totalCostWithoutKc) }}</b></td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td colspan="7"></td>
                                     </tr>
                                     <tr>
-                                        <th colspan="4">KeyChest managed certificates</th>
-                                        <th>Cost</th>
-                                        <th></th>
-                                        <th>Saving</th>
+                                        <th colspan="6">KeyChest managed certificates</th>
                                     </tr>
                                     <tr>
-                                        <td colspan="4">KeyChest License cost</td>
-                                        <td >$ {{ kcLicense }} </td>
-                                        <td></td>
+                                        <td colspan="4"><i>Item</i></td>
+                                        <td align="center"><i>Cost</i></td>
+                                        <td align="center"><i>Saving</i></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">Certificate cost</td>
+                                        <td align="right">${{ formatTableNumber(totalCostWithKc-kcLicense) }} </td>
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <th colspan="4">Total cost with KeyChest</th>
-                                        <td><b>$ {{ totalCostWithKc }} </b> </td>
-                                        <td><b>Total saving is {{ formatFloat(savingPercent) }}%</b></td>
-                                        <td><b>$ {{ totalSaving }} </b></td>
+                                        <td colspan="4">KeyChest License</td>
+                                        <td align="right">${{ formatTableNumber(kcLicense) }} </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">Total cost with KeyChest (savings of {{ formatFloat(savingPercent) }}%) </th>
+                                        <td align="right"><b>${{ formatTableNumber(totalCostWithKc) }} </b> </td>
+                                        <td align="center"><b>${{ formatTableNumber(totalSaving) }} </b></td>
                                     </tr>
 
                                     </tbody>
@@ -140,9 +151,6 @@
                                 </table>
                             </div>
 
-                            <div class="form-group">
-                                <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
-                            </div>
                         </sbox>
                     </div>
                 </div>
@@ -184,7 +192,8 @@
                 results: null,
                 certIssuerTableData: null,
                 certPriceData: null,
-                certTypeLabels: ['DV', 'DV [*]', 'OV', 'OV [*]', 'EV', 'EV [*]'],
+                certTypeLabels: ['Domain Validated', 'Wildcard, Domain Validated', 'Org. Validated',
+                    'Wildcard, Org. Validated', 'Extended Validated', 'Wildcard, Exended Validated'],
 
                 chartColors: [
                     '#00c0ef',
@@ -288,7 +297,7 @@
             },
 
             savingPercent(){
-                return 100.0 * this.totalCostWithoutKc / this.totalCostWithKc;
+                return 100.0 * (1 - this.totalCostWithKc/this.totalCostWithoutKc);
             },
 
             totalSaving(){
@@ -322,6 +331,10 @@
 
             formatFloat(x){
                 return (numeral(x).format('0'));
+            },
+
+            formatTableNumber(x){
+                return ((10 * Math.floor((x)/10)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             },
 
             loadData(){
