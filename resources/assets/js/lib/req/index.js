@@ -537,6 +537,43 @@ function takeMod(set, len){
     return ret;
 }
 
+/**
+ * Returns the most frequent value in the set.
+ * Syntactic sugar for groupBy(key) and max() over the grouped with size of the set.
+ *
+ * @param set
+ * @param keyFnc
+ */
+function mostFrequent(set, keyFnc){
+    const keyFnc_ = _.isFunction(keyFnc) ? keyFnc :
+        (!_.isEmpty(keyFnc) ? x => { return x[keyFnc]; } : x => { return x; } );
+
+    const result = {};
+    const vals = {};
+    let maxKey = undefined;
+
+    for(const val of set){
+        const key = keyFnc_(val);
+
+        if (Object.prototype.hasOwnProperty.call(result, key)) {
+            ++result[key];
+        } else {
+            result[key] = 1;
+        }
+
+        if (maxKey === undefined || result[maxKey] < result[key]){
+            maxKey = key;
+            vals[key] = val;
+        }
+    }
+
+    if (maxKey === undefined){
+        return undefined;
+    }
+
+    return vals[maxKey];
+}
+
 //
 // Certificate functions
 //
@@ -702,6 +739,7 @@ export default {
     capitalizeFirstWord: capitalizeFirstWord,
     takeMod: takeMod,
     listToSet: listToSet,
+    mostFrequent: mostFrequent,
 
     certIssuer: certIssuer,
     normalizeIssuer: normalizeIssuer,
