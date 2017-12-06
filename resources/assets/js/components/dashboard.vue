@@ -922,6 +922,26 @@
                 return Req.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
             },
 
+            cdnCerts() {
+                if (!this.results || !this.results.tls || !this.results.certificates){
+                    return {};
+                }
+
+                const cdnCertsTls = _.map(_.filter(_.values(this.results.tls), tls => {
+                    return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
+                }), tls => {
+                    return tls.cert_id_leaf;
+                });
+
+                return Req.listToSet(_.uniq(_.union(cdnCertsTls,
+                    _.map(_.filter(this.results.certificates, crt =>{
+                        return crt.is_cloudflare;
+                    }), crt => {
+                        return crt.id;
+                    })
+                )));
+            },
+
             tlsCerts(){
                 return _.map(_.keys(this.tlsCertsIdsMap), x => {
                     return this.results.certificates[x];
@@ -1791,7 +1811,7 @@
                 for(const [crtIdx, ccrt] of Object.entries(certSet)){
                     if (ccrt.is_le){
                         certTypes[0] += 1
-                    } else if (ccrt.is_cloudflare){
+                    } else if (ccrt.is_cloudflare || ccrt.id in this.cdnCerts){
                         certTypes[1] += 1
                     } else {
                         certTypes[2] += 1
