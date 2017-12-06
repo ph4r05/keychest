@@ -83,7 +83,7 @@
                                     </tr>-->
                                     <tr>
                                         <td colspan="2">Estimate of IT support time (labour cost)</td>
-                                        <td colspan="2" align="right">{{ hourlyPay }} hours</td>
+                                        <td colspan="2" align="right">{{ certsOpsHours }} hours</td>
                                         <td align="right">${{ certsOpsCost }} </td>
                                         <td></td>
                                     </tr>
@@ -267,8 +267,12 @@
                 }, 0.0);
             },
 
+            certsOpsHours(){
+                return this.certsOpsCount * 0.5;
+            },
+
             certsOpsCost(){
-                return this.certsOpsCount * this.hourlyPay * 0.5;
+                return this.certsOpsHours * this.hourlyPay;
             },
 
             totalCostWithoutKc(){
