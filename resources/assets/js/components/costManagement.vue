@@ -76,11 +76,7 @@
                                             </tr>
                                         </template>
                                     </template>
-<!--                                    <tr>
-                                        <td colspan="4"><b>Current annual certificate cost estimate</b></td>
-                                        <td align="right">$ {{ certsCostTotal }} </td>
-                                        <td></td>
-                                    </tr>-->
+
                                     <tr>
                                         <td colspan="2">Estimate of IT support time (labour cost)</td>
                                         <td colspan="2" align="right">{{ certsOpsHours }} hours</td>
@@ -189,9 +185,12 @@
                 loadingState: 0,
                 dataProcessStart: 0,
                 hourlyPay: 25,
+                excludeCdns: true,
+
                 results: null,
                 certIssuerTableData: null,
                 certPriceData: null,
+
                 certTypeLabels: ['Domain Validated', 'Wildcard, Domain Validated', 'Org. Validated',
                     'Wildcard, Org. Validated', 'Extended Validated', 'Wildcard, Exended Validated'],
 
@@ -213,18 +212,22 @@
                 return Req.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
             },
 
+            cdnCerts() {
+                if (!this.results || !this.results.tls){
+                    return {};
+                }
+
+                return Req.listToSet(_.uniq(_.map(_.filter(_.values(this.results.tls), tls => {
+                    return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
+                }), tls => {
+                    return tls.cert_id_leaf;
+                })));
+            },
+
             tlsCerts(){
                 return _.map(_.keys(this.tlsCertsIdsMap), x => {
                     return this.results.certificates[x];
                 });
-            },
-
-            allCerts(){
-                if (!this.results || !this.results.certificates){
-                    return {};
-                }
-
-                return this.results.certificates;
             },
 
             certs(){
@@ -396,6 +399,10 @@
                     cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
                     cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
                     cert.validity_sec = cert.valid_to_utc - cert.valid_from_utc;
+                }
+
+                for(const [tlsId, tls] of Object.entries(this.results.tls)){
+                    tls.cdn = Req.mostFrequent([tls.cdn_cname, tls.cdn_headers, tls.cdn_reverse]);
                 }
 
                 Req.normalizeValue(this.results.certificates, 'issuer_o', {
