@@ -213,20 +213,30 @@
             },
 
             cdnCerts() {
-                if (!this.results || !this.results.tls){
+                if (!this.results || !this.results.tls || !this.results.certificates){
                     return {};
                 }
 
-                return Req.listToSet(_.uniq(_.map(_.filter(_.values(this.results.tls), tls => {
+                const cdnCertsTls = _.map(_.filter(_.values(this.results.tls), tls => {
                     return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
                 }), tls => {
                     return tls.cert_id_leaf;
-                })));
+                });
+
+                return Req.listToSet(_.uniq(_.union(cdnCertsTls,
+                    _.map(_.filter(this.results.certificates, crt =>{
+                        return crt.is_cloudflare;
+                    }), crt => {
+                        return crt.id;
+                    })
+                )));
             },
 
             tlsCerts(){
-                return _.map(_.keys(this.tlsCertsIdsMap), x => {
+                return _.filter(_.map(_.keys(this.tlsCertsIdsMap), x => {
                     return this.results.certificates[x];
+                }), crt => {
+                    return !this.excludeCdns || !(crt.id in this.cdnCerts);
                 });
             },
 
@@ -236,7 +246,8 @@
                 }
 
                 return _.filter(this.results.certificates, x=>{
-                    return (x.id in this.tlsCertsIdsMap) || (x.valid_to_days >= -28);
+                    return ((x.id in this.tlsCertsIdsMap) || (x.valid_to_days >= -28)) &&
+                            (!this.excludeCdns || !(x.id in this.cdnCerts));
                 });
             },
 
