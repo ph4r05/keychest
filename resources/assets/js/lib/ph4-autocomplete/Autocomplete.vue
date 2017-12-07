@@ -94,7 +94,10 @@
                 required: true
             },
             // Label of list
-            label: String,
+            label: {
+                type: String,
+                default: ''
+            },
             // Debounce time
             debounce: Number,
             // ajax URL will be fetched
