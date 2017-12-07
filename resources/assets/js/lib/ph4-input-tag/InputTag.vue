@@ -98,7 +98,6 @@
             addNew (tag) {
                 if (tag) {
                     tag = this.createTag(tag);
-                    console.log(tag);
 
                     const index = !this.complexTags ? this.tags.indexOf(tag) :
                         _.map(this.tags, this.tagValue).indexOf(this.tagValue(tag));

@@ -340,10 +340,10 @@
                 // Put the selected data to type (model)
                 this.type = clean[this.anchor];
                 this.$emit('input', this.type);
-                this.$emit('onSelect', clean);
                 // Hide List
                 this.showList = false;
                 // Callback Event
+                this.$emit('onSelect', clean);
                 this.onSelect ? this.onSelect(clean) : null
             },
             deepValue(obj, path) {
