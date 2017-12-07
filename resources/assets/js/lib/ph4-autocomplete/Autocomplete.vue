@@ -53,6 +53,7 @@
     *
     */
     export default {
+        inject: ['$validator'],
         props: {
             id: String,
             name: String,
