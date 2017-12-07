@@ -42,17 +42,26 @@
         data () {
             return {
                 newTag: '',
-                bus: undefined
+                bus: undefined,
+                clientWidth: 0,
             }
         },
 
         mounted() {
             this.$nextTick(() => {
                 this.bus = new Vue();
+
+                window.addEventListener('resize', this.handleResize);
+                this.handleResize();
             });
         },
-
+        beforeDestroy: function () {
+            window.removeEventListener('resize', this.handleResize);
+        },
         methods: {
+            handleResize() {
+                this.clientWidth = this.$refs.wrapper.clientWidth;
+            },
             focusNewTag () {
                 if (this.readOnly) { return }
                 this.$el.querySelector('.new-tag').focus()
@@ -114,7 +123,7 @@
 
 <template>
 
-    <div @click="focusNewTag()" v-bind:class="{'read-only': readOnly}" class="vue-input-tag-wrapper">
+    <div @click="focusNewTag()" v-bind:class="{'read-only': readOnly}" class="vue-input-tag-wrapper" ref="wrapper">
         <span v-for="(tag, index) in tags" v-bind:key="index" class="input-tag">
           <span>{{ tag }}</span>
           <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="remove"></a>
@@ -124,6 +133,7 @@
               :readOnly="readOnly"
               :newTag="newTag"
               :bus="bus"
+              :clientWidth="clientWidth"
               :removeLastTag="removeLastTag"
               :addNew="addNew"
               :onAdd="onAdd"
