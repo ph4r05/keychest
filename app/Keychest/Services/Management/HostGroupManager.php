@@ -69,19 +69,36 @@ class HostGroupManager
     }
 
     /**
+     * Query for group search / autocomplete
+     * @param $ownerId
+     * @param $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function searchHostGroupQuery($ownerId, $search){
+        return ManagedHostGroup::query()
+            ->where('owner_id', '=', $ownerId)
+            ->where('group_name', 'like', '%' . $search . '%');
+    }
+
+    /**
      * Adds a new single host host group.
      * @param $ownerId
+     * @param null $groupName
      * @return bool
      */
-    public function addSingleHostGroup($ownerId){
+    public function addSingleHostGroup($ownerId, $groupName=null){
         $hostGroup = new ManagedHostGroup([
-            'group_name' => 'host-'. Str::random(16),
+            'group_name' => $groupName ?: 'host-'. Str::random(16),
             'owner_id' => $ownerId
         ]);
 
         $hostGroup->save();
-        $hostGroup->group_name = 'host-' . $hostGroup->id;
-        $hostGroup->save();
+
+        if (empty($groupName)) {
+            $hostGroup->group_name = 'host-' . $hostGroup->id;
+            $hostGroup->save();
+        }
+
         return $hostGroup;
     }
 }

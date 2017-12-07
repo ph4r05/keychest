@@ -137,6 +137,7 @@ Route::get('home/cost-management/data', 'CostManagementController@loadActiveCert
 // Management
 Route::get('home/management', 'Management\ManagementController@managementIndex')->name('management');
 Route::get('home/management/hosts', 'Management\HostController@getHosts');
+Route::get('home/management/groups/search', 'Management\HostGroupController@searchGroups');
 Route::post('home/management/hosts/add', 'Management\HostController@addHost');
 
 // Tester

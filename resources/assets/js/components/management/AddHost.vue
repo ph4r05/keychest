@@ -46,6 +46,40 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label>Groups</label>
+                        <input-tags
+                                placeholder="Type a group"
+                                url="/home/management/groups/search"
+
+                        >
+                            <template slot-scope="props">
+                                <autocomplete
+                                        v-if="!props.readOnly"
+
+                                        :placeholder="props.placeholder"
+                                        :debounce="250"
+                                        :classes="{ input: 'new-tag' }"
+                                        v-model="props.t.newTag"
+
+                                        ref="input_component"
+                                        anchor="group_name"
+                                        label=""
+                                        url="/home/management/groups/search"
+
+                                        :process="processGroupAutocomplete"
+                                        @onEnter="props.onAdd"
+                                        @onTab="props.onAdd"
+                                        @on188="props.onAdd"
+                                        @onRight="props.onAdd"
+                                        @onSelect="props.onAdd"
+                                        @onDelete="props.onDelete"
+                                ></autocomplete>
+                            </template>
+
+                        </input-tags>
+                    </div>
+
                     <transition>
                         <div class="form-group" v-if="sentState == 0">
                             <button type="submit" class="btn btn-block btn-success btn-block"
@@ -97,10 +131,16 @@
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
     import hostSpecValidator from '../../lib/validator/hostspec';
+    import InputTags from 'ph4-input-tag';
+    import AutoComplete from 'ph4-autocomplete';
+    import 'ph4-autocomplete/Autocomplete.css';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
+
+    Vue.component('input-tags', InputTags);
+    Vue.component('autocomplete', AutoComplete);
 
     export default {
         components: {
@@ -195,6 +235,15 @@
 
                     });
                 });
+            },
+
+            processGroupAutocomplete(json){
+                return json.results;
+            },
+
+            autocompleteOnAdd(t){
+                t.onAdd();
+
             }
         },
 
