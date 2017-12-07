@@ -34,6 +34,9 @@
                 type: String,
                 default: ''
             },
+            validator: {
+                type: Function,
+            },
         },
 
         data () {
@@ -66,6 +69,10 @@
             },
 
             validateIfNeeded (tagValue) {
+                if (this.validator){
+                    return this.validator(tagValue);
+                }
+                
                 if (this.validate === '' || this.validate === undefined) {
                     return true
                 } else if (Object.keys(validators).indexOf(this.validate) > -1) {
