@@ -25,4 +25,38 @@ class DataToolsTest extends TestCase
         $this->assertEquals('LetsEncrypt', DataTools::capitalizeFirstWord('LetsEncrypt'));
     }
 
+    public function testToObject(){
+        $data = [
+            [
+                'name' => 'John Doe',
+                'emails' => [
+                    'john@doe.com',
+                    'john.doe@example.com',
+                ],
+                'contacts' => [
+                    [
+                        'name' => 'Naomi',
+                        'emails' => [
+                            'naomi@example.com',
+                        ],
+                    ],
+                    [
+                        'name' => 'Morgan1',
+                        'emails' => [
+                            'morgan@test.com',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $dat = DataTools::asObject(collect($data));
+        $this->assertEquals('John Doe', $dat[0]->name);
+
+        $dat = collect($data)->recursiveObj();
+        $this->assertEquals('John Doe', $dat[0]->name);
+        $this->assertEquals('john.doe@example.com', $dat[0]->emails[1]);
+        $this->assertEquals('Morgan1', $dat[0]->contacts[1]->name);
+        $this->assertEquals('morgan@test.com', $dat[0]->contacts[1]->emails[0]);
+    }
 }

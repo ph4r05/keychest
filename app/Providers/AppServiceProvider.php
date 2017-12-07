@@ -16,6 +16,7 @@ use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
 use App\Keychest\Services\UserManager;
 use App\Keychest\Services\UserTokenManager;
+use App\Keychest\Utils\DataTools;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -108,6 +109,12 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 return $value;
+            });
+        });
+
+        Collection::macro('recursiveObj', function () {
+            return $this->map(function ($value) {
+                return DataTools::asObjectRecursive($value);
             });
         });
     }

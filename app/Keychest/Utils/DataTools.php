@@ -9,6 +9,7 @@
 namespace App\Keychest\Utils;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Traversable;
 
@@ -330,6 +331,53 @@ class DataTools {
         } else {
             return $input;
         }
+    }
+
+    /**
+     * Transform the arrays to objects.
+     * Only associative arrays are converted to objects.
+     * @param $val
+     * @return array|Collection|object
+     */
+    public static function asObject($val){
+        if ($val instanceof Collection){
+            return $val->map(function($item, $idx){
+                return self::asObject($item);
+            });
+
+        } else if (is_array($val) && Arr::isAssoc($val)){
+            return (object) $val;
+
+        }
+        return $val;
+    }
+
+    /**
+     * Recursively transform the arrays to objects.
+     * Only associative arrays are converted to the objects.
+     *
+     * @param $val
+     * @return object|static
+     */
+    public static function asObjectRecursive($val){
+        if ($val instanceof Collection){
+            return $val->map(function($item, $idx){
+                return self::asObject($item);
+            });
+
+        } else if (is_array($val)){
+            $objConvFnc = function ($a) use ( &$objConvFnc ) {
+                if (!is_array($a)){
+                    return $a;
+                }
+
+                $mapped = array_map($objConvFnc, $a);
+                return Arr::isAssoc($a) ? (object) $mapped : $mapped;
+            };
+            return (object) array_map($objConvFnc, $val);
+
+        }
+        return $val;
     }
 
     /**
