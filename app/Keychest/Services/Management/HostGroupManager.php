@@ -88,14 +88,14 @@ class HostGroupManager
      */
     public function addSingleHostGroup($ownerId, $groupName=null){
         $hostGroup = new ManagedHostGroup([
-            'group_name' => $groupName ?: 'host-'. Str::random(16),
+            'group_name' => $groupName ?: 'group-'. Str::random(16),
             'owner_id' => $ownerId
         ]);
 
         $hostGroup->save();
 
         if (empty($groupName)) {
-            $hostGroup->group_name = 'host-' . $hostGroup->id;
+            $hostGroup->group_name = 'group-' . $hostGroup->id;
             $hostGroup->save();
         }
 
