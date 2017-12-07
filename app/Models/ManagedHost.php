@@ -49,7 +49,7 @@ class ManagedHost extends Model
      */
     public function groups()
     {
-        return $this->belongsToMany('App\Models\ManagedHostToGroup',
+        return $this->belongsToMany('App\Models\ManagedHostGroup',
             ManagedHostToGroup::TABLE,
             'host_id',
             'group_id')
