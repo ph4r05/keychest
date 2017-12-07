@@ -20,6 +20,7 @@
                 :class="`${getClassName('list')} autocomplete autocomplete-list`"
                 v-show="showList && json.length"
         >
+            <div class="autocomplete-list-wrap">
             <ul>
                 <li
                         v-for="(data, i) in json"
@@ -38,6 +39,7 @@
                     </a>
                 </li>
             </ul>
+            </div>
 
         </div>
 
