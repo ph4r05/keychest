@@ -152,14 +152,18 @@ class HostController extends Controller
         }
 
         // Add group host-id with only this particular host.
-        $group = $this->hostGroupManager->addSingleHostGroup($user->primary_owner_id);
+        $group = $this->hostGroupManager->addSingleHostGroup($user->primary_owner_id,
+            sprintf('host-%04d', $dbHost->id));
+
         $dbHost->groups()->save($group);
 
         return response()->json([
                 'state' => 'success',
                 'host_id' => $dbHost->id,
                 'ssh_key_uuid' => $sshKey->key_id,
-                'ssh_key_public' => $sshKey->pub_key
+                'ssh_key_public' => $sshKey->pub_key,
+                'host_group' => $group->group_name,
+                'groups' => []
             ], 200);
     }
 
