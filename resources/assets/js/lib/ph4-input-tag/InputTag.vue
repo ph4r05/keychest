@@ -1,5 +1,6 @@
 <script>
     import Vue from 'vue';
+    import _ from 'lodash';
 
     /*eslint-disable*/
     const validators = {
@@ -8,7 +9,7 @@
         text : new RegExp(/^[a-zA-Z]+$/),
         digits : new RegExp(/^[\d() \.\:\-\+#]+$/),
         isodate : new RegExp(/^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/)
-    }
+    };
     /*eslint-enable*/
 
     export default {
@@ -37,6 +38,20 @@
             validator: {
                 type: Function,
             },
+            complexTags: {
+                type: Boolean,
+                default: false
+            },
+            tagAccessor: {
+                default: 'tag',
+            },
+            tagRemovable: {
+                default: undefined,
+            },
+            tagFactory: {
+                type: Function,
+                default: undefined,
+            }
         },
 
         data () {
@@ -62,15 +77,36 @@
             handleResize() {
                 this.clientWidth = this.$refs.wrapper.clientWidth;
             },
+
             focusNewTag () {
                 if (this.readOnly) { return }
                 this.$el.querySelector('.new-tag').focus()
             },
 
+            createTag(tag){
+                if (!this.complexTags){
+                    return tag;
+                } else if (this.tagFactory){
+                    return this.tagFactory(tag);
+                } else if (_.isString(tag)) {
+                    return _.set({}, this.tagAccessor, tag);
+                } else {
+                    return tag;
+                }
+            },
+
             addNew (tag) {
-                if (tag && this.tags.indexOf(tag) === -1 && this.validateIfNeeded(tag)) {
-                    this.tags.push(tag);
-                    this.tagChange();
+                if (tag) {
+                    tag = this.createTag(tag);
+                    console.log(tag);
+
+                    const index = !this.complexTags ? this.tags.indexOf(tag) :
+                        _.map(this.tags, this.tagValue).indexOf(this.tagValue(tag));
+
+                    if (index === -1 && this.validateIfNeeded(tag)){
+                        this.tags.push(tag);
+                        this.tagChange();
+                    }
                 }
 
                 this.bus.$emit('cleanInput', 1);
@@ -116,7 +152,27 @@
 
             onAdd(e){
                 this.addNew(this.newTag);
-            }
+            },
+
+            removableTag(tag, index){
+                if (!this.tagRemovable || !this.complexTags){
+                    return true;
+                } else if (_.isFunction(this.tagRemovable)){
+                    return this.tagRemovable(tag, index);
+                } else {
+                    return _.get(tag, this.tagRemovable, true);
+                }
+            },
+
+            tagValue(tag, index){
+                if (!this.tagAccessor || !this.complexTags){
+                    return tag;
+                } else if (_.isFunction(this.tagAccessor)){
+                    return this.tagAccessor(tag, index);
+                } else {
+                    return _.get(tag, this.tagAccessor);
+                }
+            },
         }
     }
 </script>
@@ -124,10 +180,22 @@
 <template>
 
     <div @click="focusNewTag()" v-bind:class="{'read-only': readOnly}" class="vue-input-tag-wrapper" ref="wrapper">
-        <span v-for="(tag, index) in tags" v-bind:key="index" class="input-tag">
-          <span>{{ tag }}</span>
-          <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="remove"></a>
-        </span>
+        <slot name="tag"
+              :tags="tags"
+              :readOnly="readOnly"
+              :removeFnc="remove"
+        >
+            <span v-for="(tag, index) in tags" v-bind:key="index" class="input-tag">
+                <template v-if="complexTags">
+                    <span>{{ tagValue(tag, index) }}</span>
+                    <a v-if="!readOnly && removableTag(tag, index)" @click.prevent.stop="remove(index)" class="remove"></a>
+                </template>
+                <template v-else="">
+                    <span>{{ tag }}</span>
+                    <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="remove"></a>
+                </template>
+            </span>
+        </slot>
         <slot :t="this"
               :placeholder="placeholder"
               :readOnly="readOnly"
