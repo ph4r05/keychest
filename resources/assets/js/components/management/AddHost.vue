@@ -224,6 +224,7 @@
                 return new Promise((resolve, reject) => {
 
                     this.sentState = 1;
+                    this.formData.host_name = _.isEmpty(this.formData.host_name) ? this.formData.host_addr : this.formData.host_name;
                     const params = this.formData;
                     axios.post('/home/management/hosts/add', params)
                         .then(res => {
