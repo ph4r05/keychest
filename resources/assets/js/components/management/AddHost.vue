@@ -52,6 +52,10 @@
                                 placeholder="Type a group"
                                 url="/home/management/groups/search"
                                 :validator="tagValidator"
+                                :tags="formData.groups"
+                                :complexTags="true"
+                                tagAccessor="group_name"
+                                :tagRemovable="tagRemovable"
 
                         >
                             <template slot-scope="props">
@@ -79,7 +83,7 @@
                                         @on188="props.onAdd"
                                         @onRight="props.onAdd"
                                         @onSpace="props.onAdd"
-                                        @onSelect="props.onAdd"
+                                        @onSelect="props.addNew"
                                         @onDelete="props.onDelete"
                                 ></autocomplete>
                             </template>
@@ -162,7 +166,8 @@
                 formData: {
                     host_name: '',
                     host_addr: '',
-                    agent_id: ''
+                    agent_id: '',
+                    groups: [],
                 },
                 response: null,
             }
@@ -238,6 +243,7 @@
                 return new Promise((resolve, reject) => {
                     Vue.nextTick( () => {
                         this.response = res.data;
+                        this.formData.groups = this.response.groups;
 
                         setTimeout(() => {
                             this.$scrollTo('.config-host');
@@ -253,6 +259,10 @@
 
             tagValidator(tagValue){
                 return !this.errors.has('host_group') && !_.startsWith(tagValue, 'host-');
+            },
+
+            tagRemovable(tag){
+                return !_.startsWith(tag.group_name, 'host-');
             }
         },
 
