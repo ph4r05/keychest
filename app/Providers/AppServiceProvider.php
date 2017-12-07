@@ -17,6 +17,7 @@ use App\Keychest\Services\SubdomainManager;
 use App\Keychest\Services\UserManager;
 use App\Keychest\Services\UserTokenManager;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
@@ -44,6 +45,9 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('local', 'testing')) {
             $this->app->register(DuskServiceProvider::class);
         }
+
+        // Macros registration
+        $this->registerMacros();
 
         // Registering sub-components, services, managers.
         $this->app->bind(UserTokenManager::class, function(Application $app){
@@ -87,6 +91,24 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(HostGroupManager::class, function(Application $app){
             return new HostGroupManager($app);
+        });
+    }
+
+    /**
+     * Registers useful macros
+     */
+    public function registerMacros(){
+        Collection::macro('recursive', function () {
+            return $this->map(function ($value) {
+                if (is_array($value)) {
+                    return collect($value)->recursive();
+                }
+                if (is_object($value)) {
+                    return collect($value)->recursive();
+                }
+
+                return $value;
+            });
         });
     }
 }
