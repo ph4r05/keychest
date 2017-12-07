@@ -67,10 +67,8 @@
                 })
             },
 
-            captureEnter: Boolean,
-            captureTab: Boolean,
-            capture188: Boolean,
-            captureDelete: Boolean,
+            //event bus
+            bus: Object,
 
             // v-model
             value: String,
@@ -220,22 +218,24 @@
                 const TAB = 9
                 const DELETE = 8
                 const ESC = 27
+                let signalChange = true;
                 // Prevent Default for Prevent Cursor Move & Form Submit
                 switch (key) {
                     case DOWN:
-                        e.preventDefault()
+                        e.preventDefault();
                         this.focusList++;
                         break;
                     case UP:
-                        e.preventDefault()
+                        e.preventDefault();
                         this.focusList--;
                         break;
                     case ENTER:
-                        e.preventDefault()
-                        this.selectList(this.json[this.focusList])
+                        e.preventDefault();
+                        this.selectList(this.json[this.focusList]);
                         this.showList = false;
                         this.onEnter ? this.onEnter(e) : null;
                         this.$emit('onEnter', e);
+                        signalChange = false;
                         break;
                     case ESC:
                         this.showList = false;
@@ -244,23 +244,30 @@
                         //e.preventDefault()
                         this.onRight ? this.onRight(e) : null;
                         this.$emit('onRight', e);
+                        signalChange = false;
                         break;
                     case TAB:
-                        e.preventDefault()
+                        e.preventDefault();
                         this.onTab ? this.onTab(e) : null;
                         this.$emit('onTab', e);
+                        signalChange = false;
                         break;
                     case DELETE:
                         this.onDelete ? this.onDelete(e) : null;
                         this.$emit('onDelete', e);
                         break;
                     case 188:
-                        e.preventDefault()
+                        e.preventDefault();
                         this.on188 ? this.on188(e) : null;
                         this.$emit('on188', e);
+                        signalChange = false;
                         break;
                 }
-                this.$emit('input', this.type);
+
+                if (signalChange) {
+                    this.$emit('input', this.type);
+                }
+
                 const listLength = this.json.length - 1;
                 const outOfRangeBottom = this.focusList > listLength
                 const outOfRangeTop = this.focusList < 0
@@ -272,7 +279,7 @@
                 this.focusList = nextFocusList
             },
             setValue(val) {
-                this.type = val
+                this.type = val;
                 this.$emit('input', this.type);
             },
             /*==============================
@@ -312,6 +319,7 @@
                 // Put the selected data to type (model)
                 this.type = clean[this.anchor];
                 this.$emit('input', this.type);
+                this.$emit('onSelect', clean);
                 // Hide List
                 this.showList = false;
                 // Callback Event
@@ -388,7 +396,10 @@
             this.type = this.initValue ? this.initValue : (this.value ? this.value : null);
         },
         mounted() {
-            if (this.required) this.$refs.input.setAttribute("required", this.required)
+            if (this.required) this.$refs.input.setAttribute("required", this.required);
+            if (this.bus){
+                this.bus.$on('cleanInput', this.clearInput);
+            }
         }
     }
 </script>

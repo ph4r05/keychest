@@ -1,8 +1,5 @@
 <script>
-    import Autocomplete from 'ph4-autocomplete';
     import Vue from 'vue';
-
-    Vue.component('autocomplete', Autocomplete);
 
     /*eslint-disable*/
     const validators = {
@@ -37,16 +34,19 @@
                 type: String,
                 default: ''
             },
-            url: {
-                type: String,
-                required: true
-            }
         },
 
         data () {
             return {
-                newTag: ''
+                newTag: '',
+                bus: undefined
             }
+        },
+
+        mounted() {
+            this.$nextTick(() => {
+                this.bus = new Vue();
+            });
         },
 
         methods: {
@@ -57,11 +57,12 @@
 
             addNew (tag) {
                 if (tag && this.tags.indexOf(tag) === -1 && this.validateIfNeeded(tag)) {
-                    this.tags.push(tag)
-                    this.tagChange()
+                    this.tags.push(tag);
+                    this.tagChange();
                 }
-                this.newTag = ''
-                console.log('new-tag: ' + tag);
+
+                this.bus.$emit('cleanInput', 1);
+                this.newTag = '';
             },
 
             validateIfNeeded (tagValue) {
@@ -74,21 +75,22 @@
             },
 
             remove (index) {
-                this.tags.splice(index, 1)
-                this.tagChange()
+                this.tags.splice(index, 1);
+                this.tagChange();
             },
 
             removeLastTag () {
                 if (this.newTag) { return }
-                this.tags.pop()
-                this.tagChange()
+                this.tags.pop();
+                this.tagChange();
             },
 
             tagChange () {
                 if (this.onChange) {
                     // avoid passing the observer
-                    this.onChange(JSON.parse(JSON.stringify(this.tags)))
+                    this.onChange(JSON.parse(JSON.stringify(this.tags)));
                 }
+                this.bus.$emit('tagChange');
             },
 
             onDelete(e){
@@ -98,7 +100,6 @@
 
             onAdd(e){
                 this.addNew(this.newTag);
-                this.$refs.autocomp.clearInput();
             }
         }
     }
@@ -111,27 +112,21 @@
           <span>{{ tag }}</span>
           <a v-if="!readOnly" @click.prevent.stop="remove(index)" class="remove"></a>
         </span>
-
-        <!--<input v-if="!readOnly" v-bind:placeholder="placeholder" type="text" class="new-tag"-->
-               <!--v-model="newTag"-->
-               <!--v-on:keydown.delete.stop="removeLastTag()"-->
-               <!--v-on:keydown.enter.188.tab.prevent.stop="addNew(newTag)"/>-->
-
-        <autocomplete
-                v-if="!readOnly"
-                :placeholder="placeholder"
-                :debounce="250"
-                :classes="{ input: 'new-tag' }"
-                ref="autocomp"
-                v-model="newTag"
-                anchor="name"
-                :url="url"
-                @onEnter="onAdd"
-                @onTab="onAdd"
-                @on188="onAdd"
-                @onRight="onAdd"
-                @onDelete="onDelete"
-        ></autocomplete>
+        <slot :t="this"
+              :placeholder="placeholder"
+              :readOnly="readOnly"
+              :newTag="newTag"
+              :bus="bus"
+              :removeLastTag="removeLastTag"
+              :addNew="addNew"
+              :onAdd="onAdd"
+              :onDelete="onDelete"
+        >
+        <input v-if="!readOnly" v-bind:placeholder="placeholder" type="text" class="new-tag"
+               v-model="newTag" ref="input_component"
+               v-on:keydown.delete.stop="removeLastTag()"
+               v-on:keydown.enter.188.tab.prevent.stop="addNew(newTag)"/>
+        </slot>
     </div>
 
 </template>
