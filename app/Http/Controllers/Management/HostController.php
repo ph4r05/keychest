@@ -163,7 +163,7 @@ class HostController extends Controller
                 'ssh_key_uuid' => $sshKey->key_id,
                 'ssh_key_public' => $sshKey->pub_key,
                 'host_group' => $group->group_name,
-                'groups' => []
+                'groups' => $dbHost->groups->all()
             ], 200);
     }
 
