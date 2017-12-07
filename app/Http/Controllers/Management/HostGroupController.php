@@ -73,10 +73,16 @@ class HostGroupController extends Controller
     public function searchGroups(ParamRequest $request)
     {
         $q = Input::get('q');
+        $noHostGroups = Input::get('noHostGroups');
 
         // Host Db spec for storage.
         $user = Auth::getUser();
         $query = $this->hostGroupManager->searchHostGroupQuery($user->primary_owner_id, $q);
+
+        if ($noHostGroups){
+            $query = $query->where('group_name', 'not like', 'host-%');
+        }
+
         $results = $query->limit(30)->get();
 
         return response()->json([

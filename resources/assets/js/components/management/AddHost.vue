@@ -73,6 +73,7 @@
 
                                         :process="processGroupAutocomplete"
                                         :spaceAsTrigger="true"
+                                        :customParams="{ noHostGroups: '1' }"
                                         @onEnter="props.onAdd"
                                         @onTab="props.onAdd"
                                         @on188="props.onAdd"
@@ -251,7 +252,7 @@
             },
 
             tagValidator(tagValue){
-                return !this.errors.has('host_group')
+                return !this.errors.has('host_group') && !_.startsWith(tagValue, 'host-');
             }
         },
 
