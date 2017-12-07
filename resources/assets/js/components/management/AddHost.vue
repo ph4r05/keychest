@@ -302,6 +302,6 @@
 
 .autocomplete-list .autocomplete-list-wrap {
     width: 100%;
-    padding-right: 5px;
+    padding-right: 20px;
 }
 </style>
