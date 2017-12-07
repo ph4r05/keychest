@@ -40,16 +40,22 @@
         },
         data(){
             return {
-
+                clientWidth: 0,
             };
         },
         methods: {
             hookup(){
+                window.addEventListener('resize', this.handleResize);
+                this.handleResize();
+
                 if (this.rowData.ssh_key){
                     const newWidth = this.$refs.tbl.clientWidth;
                     this.$refs.ssh_key.style.width = newWidth+'px';
                     this.$refs.ssh_key.style.maxWidth = 'inherit';
                 }
+            },
+            handleResize() {
+                this.clientWidth = this.$refs.wrapper.clientWidth;
             },
             onClick (event) {
                 console.log('my-detail-row: on-click', event.target)
@@ -59,7 +65,10 @@
             this.$nextTick(function () {
                 this.hookup();
             })
-        }
+        },
+        beforeDestroy: function () {
+            window.removeEventListener('resize', this.handleResize);
+        },
     }
 </script>
 <style scoped>
