@@ -51,11 +51,15 @@
                         <input-tags
                                 placeholder="Type a group"
                                 url="/home/management/groups/search"
+                                :validator="tagValidator"
 
                         >
                             <template slot-scope="props">
                                 <autocomplete
                                         v-if="!props.readOnly"
+                                        v-validate="{max: 128, regex: /^([a-zA-Z0-9_/\-.]+)$/ }"
+                                        name="host_group"
+                                        data-vv-as="Host group"
 
                                         :placeholder="props.placeholder"
                                         :debounce="250"
@@ -68,16 +72,21 @@
                                         url="/home/management/groups/search"
 
                                         :process="processGroupAutocomplete"
+                                        :spaceAsTrigger="true"
                                         @onEnter="props.onAdd"
                                         @onTab="props.onAdd"
                                         @on188="props.onAdd"
                                         @onRight="props.onAdd"
+                                        @onSpace="props.onAdd"
                                         @onSelect="props.onAdd"
                                         @onDelete="props.onDelete"
                                 ></autocomplete>
                             </template>
-
                         </input-tags>
+
+                        <i v-show="errors.has('host_group')" class="fa fa-warning"></i>
+                        <span v-show="errors.has('host_group')" class="help is-danger"
+                        >{{ errors.first('host_group') }}</span>
                     </div>
 
                     <transition>
@@ -241,9 +250,8 @@
                 return json.results;
             },
 
-            autocompleteOnAdd(t){
-                t.onAdd();
-
+            tagValidator(tagValue){
+                return !this.errors.has('host_group')
             }
         },
 
@@ -252,8 +260,36 @@
         }
     }
 </script>
+
 <style scoped>
 .config-host .ssh-key {
     word-wrap: break-word !important;
+}
+</style>
+
+<style>
+.autocomplete-list ul {
+    margin-left: -5px;
+    margin-top: 1px;
+    margin-right: 5px;
+    padding-top: 0;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 200px;
+}
+
+.autocomplete-list ul li{
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.autocomplete-list ul:before{
+    display: none !important;
+}
+
+.autocomplete-list .autocomplete-list-wrap {
+    width: 100%;
+    padding-right: 5px;
 }
 </style>
