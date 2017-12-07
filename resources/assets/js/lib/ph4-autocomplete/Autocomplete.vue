@@ -231,13 +231,16 @@
                         break;
                     case ENTER:
                         e.preventDefault();
-                        this.selectList(this.json[this.focusList]);
-                        this.showList = false;
+                        if (this.showList && this.json && this.focusList in this.json) {
+                            this.selectList(this.json[this.focusList]);
+                            this.showList = false;
+                        }
                         this.onEnter ? this.onEnter(e) : null;
                         this.$emit('onEnter', e);
                         signalChange = false;
                         break;
                     case ESC:
+                        
                         this.showList = false;
                         break;
                     case RIGHT:
