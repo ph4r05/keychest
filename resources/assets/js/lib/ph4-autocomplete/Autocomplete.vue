@@ -123,6 +123,11 @@
                 type: Number,
                 default: 0
             },
+            // space cannot be entered, triggers event
+            spaceAsTrigger: {
+                type: Boolean,
+                default: false
+            },
             // Create a custom template from data.
             onShouldRenderChild: Function,
             // Process the result before retrieveng the result array.
@@ -215,13 +220,14 @@
                 // Disable when list isn't showing up
                 if(!this.showList) return;
                 // Key List
-                const DOWN = 40
-                const UP = 38
-                const RIGHT = 39
-                const ENTER = 13
-                const TAB = 9
-                const DELETE = 8
-                const ESC = 27
+                const DOWN = 40;
+                const UP = 38;
+                const RIGHT = 39;
+                const ENTER = 13;
+                const TAB = 9;
+                const DELETE = 8;
+                const ESC = 27;
+                const SPACE = 32;
                 let signalChange = true;
                 // Prevent Default for Prevent Cursor Move & Form Submit
                 switch (key) {
@@ -244,7 +250,6 @@
                         signalChange = false;
                         break;
                     case ESC:
-                        
                         this.showList = false;
                         break;
                     case RIGHT:
@@ -262,6 +267,13 @@
                     case DELETE:
                         this.onDelete ? this.onDelete(e) : null;
                         this.$emit('onDelete', e);
+                        break;
+                    case SPACE:
+                        if (this.spaceAsTrigger){
+                            e.preventDefault();
+                            this.$emit('onSpace', e);
+                            signalChange = false;
+                        }
                         break;
                     case 188:
                         e.preventDefault();
