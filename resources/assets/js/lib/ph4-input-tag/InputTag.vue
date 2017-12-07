@@ -189,7 +189,7 @@
         outline: none;
         padding: 4px;
         padding-left: 0;
-        width: 80px;
+        width: 100px;
     }
 
     .vue-input-tag-wrapper.read-only {
