@@ -47,15 +47,9 @@
             hookup(){
                 window.addEventListener('resize', this.handleResize);
                 this.handleResize();
-
-                if (this.rowData.ssh_key){
-                    const newWidth = this.$refs.tbl.clientWidth;
-                    this.$refs.ssh_key.style.width = newWidth+'px';
-                    this.$refs.ssh_key.style.maxWidth = 'inherit';
-                }
             },
             handleResize() {
-                this.clientWidth = this.$refs.wrapper.clientWidth;
+                this.clientWidth = this.$refs.tbl.clientWidth;
             },
             onClick (event) {
                 console.log('my-detail-row: on-click', event.target)
@@ -78,7 +72,7 @@
     }
 
     .config-host {
-        max-width: 500px;
+        display: grid;
     }
 
     .table-wrapper{
