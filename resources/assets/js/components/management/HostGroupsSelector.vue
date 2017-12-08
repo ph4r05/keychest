@@ -106,7 +106,7 @@
             },
 
             tagValidator(tagValue){
-                return !this.errors.has('host_group') && !_.startsWith(tagValue, 'host-');
+                return !this.errors.has('host_group') && !_.startsWith(tagValue.group_name, 'host-');
             },
 
             tagRemovable(tag){
