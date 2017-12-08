@@ -24,6 +24,7 @@ use App\Models\SshKey;
 use App\Models\User;
 use Carbon\Carbon;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -84,7 +85,7 @@ class HostGroupManager
      * Adds a new single host host group.
      * @param $ownerId
      * @param null $groupName
-     * @return bool
+     * @return ManagedHostGroup
      */
     public function addSingleHostGroup($ownerId, $groupName=null){
         $hostGroup = new ManagedHostGroup([
@@ -100,6 +101,96 @@ class HostGroupManager
         }
 
         return $hostGroup;
+    }
+
+    /**
+     * Sanitizes group by reloading them from the database
+     * making sure the owner has access to those groups by the ID.
+     *
+     * @param $groups
+     * @param $ownerId
+     * @return mixed
+     */
+    public function sanitizeGroupsByReload($groups, $ownerId){
+        list($loadable, $rest) = $groups->partition(function($item){
+            return isset($item->id);
+        });
+
+        $groupIds = $loadable->map->id->values();
+        $loaded = ManagedHostGroup::query()
+            ->where('owner_id', '=', $ownerId)
+            ->whereIn('id', $groupIds)
+            ->get();
+
+        return $rest->merge($loaded);
+    }
+
+    /**
+     * Fetches existing groups or creates a new ones
+     * @param $groups
+     * @param $ownerId
+     * @return mixed
+     * @throws \Exception
+     */
+    public function fetchOrCreate($groups, $ownerId){
+        list($existing, $fetchList) = $groups->partition(function($item){
+            return isset($item->id);
+        });
+
+        $keysToFetch = $fetchList->keyBy('group_name');
+        if ($keysToFetch->isEmpty()){
+            return $groups;
+        }
+
+        Log::info($keysToFetch->toJson());
+        $fetched = collect();
+        $batchSize = 1;
+
+        // As race conditions may occur this needs to be performed in a loop.
+        // Unique constrain may be triggered if another thread inserts the same (owner_id, group_name).
+        $attempts = 0;
+        for(; $attempts < (10 + $keysToFetch->count()) && $keysToFetch->isNotEmpty(); $attempts+=1){
+
+            // Fetch groups in chunks (batch size)
+            $chunks = $keysToFetch->keys()->chunk($batchSize);
+            $fetchedNow = collect();
+            foreach ($chunks as $chunk) {
+                $fetchedNow = $fetchedNow->merge(
+                    ManagedHostGroup::query()
+                        ->where('owner_id', '=', $ownerId)
+                        ->whereIn('group_name', $chunk)
+                        ->get()
+                        ->keyBy('group_name'));
+            }
+
+            // Remove fetched keys from the $keysToFetch.
+            $fetched = $fetched->merge($fetchedNow);
+            $keysToFetch = $keysToFetch->reject(function($value, $key) use ($fetchedNow) {
+                return $fetchedNow->has($key);
+            });
+
+            // Try to insert a new group, one by one
+            foreach (collect($keysToFetch) as $group_name => $group_data) {
+                try {
+                    $grp = new ManagedHostGroup();
+                    $grp->group_name = $group_name;
+                    $grp->owner_id = $ownerId;
+                    $grp->save();
+
+                    $fetched->put($group_name, $grp);
+                    $keysToFetch->forget($group_name);
+
+                } catch (QueryException $e) {
+                    continue;
+                }
+            }
+        }
+
+        if ($keysToFetch->isNotEmpty()){
+            throw new \Exception('Could not fetch/insert');
+        }
+
+        return $existing->merge($fetched->values());
     }
 }
 
