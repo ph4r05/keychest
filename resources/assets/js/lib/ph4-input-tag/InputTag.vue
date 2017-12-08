@@ -13,6 +13,7 @@
     /*eslint-enable*/
 
     export default {
+        inject: ['$validator'],
         name: 'InputTag',
 
         props: {
