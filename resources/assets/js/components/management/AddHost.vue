@@ -244,7 +244,11 @@
                 return new Promise((resolve, reject) => {
                     Vue.nextTick( () => {
                         this.response = res.data;
-                        this.formData.groups = this.response.groups;
+
+                        // sort groups so the host group is first
+                        this.formData.groups = _.sortBy(this.response.groups, x => {
+                            return (!_.startsWith(x.group_name, 'host-'))  + x.group_name;
+                        });
 
                         setTimeout(() => {
                             this.$scrollTo('.config-host');
