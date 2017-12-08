@@ -26,37 +26,44 @@
                 <!-- Certificate price list -->
                 <div class="row" v-if="certPriceData">
                     <div class="xcol-md-12">
-                        <sbox cssBox="box-success" :headerCollapse="true">
-                            <template slot="title">Certificate expenses estimation</template>
+                        <sbox cssBox="box-primary" :headerCollapse="true">
+                            <template slot="title">Certificate Cost</template>
                             <div class="table-responsive table-xfull" style="margin-bottom: 10px">
 
-                            <p>
-                                And some text.
-                            </p>
+                                <p class="tc-onyx">
+                                    The page demonstrates an estimated annual cost of the certificates in your KeyChest account.
+                                    As the pricing of existing certificate providers is complex and may include tailored
+                                    discounts, we use basic prices available on their websites.
+                                </p>
+                                <p class="tc-onyx">
+                                    We also estimate the cost of IT support to renew certificates using a simple assumption
+                                    that one renewal takes about 30 minutes from start to finish.
+                                </p>
                                 <table>
                                     <tr>
-                                        <td>Hourly cost of your IT support for  certificate management&nbsp;&nbsp;</td>
                                         <td><div class="input-group input-group-sm input-group-inline valign-middle">
-                                            <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                                            <input type="text" class="form-control" size="3"
-                                                   title="hourly payment for cert management"
-                                                   v-model="hourlyPay">
+                                            <span class="input-group-addon tc-rich-electric-blue">Adjust the hourly rate of your IT support
+                                                for  certificate management in US$</span>
+                                            <b><input type="text" class="form-control" size="3"
+                                                   title="hourly rate of certificate management support"
+                                                   v-model="hourlyPay"></b>
                                         </div></td>
                                     </tr>
                                 </table>
-                                <p>
-                                    bla
-                                </p>
-
-                                <table class="table table-bordered table-striped table-hover">
+                                <br/>
+                                <table class="table table-bordered table-striped table-hover tc-onyx">
                                     <thead>
-                                    <tr>
-                                        <th>Provider</th>
-                                        <th>Type</th>
-                                        <th align="center">Units in use</th>
-                                        <th align="center">Units unused</th>
-                                        <th align="center">Price</th>
-                                        <th align="center">KeyChest managed</th>
+                                    <tr class="tc-rich-electric-blue">
+                                        <td colspan="7"><b>Your current cost - based on undiscounted prices and
+                                            KeyChest monitoring</b><br/>
+                                        (all prices are in US dollars, numbers may not add up due to rounding)</td>
+                                    </tr>
+                                    <tr >
+                                        <td colspan="2"><b>Cost item</b></td>
+                                        <td align="center"><b>Units in use</b></td>
+                                        <td align="center"><b>Units unused</b></td>
+                                        <td align="center"><b>Cost</b></td>
+                                        <td align="center"><b>In KeyChest cost</b></td>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -77,88 +84,128 @@
                                         </template>
                                     </template>
 
-                                    <tr>
-                                        <td colspan="2">Current annual cost of certificates </td>
+                                    <tr class="tc-rich-electric-blue">
+                                        <td colspan="2" class="tc-onyx">Subtotal for certificates only</td>
                                         <td align="right">${{ formatTableNumber(certsCostUsed) }}</td>
                                         <td align="right">${{ formatTableNumber(certsCostUnused) }}</td>
                                         <td align="right">${{ formatTableNumber(certsCostTotal) }}</td>
                                         <td></td>
                                     </tr>
-
-                                    <tr>
-                                        <td colspan="2">Estimate of IT support time (labour cost)</td>
-                                        <td colspan="2" align="right">{{ certsOpsHours }} hours</td>
-                                        <td align="right">${{ certsOpsCost }} </td>
-                                        <td></td>
-                                    </tr>
-
-                                    <tr>
-                                        <th colspan="4">Current annual cost of certificate management </th>
-                                        <td align="right"><b>${{ formatTableNumber(totalCostWithoutKc) }}</b></td>
-                                        <td></td>
-                                    </tr>
-
                                     <tr>
                                         <td colspan="7"></td>
                                     </tr>
                                     <tr>
-                                        <th colspan="6">KeyChest managed certificates</th>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4"><i>Item</i></td>
-                                        <td align="center"><i>Cost</i></td>
-                                        <td align="center"><i>Saving</i></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4">Unmanaged certificate cost + labour</td>
-                                        <td align="right">${{ formatTableNumber(totalCostWithKc - kcLicense) }} </td>
+                                        <td colspan="2">IT support time (labour cost)</td>
+                                        <td colspan="2" align="right">{{ certsOpsHours }} hours</td>
+                                        <td align="right">${{ formatTableNumber(certsOpsCost) }} </td>
                                         <td></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="4">Your annual cost of certificate management </th>
+                                        <td align="right" class="tc-rich-electric-blue"><b>${{ formatTableNumber(totalCostWithoutKc) }}</b></td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="tc-onyx table table-bordered table-striped table-hover">
+                                    <thead>
+                                    <tr class="tc-rich-electric-blue">
+                                        <td colspan="6" ><b>Certificate management with KeyChest</b><br/>
+                                            (all prices are in US dollars, numbers may not add up due to rounding)</td>
+                                    </tr>
+                                    <tr style="font-weight: bold;">
+                                        <td colspan="4">Item</td>
+                                        <td align="center">Cost</td>
+                                        <td align="center">Saving</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td colspan="4">Unused certificate</td>
+                                        <td align="right">$0</td>
+                                        <td align="right">${{ formatTableNumber(certsCostUnused) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">Certificate cost + labor </td>
+                                        <td align="right">${{ formatTableNumber(totalCostWithKc - kcLicense) }} </td>
+                                        <td align="right">${{formatTableNumber(certsCostUsed-certsKcNonmanagedCost + certsKcManagedOpsSaving)}} </td>
                                     </tr>
                                     <tr>
                                         <td colspan="4">KeyChest License</td>
                                         <td align="right">${{ formatTableNumber(kcLicense) }} </td>
                                         <td></td>
                                     </tr>
-                                    <tr>
-                                        <th colspan="4">Total cost with KeyChest (savings of {{ formatFloat(savingPercent) }}%) </th>
-                                        <td align="right"><b>${{ formatTableNumber(totalCostWithKc) }} </b> </td>
-                                        <td align="center"><b>${{ formatTableNumber(totalSaving) }} </b></td>
+                                    <tr v-if="savingPercent>0">
+                                        <th colspan="4">Cost saving</th>
+                                        <td align="right"></td>
+                                        <td align="right" class="tc-rich-electric-blue"><b>${{ formatTableNumber(totalSaving + kcLicense) }} </b></td>
+                                    </tr>
+                                    <tr v-if="savingPercent>0">
+                                        <th colspan="4">Total cost with KeyChest</th>
+                                        <td align="right" class="tc-rich-electric-blue"><b>${{ formatTableNumber(totalCostWithKc) }} </b> </td>
+                                        <td align="right" class="tc-rich-electric-blue"><b>{{ formatFloat(savingPercent) }}%</b></td>
+                                    </tr>
+                                    <tr v-else="">
+                                        <th colspan="4">Total cost with KeyChest</th>
+                                        <td align="right" class="tc-rich-electric-blue"><b>${{ formatTableNumber(totalCostWithKc) }} </b> </td>
+                                        <td align="right"><b></b></td>
                                     </tr>
 
                                     </tbody>
                                 </table>
+                                <p class="tc-onyx">
+                                    The KeyChest cost includes an initial configuration of a renewal agent to provide
+                                    the required functionality. Please get in touch using the form below, if you require
+                                    a quotation.
+                                </p>
+                                <p><i>
+                                    Disclaimer: The calculation is intended for an estimate only, with the purpose of allowing you
+                                    to consider the KeyChest service. The actual KeyChest license cost will be subject
+                                    to a final technical and  security assessment of your requirements.  We make no
+                                    representations and warranties whatsoever.
+                                </i>
+                                </p>
+
                             </div>
                         </sbox>
                     </div>
                 </div>
 
-                <!-- Certificate issuers -->
-                <div class="row" v-if="certIssuerTableData">
-                    <div class="xcol-md-12">
-                        <sbox cssBox="box-success" :headerCollapse="true">
-                            <template slot="title">Number of certificates per issuer</template>
-                            <div class="table-responsive table-xfull" style="margin-bottom: 10px">
-                                <table class="table table-bordered table-striped table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Provider</th>
-                                        <th>Watched servers</th>
-                                        <th>All issued certificates (CT)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="curDat in certIssuerTableData">
-                                        <td> {{ curDat[0] }} </td>
-                                        <td> {{ curDat[1] }} </td>
-                                        <td> {{ curDat[2] }} </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
 
-                        </sbox>
-                    </div>
-                </div>
+                <iframe title="KeyChest cost feedback" class="freshwidget-embedded-form" id="freshwidget-embedded-form-4"
+                        src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
+                        scrolling="no" height="410px" width="100%" frameborder="0" >
+                </iframe>
+
+
+                <!--&lt;!&ndash; Certificate issuers &ndash;&gt;-->
+                <!--<div class="row" v-if="certIssuerTableData">-->
+                <!--<div class="xcol-md-12">-->
+                <!--<sbox cssBox="box-success" :headerCollapse="true">-->
+                <!--<template slot="title">Number of certificates per issuer</template>-->
+                <!--<div class="table-responsive table-xfull" style="margin-bottom: 10px">-->
+                <!--<table class="table table-bordered table-striped table-hover">-->
+                <!--<thead>-->
+                <!--<tr>-->
+                <!--<th>Provider</th>-->
+                <!--<th>Watched servers</th>-->
+                <!--<th>All issued certificates (CT)</th>-->
+                <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                <!--<tr v-for="curDat in certIssuerTableData">-->
+                <!--<td> {{ curDat[0] }} </td>-->
+                <!--<td> {{ curDat[1] }} </td>-->
+                <!--<td> {{ curDat[2] }} </td>-->
+                <!--</tr>-->
+                <!--</tbody>-->
+                <!--</table>-->
+                <!--</div>-->
+                <!--</sbox>-->
+                <!--</div>-->
+                <!--</div>-->
             </div>
         </transition>
     </div>
@@ -200,8 +247,8 @@
                 certIssuerTableData: null,
                 certPriceData: null,
 
-                certTypeLabels: ['Domain Validated', 'Wildcard, Domain Validated', 'Org. Validated',
-                    'Wildcard, Org. Validated', 'Extended Validated', 'Wildcard, Exended Validated'],
+                certTypeLabels: ['domain validated', 'wildcard, domain validated', 'org. validated',
+                    'wildcard, org. validated', 'extended validation', 'wildcard, exended validation'],
 
                 chartColors: [
                     '#00c0ef',
@@ -324,6 +371,16 @@
                         return subAcc + subVal[0] * !!val[2].mods[subKey].kcman;
                     }, 0);
                 }, 0);
+            },
+
+            certsKcManagedOpsSaving(){
+                // Computed from TLS scan (val[1]) scan as this is the actual number of
+                // keychest managed certificates (not CT).
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
+                        return subAcc + subVal[0] * !!val[2].mods[subKey].kcman; // kc managed? then 0 units
+                    }, 0.0);
+                }, 0.0) * this.hourlyPay * 0.5;
             },
 
             certsManualManagedOpsCost(){

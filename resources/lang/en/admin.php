@@ -20,7 +20,7 @@ return [
     'enterprise' => 'Enterprise',
     'request' => 'Request KeyChest',
     'license' => 'Account',
-    'cost-management' => 'Cost Management',
+    'cost-management' => 'Certificate Cost',
     'apidoc' => 'API',
     'management' => 'Management',
 
@@ -35,5 +35,5 @@ return [
     'request_desc' => 'Benefits of KeyChest; customize your purchase order',
     'apidoc_desc' => 'Automate certificates with our API',
     'management_desc' => 'Certificate auto management',
-    'cost_management_desc' => 'Certificate infrastructure price estimates',
+    'cost_management_desc' => 'Cost of managing certificates',
 ];
