@@ -132,6 +132,7 @@
 
             removeLastTag () {
                 if (this.newTag) { return }
+                if (this.tags.length > 0 && !this.removableTag(_.last(this.tags))) { return }
                 this.tags.pop();
                 this.tagChange();
             },
