@@ -48,46 +48,7 @@
 
                     <div class="form-group">
                         <label>Groups</label>
-                        <input-tags
-                                placeholder="Type a group"
-                                url="/home/management/groups/search"
-                                :validator="tagValidator"
-                                :tags="formData.groups"
-                                :complexTags="true"
-                                tagAccessor="group_name"
-                                :tagRemovable="tagRemovable"
-
-                        >
-                            <template slot-scope="props">
-                                <autocomplete
-                                        v-if="!props.readOnly"
-                                        v-validate="{max: 128, regex: /^([a-zA-Z0-9_/\-.]+)$/ }"
-                                        name="host_group"
-                                        data-vv-as="Host group"
-
-                                        :placeholder="props.placeholder"
-                                        :debounce="250"
-                                        :classes="{ input: 'new-tag' }"
-                                        v-model="props.t.newTag"
-
-                                        ref="input_component"
-                                        anchor="group_name"
-                                        label=""
-                                        url="/home/management/groups/search"
-
-                                        :process="processGroupAutocomplete"
-                                        :spaceAsTrigger="true"
-                                        :customParams="{ noHostGroups: '1' }"
-                                        @onEnter="props.onAdd"
-                                        @onTab="props.onAdd"
-                                        @on188="props.onAdd"
-                                        @onRight="props.onAdd"
-                                        @onSpace="props.onAdd"
-                                        @onSelect="props.addNew"
-                                        @onDelete="props.onDelete"
-                                ></autocomplete>
-                            </template>
-                        </input-tags>
+                        <host-groups :tags="formData.groups"></host-groups>
 
                         <i v-show="errors.has('host_group')" class="fa fa-warning"></i>
                         <span v-show="errors.has('host_group')" class="help is-danger"
@@ -136,6 +97,7 @@
     import pluralize from 'pluralize';
     import axios from 'axios';
     import Req from 'req';
+    import mgmUtil from './util';
     import swal from 'sweetalert2';
     import toastr from 'toastr';
 
@@ -145,16 +107,13 @@
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
     import hostSpecValidator from '../../lib/validator/hostspec';
-    import InputTags from 'ph4-input-tag';
-    import AutoComplete from 'ph4-autocomplete';
-    import 'ph4-autocomplete/Autocomplete.css';
+    import HostGroups from './HostGroupsSelector';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
-    Vue.component('input-tags', InputTags);
-    Vue.component('autocomplete', AutoComplete);
+    Vue.component('host-groups', HostGroups);
 
     export default {
         components: {
@@ -246,9 +205,7 @@
                         this.response = res.data;
 
                         // sort groups so the host group is first
-                        this.formData.groups = _.sortBy(this.response.groups, x => {
-                            return (!_.startsWith(x.group_name, 'host-'))  + x.group_name;
-                        });
+                        this.formData.groups = mgmUtil.sortHostGroups(this.response.groups);
 
                         setTimeout(() => {
                             this.$scrollTo('.config-host');
@@ -258,17 +215,6 @@
                 });
             },
 
-            processGroupAutocomplete(json){
-                return json.results;
-            },
-
-            tagValidator(tagValue){
-                return !this.errors.has('host_group') && !_.startsWith(tagValue, 'host-');
-            },
-
-            tagRemovable(tag){
-                return !_.startsWith(tag.group_name, 'host-');
-            }
         },
 
         events: {
@@ -280,32 +226,5 @@
 <style scoped>
 .config-host .ssh-key {
     word-wrap: break-word !important;
-}
-</style>
-
-<style>
-.autocomplete-list ul {
-    margin-left: -5px;
-    margin-top: 1px;
-    margin-right: 5px;
-    padding-top: 0;
-    width: 100%;
-    overflow-y: auto;
-    max-height: 200px;
-}
-
-.autocomplete-list ul li{
-    border-bottom: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-}
-
-.autocomplete-list ul:before{
-    display: none !important;
-}
-
-.autocomplete-list .autocomplete-list-wrap {
-    width: 100%;
-    padding-right: 20px;
 }
 </style>
