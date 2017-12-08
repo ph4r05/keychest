@@ -157,6 +157,12 @@ class HostController extends Controller
 
         $dbHost->groups()->save($group);
 
+        // All secondary groups added
+        $groups = collect(Input::get('groups'))->recursiveObj();
+        $groups = $this->hostGroupManager->sanitizeGroupsByReload($groups, $user->primary_owner_id);
+        $groups = $this->hostGroupManager->fetchOrCreate($groups, $user->primary_owner_id);
+        $dbHost->groups()->saveMany($groups);
+
         return response()->json([
                 'state' => 'success',
                 'host_id' => $dbHost->id,

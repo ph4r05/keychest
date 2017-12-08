@@ -17,6 +17,7 @@ use App\Keychest\Services\Management\HostManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
+use App\Models\ManagedHostGroup;
 use App\Rules\HostSpecObjRule;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
