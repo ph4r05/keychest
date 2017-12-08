@@ -20,7 +20,7 @@
                 :class="`${getClassName('list')} autocomplete autocomplete-list`"
                 v-show="showList && json.length"
         >
-            <div class="autocomplete-list-wrap">
+            <div class="autocomplete-list-wrap" ref="listWrapper" :style="listWrapperStyle">
             <ul>
                 <li
                         v-for="(data, i) in json"
@@ -130,6 +130,10 @@
                 type: Boolean,
                 default: false
             },
+            // width of the tooltip bar, optional
+            tooltipWidth: {
+                type: Number,
+            },
             // Create a custom template from data.
             onShouldRenderChild: Function,
             // Process the result before retrieveng the result array.
@@ -159,6 +163,14 @@
                 focusList: "",
                 debounceTask: undefined,
             };
+        },
+        computed: {
+            listWrapperStyle(){
+                return !this.tooltipWidth ? {} : {
+                    width: this.tooltipWidth + 'px',
+                    paddingRight: '0px',
+                };
+            }
         },
         watch: {
             options(newVal, oldVal) {
