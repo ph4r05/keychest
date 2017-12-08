@@ -302,7 +302,7 @@
                 }, 0.0);
             },
 
-            certsManagedOpsCost(){
+            certsManualManagedOpsCost(){
                 return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
                     return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
                         return subAcc + subVal[0] * !val[2].mods[subKey].kcman; // managed? then 0 units
@@ -311,7 +311,7 @@
             },
 
             totalCostWithKc(){
-                return this.kcLicense + this.certsManagedOpsCost + this.certsUnmanagedCost;
+                return this.kcLicense + this.certsManualManagedOpsCost + this.certsUnmanagedCost;
             },
 
             savingPercent(){
