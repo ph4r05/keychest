@@ -24,6 +24,7 @@
 
 <script>
     export default {
+        inject: ['$validator'],
         props: {
             remove: {
                 type: Boolean,
