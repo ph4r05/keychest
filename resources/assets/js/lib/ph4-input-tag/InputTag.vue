@@ -108,8 +108,8 @@
                     }
                 }
 
-                this.bus.$emit('cleanInput', 1);
                 this.newTag = '';
+                this.bus.$emit('cleanInput', 1);
             },
 
             validateIfNeeded (tagValue) {

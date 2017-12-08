@@ -175,7 +175,7 @@
                 }
             },
             value(newVal, oldVal) {
-                if (newVal !== oldVal) {
+                if (newVal !== oldVal || !newVal) {
                     this.type = newVal;
                 }
             }
@@ -218,10 +218,7 @@
                 }
             },
             handleKeyDown(e){
-                let key = e.keyCode;
-                // Disable when list isn't showing up
-                if(!this.showList) return;
-                // Key List
+                const key = e.keyCode;
                 const DOWN = 40;
                 const UP = 38;
                 const RIGHT = 39;
