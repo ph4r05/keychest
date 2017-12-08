@@ -78,6 +78,14 @@
                                     </template>
 
                                     <tr>
+                                        <td colspan="2">Current annual cost of certificates </td>
+                                        <td align="right">${{ formatTableNumber(certsCostUsed) }}</td>
+                                        <td align="right">${{ formatTableNumber(certsCostUnused) }}</td>
+                                        <td align="right">${{ formatTableNumber(certsCostTotal) }}</td>
+                                        <td></td>
+                                    </tr>
+
+                                    <tr>
                                         <td colspan="2">Estimate of IT support time (labour cost)</td>
                                         <td colspan="2" align="right">{{ certsOpsHours }} hours</td>
                                         <td align="right">${{ certsOpsCost }} </td>
@@ -89,6 +97,7 @@
                                         <td align="right"><b>${{ formatTableNumber(totalCostWithoutKc) }}</b></td>
                                         <td></td>
                                     </tr>
+
                                     <tr>
                                         <td colspan="7"></td>
                                     </tr>
@@ -101,7 +110,7 @@
                                         <td align="center"><i>Saving</i></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4">Certificate cost</td>
+                                        <td colspan="4">Unmanaged certificate cost + labour</td>
                                         <td align="right">${{ formatTableNumber(totalCostWithKc - kcLicense) }} </td>
                                         <td></td>
                                     </tr>
@@ -260,13 +269,17 @@
             },
 
             kcLicense(){
-                return 4000.;  // may depend on another variables (e.g. number of managed certs)
+                return (10 * this.certsKcManagedCount) + 1000.;
+            },
+
+            certsCostUsed(){
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + val[1].total_price;
+                }, 0.0);
             },
 
             certsCostUnused(){
-                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
-                    return acc + (val[2].total_price - val[1].total_price);  // using CT - TLS detected
-                }, 0.0);
+                return this.certsCostTotal - this.certsCostUsed;
             },
 
             certsCostTotal(){
@@ -293,25 +306,38 @@
                 return this.certsCostTotal + this.certsOpsCost;
             },
 
-            certsUnmanagedCost(){
-                // Cost with managed by KC - subtract those managed by KC
+            certsKcNonmanagedCost(){
+                // KC-nonmanaged cert cost.
+                // Computed from TLS (val[1]) scan as we can save unused CT cert price.
                 return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
                     return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
-                            return subAcc + subVal[1] * !val[2].mods[subKey].kcman; // managed? then 0 cost
+                            return subAcc + subVal[1] * !val[2].mods[subKey].kcman; // kc managed? then 0 cost
                     }, 0.0);
                 }, 0.0);
             },
 
-            certsManualManagedOpsCost(){
+            certsKcManagedCount(){
+                // Computed from TLS scan (val[1]).
+                // KC manages only TLS present cert by default.
                 return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
                     return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
-                        return subAcc + subVal[0] * !val[2].mods[subKey].kcman; // managed? then 0 units
+                        return subAcc + subVal[0] * !!val[2].mods[subKey].kcman;
+                    }, 0);
+                }, 0);
+            },
+
+            certsManualManagedOpsCost(){
+                // Computed from TLS scan (val[1]) scan as this is the actual number of
+                // manually managed certificates (not CT).
+                return _.isEmpty(this.certPriceData) ? 0 : _.reduce(this.certPriceData, (acc, val, key) => {
+                    return acc + _.reduce(val[1].num_price, (subAcc, subVal, subKey) => {
+                        return subAcc + subVal[0] * !val[2].mods[subKey].kcman; // kc managed? then 0 units
                     }, 0.0);
                 }, 0.0) * this.hourlyPay * 0.5;
             },
 
             totalCostWithKc(){
-                return this.kcLicense + this.certsManualManagedOpsCost + this.certsUnmanagedCost;
+                return this.kcLicense + this.certsManualManagedOpsCost + this.certsKcNonmanagedCost;
             },
 
             savingPercent(){
