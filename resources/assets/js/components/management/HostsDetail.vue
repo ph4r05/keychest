@@ -11,6 +11,12 @@
                         <th>Host address</th>
                         <td>{{ rowData.host_addr }}:{{ rowData.ssh_port }}</td>
                     </tr>
+                    <tr>
+                        <th>Host groups</th>
+                        <td>
+                            <host-groups :tags="rowData.groups" :readOnly="true"></host-groups>
+                        </td>
+                    </tr>
                     <tr v-if="rowData.ssh_key">
                         <th colspan="2">SSH key</th>
                     </tr>
@@ -27,6 +33,12 @@
 
 <script>
     import _ from 'lodash';
+    import mgmUtil from './util';
+
+    import Vue from 'vue';
+    import HostGroups from './HostGroupsSelector';
+
+    Vue.component('host-groups', HostGroups);
 
     export default {
         props: {
@@ -47,6 +59,8 @@
             hookup(){
                 window.addEventListener('resize', this.handleResize);
                 this.handleResize();
+
+                mgmUtil.sortHostGroupsInPlace(this.rowData.groups);
             },
             handleResize() {
                 this.clientWidth = this.$refs.tbl.clientWidth;

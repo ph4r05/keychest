@@ -86,7 +86,7 @@ class HostController extends Controller
             });
         }
 
-        $query = $query->with(['sshKey']);
+        $query = $query->with(['sshKey', 'groups']);
         $query = DbTools::sortQuery($query, $sort_parsed);
 
         $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
@@ -106,6 +106,7 @@ class HostController extends Controller
      *
      * @param ParamRequest $request
      * @return Response
+     * @throws Exception
      */
     public function addHost(ParamRequest $request)
     {
