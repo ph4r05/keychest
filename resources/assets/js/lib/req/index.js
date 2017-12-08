@@ -574,6 +574,41 @@ function mostFrequent(set, keyFnc){
     return vals[maxKey];
 }
 
+/**
+ * Using Lodash _.sortBy() to get the sort index by user suplied sorting lambda.
+ *
+ * Augments array with position, runs the modified sorting function to obtain
+ * the sorting index, resort the array based on the index.
+ *
+ * @param col
+ * @param fnc
+ */
+function sortByGetSortIndex(col, fnc){
+    const sorted = _.sortBy(
+        _.map(col, (value, index, col) => {
+            return [index, value];
+        }),
+        x => {
+            return fnc(x[1]);
+        }
+    );
+
+    return _.map(sorted, x => {
+        return x[0];
+    });
+}
+
+/**
+ * In place sorting using classic JS .sort().
+ * @param col array
+ * @param fnc Function
+ * @returns {*}
+ */
+function sortByInPlace(col, fnc){
+    col.sort(keyToCompare(fnc));
+    return col;
+}
+
 //
 // Certificate functions
 //
@@ -740,6 +775,8 @@ export default {
     takeMod: takeMod,
     listToSet: listToSet,
     mostFrequent: mostFrequent,
+    sortByGetSortIndex: sortByGetSortIndex,
+    sortByInPlace: sortByInPlace,
 
     certIssuer: certIssuer,
     normalizeIssuer: normalizeIssuer,
