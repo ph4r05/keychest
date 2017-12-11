@@ -10,6 +10,7 @@
 
     import Management from './management.vue';
     import AddHost from './management/AddHost.vue';
+    import AddService from './management/AddService.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
@@ -26,7 +27,12 @@
             path: '/addHost',
             name: 'addHost',
             component: AddHost,
-        }
+        },
+        {
+            path: '/addService',
+            name: 'addService',
+            component: AddService,
+        },
     ];
 
     const router = window.VueRouter; // type: VueRouter
