@@ -78,6 +78,7 @@
     router.afterEach((to, fromr) => {
         if (fromr){
             to.meta.predecessor = fromr;
+            fromr.meta.predecessor = null;
         }
     });
 
@@ -102,7 +103,7 @@
             hookup(){
                 const pred = _.get(this.$route, 'meta.predecessor.meta');
                 if (pred && pred.tabCode && pred.tabCode === 'mgmt' && pred.tab){
-                    Req.switchTab(pred.tab);
+                    Req.switchTab('tab_' + pred.tab);
                 }
             },
         },
