@@ -248,10 +248,12 @@
                         e.preventDefault();
                         this.focusList++;
                         break;
+
                     case UP:
                         e.preventDefault();
                         this.focusList--;
                         break;
+
                     case ENTER:
                         e.preventDefault();
                         if (this.showList && this.json && this.focusList in this.json) {
@@ -262,33 +264,43 @@
                         this.$emit('onEnter', e);
                         signalChange = false;
                         break;
+
                     case ESC:
                         this.showList = false;
                         break;
+
                     case RIGHT:
                         //e.preventDefault()
                         this.onRight ? this.onRight(e) : null;
                         this.$emit('onRight', e);
                         signalChange = false;
                         break;
+
                     case TAB:
                         e.preventDefault();
+                        if (_.isEmpty(this.type)){
+                            this.listLoadTrigger();
+                        }
+
                         this.onTab ? this.onTab(e) : null;
                         this.$emit('onTab', e);
                         signalChange = false;
                         break;
+
                     case DELETE:
                         this.onDelete ? this.onDelete(e) : null;
                         this.$emit('onDelete', e);
                         break;
+
                     case SPACE:
                         if (this.spaceAsTrigger){
                             e.preventDefault();
-                            this.$emit('onSpace', e);
-                            signalChange = false;
                             if (_.isEmpty(this.type)){
                                 this.listLoadTrigger();
                             }
+
+                            this.$emit('onSpace', e);
+                            signalChange = false;
                         }
                         break;
                     case 188:
