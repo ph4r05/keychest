@@ -75,10 +75,11 @@
     ];
     router.addRoutes(routes);
 
+    // BUG: this closure slows down the navigation a bit from some reason
     router.afterEach((to, fromr) => {
         if (fromr){
-            to.meta.predecessor = fromr;
             fromr.meta.predecessor = null;
+            to.meta.predecessor = fromr.meta;
         }
     });
 
@@ -101,7 +102,8 @@
             },
 
             hookup(){
-                const pred = _.get(this.$route, 'meta.predecessor.meta');
+                // If the previous link defines the tab which should be displayed, switch the tab.
+                const pred = _.get(this.$route, 'meta.predecessor');
                 if (pred && pred.tabCode && pred.tabCode === 'mgmt' && pred.tab){
                     Req.switchTab('tab_' + pred.tab);
                 }
