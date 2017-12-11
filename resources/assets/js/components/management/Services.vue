@@ -121,7 +121,7 @@
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
     import FilterBar from '../partials/FilterBar.vue';
-    import DetailRow from './HostsDetail.vue';
+    import DetailRow from './ServiceDetail.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
