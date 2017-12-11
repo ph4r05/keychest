@@ -74,4 +74,87 @@ class MgmtServiceController extends Controller
         $this->credentialsManager = $credentialsManager;
     }
 
+    /**
+     * Get all managed services
+     */
+    public function getServices(){
+        $curUser = Auth::user();
+        $ownerId = $curUser->primary_owner_id;
+
+        $sort = strtolower(trim(Input::get('sort')));
+        $filter = strtolower(trim(Input::get('filter')));
+        $per_page = intval(trim(Input::get('per_page')));
+        $return_all = intval(trim(Input::get('return_all')));
+        $sort_parsed = DataTools::vueSortToDb($sort);
+
+        // server list load
+        $query = $this->serviceManager->loadServiceListQuery($ownerId);
+        if (!empty($filter)){
+            $query = $query->where(function(Builder $query) use($filter) {
+                $query->where('svc_name', 'like', '%'. $filter . '%')
+                    ->orWhere('svc_display', 'like', '%'. $filter . '%');
+            });
+        }
+
+        $query = $query->with(['solutions']);
+        $query = DbTools::sortQuery($query, $sort_parsed);
+
+        $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
+        if ($return_all){
+            $page_size = config('keychest.max_servers');
+        }
+
+        $ret = $query->paginate($page_size); // type: \Illuminate\Pagination\LengthAwarePaginator
+        $retArr = $ret->toArray();
+
+        return response()->json($retArr, 200);
+    }
+
+    /**
+     * Adds managed service
+     *
+     * @param ParamRequest $request
+     * @return Response
+     * @throws Exception
+     */
+    public function addService(ParamRequest $request)
+    {
+        $this->validate($request, [  // TODO: refine validation rules
+            'svc_name' => 'required|max:160',
+            'svc_display' => 'present|max:160',
+            'svc_type' => 'required|max:64',
+            'svc_criticality' => 'required|integer',
+            'svc_assurance' => 'required|max:64',
+        ], [], [
+                'svc_name' => 'Service code']
+        );
+
+        // Host Db spec for storage.
+        $user = Auth::getUser();
+        $ownerId = $user->primary_owner_id;
+        $svcName = Input::get('svc_name');
+
+        // Duplicity detection
+        $exists = $this->serviceManager->getByName($svcName, $ownerId)->first();
+        if (!empty($exists)){
+            return response()->json(['status' => 'already-present'], 410);
+        }
+
+        $params = [
+            'svc_name' => $svcName,
+            'svc_display' => Input::get('svc_display'),
+            'svc_type' => Input::get('svc_type'),
+            'svc_criticality' => Input::get('svc_criticality'),
+            'svc_assurance_level' => Input::get('svc_assurance'),
+        ];
+
+        // Add
+        $dbRecord = $this->serviceManager->add($params, $ownerId);
+
+        return response()->json([
+            'state' => 'success',
+            'record' => $dbRecord,
+        ], 200);
+    }
+
 }
