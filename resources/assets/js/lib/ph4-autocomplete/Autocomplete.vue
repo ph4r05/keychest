@@ -48,6 +48,8 @@
 
 
 <script>
+    import _ from 'lodash';
+
     /*! Copyright (c) 2016 Naufal Rabbani (http://github.com/BosNaufal)
     * Licensed Under MIT (http://opensource.org/licenses/MIT)
     *
@@ -284,6 +286,9 @@
                             e.preventDefault();
                             this.$emit('onSpace', e);
                             signalChange = false;
+                            if (_.isEmpty(this.type)){
+                                this.listLoadTrigger();
+                            }
                         }
                         break;
                     case 188:
