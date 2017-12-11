@@ -77,7 +77,7 @@
                         <i class="glyphicon glyphicon-random" title="Invert"></i></button>
                     <button type="button" class="btn btn-sm btn-danger" :class="{'disabled': numSelected==0}"
                             :disabled="numSelected==0"
-                            @click="onDeleteServers()">
+                            @click="onDeleteBulk()">
                         <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
                 </div>
                 <span>Selected {{numSelected}} {{ pluralize('host', numSelected) }} </span>
@@ -315,10 +315,10 @@
                     showCancelButton: true,
                     confirmButtonText: 'Remove'
                 }).then(() => {
-                    this.onDeleteServerConfirmed(data);
+                    this.onDeleteConfirmed(data);
                 }).catch(() => {});
             },
-            onDeleteServers(){
+            onDeleteBulk(){
                 swal({
                     title: 'Please confirm removal',
                     text: pluralize('Host', this.numSelected, true) + ' will be removed.',
@@ -326,10 +326,10 @@
                     showCancelButton: true,
                     confirmButtonText: 'Remove'
                 }).then(() => {
-                    this.onDeleteServerConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
+                    this.onDeleteConfirmed({'ids': this.$refs.vuetable.selectedTo}, true);
                 }).catch(() => {});
             },
-            onDeleteServerConfirmed(data, isMore){
+            onDeleteConfirmed(data, isMore){
                 const onFail = () => {
                     this.moreParams.deleteState = -1;
                     swal('Delete error', 'Server delete failed :(', 'error');
