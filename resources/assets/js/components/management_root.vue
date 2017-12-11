@@ -9,8 +9,6 @@
     import VueRouter from 'vue-router';
 
     import Management from './management.vue';
-    import AddHost from './management/AddHost.vue';
-    import AddService from './management/AddService.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
@@ -18,20 +16,11 @@
     const routes = [
         {
             path: '/',
+            name: 'management',
             component: Management,
             children: [
 
-            ]
-        },
-        {
-            path: '/addHost',
-            name: 'addHost',
-            component: AddHost,
-        },
-        {
-            path: '/addService',
-            name: 'addService',
-            component: AddService,
+            ],
         },
     ];
 

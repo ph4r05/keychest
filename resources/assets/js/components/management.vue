@@ -31,12 +31,18 @@
     </div>
 </template>
 <script>
+    import _ from 'lodash';
+    import Req from 'req';
+
     import Vue from 'vue';
     import VueEvents from 'vue-events';
     import VueRouter from 'vue-router';
 
     import ManagementHosts from './management/Hosts.vue';
     import ManagementServices from './management/Services.vue';
+
+    import AddHost from './management/AddHost.vue';
+    import AddService from './management/AddService.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
@@ -45,6 +51,36 @@
     Vue.component('mgmt-services', ManagementServices);
 
     const router = window.VueRouter; // type: VueRouter
+    const routes = [
+        {
+            path: '/addHost',
+            name: 'addHost',
+            component: AddHost,
+            meta: {
+                tabCode: 'mgmt',
+                tab:  1,
+                parent: {name: 'management'}
+            },
+        },
+        {
+            path: '/addService',
+            name: 'addService',
+            component: AddService,
+            meta: {
+                tabCode: 'mgmt',
+                tab:  3,
+                parent: {name: 'management'}
+            },
+        },
+    ];
+    router.addRoutes(routes);
+
+    router.afterEach((to, fromr) => {
+        if (fromr){
+            to.meta.predecessor = fromr;
+        }
+    });
+
     export default {
         data () {
             return {
@@ -52,10 +88,23 @@
             }
         },
 
+        mounted() {
+            this.$nextTick(() => {
+                this.hookup();
+            });
+        },
+
         methods: {
             refresh(){
                 this.$events.fire('on-manual-refresh');
-            }
+            },
+
+            hookup(){
+                const pred = _.get(this.$route, 'meta.predecessor.meta');
+                if (pred && pred.tabCode && pred.tabCode === 'mgmt' && pred.tab){
+                    Req.switchTab(pred.tab);
+                }
+            },
         },
     }
 </script>

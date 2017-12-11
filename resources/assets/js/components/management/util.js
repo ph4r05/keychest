@@ -42,5 +42,16 @@ export default {
 
         return Req.sortByInPlace(groups, this.hostGroupSortFunction);
     },
+
+    /**
+     * vue-router: Returns either to the parent from meta or to the previous page (if no parent).
+     * @param router
+     * @param route
+     * @returns {void|*}
+     */
+    windowBack(router, route){
+        const parent = _.get(route, 'meta.parent');
+        return parent ? router.push(parent) : router.back();
+    },
 }
 

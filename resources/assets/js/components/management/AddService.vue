@@ -165,7 +165,7 @@
             },
 
             back() {
-                this.$router.back();
+                mgmUtil.windowBack(this.$router, this.$route);
             },
 
             async inputCheck(){
