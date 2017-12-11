@@ -2,7 +2,7 @@
     <div class="mgmt-add-host row">
 
         <sbox cssBox="box-primary" :headerCollapse="false">
-            <template slot="title">Add managed host</template>
+            <template slot="title">{{ editMode ? 'Edit' : 'Add' }} managed host</template>
             <template slot="widgets">
                 <button type="button" class="btn btn-box-tool"
                         data-toggle="tooltip" title="Back"
@@ -12,7 +12,8 @@
             </template>
 
             <p>
-                Add a new managed server.
+                <template v-if="editMode">Edit the managed server.</template>
+                <template v-else="">Add a new managed server.</template>
             </p>
 
             <div class="">
@@ -32,6 +33,7 @@
                                v-validate="{max: 255, required: true, host_spec: true}"
                                data-vv-as="Host address"
                                v-model="formData.host_addr"
+                               :disabled="editMode"
                         />
 
                         <i v-show="errors.has('host_addr')" class="fa fa-warning"></i>
@@ -56,10 +58,10 @@
                     </div>
 
                     <transition>
-                        <div class="form-group" v-if="sentState == 0">
+                        <div class="form-group" v-if="sentState != 1">
                             <button type="submit" class="btn btn-block btn-success btn-block"
                                     :disabled="hasErrors || isRequestInProgress"
-                            >Save Server</button>
+                            >{{ editMode ? 'Update' : 'Save' }} Server</button>
                         </div>
 
                         <div class="alert alert-info-2 alert-waiting" v-if="sentState == 1">
@@ -73,18 +75,11 @@
             <div v-if="sentState == 2">
                 <hr/>
 
-                <transition>
-                    <div class="alert alert-success-2">
-                        <span>Host has been saved</span>
-                    </div>
-                </transition>
-
-                <div class="config-host alert alert-info-2" v-if="response">
+                <div class="config-host alert alert-info-2" v-if="response && !alreadyExisted">
                     <p>Please add the following SSH key to your <span class="code-block">~/.ssh/authorized_keys</span>:</p>
                     <p class="code-block ssh-key">{{ response.ssh_key_public }}</p>
                 </div>
             </div>
-
 
         </sbox>
 
@@ -122,7 +117,10 @@
         data () {
             return {
                 sentState: 0,
+                editMode: false,
+                alreadyExisted: false,
                 formData: {
+                    id: null,
                     host_name: '',
                     host_addr: '',
                     agent_id: '',
@@ -185,7 +183,7 @@
                     this.sentState = 1;
                     this.formData.host_name = _.isEmpty(this.formData.host_name) ? this.formData.host_addr : this.formData.host_name;
                     const params = this.formData;
-                    axios.post('/home/management/hosts/add', params)
+                    axios.post('/home/management/hosts/' + (this.editMode ? 'edit' : 'add'), params)
                         .then(res => {
                             this.sentState = 2;
                             resolve(res);
@@ -211,6 +209,11 @@
                             this.$scrollTo('.config-host');
                         }, 100);
 
+                        toastr.success(this.editMode ?
+                            'Server updated successfully.' :
+                            'Server added successfully.', 'Success');
+
+                        this.editMode = true;
                     });
                 });
             },
