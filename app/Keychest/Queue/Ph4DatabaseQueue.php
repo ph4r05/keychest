@@ -25,9 +25,10 @@ class Ph4DatabaseQueue extends DatabaseQueue implements QueueContract
     public function deleteReserved($queue, $id)
     {
         $this->database->transaction(function() use($queue, $id){
-            if ($this->database->table($this->table)->lockForUpdate()->find($id)) {
-                $this->database->table($this->table)->where('id', $id)->delete();
-            }
+            //if ($this->database->table($this->table)->lockForUpdate()->find($id)) {
+            //    $this->database->table($this->table)->where('id', $id)->delete();
+            //}
+            $this->database->table($this->table)->where('id', $id)->delete();
 
         }, 5);
     }
