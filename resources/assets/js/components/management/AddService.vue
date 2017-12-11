@@ -2,7 +2,7 @@
     <div class="mgmt-add-host row">
 
         <sbox cssBox="box-primary" :headerCollapse="false">
-            <template slot="title">Add managed service</template>
+            <template slot="title">{{ editMode ? 'Edit' : 'Add' }} managed service</template>
             <template slot="widgets">
                 <button type="button" class="btn btn-box-tool"
                         data-toggle="tooltip" title="Back"
@@ -12,7 +12,8 @@
             </template>
 
             <p>
-                Add a new managed service.
+                <template v-if="editMode">Edit the managed service.</template>
+                <template v-else="">Add a new managed service.</template>
             </p>
 
             <div class="">
@@ -32,6 +33,7 @@
                                v-validate="{max: 255, required: true}"
                                data-vv-as="Service code"
                                v-model="formData.svc_name"
+                               :disabled="editMode"
                         />
 
                         <i v-show="errors.has('svc_name')" class="fa fa-warning"></i>
@@ -76,10 +78,10 @@
                     </div>
 
                     <transition>
-                        <div class="form-group" v-if="sentState == 0">
+                        <div class="form-group" v-if="sentState != 1">
                             <button type="submit" class="btn btn-block btn-success btn-block"
                                     :disabled="hasErrors || isRequestInProgress"
-                            >Save Service</button>
+                            >{{ editMode ? 'Update' : 'Save' }} Service</button>
                         </div>
 
                         <div class="alert alert-info-2 alert-waiting" v-if="sentState == 1">
@@ -91,15 +93,8 @@
             </div>
 
             <div v-if="sentState == 2">
-                <hr/>
 
-                <transition>
-                    <div class="alert alert-success-2">
-                        <span>Service has been saved</span>
-                    </div>
-                </transition>
             </div>
-
 
         </sbox>
 
@@ -136,7 +131,9 @@
         data () {
             return {
                 sentState: 0,
+                editMode: false,
                 formData: {
+                    id: null,
                     svc_display: '',
                     svc_name: '',
                     svc_type: 'web',
@@ -198,9 +195,11 @@
                 return new Promise((resolve, reject) => {
 
                     this.sentState = 1;
-                    this.formData.host_name = _.isEmpty(this.formData.host_name) ? this.formData.host_addr : this.formData.host_name;
+                    this.formData.svc_display = _.isEmpty(this.formData.svc_display) ?
+                        this.formData.svc_name : this.formData.svc_display;
+
                     const params = this.formData;
-                    axios.post('/home/management/services/add', params)
+                    axios.post('/home/management/services/' + (this.editMode ? 'edit' : 'add'), params)
                         .then(res => {
                             this.sentState = 2;
                             resolve(res);
@@ -218,6 +217,11 @@
                 return new Promise((resolve, reject) => {
                     Vue.nextTick( () => {
                         this.response = res.data;
+                        toastr.success(this.editMode ?
+                            'Service updated successfully.' :
+                            'Service added successfully.', 'Success');
+
+                        this.editMode = true;
                     });
                 });
             },

@@ -139,6 +139,10 @@ Route::get('home/management', 'Management\ManagementController@managementIndex')
 Route::get('home/management/hosts', 'Management\HostController@getHosts');
 Route::get('home/management/groups/search', 'Management\HostGroupController@searchGroups');
 Route::post('home/management/hosts/add', 'Management\HostController@addHost');
+// TODO: host delete, host edit
+Route::get('home/management/services', 'Management\MgmtServiceController@getServices');
+Route::post('home/management/services/add', 'Management\MgmtServiceController@addService');
+// TODO: service delete, service edit
 
 // Tester
 Route::get('tester', 'KeyCheckController@index');

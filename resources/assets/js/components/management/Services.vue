@@ -349,7 +349,7 @@
                 };
 
                 this.moreParams.deleteState = 2;
-                axios.post('/home/management/service/del' + (isMore ? 'More' : ''), data)
+                axios.post('/home/management/services/del' + (isMore ? 'More' : ''), data)
                     .then(response => {
                         if (!response || !response.data || response.data['status'] !== 'success'){
                             onFail();

@@ -20,6 +20,7 @@ use App\Models\ApiKey;
 use App\Models\ApiWaitingObject;
 use App\Models\ManagedHost;
 use App\Models\ManagedHostGroup;
+use App\Models\ManagedService;
 use App\Models\SshKey;
 use App\Models\User;
 use Carbon\Carbon;
@@ -54,6 +55,55 @@ class MgmtServiceManager
         $this->app = $app;
     }
 
+    /**
+     * Builds query to load host list.
+     *
+     * @param null $ownerId
+     * @return \Illuminate\Database\Query\Builder|static
+     */
+    public function loadServiceListQuery($ownerId=null){
+        $query = ManagedService::query();
+        if ($ownerId){
+            $query = $query->where('owner_id', '=', $ownerId);
+        }
 
+        return $query;
+    }
+
+    /**
+     * Loads host by defined specs
+     * @param $svcName
+     * @param $ownerId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getByName($svcName, $ownerId){
+        $q = ManagedService::query()
+            ->where('svc_name', '=', $svcName);
+        $q = $q->where('owner_id', '=', $ownerId);
+        return $q;
+    }
+
+    /**
+     * Creates a new host from the specification.
+     * @param $params
+     * @param $ownerId
+     * @return ManagedService
+     */
+    public function add($params, $ownerId){
+        // Soft delete query
+        $trashedElem = $this->getByName($params['svc_name'], $ownerId)->onlyTrashed()->first();
+        if (!empty($trashedElem)){
+            $trashedElem->restore();
+            return $trashedElem;
+        }
+
+        // Insert a new record
+        unset($params['id']);
+        $item = new ManagedService(array_merge($params, [
+            'owner_id' => $ownerId
+        ]));
+        $item->save();
+        return $item;
+    }
 }
 
