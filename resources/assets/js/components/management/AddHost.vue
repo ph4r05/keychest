@@ -16,7 +16,7 @@
             </p>
 
             <div class="">
-                <form @submit.prevent="hostCheck()">
+                <form @submit.prevent="inputCheck()">
 
                     <div class="form-group">
                         <label for="host_name">Host name</label>
@@ -156,7 +156,7 @@
                 this.$router.back();
             },
 
-            async hostCheck(){
+            async inputCheck(){
                 const validResult = await this.$validator.validateAll();
                 if (!validResult){
                     return;

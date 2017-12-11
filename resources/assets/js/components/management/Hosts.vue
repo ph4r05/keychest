@@ -81,7 +81,7 @@
                         <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
                 </div>
                 <span>Selected {{numSelected}} {{ pluralize('host', numSelected) }} </span>
-                <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServers" >
+                <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadList" >
                     Download all hosts
                 </button>
             </div>
@@ -291,7 +291,7 @@
                 const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'});
                 FileSaver.saveAs(blob, 'hosts.csv');
             },
-            downloadServers() {
+            downloadList() {
                 Req.bodyProgress(true);
                 const params = {
                     return_all: 1,
