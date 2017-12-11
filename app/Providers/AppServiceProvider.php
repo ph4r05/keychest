@@ -11,6 +11,8 @@ use App\Keychest\Services\IpScanManager;
 use App\Keychest\Services\LicenseManager;
 use App\Keychest\Services\Management\HostGroupManager;
 use App\Keychest\Services\Management\HostManager;
+use App\Keychest\Services\Management\MgmtServiceManager;
+use App\Keychest\Services\Management\MgmtSolutionManager;
 use App\Keychest\Services\ScanManager;
 use App\Keychest\Services\ServerManager;
 use App\Keychest\Services\SubdomainManager;
@@ -92,6 +94,12 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(HostGroupManager::class, function(Application $app){
             return new HostGroupManager($app);
+        });
+        $this->app->bind(MgmtServiceManager::class, function(Application $app){
+            return new MgmtServiceManager($app);
+        });
+        $this->app->bind(MgmtSolutionManager::class, function(Application $app){
+            return new MgmtSolutionManager($app);
         });
     }
 
