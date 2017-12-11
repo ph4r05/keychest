@@ -331,7 +331,7 @@
             },
             listLoadTrigger(){
                 this.json = [];
-                this.getData("");
+                this.getData('', {'reload': true});
                 // Callback Event
                 this.onShow ? this.onShow() : null;
                 this.showList = true;
@@ -402,34 +402,34 @@
                     })
                 }
             },
-            doAjax(val) {
+            doAjax(val, options) {
                 // Callback Event
-                this.onBeforeAjax ? this.onBeforeAjax(val) : null;
+                this.onBeforeAjax ? this.onBeforeAjax(val, options) : null;
                 // Compose Params
-                let params = this.composeParams(val);
+                const params = this.composeParams(val);
                 // Init Ajax
-                let ajax = new XMLHttpRequest();
+                const ajax = new XMLHttpRequest();
                 ajax.open('GET', `${this.url}?${params}`, true);
                 this.composeHeader(ajax);
                 // Callback Event
                 ajax.addEventListener('progress', (data) => {
-                    if(data.lengthComputable && this.onAjaxProgress) this.onAjaxProgress(data)
+                    if(data.lengthComputable && this.onAjaxProgress) this.onAjaxProgress(data, options);
                 });
                 // On Done
                 ajax.addEventListener('loadend', (e) => {
                     const { responseText } = e.target;
-                    let json = JSON.parse(responseText);
+                    const json = JSON.parse(responseText);
                     // Callback Event
-                    this.onAjaxLoaded ? this.onAjaxLoaded(json) : null;
+                    this.onAjaxLoaded ? this.onAjaxLoaded(json, options) : null;
                     this.json = this.process ? this.process(json) : json;
                 });
                 // Send Ajax
                 ajax.send();
             },
-            getData(value){
+            getData(value, options){
                 if (value.length < this.min || !this.url) return;
-                if (this.onShouldGetData) this.manualGetData(value);
-                else this.doAjax(value)
+                if (this.onShouldGetData) this.manualGetData(value, options);
+                else this.doAjax(value, options)
             },
             // Do Ajax Manually, so user can do whatever he want
             manualGetData(val) {
