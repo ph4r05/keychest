@@ -178,34 +178,6 @@
                         src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
                         scrolling="no" height="410px" width="100%" frameborder="0" >
                 </iframe>
-
-
-                <!--&lt;!&ndash; Certificate issuers &ndash;&gt;-->
-                <!--<div class="row" v-if="certIssuerTableData">-->
-                <!--<div class="xcol-md-12">-->
-                <!--<sbox cssBox="box-success" :headerCollapse="true">-->
-                <!--<template slot="title">Number of certificates per issuer</template>-->
-                <!--<div class="table-responsive table-xfull" style="margin-bottom: 10px">-->
-                <!--<table class="table table-bordered table-striped table-hover">-->
-                <!--<thead>-->
-                <!--<tr>-->
-                <!--<th>Provider</th>-->
-                <!--<th>Watched servers</th>-->
-                <!--<th>All issued certificates (CT)</th>-->
-                <!--</tr>-->
-                <!--</thead>-->
-                <!--<tbody>-->
-                <!--<tr v-for="curDat in certIssuerTableData">-->
-                <!--<td> {{ curDat[0] }} </td>-->
-                <!--<td> {{ curDat[1] }} </td>-->
-                <!--<td> {{ curDat[2] }} </td>-->
-                <!--</tr>-->
-                <!--</tbody>-->
-                <!--</table>-->
-                <!--</div>-->
-                <!--</sbox>-->
-                <!--</div>-->
-                <!--</div>-->
             </div>
         </transition>
     </div>
