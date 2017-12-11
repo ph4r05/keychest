@@ -175,15 +175,15 @@
         watch: {
             options(newVal, oldVal) {
                 if (this.filterByAnchor) {
-                    const { type, anchor } = this
-                    const regex = new RegExp(`${type}`, 'i')
+                    const { type, anchor } = this;
+                    const regex = new RegExp(`${type}`, 'i');
                     const filtered = newVal.filter((item) => {
-                        const found = item[anchor].search(regex) !== -1
+                        const found = item[anchor].search(regex) !== -1;
                         return found
-                    })
-                    this.json = filtered
+                    });
+                    this.json = filtered;
                 } else {
-                    this.json = newVal
+                    this.json = newVal;
                 }
             },
             value(newVal, oldVal) {
@@ -194,16 +194,16 @@
         },
         methods: {
             getClassName(part) {
-                const { classes, className } = this
-                if (classes[part]) return `${classes[part]}`
+                const { classes, className } = this;
+                if (classes[part]) return `${classes[part]}`;
                 return className ? `${className}-${part}` : ''
             },
             // Netralize Autocomplete
             clearInput() {
-                this.showList = false
-                this.type = ""
-                this.json = []
-                this.focusList = ""
+                this.showList = false;
+                this.type = "";
+                this.json = [];
+                this.focusList = "";
                 this.$emit('input', this.type);
             },
             // Get the original data
@@ -214,19 +214,19 @@
               INPUT EVENTS
             =============================*/
             handleInput(e){
-                const { value } = e.target
+                const { value } = e.target;
                 this.showList = true;
                 this.$emit('input', this.type);
                 // Callback Event
-                if(this.onInput) this.onInput(value)
+                if(this.onInput) this.onInput(value);
                 // If Debounce
                 if (this.debounce) {
-                    if (this.debounceTask !== undefined) clearTimeout(this.debounceTask)
+                    if (this.debounceTask !== undefined) clearTimeout(this.debounceTask);
                     this.debounceTask = setTimeout(() => {
-                        return this.getData(value)
+                        return this.getData(value);
                     }, this.debounce)
                 } else {
-                    return this.getData(value)
+                    return this.getData(value);
                 }
             },
             handleKeyDown(e){
@@ -299,35 +299,38 @@
                 }
 
                 const listLength = this.json.length - 1;
-                const outOfRangeBottom = this.focusList > listLength
-                const outOfRangeTop = this.focusList < 0
-                const topItemIndex = 0
-                const bottomItemIndex = listLength
-                let nextFocusList = this.focusList
-                if (outOfRangeBottom) nextFocusList = topItemIndex
-                if (outOfRangeTop) nextFocusList = bottomItemIndex
-                this.focusList = nextFocusList
+                const outOfRangeBottom = this.focusList > listLength;
+                const outOfRangeTop = this.focusList < 0;
+                const topItemIndex = 0;
+                const bottomItemIndex = listLength;
+                let nextFocusList = this.focusList;
+                if (outOfRangeBottom) nextFocusList = topItemIndex;
+                if (outOfRangeTop) nextFocusList = bottomItemIndex;
+                this.focusList = nextFocusList;
             },
             setValue(val) {
                 this.type = val;
                 this.$emit('input', this.type);
             },
+            listLoadTrigger(){
+                this.json = [];
+                this.getData("");
+                // Callback Event
+                this.onShow ? this.onShow() : null;
+                this.showList = true;
+            },
             /*==============================
               LIST EVENTS
             =============================*/
             handleDoubleClick(){
-                this.json = [];
-                this.getData("")
-                // Callback Event
-                this.onShow ? this.onShow() : null
-                this.showList = true;
+                this.listLoadTrigger();
             },
             handleBlur(e){
                 // Callback Event
-                this.onBlur ? this.onBlur(e) : null
+                this.onBlur ? this.onBlur(e) : null;
                 setTimeout(() => {
                     // Callback Event
-                    this.onHide ? this.onHide() : null
+                    this.onHide ? this.onHide() : null;
                     this.showList = false;
                 },250);
             },
@@ -340,7 +343,7 @@
                 this.focusList = i;
             },
             activeClass(i){
-                const focusClass = i === this.focusList ? 'focus-list' : ''
+                const focusClass = i === this.focusList ? 'focus-list' : '';
                 return `${focusClass}`
             },
             selectList(data){
@@ -356,8 +359,8 @@
                 this.onSelect ? this.onSelect(clean) : null
             },
             deepValue(obj, path) {
-                const arrayPath = path.split('.')
-                for (var i = 0; i < arrayPath.length; i++) {
+                const arrayPath = path.split('.');
+                for (let i = 0; i < arrayPath.length; i++) {
                     obj = obj[arrayPath[i]];
                 }
                 return obj;
@@ -366,11 +369,11 @@
               AJAX EVENTS
             =============================*/
             composeParams(val) {
-                const encode = (val) => this.encodeParams ? encodeURIComponent(val) : val
-                let params = `${this.param}=${encode(val)}`
+                const encode = (val) => this.encodeParams ? encodeURIComponent(val) : val;
+                let params = `${this.param}=${encode(val)}`;
                 if(this.customParams) {
                     Object.keys(this.customParams).forEach((key) => {
-                        params += `&${key}=${encode(this.customParams[key])}`
+                        params += `&${key}=${encode(this.customParams[key])}`;
                     })
                 }
                 return params
@@ -384,23 +387,23 @@
             },
             doAjax(val) {
                 // Callback Event
-                this.onBeforeAjax ? this.onBeforeAjax(val) : null
+                this.onBeforeAjax ? this.onBeforeAjax(val) : null;
                 // Compose Params
-                let params = this.composeParams(val)
+                let params = this.composeParams(val);
                 // Init Ajax
                 let ajax = new XMLHttpRequest();
                 ajax.open('GET', `${this.url}?${params}`, true);
-                this.composeHeader(ajax)
+                this.composeHeader(ajax);
                 // Callback Event
                 ajax.addEventListener('progress', (data) => {
                     if(data.lengthComputable && this.onAjaxProgress) this.onAjaxProgress(data)
                 });
                 // On Done
                 ajax.addEventListener('loadend', (e) => {
-                    const { responseText } = e.target
+                    const { responseText } = e.target;
                     let json = JSON.parse(responseText);
                     // Callback Event
-                    this.onAjaxLoaded ? this.onAjaxLoaded(json) : null
+                    this.onAjaxLoaded ? this.onAjaxLoaded(json) : null;
                     this.json = this.process ? this.process(json) : json;
                 });
                 // Send Ajax
@@ -408,12 +411,12 @@
             },
             getData(value){
                 if (value.length < this.min || !this.url) return;
-                if (this.onShouldGetData) this.manualGetData(value)
+                if (this.onShouldGetData) this.manualGetData(value);
                 else this.doAjax(value)
             },
             // Do Ajax Manually, so user can do whatever he want
             manualGetData(val) {
-                const task = this.onShouldGetData(val)
+                const task = this.onShouldGetData(val);
                 if (task && task.then) {
                     return task.then((options) => {
                         this.json = options
