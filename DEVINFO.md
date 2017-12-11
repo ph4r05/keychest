@@ -39,3 +39,48 @@ adminlte-laravel social
 Facebook, Google and Linked in support more callback URIs,
 for Github and Twitter there has to be a separate app for each 
 new domain (test, dev, production).
+
+
+## InnoDB transactions
+
+```bash
+yum install innotop
+innotop -uroot -ppassword
+```
+https://www.xaprb.com/blog/2006/07/31/how-to-analyze-innodb-mysql-locks/
+
+InnoDB transaction status:
+
+```sql
+SHOW ENGINE INNODB STATUS \G
+```
+
+```sql
+use keychest;
+SELECT
+  r.trx_id waiting_trx_id,
+  r.trx_mysql_thread_id waiting_thread,
+  r.trx_query waiting_query,
+  b.trx_id blocking_trx_id,
+  b.trx_mysql_thread_id blocking_thread,
+  b.trx_query blocking_query
+FROM       information_schema.innodb_lock_waits w
+INNER JOIN information_schema.innodb_trx b
+  ON b.trx_id = w.blocking_trx_id
+INNER JOIN information_schema.innodb_trx r
+  ON r.trx_id = w.requesting_trx_id;
+```
+
+```sql
+USE INFORMATION_SCHEMA
+SELECT * FROM INNODB_LOCK_WAITS;
+```
+
+```sql
+USE INFORMATION_SCHEMA
+SELECT INNODB_LOCKS.* 
+FROM INNODB_LOCKS
+JOIN INNODB_LOCK_WAITS
+  ON (INNODB_LOCKS.LOCK_TRX_ID = INNODB_LOCK_WAITS.BLOCKING_TRX_ID);
+```
+
