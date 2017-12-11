@@ -49,6 +49,19 @@ innotop -uroot -ppassword
 ```
 https://www.xaprb.com/blog/2006/07/31/how-to-analyze-innodb-mysql-locks/
 
+### Database driver deadlocks
+
+With normal DB job backend there was a following transaction deadlock scenario:
+
+3 transactions:
+
+ 1. `delete from jobs where id=?`, holds PRIMARY, waits jobs_queue_reserved_at_idx
+ 2. `select next job`, waits PRIMARY
+ 3. `insert into jobs`, probably holds jobs_queue_reserved_at_idx
+
+
+### InnoDB transaction status
+
 InnoDB transaction status:
 
 ```sql
