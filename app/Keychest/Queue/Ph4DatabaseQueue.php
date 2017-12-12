@@ -5,6 +5,7 @@ namespace App\Keychest\Queue;
 
 
 
+use Illuminate\Database\DetectsDeadlocks;
 use Illuminate\Queue\DatabaseQueue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class Ph4DatabaseQueue extends DatabaseQueue implements QueueContract
 {
+    use DetectsDeadlocks;
+
     /**
      * Delete a reserved job from the queue.
      * https://github.com/laravel/framework/issues/7046
@@ -36,27 +39,32 @@ class Ph4DatabaseQueue extends DatabaseQueue implements QueueContract
     /**
      * Pop the next job off of the queue.
      *
-     * @param  string  $queue
+     * @param  string $queue
      * @return \Illuminate\Contracts\Queue\Job|null
+     * @throws \Exception|\Throwable
      */
     public function pop($queue = null)
     {
         $queue = $this->getQueue($queue);
 
-        try {
-            return $this->database->transaction(function () use ($queue) {
+        return $this->database->transaction(function () use ($queue) {
+            try {
                 if ($job = $this->getNextAvailableJob($queue)) {
                     return $this->marshalJob($queue, $job);
                 }
 
                 return null;
-            }, 5);
+            } catch(\Exception $t){
+                if ($this->causedByDeadlock($t)){
+                    // Deadlock detected. May backoff here
+                    Log::info('Deadlock on queue: ' . $queue);
+                }
 
-        } catch (\Exception $e) {
-            Log::error('Exception in Ph4DatabaseQueue::pop()');
-            Log::info($e);
-            throw new \RuntimeException($e);
-        }
+                Log::debug('Throwable: ' . $t);
+                throw $t;
+            }
+
+        }, 5);
     }
 
     /**
