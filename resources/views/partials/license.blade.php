@@ -2,6 +2,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Account</a></li>
         <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">License</a></li>
+        <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Subscriptions</a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_1">
@@ -201,6 +202,89 @@
 
         </div>
         <!-- /.tab-pane -->
+        <div class="tab-pane" id="tab_3">
+            <h3 class="mg-md">Subscriptions</h3>
+
+            <p>
+                We will soon introduce first integrations of KeyChest with popular applications. These integrations
+                will be subject to a monthly subscription. The cost depends on the number of certificates monitored
+                by KeyChest.
+            </p>
+            <p>
+            <table>
+                <tr><td>&nbsp;- up to 10 certificates</td><td align="right">&nbsp;FREE</td></tr>
+                <tr><td>&nbsp;- 10 - 100 certificates</td><td align="right">$5</td></tr>
+                <tr><td>&nbsp;- 101 - 2,000 certificates</td><td align="right">$19</td></tr>
+                <tr><td>&nbsp;- over 2,000 certificates</td><td align="right">$79</td></tr>
+            </table>
+            </p>
+            <p>
+                The subscription will automatically change if the number of certificates stays in a new
+                interval for more than 30 days.
+            </p>
+
+            <table class="table tg">
+                <tr>
+                    <th>Application name</th>
+                    <th>Events</th>
+                    <th>Connected / Connect</th>
+                </tr>
+                <tr>
+                    <td>Slack</td>
+                    <td>successful renewal, weekly summary, new certificates, expiration</td>
+                    <td><button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Connect
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>HipChat</td>
+                    <td>successful renewal, weekly summary, new certificates, expiration</td>
+                    <td><button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Connect
+                        </button>
+                    </td>
+                </tr>
+<!--                <tr>
+                    <td>Twist app</td>
+                    <td>successful renewal, weekly summary, new certificates, expiration</td>
+                    <td><button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Connect
+                        </button>
+                    </td>
+                </tr> -->
+<!--                <tr>
+                    <td>Facebook</td>
+                    <td>successful renewal, weekly summary, new certificates, expiration</td>
+                    <td><button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Connect
+                        </button></td>
+                </tr>-->
+                <tr>
+                    <td>Text message (SMS)</td>
+                    <td>new certificates, expiration</td>
+                    <td><button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Connect
+                        </button></td>
+                </tr>
+
+                <tr class="table">
+                    <td>Subscription</td>
+                    <td>Expires: month/year</td>
+                    <td><button type="button" disabled="disabled" class="btn btn-sm btn-default btn-block">
+                            Subscribe/update
+                        </button></td>
+                </tr>
+            </table>
+
+            <iframe title="KeyChest license" class="freshwidget-embedded-form" id="freshwidget-embedded-form-2"
+                    src="https://enigmabridge.freshdesk.com/widgets/feedback_widget/new?&SubmitTitle=Send+Now&widgetType=embedded&screenshot=no&searchArea=no"
+                    scrolling="no" height="410px" width="100%" frameborder="0" >
+            </iframe>
+
+        </div>
+        <!-- /.tab-pane -->
+
     </div>
     <!-- /.tab-content -->
 </div>
