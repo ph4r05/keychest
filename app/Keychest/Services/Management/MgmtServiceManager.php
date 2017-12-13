@@ -84,6 +84,19 @@ class MgmtServiceManager
     }
 
     /**
+     * Get service by ID
+     * @param $id
+     * @param $ownerId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getServiceQuery($id, $ownerId){
+        return ManagedService::query()
+            ->where('id', $id)
+            ->where('owner_id', $ownerId)
+            ->with(['solutions']);
+    }
+
+    /**
      * Creates a new host from the specification.
      * @param $params
      * @param $ownerId

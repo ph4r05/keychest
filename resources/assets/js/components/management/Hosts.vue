@@ -31,8 +31,6 @@
                 </div>
             </div>
 
-            <!--<edit-server ref="editServer"></edit-server>-->
-
             <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
                 <vuetable-my ref="vuetable"
                              api-url="/home/management/hosts"
@@ -43,7 +41,7 @@
                              :multi-sort="true"
                              :per-page="50"
                              :append-params="moreParams"
-                             detail-row-component="detail-row"
+                             detail-row-component="host-detail-row"
                              @vuetable:pagination-data="onPaginationData"
                              @vuetable:loaded="onLoaded"
                              @vuetable:loading="onLoading"
@@ -58,8 +56,8 @@
                     </template>
                     <template slot="actions" slot-scope="props">
                         <div class="custom-actions">
-                            <!--<button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>-->
                             <button class="btn btn-sm btn-primary" @click="onDetailToggle(props)"><i class="glyphicon glyphicon-info-sign"></i></button>
+                            <router-link :to="{name: 'editHost', params: {id :props.rowData.id}}" tag="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-pencil"></i></router-link>
                             <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>
                         </div>
                     </template>
@@ -129,7 +127,7 @@
     Vue.use(VueRouter);
     Vue.use(Vue2Filters);
     Vue.component('filter-bar', FilterBar);
-    Vue.component('detail-row', DetailRow);
+    Vue.component('host-detail-row', DetailRow);
 
     export default {
         components: {

@@ -56,8 +56,8 @@
                     </template>
                     <template slot="actions" slot-scope="props">
                         <div class="custom-actions">
-                            <!--<button class="btn btn-sm btn-primary" @click="onEditServer(props.rowData)"><i class="glyphicon glyphicon-pencil"></i></button>-->
                             <button class="btn btn-sm btn-primary" @click="onDetailToggle(props)"><i class="glyphicon glyphicon-info-sign"></i></button>
+                            <router-link :to="{name: 'editService', params: {id :props.rowData.id}}" tag="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-pencil"></i></router-link>
                             <button class="btn btn-sm btn-danger" @click="onDeleteServer(props.rowData)"><i class="glyphicon glyphicon-trash"></i></button>
                         </div>
                     </template>

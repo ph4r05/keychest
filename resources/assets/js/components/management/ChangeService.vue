@@ -1,7 +1,18 @@
 <template>
     <div class="mgmt-add-host row">
 
-        <sbox cssBox="box-primary" :headerCollapse="false">
+        <div class="row" v-if="loadingState !== 0">
+            <div class="alert alert-danger alert-waiting"
+                 v-if="loadingState === 1">
+                <span>Loading</span>
+            </div>
+            <div class="alert alert-danger alert-waiting"
+                 v-if="loadingState === -1">
+                <span>Error, please refresh or try again later.</span>
+            </div>
+        </div>
+
+        <sbox cssBox="box-primary" :headerCollapse="false" v-if="loadingState === 0">
             <template slot="title">{{ editMode ? 'Edit' : 'Add' }} managed service</template>
             <template slot="widgets">
                 <button type="button" class="btn btn-box-tool"
@@ -128,8 +139,16 @@
         components: {
 
         },
+
+        props: {
+            id: {
+
+            },
+        },
+
         data () {
             return {
+                loadingState: 0,
                 sentState: 0,
                 editMode: false,
                 formData: {
@@ -161,11 +180,30 @@
 
         methods: {
             hookup(){
-
+                if (this.id){
+                    this.editMode = true;
+                    this.loadState = 1;
+                    this.fetchData();
+                }
             },
 
             back() {
                 mgmUtil.windowBack(this.$router, this.$route);
+            },
+
+            fetchData(){
+                axios.get('/home/management/services/' + this.id)
+                    .then(res => {
+                        this.loadState = 0;
+                        this.response = res.data;
+                        _.assign(this.formData, this.response.record);
+                    })
+                    .catch(err => {
+                        this.loadState = -1;
+                        const error = new Error(err);
+                        error.code = err && err.response ? err.response.status : 0;
+                        toastr.error('Error while loading. Please, try again later', 'Error');
+                    });
             },
 
             async inputCheck(){

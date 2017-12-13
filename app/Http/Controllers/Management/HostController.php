@@ -102,6 +102,23 @@ class HostController extends Controller
     }
 
     /**
+     * Get host for the user
+     * @param ParamRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getHost(ParamRequest $request, $id)
+    {
+        $user = Auth::getUser();
+        $host = $this->hostManager->getHostQuery($id, $user->primary_owner_id)->first();
+
+        return response()->json([
+            'state' => $host ? 'success' : 'not-found',
+            'record' => $host,
+        ], $host ? 200 : 404);
+    }
+
+    /**
      * Show the application dashboard.
      *
      * @param ParamRequest $request

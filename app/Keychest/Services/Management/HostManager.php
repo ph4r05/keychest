@@ -8,6 +8,7 @@
 
 namespace App\Keychest\Services\Management;
 
+use App\Http\Request\ParamRequest;
 use App\Keychest\DataClasses\GeneratedSshKey;
 use App\Keychest\DataClasses\HostRecord;
 use App\Keychest\DataClasses\ValidityDataModel;
@@ -64,6 +65,19 @@ class HostManager
         }
 
         return $query;
+    }
+
+    /**
+     * Get host by ID
+     * @param $id
+     * @param $ownerId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getHostQuery($id, $ownerId){
+        return ManagedHost::query()
+            ->where('id', $id)
+            ->where('owner_id', $ownerId)
+            ->with(['sshKey', 'groups']);
     }
 
     /**

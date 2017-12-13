@@ -8,7 +8,7 @@
     import VueEvents from 'vue-events';
     import VueRouter from 'vue-router';
 
-    import Management from './management.vue';
+    import Management from './management/Management.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);

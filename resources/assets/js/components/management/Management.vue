@@ -38,11 +38,11 @@
     import VueEvents from 'vue-events';
     import VueRouter from 'vue-router';
 
-    import ManagementHosts from './management/Hosts.vue';
-    import ManagementServices from './management/Services.vue';
+    import ManagementHosts from './Hosts.vue';
+    import ManagementServices from './Services.vue';
 
-    import AddHost from './management/AddHost.vue';
-    import AddService from './management/AddService.vue';
+    import ChangeHost from './ChangeHost.vue';
+    import ChangeService from './ChangeService.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
@@ -55,18 +55,47 @@
         {
             path: '/addHost',
             name: 'addHost',
-            component: AddHost,
+            component: ChangeHost,
             meta: {
+                editMode: false,
                 tabCode: 'mgmt',
                 tab:  1,
-                parent: {name: 'management'}
+                parent: {name: 'management'},
             },
         },
+
+        {
+            path: '/editHost/:id',
+            name: 'editHost',
+            component: ChangeHost,
+            props: true,
+            meta: {
+                editMode: true,
+                tabCode: 'mgmt',
+                tab:  1,
+                parent: {name: 'management'},
+            },
+        },
+
         {
             path: '/addService',
             name: 'addService',
-            component: AddService,
+            component: ChangeService,
             meta: {
+                editMode: false,
+                tabCode: 'mgmt',
+                tab:  3,
+                parent: {name: 'management'}
+            },
+        },
+
+        {
+            path: '/editService/:id',
+            name: 'editService',
+            component: ChangeService,
+            props: true,
+            meta: {
+                editMode: true,
                 tabCode: 'mgmt',
                 tab:  3,
                 parent: {name: 'management'}
@@ -81,6 +110,7 @@
             fromr.meta.predecessor = null;
             to.meta.predecessor = fromr.meta;
         }
+        console.log('mgmt-aftereach-done');
     });
 
     export default {

@@ -111,6 +111,23 @@ class MgmtServiceController extends Controller
     }
 
     /**
+     * Get service for the user
+     * @param ParamRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getService(ParamRequest $request, $id)
+    {
+        $user = Auth::getUser();
+        $svc = $this->serviceManager->getServiceQuery($id, $user->primary_owner_id)->first();
+
+        return response()->json([
+            'state' => $svc ? 'success' : 'not-found',
+            'record' => $svc,
+        ], $svc ? 200 : 404);
+    }
+
+    /**
      * Adds managed service
      *
      * @param ParamRequest $request
