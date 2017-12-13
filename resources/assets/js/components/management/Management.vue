@@ -22,7 +22,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_4">
-                    <h3>Solutions / endpoints</h3>
+                    <mgmt-solutions></mgmt-solutions>
                 </div>
                 <!-- /.tab-pane -->
             </div>
@@ -40,15 +40,18 @@
 
     import ManagementHosts from './Hosts.vue';
     import ManagementServices from './Services.vue';
+    import ManagementSolutions from './Solutions.vue';
 
     import ChangeHost from './ChangeHost.vue';
     import ChangeService from './ChangeService.vue';
+    import ChangeSolution from './ChangeSolution.vue';
 
     Vue.use(VueEvents);
     Vue.use(VueRouter);
 
     Vue.component('mgmt-hosts', ManagementHosts);
     Vue.component('mgmt-services', ManagementServices);
+    Vue.component('mgmt-solutions', ManagementSolutions);
 
     const router = window.VueRouter; // type: VueRouter
     const routes = [
@@ -98,6 +101,31 @@
                 editMode: true,
                 tabCode: 'mgmt',
                 tab:  3,
+                parent: {name: 'management'}
+            },
+        },
+
+        {
+            path: '/addSolution',
+            name: 'addSolution',
+            component: ChangeSolution,
+            meta: {
+                editMode: false,
+                tabCode: 'mgmt',
+                tab:  4,
+                parent: {name: 'management'}
+            },
+        },
+
+        {
+            path: '/editSolution/:id',
+            name: 'editSolution',
+            component: ChangeSolution,
+            props: true,
+            meta: {
+                editMode: true,
+                tabCode: 'mgmt',
+                tab:  4,
                 parent: {name: 'management'}
             },
         },

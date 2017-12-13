@@ -145,6 +145,10 @@ Route::get('home/management/services', 'Management\MgmtServiceController@getServ
 Route::get('home/management/services/{id}', 'Management\MgmtServiceController@getService');
 Route::post('home/management/services/add', 'Management\MgmtServiceController@addService');
 // TODO: service delete, service edit
+Route::get('home/management/solutions', 'Management\MgmtSolutionController@getSolutions');
+Route::get('home/management/solutions/{id}', 'Management\MgmtSolutionController@getSolution');
+Route::post('home/management/solutions/add', 'Management\MgmtSolutionController@addSolution');
+// TODO: solution delete, service edit
 
 // Tester
 Route::get('tester', 'KeyCheckController@index');

@@ -74,4 +74,106 @@ class MgmtSolutionController extends Controller
         $this->credentialsManager = $credentialsManager;
     }
 
+    /**
+     * Get all managed solutions
+     */
+    public function getSolutions(){
+        $curUser = Auth::user();
+        $ownerId = $curUser->primary_owner_id;
+
+        $sort = strtolower(trim(Input::get('sort')));
+        $filter = strtolower(trim(Input::get('filter')));
+        $per_page = intval(trim(Input::get('per_page')));
+        $return_all = intval(trim(Input::get('return_all')));
+        $sort_parsed = DataTools::vueSortToDb($sort);
+
+        // server list load
+        $query = $this->solutionManager->loadListQuery($ownerId);
+        if (!empty($filter)){
+            $query = $query->where(function(Builder $query) use($filter) {
+                $query->where('sol_name', 'like', '%'. $filter . '%')
+                    ->orWhere('sol_display', 'like', '%'. $filter . '%');
+            });
+        }
+
+        $query = $query->with(['hostGroups']);
+        $query = DbTools::sortQuery($query, $sort_parsed);
+
+        $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
+        if ($return_all){
+            $page_size = config('keychest.max_servers');
+        }
+
+        $ret = $query->paginate($page_size); // type: \Illuminate\Pagination\LengthAwarePaginator
+        $retArr = $ret->toArray();
+
+        return response()->json($retArr, 200);
+    }
+
+    /**
+     * Get solution for the user
+     * @param ParamRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSolution(ParamRequest $request, $id)
+    {
+        $user = Auth::getUser();
+        $sol = $this->solutionManager->getQuery($id, $user->primary_owner_id)->first();
+
+        return response()->json([
+            'state' => $sol ? 'success' : 'not-found',
+            'record' => $sol,
+        ], $sol ? 200 : 404);
+    }
+
+    /**
+     * Adds managed solution
+     *
+     * @param ParamRequest $request
+     * @return Response
+     * @throws Exception
+     */
+    public function addSolution(ParamRequest $request)
+    {
+        $this->validate($request, [  // TODO: refine validation rules
+            'sol_name' => 'required|max:160',
+            'sol_display' => 'present|max:160',
+            'sol_provider' => 'present|max:160',
+            'sol_deployment' => 'present|max:160',
+            'sol_domain_auth' => 'present|max:160',
+            'sol_config' => 'present|max:160',
+        ], [], [
+                'sol_name' => 'Solution code']
+        );
+
+        // Host Db spec for storage.
+        $user = Auth::getUser();
+        $ownerId = $user->primary_owner_id;
+        $name = Input::get('sol_name');
+
+        // Duplicity detection
+        $exists = $this->solutionManager->getByName($name, $ownerId)->first();
+        if (!empty($exists)){
+            return response()->json(['status' => 'already-present'], 410);
+        }
+
+        $params = [
+            'sol_name' => $name,
+            'sol_display' => Input::get('sol_display'),
+            'sol_provider' => Input::get('sol_provider'),
+            'sol_deployment' => Input::get('sol_deployment'),
+            'sol_domain_auth' => Input::get('sol_domain_auth'),
+            'sol_config' => Input::get('sol_config'),
+        ];
+
+        // Add
+        $dbRecord = $this->solutionManager->add($params, $ownerId);
+
+        return response()->json([
+            'state' => 'success',
+            'record' => $dbRecord,
+        ], 200);
+    }
+
 }
