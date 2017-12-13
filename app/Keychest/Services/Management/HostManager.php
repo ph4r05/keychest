@@ -58,7 +58,7 @@ class HostManager
      * @param null $ownerId
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadHostListQuery($ownerId=null){
+    public function loadListQuery($ownerId=null){
         $query = ManagedHost::query();
         if ($ownerId){
             $query = $query->where('owner_id', '=', $ownerId);

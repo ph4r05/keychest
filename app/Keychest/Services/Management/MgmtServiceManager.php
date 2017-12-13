@@ -56,12 +56,12 @@ class MgmtServiceManager
     }
 
     /**
-     * Builds query to load host list.
+     * Builds query to load service list.
      *
      * @param null $ownerId
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadServiceListQuery($ownerId=null){
+    public function loadListQuery($ownerId=null){
         $query = ManagedService::query();
         if ($ownerId){
             $query = $query->where('owner_id', '=', $ownerId);
@@ -72,13 +72,13 @@ class MgmtServiceManager
 
     /**
      * Loads host by defined specs
-     * @param $svcName
+     * @param $name
      * @param $ownerId
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getByName($svcName, $ownerId){
+    public function getByName($name, $ownerId){
         $q = ManagedService::query()
-            ->where('svc_name', '=', $svcName);
+            ->where('svc_name', '=', $name);
         $q = $q->where('owner_id', '=', $ownerId);
         return $q;
     }
@@ -97,7 +97,7 @@ class MgmtServiceManager
     }
 
     /**
-     * Creates a new host from the specification.
+     * Creates a new service from the specification.
      * @param $params
      * @param $ownerId
      * @return ManagedService

@@ -88,7 +88,7 @@ class MgmtServiceController extends Controller
         $sort_parsed = DataTools::vueSortToDb($sort);
 
         // server list load
-        $query = $this->serviceManager->loadServiceListQuery($ownerId);
+        $query = $this->serviceManager->loadListQuery($ownerId);
         if (!empty($filter)){
             $query = $query->where(function(Builder $query) use($filter) {
                 $query->where('svc_name', 'like', '%'. $filter . '%')

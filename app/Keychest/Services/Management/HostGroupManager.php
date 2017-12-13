@@ -60,7 +60,7 @@ class HostGroupManager
      * @param null $ownerId
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function loadGroupListQuery($ownerId=null){
+    public function loadListQuery($ownerId=null){
         $query = ManagedHost::query();
         if ($ownerId){
             $query = $query->where('owner_id', '=', $ownerId);

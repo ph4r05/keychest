@@ -78,7 +78,7 @@ class HostController extends Controller
         $sort_parsed = DataTools::vueSortToDb($sort);
 
         // server list load
-        $query = $this->hostManager->loadHostListQuery($ownerId);
+        $query = $this->hostManager->loadListQuery($ownerId);
         if (!empty($filter)){
             $query = $query->where(function(Builder $query) use($filter) {
                 $query->where('host_name', 'like', '%'. $filter . '%')
