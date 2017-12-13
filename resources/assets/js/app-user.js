@@ -95,9 +95,11 @@ const router = new VueRouter({
 });
 
 // Main Vuex
-import { sync } from 'vuex-router-sync'
 import store from './store';
-const unsync = sync(store, router); // done. Returns an unsync callback fn
+
+// vue route rsync - disabled for the moment, suspect for memory leaks
+// import { sync } from 'vuex-router-sync'
+// const unsync = sync(store, router); // done. Returns an unsync callback fn
 
 const app = new Vue({
     el: '#app',
