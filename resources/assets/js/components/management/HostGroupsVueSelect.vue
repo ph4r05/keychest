@@ -93,8 +93,8 @@
             },
             hostRegex(){
                 return this.allowHostGroups ?
-                    /^([a-zA-Z0-9_/\-.]+)$/ :
-                    /^((?!host-)([a-zA-Z0-9_/\-.]+))$/;
+                    /^([a-zA-Z0-9_/\-.]*)$/ :
+                    /^((?!host-)([a-zA-Z0-9_/\-.]*))$/;
             },
         },
         methods: {
@@ -176,6 +176,7 @@
             tagValidator(tagValue){
                 return tagValue
                     && !this.errors.has('host_group')
+                    && tagValue.group_name
                     && this.isTagValid(tagValue.group_name);
             },
 
