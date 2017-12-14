@@ -16,7 +16,7 @@
                 :shouldSpaceTrigger="!readOnly"
                 :shouldTabTrigger="!readOnly"
                 :shouldCommaTrigger="!readOnly"
-                :disabled="readOnly"
+                :noDrop="readOnly"
                 :multiple="true"
                 :refocus="true"
 
@@ -181,6 +181,10 @@
             },
 
             tagRemovable(tag){
+                if (this.readOnly){
+                    return false;
+                }
+
                 return this.allowHostGroups ? true : !_.startsWith(tag.group_name, 'host-');
             },
         },
