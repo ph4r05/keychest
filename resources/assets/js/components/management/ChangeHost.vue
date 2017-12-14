@@ -113,7 +113,7 @@
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
     import hostSpecValidator from '../../lib/validator/hostspec';
-    import HostGroups from './HostGroupsSelector';
+    import HostGroups from './HostGroupsVueSelect';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);

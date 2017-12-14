@@ -104,10 +104,10 @@
 
                     <div class="form-group">
                         <label>Host Groups</label>
-                        <vue-host-groups
+                        <host-groups
                                 :tags="formData.host_groups"
                                 :allowHostGroups="true"
-                                name="host_groups"></vue-host-groups>
+                                name="host_groups"></host-groups>
 
                         <i v-show="errors.has('host_groups')" class="fa fa-warning"></i>
                         <span v-show="errors.has('host_groups')" class="help is-danger"
@@ -153,19 +153,17 @@
     import VueScrollTo from 'vue-scrollto';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
-    import HostGroups from './HostGroupsSelector';
     import VueHostGroups from './HostGroupsVueSelect';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
-    Vue.component('host-groups', HostGroups);
-    Vue.component('vue-host-groups', VueHostGroups);
+    //Vue.component('host-groups', VueHostGroups);
 
     export default {
         components: {
-
+            'host-groups': VueHostGroups,
         },
 
         props: {

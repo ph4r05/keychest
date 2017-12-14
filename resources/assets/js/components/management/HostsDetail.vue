@@ -36,7 +36,7 @@
     import mgmUtil from './util';
 
     import Vue from 'vue';
-    import HostGroups from './HostGroupsSelector';
+    import HostGroups from './HostGroupsVueSelect';
 
     Vue.component('host-groups', HostGroups);
 

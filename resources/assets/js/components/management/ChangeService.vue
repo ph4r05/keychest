@@ -127,13 +127,10 @@
     import VueScrollTo from 'vue-scrollto';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
-    import HostGroups from './HostGroupsSelector';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
-
-    Vue.component('host-groups', HostGroups);
 
     export default {
         components: {
