@@ -57,61 +57,39 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="sol_provider">Provider</label>
-                        <select class="form-control" id="sol_provider"
-                                v-model="formData.sol_provider">
-                            <option value="apache">Apache</option>
-                            <option value="nginx">nginx</option>
+                        <label for="sol_type">Type</label>
+                        <select class="form-control" id="sol_type"
+                                v-model="formData.sol_type">
+                            <option value="web">Web</option>
                         </select>
 
-                        <i v-show="errors.has('sol_provider')" class="fa fa-warning"></i>
-                        <span v-show="errors.has('sol_provider')" class="help is-danger"
-                        >{{ errors.first('sol_provider') }}</span>
+                        <i v-show="errors.has('sol_type')" class="fa fa-warning"></i>
+                        <span v-show="errors.has('sol_type')" class="help is-danger"
+                        >{{ errors.first('sol_type') }}</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="sol_deployment">Deployment</label>
-                        <select class="form-control" id="sol_deployment"
-                                v-model="formData.sol_deployment">
-                            <option value="ansible">ansible</option>
-                            <option value="agent">agent</option>
+                        <label for="sol_criticality">Criticality</label>
+                        <select class="form-control" id="sol_criticality"
+                                v-model="formData.sol_criticality">
+                            <option value="0">Low</option>
+                            <option value="1">Medium</option>
+                            <option value="2">High</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Domain authorization</label>
-                        <select class="form-control" id="sol_domain_auth"
-                                v-model="formData.sol_domain_auth">
-                            <option value="local-certbot">Local certbot</option>
+                        <label>Assurance level</label>
+                        <select class="form-control" id="sol_assurance"
+                                v-model="formData.sol_assurance">
+                            <option value="0">Low</option>
+                            <option value="1">Medium</option>
+                            <option value="2">High</option>
                         </select>
 
-                        <i v-show="errors.has('sol_domain_auth')" class="fa fa-warning"></i>
-                        <span v-show="errors.has('sol_domain_auth')" class="help is-danger"
-                        >{{ errors.first('sol_domain_auth') }}</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Host configuration</label>
-                        <select class="form-control" id="sol_config"
-                                v-model="formData.sol_config">
-                            <option value="manual">Manual</option>
-                        </select>
-
-                        <i v-show="errors.has('sol_config')" class="fa fa-warning"></i>
-                        <span v-show="errors.has('sol_config')" class="help is-danger"
-                        >{{ errors.first('sol_config') }}</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Host Groups</label>
-                        <host-groups
-                                :tags="formData.host_groups"
-                                :allowHostGroups="true"
-                                name="host_groups"></host-groups>
-
-                        <i v-show="errors.has('host_groups')" class="fa fa-warning"></i>
-                        <span v-show="errors.has('host_groups')" class="help is-danger"
-                        >{{ errors.first('host_groups') }}</span>
+                        <i v-show="errors.has('sol_assurance')" class="fa fa-warning"></i>
+                        <span v-show="errors.has('sol_assurance')" class="help is-danger"
+                        >{{ errors.first('sol_assurance') }}</span>
                     </div>
 
                     <transition>
@@ -153,17 +131,14 @@
     import VueScrollTo from 'vue-scrollto';
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
-    import VueHostGroups from './HostGroupsVueSelect';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
-    //Vue.component('host-groups', VueHostGroups);
-
     export default {
         components: {
-            'host-groups': VueHostGroups,
+
         },
 
         props: {
@@ -181,11 +156,9 @@
                     id: null,
                     sol_display: '',
                     sol_name: '',
-                    sol_provider: 'nginx',
-                    sol_deployment: 'agent',
-                    sol_domain_auth: 'local-certbot',
-                    sol_config: 'manual',
-                    host_groups: []
+                    sol_type: 'web',
+                    sol_criticality: 0,
+                    sol_assurance: 0,
                 },
                 response: null,
             }

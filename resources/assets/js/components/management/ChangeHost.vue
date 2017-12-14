@@ -119,11 +119,9 @@
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
-    Vue.component('host-groups', HostGroups);
-
     export default {
         components: {
-
+            'host-groups': HostGroups,
         },
 
         props: {

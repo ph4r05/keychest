@@ -155,19 +155,14 @@
                         title: 'Solution name',
                     },
                     {
-                        name: 'sol_provider',
-                        sortField: 'sol_provider',
-                        title: 'Provider',
+                        name: 'sol_type',
+                        sortField: 'sol_type',
+                        title: 'Service type',
                     },
                     {
-                        name: 'sol_deployment',
-                        sortField: 'sol_deployment',
-                        title: 'Deployment',
-                    },
-                    {
-                        name: 'sol_domain_auth',
-                        sortField: 'sol_domain_auth',
-                        title: 'Domain auth',
+                        name: 'sol_criticality',
+                        sortField: 'sol_criticality',
+                        title: 'Criticality',
                     },
                     {
                         name: 'created_at',

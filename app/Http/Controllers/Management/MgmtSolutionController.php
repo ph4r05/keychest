@@ -96,7 +96,7 @@ class MgmtSolutionController extends Controller
             });
         }
 
-        $query = $query->with(['hostGroups']);
+        $query = $query->with(['services']);
         $query = DbTools::sortQuery($query, $sort_parsed);
 
         $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
@@ -139,10 +139,9 @@ class MgmtSolutionController extends Controller
         $this->validate($request, [  // TODO: refine validation rules
             'sol_name' => 'required|max:160',
             'sol_display' => 'present|max:160',
-            'sol_provider' => 'present|max:160',
-            'sol_deployment' => 'present|max:160',
-            'sol_domain_auth' => 'present|max:160',
-            'sol_config' => 'present|max:160',
+            'sol_type' => 'required|max:64',
+            'sol_criticality' => 'required|integer',
+            'sol_assurance' => 'required|max:64',
         ], [], [
                 'sol_name' => 'Solution code']
         );
@@ -161,10 +160,9 @@ class MgmtSolutionController extends Controller
         $params = [
             'sol_name' => $name,
             'sol_display' => Input::get('sol_display'),
-            'sol_provider' => Input::get('sol_provider'),
-            'sol_deployment' => Input::get('sol_deployment'),
-            'sol_domain_auth' => Input::get('sol_domain_auth'),
-            'sol_config' => Input::get('sol_config'),
+            'sol_type' => Input::get('sol_type'),
+            'sol_criticality' => Input::get('sol_criticality'),
+            'sol_assurance_level' => Input::get('sol_assurance'),
         ];
 
         // Add

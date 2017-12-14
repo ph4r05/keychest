@@ -11,11 +11,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class ManagedServiceToSolution extends Model
+class ManagedSolutionToService extends Model
 {
     // use SoftDeletes;
 
-    const TABLE = 'managed_service_to_solution';
+    const TABLE = 'managed_solution_to_service';
 
     protected $guarded = array();
 

@@ -38,9 +38,10 @@
     import Vue from 'vue';
     import HostGroups from './HostGroupsVueSelect';
 
-    Vue.component('host-groups', HostGroups);
-
     export default {
+        components: {
+            'host-groups': HostGroups,
+        },
         props: {
             rowData: {
                 type: Object,

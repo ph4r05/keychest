@@ -18,8 +18,12 @@
     import mgmUtil from './util';
 
     import Vue from 'vue';
+    import HostGroups from './HostGroupsVueSelect';
 
     export default {
+        components: {
+            'host-groups': HostGroups,
+        },
         props: {
             rowData: {
                 type: Object,

@@ -93,7 +93,7 @@ class MgmtSolutionManager
         return ManagedSolution::query()
             ->where('id', $id)
             ->where('owner_id', $ownerId)
-            ->with(['hostGroups']);
+            ->with(['services']);
     }
 
     /**

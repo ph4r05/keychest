@@ -96,7 +96,7 @@ class MgmtServiceController extends Controller
             });
         }
 
-        $query = $query->with(['solutions']);
+        $query = $query->with(['hostGroups']);
         $query = DbTools::sortQuery($query, $sort_parsed);
 
         $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
@@ -139,9 +139,10 @@ class MgmtServiceController extends Controller
         $this->validate($request, [  // TODO: refine validation rules
             'svc_name' => 'required|max:160',
             'svc_display' => 'present|max:160',
-            'svc_type' => 'required|max:64',
-            'svc_criticality' => 'required|integer',
-            'svc_assurance' => 'required|max:64',
+            'svc_provider' => 'present|max:160',
+            'svc_deployment' => 'present|max:160',
+            'svc_domain_auth' => 'present|max:160',
+            'svc_config' => 'present|max:160',
         ], [], [
                 'svc_name' => 'Service code']
         );
@@ -160,9 +161,10 @@ class MgmtServiceController extends Controller
         $params = [
             'svc_name' => $svcName,
             'svc_display' => Input::get('svc_display'),
-            'svc_type' => Input::get('svc_type'),
-            'svc_criticality' => Input::get('svc_criticality'),
-            'svc_assurance_level' => Input::get('svc_assurance'),
+            'svc_provider' => Input::get('svc_provider'),
+            'svc_deployment' => Input::get('svc_deployment'),
+            'svc_domain_auth' => Input::get('svc_domain_auth'),
+            'svc_config' => Input::get('svc_config'),
         ];
 
         // Add

@@ -11,17 +11,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 
-class ManagedSolutionToGroupPivot extends Pivot
+class ManagedSolutionToServicePivot extends Pivot
 {
     // use SoftDeletes;
 
     protected $guarded = array();
 
-    protected $table = ManagedSolutionToGroup::TABLE;
+    protected $table = ManagedSolutionToService::TABLE;
 
     protected $foreignKey = 'solution_id';
 
-    protected $relatedKey = 'group_id';
+    protected $relatedKey = 'service_id';
 
     public function getDates()
     {

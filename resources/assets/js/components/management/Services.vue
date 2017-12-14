@@ -155,14 +155,19 @@
                         title: 'Service name',
                     },
                     {
-                        name: 'svc_type',
-                        sortField: 'svc_type',
-                        title: 'Service type',
+                        name: 'svc_provider',
+                        sortField: 'svc_provider',
+                        title: 'Provider',
                     },
                     {
-                        name: 'svc_criticality',
-                        sortField: 'svc_criticality',
-                        title: 'Criticality',
+                        name: 'svc_deployment',
+                        sortField: 'svc_deployment',
+                        title: 'Deployment',
+                    },
+                    {
+                        name: 'svc_domain_auth',
+                        sortField: 'svc_domain_auth',
+                        title: 'Domain auth',
                     },
                     {
                         name: 'created_at',

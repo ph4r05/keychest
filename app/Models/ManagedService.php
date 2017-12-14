@@ -39,13 +39,13 @@ class ManagedService extends Model
      * Associated solutions
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function solutions()
+    public function hostGroups()
     {
-        return $this->belongsToMany('App\Models\ManagedSolution',
-            ManagedServiceToSolution::TABLE,
+        return $this->belongsToMany('App\Models\ManagedHostGroup',
+            ManagedServiceToGroup::TABLE,
             'service_id',
-            'solution_id')
+            'group_id')
             ->withTimestamps()
-            ->using('App\Models\ManagedServiceToSolutionPivot');
+            ->using('App\Models\ManagedServiceToGroupPivot');
     }
 }
