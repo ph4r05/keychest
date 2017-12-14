@@ -102,6 +102,15 @@
                         >{{ errors.first('sol_config') }}</span>
                     </div>
 
+                    <div class="form-group">
+                        <label>Host Groups</label>
+                        <vue-host-groups :tags="formData.host_groups" name="host_groups"></vue-host-groups>
+
+                        <i v-show="errors.has('host_groups')" class="fa fa-warning"></i>
+                        <span v-show="errors.has('host_groups')" class="help is-danger"
+                        >{{ errors.first('host_groups') }}</span>
+                    </div>
+
                     <transition>
                         <div class="form-group" v-if="sentState != 1">
                             <button type="submit" class="btn btn-block btn-success btn-block"
@@ -142,12 +151,14 @@
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
     import HostGroups from './HostGroupsSelector';
+    import VueHostGroups from './HostGroupsVueSelect';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     Vue.component('host-groups', HostGroups);
+    Vue.component('vue-host-groups', VueHostGroups);
 
     export default {
         components: {
@@ -173,6 +184,7 @@
                     sol_deployment: 'agent',
                     sol_domain_auth: 'local-certbot',
                     sol_config: 'manual',
+                    host_groups: []
                 },
                 response: null,
             }
