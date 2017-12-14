@@ -291,7 +291,7 @@
         <slot name="selected-option" v-bind="option">
           {{ getOptionLabel(option) }}
         </slot>
-        <button v-if="multiple" :disabled="disabled" @click="deselect(option)" type="button" class="close" aria-label="Remove option">
+        <button v-if="multiple && isOptionRemovable(option)" :disabled="disabled" @click="deselect(option)" type="button" class="close" aria-label="Remove option">
           <span aria-hidden="true">&times;</span>
         </button>
       </span>
@@ -304,6 +304,9 @@
               @keydown.up.prevent="typeAheadUp"
               @keydown.down.prevent="typeAheadDown"
               @keydown.enter.prevent="typeAheadSelect"
+              @keydown.188="onKeyComma"
+              @keydown.tab="onKeyTab"
+              @keydown.space="onKeySpace"
               @blur="onSearchBlur"
               @focus="onSearchFocus"
               type="search"
@@ -315,6 +318,7 @@
               :readonly="!searchable"
               :style="{ width: isValueEmpty ? '100%' : 'auto' }"
               :id="inputId"
+              :name="inputName"
               aria-label="Search for option"
       >
 
@@ -346,9 +350,10 @@
   import pointerScroll from '../mixins/pointerScroll'
   import typeAheadPointer from '../mixins/typeAheadPointer'
   import ajax from '../mixins/ajax'
+  import keyMaps from '../mixins/keyMaps'
 
   export default {
-    mixins: [pointerScroll, typeAheadPointer, ajax],
+    mixins: [pointerScroll, typeAheadPointer, ajax, keyMaps],
 
     props: {
       /**
@@ -584,6 +589,62 @@
         type: String,
         default: 'auto'
       },
+
+      /**
+       * Sets the name of the input element.
+       * @type {String}
+       * @default {null}
+       */
+      inputName: {
+          type: String
+      },
+
+      /**
+       * User defined function for filtering options for select.
+       * @type {Function}
+       */
+      isOptionAllowed: {
+        type: Function,
+        default(newOption) {
+          return true;
+        }
+      },
+
+      /**
+       * Object label or function which determines if the tag is removable from the list or not.
+       * @default {null}
+       */
+      removableTagLabel: {
+        type: String,
+        default: undefined,
+      },
+
+      /**
+       * User defined function for determining if the tag is removable.
+       * @type {Function}
+       */
+      isOptionRemovable: {
+        type: Function,
+        default(option) {
+          return this.removableTagLabel ? option[this.removableTagLabel] : true;
+        }
+      },
+
+      shouldSpaceTrigger: {
+        type: Boolean,
+        default: false,
+      },
+
+      shouldTabTrigger: {
+        type: Boolean,
+        default: false,
+      },
+
+      shouldCommaTrigger: {
+        type: Boolean,
+        default: false,
+      },
+
     },
 
     data() {
@@ -679,7 +740,9 @@
             option = this.createOption(option)
           }
 
-          if (this.multiple && !this.mutableValue) {
+          if (!this.isOptionAllowed(option)){
+            this.$emit('option:rejected', option);
+          } else if (this.multiple && !this.mutableValue) {
             this.mutableValue = [option]
           } else if (this.multiple) {
             this.mutableValue.push(option)
@@ -960,7 +1023,11 @@
         }
 
         return []
-      }
+      },
+
+       visitSearch(fnc){
+          fnc(this.$refs.search);
+       },
     },
 
   }

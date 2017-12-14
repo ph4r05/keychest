@@ -1,6 +1,6 @@
 {
   "files": [
-    "vue-select/src/index.js"
+    "index.js"
   ],
   "name": "ph4-vue-select",
   "version": "0.0.1"
