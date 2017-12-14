@@ -958,7 +958,7 @@
       },
 
       visitSearch(fnc){
-        fnc(this.$refs.search);
+        fnc(this, this.$refs.search);
       },
     },
 
