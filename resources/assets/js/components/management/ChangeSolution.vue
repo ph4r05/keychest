@@ -104,7 +104,10 @@
 
                     <div class="form-group">
                         <label>Host Groups</label>
-                        <vue-host-groups :tags="formData.host_groups" name="host_groups"></vue-host-groups>
+                        <vue-host-groups
+                                :tags="formData.host_groups"
+                                :allowHostGroups="true"
+                                name="host_groups"></vue-host-groups>
 
                         <i v-show="errors.has('host_groups')" class="fa fa-warning"></i>
                         <span v-show="errors.has('host_groups')" class="help is-danger"
