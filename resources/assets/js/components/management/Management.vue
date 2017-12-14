@@ -2,10 +2,10 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-                <li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="false">Services</a></li>
+                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false">Services</a></li>
                 <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Solutions</a></li>
                 <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Groups</a></li>
-                <li class="active"><a href="#tab_4" data-toggle="tab" aria-expanded="true">Managed hosts</a></li>
+                <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="true">Managed hosts</a></li>
                 <li class="pull-right"><a href="#" class="text-muted" title="Refresh" v-on:click="refresh"><i class="fa fa-refresh"></i></a></li>
             </ul>
             <div class="tab-content">
