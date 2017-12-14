@@ -1,9 +1,12 @@
 <template>
     <div>
+        <!--suppress XmlUnboundNsPrefix -->
         <ph4-vue-select
                 label="group_name"
                 placeholder="Type a host group"
+                ref="vueSelect"
 
+                :inputName="name"
                 :value="tags"
                 :options="options"
                 :searchable="!readOnly"
@@ -24,7 +27,12 @@
 
         >
             <template slot="no-options">
-                Sorry, no matching options. <a @click.prevent="reloadEmptySearch" style="display: inline;">Try reload</a>
+                <template v-if="searchEmpty">
+                    Start searching or <a @click.prevent.stop="reloadEmptySearch" style="display: inline;">click here</a>
+                </template>
+                <template v-else="">
+                    Sorry, no matching options. <a @click.prevent.stop="reloadEmptySearch" style="display: inline;">Try reload</a>
+                </template>
             </template>
         </ph4-vue-select>
     </div>
@@ -49,7 +57,7 @@
     Vue.component('ph4-vue-select', Ph4VueSelect);
 
     export default {
-        name: "host-groups-selector",
+        name: "host-groups-vue-selector",
         inject: ['$validator'],
         props: {
             tags: {
@@ -67,7 +75,11 @@
             taggable: {
                 type: Boolean,
                 default: true,
-            }
+            },
+            allowHostGroups: {
+                type: Boolean,
+                default: false,
+            },
         },
         data() {
             return {
@@ -76,11 +88,42 @@
             };
         },
         computed: {
-
+            searchEmpty(){
+                return !this.$refs || !this.$refs.vueSelect || !this.$refs.vueSelect.$data.search;
+            },
+            hostRegex(){
+                return this.allowHostGroups ?
+                    /^([a-zA-Z0-9_/\-.]+)$/ :
+                    /^((?!host-)([a-zA-Z0-9_/\-.]+))$/;
+            },
         },
         methods: {
             hookup(){
                 this.fetchGroups('', ()=>{}, this);
+
+                if (this.$validator){
+                    this.attachValidator();
+                }
+            },
+
+            attachValidator(){
+                this.$refs.vueSelect.$validator = this.$validator;
+                this.$refs.vueSelect.visitSearch((vm, field) => {
+                    vm.$validator.attach({
+                        name: this.name,
+                        el: field,
+                        events: 'input',
+                        vm: vm,
+                        getter: () => {
+                            return field.value; // vm.$data.search
+                        },
+                        rules: {
+                            max: 128,
+                            regex: this.hostRegex
+                        },
+                        alias: 'Host group'
+                    });
+                });
             },
 
             createOption(newOption) {
@@ -91,7 +134,11 @@
             },
 
             reloadEmptySearch(){
-                this.search('', () => {});
+                this.search('', () => {
+                    this.$nextTick(() => {
+                        this.$refs.vueSelect.$refs.search.focus();
+                    });
+                });
             },
 
             search(search, loading) {
@@ -101,7 +148,12 @@
             },
 
             fetchGroups: _.debounce((search, loading, vm) => {
-                axios.get(`/home/management/groups/search?q=${search}&noHostGroups=1`)
+                if (search && !vm.isTagValid(search)){
+                    loading(false);
+                    return;
+                }
+
+                axios.get(`/home/management/groups/search?q=${search}&noHostGroups=${Number(!vm.allowHostGroups)}`)
                     .then(response => {
                         vm.onLoaded(response.data);
                     })
@@ -117,12 +169,18 @@
                 this.options = mgmUtil.sortHostGroups(data.results);
             },
 
+            isTagValid(tagValue){
+                return this.hostRegex.test(tagValue);
+            },
+
             tagValidator(tagValue){
-                return tagValue && !this.errors.has('host_group') && !_.startsWith(tagValue.group_name, 'host-');
+                return tagValue
+                    && !this.errors.has('host_group')
+                    && this.isTagValid(tagValue.group_name);
             },
 
             tagRemovable(tag){
-                return !_.startsWith(tag.group_name, 'host-');
+                return this.allowHostGroups ? true : !_.startsWith(tag.group_name, 'host-');
             },
         },
         mounted(){
