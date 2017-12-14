@@ -10,11 +10,11 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
-                    <mgmt-solutions></mgmt-solutions>
+                    <mgmt-services></mgmt-services>
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_2">
-                    <mgmt-services></mgmt-services>
+                    <mgmt-solutions></mgmt-solutions>
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_3">
