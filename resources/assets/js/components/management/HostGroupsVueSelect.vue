@@ -22,7 +22,11 @@
                 :isOptionRemovable="tagRemovable"
                 :isOptionAllowed="tagValidator"
 
-        ></ph4-vue-select>
+        >
+            <template slot="no-options">
+                Sorry, no matching options. <a @click.prevent="reloadEmptySearch" style="display: inline;">Try reload</a>
+            </template>
+        </ph4-vue-select>
     </div>
 </template>
 
@@ -68,6 +72,7 @@
         data() {
             return {
                 options: [],
+                searchStr: '',
             };
         },
         computed: {
@@ -85,7 +90,12 @@
                 return newOption;
             },
 
+            reloadEmptySearch(){
+                this.search('', () => {});
+            },
+
             search(search, loading) {
+                this.searchStr = search;
                 loading(true);
                 this.fetchGroups(search, loading, this);
             },
