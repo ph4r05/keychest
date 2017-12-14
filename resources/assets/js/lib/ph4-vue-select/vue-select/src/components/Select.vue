@@ -600,6 +600,16 @@
       },
 
       /**
+       * Whether the input should automatically refocus on a tag added.
+       * @type {Boolean}
+       * @default {false}
+       */
+      refocus: {
+          type: Boolean,
+          default: false,
+      },
+
+      /**
        * User defined function for filtering options for select.
        * @type {Function}
        */

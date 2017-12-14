@@ -52,6 +52,10 @@ module.exports = {
         this.select(this.search)
       }
 
+      if (this.refocus) {
+        this.$refs.search.focus();
+      }
+
       if( this.clearSearchOnSelect ) {
         this.search = "";
       }
