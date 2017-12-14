@@ -605,8 +605,8 @@
        * @default {false}
        */
       refocus: {
-          type: Boolean,
-          default: false,
+        type: Boolean,
+        default: false,
       },
 
       /**
@@ -621,22 +621,13 @@
       },
 
       /**
-       * Object label or function which determines if the tag is removable from the list or not.
-       * @default {null}
-       */
-      removableTagLabel: {
-        type: String,
-        default: undefined,
-      },
-
-      /**
        * User defined function for determining if the tag is removable.
        * @type {Function}
        */
       isOptionRemovable: {
         type: Function,
         default(option) {
-          return this.removableTagLabel ? option[this.removableTagLabel] : true;
+          return true;
         }
       },
 
