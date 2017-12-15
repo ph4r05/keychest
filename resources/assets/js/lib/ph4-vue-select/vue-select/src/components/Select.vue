@@ -332,7 +332,7 @@
               @focus="onSearchFocus"
               type="search"
               class="form-control"
-              autocomplete="false"
+              autocomplete="off"
               :disabled="disabled"
               :placeholder="searchPlaceholder"
               :tabindex="tabindex"
