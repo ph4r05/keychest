@@ -84,7 +84,7 @@ class HostGroupController extends Controller
             $query = $query->where('group_name', 'not like', 'host-%');
         }
 
-        $results = $query->limit(30)->get();
+        $results = $query->limit(100)->get();
 
         return response()->json([
             'state' => 'success',
