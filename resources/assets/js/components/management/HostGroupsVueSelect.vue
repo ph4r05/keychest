@@ -27,7 +27,7 @@
 
         >
             <template slot="no-options">
-                <template v-if="searchEmpty">
+                <template v-if="searchEmpty()">
                     Start searching or <a @click.prevent.stop="reloadEmptySearch" style="display: inline;">click here</a>
                 </template>
                 <template v-else="">
@@ -89,10 +89,7 @@
             };
         },
         computed: {
-            searchEmpty(){
-                return !this.$refs || !this.$refs.vueSelect || !this.$refs.vueSelect.$data.search;
-            },
-            hostRegex(){
+            tagRegex(){
                 return this.allowHostGroups ?
                     /^([a-zA-Z0-9_/\-.]*)$/ :
                     /^((?!host-)([a-zA-Z0-9_/\-.]*))$/;
@@ -100,7 +97,7 @@
         },
         methods: {
             hookup(){
-                this.fetchGroups('', ()=>{}, this);
+                this.fetchData('', ()=>{}, this);
 
                 if (this.$validator){
                     this.attachValidator();
@@ -120,11 +117,15 @@
                         },
                         rules: {
                             max: 128,
-                            regex: this.hostRegex
+                            regex: this.tagRegex
                         },
                         alias: 'Host group'
                     });
                 });
+            },
+
+            searchEmpty(){
+                return !this.$refs || !this.$refs.vueSelect || !this.$refs.vueSelect.$data.search;
             },
 
             createOption(newOption) {
@@ -145,10 +146,10 @@
             search(search, loading) {
                 this.searchStr = search;
                 loading(true);
-                this.fetchGroups(search, loading, this);
+                this.fetchData(search, loading, this);
             },
 
-            fetchGroups: _.debounce((search, loading, vm) => {
+            fetchData: _.debounce((search, loading, vm) => {
                 if (search && !vm.isTagValid(search)){
                     loading(false);
                     return;
@@ -171,12 +172,12 @@
             },
 
             isTagValid(tagValue){
-                return this.hostRegex.test(tagValue);
+                return this.tagRegex.test(tagValue);
             },
 
             tagValidator(tagValue){
                 return tagValue
-                    && !this.errors.has('host_group')
+                    && !this.errors.has(this.name)
                     && tagValue.group_name
                     && this.isTagValid(tagValue.group_name);
             },
