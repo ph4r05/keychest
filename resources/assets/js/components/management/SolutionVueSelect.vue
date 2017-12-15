@@ -107,7 +107,7 @@
                     vm.$validator.attach({
                         name: this.name,
                         el: field,
-                        events: 'input',
+                        events: 'input|blur',
                         vm: vm,
                         getter: () => {
                             return field.value; // vm.$data.search
