@@ -54,11 +54,12 @@
     Vue.use(VueEvents);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
-    Vue.component('ph4-vue-select', Ph4VueSelect);
-
     export default {
         name: "host-groups-vue-selector",
         inject: ['$validator'],
+        components: {
+            'ph4-vue-select': Ph4VueSelect
+        },
         props: {
             tags: {
                 type: Array,

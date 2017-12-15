@@ -126,15 +126,15 @@
     Vue.use(VueEvents);
     Vue.use(VueRouter);
     Vue.use(Vue2Filters);
-    Vue.component('filter-bar', FilterBar);
-    Vue.component('solution-detail-row', DetailRow);
 
     export default {
         components: {
             Vuetable,
             VuetablePagination,
             VuetablePaginationInfo,
-            VuetablePaginationBootstrap
+            VuetablePaginationBootstrap,
+            'filter-bar': FilterBar,
+            'solution-detail-row': DetailRow,
         },
         data () {
             return {

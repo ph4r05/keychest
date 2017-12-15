@@ -49,10 +49,6 @@
     Vue.use(VueEvents);
     Vue.use(VueRouter);
 
-    Vue.component('mgmt-hosts', ManagementHosts);
-    Vue.component('mgmt-services', ManagementServices);
-    Vue.component('mgmt-solutions', ManagementSolutions);
-
     const router = window.VueRouter; // type: VueRouter
     const routes = [
         {
@@ -141,7 +137,14 @@
         console.log('mgmt-aftereach-done');
     });
 
+
+
     export default {
+        components: {
+            'mgmt-hosts': ManagementHosts,
+            'mgmt-services': ManagementServices,
+            'mgmt-solutions': ManagementSolutions,
+        },
         data () {
             return {
                 loadingState: 0,

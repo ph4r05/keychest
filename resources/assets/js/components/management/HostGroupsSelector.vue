@@ -61,15 +61,16 @@
     Vue.use(VueEvents);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
-    Vue.component('input-tags', InputTags);
-    Vue.component('autocomplete', AutoComplete);
-
     /**
      * @deprecated
      */
     export default {
         name: "host-groups-selector",
         inject: ['$validator'],
+        components:{
+            'input-tags': InputTags,
+            'autocomplete': AutoComplete,
+        },
         props: {
             tags: {
                 type: Array,
