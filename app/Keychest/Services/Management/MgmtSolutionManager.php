@@ -118,5 +118,17 @@ class MgmtSolutionManager
         $item->save();
         return $item;
     }
+
+    /**
+     * Query for group search / autocomplete
+     * @param $ownerId
+     * @param $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function searchQuery($ownerId, $search){
+        return ManagedSolution::query()
+            ->where('owner_id', '=', $ownerId)
+            ->where('sol_name', 'like', '%' . $search . '%');
+    }
 }
 

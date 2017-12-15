@@ -174,4 +174,25 @@ class MgmtSolutionController extends Controller
         ], 200);
     }
 
+    /**
+     * Search for the given solution.
+     *
+     * @param ParamRequest $request
+     * @return Response
+     */
+    public function search(ParamRequest $request)
+    {
+        $q = Input::get('q');
+
+        // Host Db spec for storage.
+        $user = Auth::getUser();
+        $query = $this->solutionManager->searchQuery($user->primary_owner_id, $q);
+        $results = $query->limit(100)->get();
+
+        return response()->json([
+            'state' => 'success',
+            'results' => $results,
+        ], 200);
+    }
+
 }

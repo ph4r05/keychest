@@ -110,6 +110,20 @@
                         >{{ errors.first('host_groups') }}</span>
                     </div>
 
+                    <div class="form-group">
+                        <label>Solution</label>
+                        <solutions
+                                :tags="formData.solution"
+                                :multiple="false"
+                                :taggable="false"
+                                :allowHostGroups="true"
+                                name="sol_name"></solutions>
+
+                        <i v-show="errors.has('sol_name')" class="fa fa-warning"></i>
+                        <span v-show="errors.has('sol_name')" class="help is-danger"
+                        >{{ errors.first('sol_name') }}</span>
+                    </div>
+
                     <transition>
                         <div class="form-group" v-if="sentState != 1">
                             <button type="submit" class="btn btn-block btn-success btn-block"
@@ -150,6 +164,7 @@
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
     import VueHostGroups from './HostGroupsVueSelect';
+    import VueSolutions from './SolutionVueSelect';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
@@ -158,6 +173,7 @@
     export default {
         components: {
             'host-groups': VueHostGroups,
+            'solutions': VueSolutions,
         },
 
         props: {
@@ -180,6 +196,7 @@
                     svc_domain_auth: 'local-certbot',
                     svc_config: 'manual',
                     host_groups: [],
+                    solution: '',
                 },
                 response: null,
             }
