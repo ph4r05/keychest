@@ -645,6 +645,15 @@
       },
 
       /**
+       * Enables/disables clear button.
+       * @type {Boolean}
+       */
+      clearButtonAllowed: {
+        type: Boolean,
+        default: true
+      },
+
+      /**
        * User defined function for filtering options for select.
        * @type {Function}
        */
@@ -1078,7 +1087,7 @@
        * @return {Boolean}
        */
       showClearButton() {
-        return !this.multiple && !this.open && this.mutableValue != null
+        return !this.multiple && !this.open && this.mutableValue != null && this.clearButtonAllowed;
       },
 
     },
