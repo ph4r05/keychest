@@ -17,6 +17,7 @@
                 :shouldTabTrigger="!readOnly"
                 :shouldCommaTrigger="!readOnly"
                 :noDrop="readOnly"
+                :clearButtonAllowed="!readOnly"
                 :multiple="true"
                 :refocus="true"
 
