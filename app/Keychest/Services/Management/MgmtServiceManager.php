@@ -93,7 +93,7 @@ class MgmtServiceManager
         return ManagedService::query()
             ->where('id', $id)
             ->where('owner_id', $ownerId)
-            ->with(['hostGroups', 'solutions']);
+            ->with(['hostGroups', 'solutions', 'testProfile']);
     }
 
     /**
