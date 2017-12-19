@@ -69,6 +69,6 @@ class ManagedService extends Model
      */
     public function testProfile()
     {
-        return $this->belongsTo('App\Models\ManagetTestProfile');
+        return $this->belongsTo('App\Models\ManagedTestProfile', 'test_profile_id');
     }
 }
