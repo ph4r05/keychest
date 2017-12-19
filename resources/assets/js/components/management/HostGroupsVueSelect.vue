@@ -3,7 +3,7 @@
         <!--suppress XmlUnboundNsPrefix -->
         <ph4-vue-select
                 label="group_name"
-                placeholder="Type a host group"
+                :placeholder="readOnly ? 'No host group' : 'Type a host group'"
                 ref="vueSelect"
 
                 :inputName="name"

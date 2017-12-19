@@ -3,7 +3,7 @@
         <!--suppress XmlUnboundNsPrefix -->
         <ph4-vue-select
                 label="sol_name"
-                placeholder="Type a solution"
+                :placeholder="readOnly ? 'No solution' : 'Type a solution'"
                 ref="vueSelect"
 
                 :inputName="name"
