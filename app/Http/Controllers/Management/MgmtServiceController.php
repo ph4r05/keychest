@@ -15,6 +15,7 @@ use App\Keychest\Services\Management\HostDbSpec;
 use App\Keychest\Services\Management\HostGroupManager;
 use App\Keychest\Services\Management\HostManager;
 use App\Keychest\Services\Management\MgmtServiceManager;
+use App\Keychest\Services\Management\MgmtSolutionManager;
 use App\Keychest\Utils\DataTools;
 use App\Keychest\Utils\DbTools;
 use App\Keychest\Utils\DomainTools;
@@ -46,6 +47,11 @@ class MgmtServiceController extends Controller
     protected $hostGroupManager;
 
     /**
+     * @var MgmtSolutionManager
+     */
+    protected $solutionManager;
+
+    /**
      * @var MgmtServiceManager
      */
     protected $serviceManager;
@@ -64,12 +70,14 @@ class MgmtServiceController extends Controller
      */
     public function __construct(HostManager $hostManager,
                                 HostGroupManager $hostGroupManager,
+                                MgmtSolutionManager $solutionManager,
                                 MgmtServiceManager $serviceManager,
                                 CredentialsManager $credentialsManager)
     {
         $this->middleware('auth');
         $this->hostManager = $hostManager;
         $this->hostGroupManager = $hostGroupManager;
+        $this->solutionManager = $solutionManager;
         $this->serviceManager = $serviceManager;
         $this->credentialsManager = $credentialsManager;
     }
@@ -96,7 +104,7 @@ class MgmtServiceController extends Controller
             });
         }
 
-        $query = $query->with(['hostGroups']);
+        $query = $query->with(['hostGroups', 'solutions']);
         $query = DbTools::sortQuery($query, $sort_parsed);
 
         $page_size = $per_page > 0 && $per_page < 1000 ? $per_page : 100;
@@ -169,6 +177,19 @@ class MgmtServiceController extends Controller
 
         // Add
         $dbRecord = $this->serviceManager->add($params, $ownerId);
+
+        // All secondary groups added
+        $groups = collect(Input::get('host_groups'))->recursiveObj();
+        $groups = $this->hostGroupManager->sanitizeGroupsByReload($groups, $user->primary_owner_id);
+        $groups = $this->hostGroupManager->fetchOrCreate($groups, $user->primary_owner_id);
+        $dbRecord->hostGroups()->saveMany($groups);
+
+        // Associate solution, for now, only one is allowed.
+        $solution = Input::get('solution');
+        if ($solution && isset($solution['id'])){
+            $solution = $this->solutionManager->getQuery($solution['id'], $ownerId)->first();
+            $dbRecord->solutions()->sync($solution ? [$solution->id] : null);
+        }
 
         return response()->json([
             'state' => 'success',
