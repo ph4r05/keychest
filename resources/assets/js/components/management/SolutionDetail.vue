@@ -21,6 +21,7 @@
     import HostGroups from './HostGroupsVueSelect';
 
     export default {
+        name: 'solution-detail-row',
         components: {
             'host-groups': HostGroups,
         },

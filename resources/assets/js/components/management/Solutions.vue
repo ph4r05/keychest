@@ -41,7 +41,7 @@
                              :multi-sort="true"
                              :per-page="50"
                              :append-params="moreParams"
-                             detail-row-component="solution-detail-row"
+                             detail-row-component="mgmt-solution-detail-row"
                              @vuetable:pagination-data="onPaginationData"
                              @vuetable:loaded="onLoaded"
                              @vuetable:loading="onLoading"
@@ -127,6 +127,9 @@
     Vue.use(VueRouter);
     Vue.use(Vue2Filters);
 
+    // Global detail row registration because my-vuetable would not see localy registered detail row in this component.
+    Vue.component('mgmt-solution-detail-row', DetailRow);
+
     export default {
         components: {
             Vuetable,
@@ -134,7 +137,6 @@
             VuetablePaginationInfo,
             VuetablePaginationBootstrap,
             'filter-bar': FilterBar,
-            'solution-detail-row': DetailRow,
         },
         data () {
             return {
