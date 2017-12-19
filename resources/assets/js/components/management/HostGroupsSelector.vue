@@ -65,7 +65,7 @@
      * @deprecated
      */
     export default {
-        name: "host-groups-selector",
+        name: 'host-groups-selector',
         inject: ['$validator'],
         components:{
             'input-tags': InputTags,

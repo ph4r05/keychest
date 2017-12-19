@@ -55,7 +55,7 @@
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
-        name: "host-groups-vue-selector",
+        name: 'host-groups-vue-select',
         inject: ['$validator'],
         components: {
             'ph4-vue-select': Ph4VueSelect
