@@ -101,7 +101,7 @@
                     <div class="form-group">
                         <label>Host Groups</label>
                         <host-groups
-                                :tags="formData.host_groups"
+                                v-model="formData.host_groups"
                                 :allowHostGroups="true"
                                 name="host_groups"></host-groups>
 
@@ -113,10 +113,9 @@
                     <div class="form-group">
                         <label>Solution</label>
                         <solutions
-                                :tags="formData.solution"
+                                v-model="formData.solution"
                                 :multiple="false"
                                 :taggable="false"
-                                :allowHostGroups="true"
                                 name="sol_name"></solutions>
 
                         <i v-show="errors.has('sol_name')" class="fa fa-warning"></i>
@@ -196,7 +195,7 @@
                     svc_domain_auth: 'local-certbot',
                     svc_config: 'manual',
                     host_groups: [],
-                    solution: '',
+                    solution: null,
                 },
                 response: null,
             }

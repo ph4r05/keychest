@@ -14,7 +14,7 @@
                     <tr>
                         <th>Host groups</th>
                         <td>
-                            <host-groups :tags="rowData.groups" :readOnly="true"></host-groups>
+                            <host-groups v-model="rowData.groups" :readOnly="true"></host-groups>
                         </td>
                     </tr>
                     <tr v-if="rowData.ssh_key">

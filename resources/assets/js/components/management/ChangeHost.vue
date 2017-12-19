@@ -61,7 +61,7 @@
 
                     <div class="form-group">
                         <label>Groups</label>
-                        <host-groups :tags="formData.groups"></host-groups>
+                        <host-groups v-model="formData.groups"></host-groups>
 
                         <i v-show="errors.has('host_group')" class="fa fa-warning"></i>
                         <span v-show="errors.has('host_group')" class="help is-danger"

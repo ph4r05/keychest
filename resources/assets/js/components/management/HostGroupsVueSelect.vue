@@ -7,7 +7,7 @@
                 ref="vueSelect"
 
                 :inputName="name"
-                :value="tags"
+                v-model="selected"
                 :options="options"
                 :searchable="!readOnly"
                 :taggable="!readOnly && taggable"
@@ -61,8 +61,7 @@
             'ph4-vue-select': Ph4VueSelect
         },
         props: {
-            tags: {
-                type: Array,
+            value: {
                 default: () => []
             },
             name: {
@@ -85,6 +84,7 @@
         data() {
             return {
                 options: [],
+                selected: this.value,
                 searchStr: '',
             };
         },
@@ -95,6 +95,31 @@
                     /^((?!host-)([a-zA-Z0-9_/\-.]*))$/;
             },
         },
+        watch:{
+            /**
+             * When the value prop changes, update
+             * the internal mutableValue.
+             * @param  {mixed} val
+             * @return {void}
+             */
+            value(val) {
+                this.selected = val;
+            },
+
+            /**
+             * Maybe run the onChange callback.
+             * @param  {string|object} val
+             * @param  {string|object} old
+             * @return {void}
+             */
+            selected(val, old) {
+                if (this.multiple) {
+                    this.onChange ? this.onChange(val) : null;
+                } else {
+                    this.onChange && val !== old ? this.onChange(val) : null;
+                }
+            },
+        },
         methods: {
             hookup(){
                 this.fetchData('', ()=>{}, this);
@@ -102,6 +127,10 @@
                 if (this.$validator){
                     this.attachValidator();
                 }
+            },
+
+            onChange(val){
+                this.$emit('input', val);
             },
 
             attachValidator(){
