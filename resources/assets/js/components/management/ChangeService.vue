@@ -235,6 +235,8 @@
                         this.loadState = 0;
                         this.response = res.data;
                         _.assign(this.formData, this.response.record);
+                        this.formData.solution = _.isEmpty(this.response.record.solutions) ?
+                            null : _.head(this.response.record.solutions);
                     })
                     .catch(err => {
                         this.loadState = -1;
