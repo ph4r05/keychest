@@ -62,4 +62,13 @@ class ManagedService extends Model
             ->withTimestamps()
             ->using('App\Models\ManagedSolutionToServicePivot');
     }
+
+    /**
+     * Associated managed test profile
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function testProfile()
+    {
+        return $this->belongsTo('App\Models\ManagetTestProfile');
+    }
 }
