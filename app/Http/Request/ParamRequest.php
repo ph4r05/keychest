@@ -15,9 +15,9 @@ class ParamRequest extends BaseRequest
 {
     use ParamRequestTrait;
 
-    public function all()
+    public function all($keys = null)
     {
-        $arr = parent::all();
+        $arr = parent::all($keys);
         return $this->augmentAllResponse($arr);
     }
 
