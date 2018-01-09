@@ -34,6 +34,12 @@ class MigrateGenerateCommand extends BaseMigrateGenerateCommand {
                             .'separate namespace from normal migrations.';
 
     /**
+     * Counter to preserve ordering of generated migrations
+     * @var int
+     */
+	protected $counter = 0;
+
+    /**
      * @param \Way\Generators\Generator $generator
      * @param \Way\Generators\Filesystem\Filesystem $file
      * @param \Way\Generators\Compilers\TemplateCompiler $compiler
@@ -111,8 +117,8 @@ class MigrateGenerateCommand extends BaseMigrateGenerateCommand {
      */
     protected function getDatePrefix()
     {
-        //return parent::getDatePrefix();
-        return '2017_01_01_000000';
+        $this->counter += 1;
+        return sprintf('2017_01_01_%06d', $this->counter);
     }
 
 
