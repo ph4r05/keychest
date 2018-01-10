@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Console\Commands\CheckCertificateValidityCommand;
 use App\Console\Commands\CheckSshKeyPoolCommand;
+use App\Console\Commands\DumpSshKeyCommand;
 use App\Console\Commands\MigrateGenerateCommand;
 use App\Console\Commands\Setup;
 use App\Console\Commands\SetupEcho;
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         CheckCertificateValidityCommand::class,
         CheckSshKeyPoolCommand::class,
+        DumpSshKeyCommand::class,
         MigrateGenerateCommand::class,
         Setup::class,
         SetupEcho::class,
