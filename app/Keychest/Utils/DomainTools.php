@@ -534,7 +534,7 @@ class DomainTools {
             '/^\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+([a-z]{2,63})\b(?::([0-9]{1,5}))?$/', $str, $mHostname);
 
         if ($hostMatch){
-            return new HostSpec($mHostname[1] . $mHostname[4], isset($mHostname[5]) ? $mHostname[5] : null, HostSpec::ADDR_DOMAIN);
+            return new HostSpec($mHostname[1] . $mHostname[4], $mHostname[5] ?? null, HostSpec::ADDR_DOMAIN);
         }
 
         if ($ip6Match){
@@ -542,7 +542,7 @@ class DomainTools {
         }
 
         if ($ip4Match){
-            return new HostSpec($mIpv4[1], $mIpv4[2], HostSpec::ADDR_IPv4);
+            return new HostSpec($mIpv4[1], $mIpv4[2] ?? null, HostSpec::ADDR_IPv4);
         }
 
         throw new HostSpecParseException('HostSpec parse error');
