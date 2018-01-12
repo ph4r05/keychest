@@ -568,3 +568,30 @@ Init script change to support `chkconfig`:
 # pidfile: /var/run/redis_6379.pid
 ```
 
+Automatic monitoring of remote acces
+
+Install the Python wrapper for statusio:
+```
+pip install python-statusio
+```
+
+Open the tools/ssh_config.py file and set the status.io variables according to the info from the status.io dashboard.
+
+Add a "ForceCommand" to /etc/ssh/sshd_config file
+
+```
+ForceCommand /var/www/keychest/tools/ssh_in.py 1>/dev/null 2>&1;/bin/bash;/var/www/keychest/tools/ssh_out.py 1>/dev/null 2>&1
+```
+
+Adding stats to the background of the login/register page of KeyChest:
+
+Open the tools/stats_image.py file and set the password and username to connect to the database. This user should
+only have restricted rights.
+
+Check all the dependencies are satisfied.
+
+Once done, simply add the following line to the /etc/crontab file.
+
+```
+*/30 *  *   * * ec2-user cd /var/www/keychest-prod/tools;/usr/bin/python ./stats_image.py 1>/dev/null 2>&1
+```
