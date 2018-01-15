@@ -181,7 +181,7 @@
                         </div>
                         <p>
 
-                            <i>Note: The number of renewals for certificates, notably Let&#39;Encrypt certificates, valid
+                            <i>Note: The number of renewals for certificates, notably Let&#39;s Encrypt certificates, valid
                                 for less than 12 months, is estimated for months beyond their maximum validity.</i>
                             <br/><br/>
                             You may want to check that all certificates are legitimate if:
