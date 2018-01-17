@@ -125,7 +125,7 @@
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-number">Key Compliance Report </span>
+                        <span class="info-box-number">Cyber Security Compliance Report </span>
                         <span class="info-box-text">{{ (new Date()).toLocaleString("en-us",{'day':'numeric','month':'short',
                             'year':'numeric', 'hour':'numeric','minute':'numeric'}) }}</span>
                         <div class="progress">
