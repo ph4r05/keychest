@@ -53,8 +53,7 @@
                         <div class="small-box bg-aqua" >
                             <div class="inner">
                                 <h3>{{ Math.round(certsOpsHours/8/260*10+0.5,0,PHP_ROUND_UP_HALF)/10 }}</h3>
-
-                                <p>Full time resources</p>
+                                <p>Full time resource</p>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-exclamation-circle"></i>
@@ -302,6 +301,7 @@
     import Psl from 'ph4-psl';
     import Req from 'req';
     import ReqD from 'req-data';
+    import pluralize from 'pluralize';
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
@@ -512,6 +512,8 @@
             recomp(){
                 this.$emit('onRecompNeeded');
             },
+
+            pluralize,
 
             formatFloat(x){
                 return (numeral(x).format('0'));
