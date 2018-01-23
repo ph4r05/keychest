@@ -435,7 +435,7 @@
                         this.closedAt = moment().utc();
                         this.$emit('onAccountClosed', data);
                         this.$events.fire('on-account-closed', data);
-                        toastr.success('Account close request submitted.', 'Success');
+                        toastr.success('The request to close account submitted.', 'Success');
                     });
                 };
 
