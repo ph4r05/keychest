@@ -207,7 +207,7 @@ function isEmpty(x){
  */
 function del(fnc, obj){
     return (...args) => {
-        fnc.apply(obj, args);
+        return fnc.apply(obj, args);
     }
 }
 
