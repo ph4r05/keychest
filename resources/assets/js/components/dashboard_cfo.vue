@@ -301,6 +301,7 @@
     import Psl from 'ph4-psl';
     import Req from 'req';
     import ReqD from 'req-data';
+    import util from './dashboard/util'
     import pluralize from 'pluralize';
 
     import VueCharts from 'vue-chartjs';
@@ -332,13 +333,6 @@
 
                 certTypeLabels: ['domain validated', 'wildcard, domain validated', 'org. validated',
                     'wildcard, org. validated', 'extended validation', 'wildcard, exended validation'],
-
-                chartColors: [
-                    '#00c0ef',
-                    '#f39c12',
-                    '#00a65a',
-                    '#f56954',
-                ],
             }
         },
 
