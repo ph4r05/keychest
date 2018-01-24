@@ -158,8 +158,7 @@
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-number">Security Business Functions Report</span>
-                        <span class="info-box-text">{{ (new Date()).toLocaleString("en-us",{'day':'numeric','month':'short',
-                            'year':'numeric', 'hour':'numeric','minute':'numeric'}) }}</span>
+                        <span class="info-box-text">{{ curDateUsString() }}</span>
                         <div class="progress">
                             <div class="progress-bar" style="width: 70%"></div>
                         </div>
@@ -822,6 +821,7 @@
 
             take: util.take,
             len: util.len,
+            curDateUsString: util.curDateUsString,
             extendDateField: util.extendDateField,
             moment: util.moment,
             momentu: util.momentu,

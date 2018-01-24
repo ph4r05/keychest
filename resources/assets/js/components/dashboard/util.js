@@ -74,6 +74,28 @@ export default {
         return x ? x : '-';
     },
 
+    /**
+     * Returns current date in the US format.
+     * @returns {string}
+     */
+    curDateUsString(){
+        return (new Date()).toLocaleString('en-us', this.dateUsParams());
+    },
+
+    /**
+     * Returns params for Date.toLocaleString()
+     * @returns {{day: string, month: string, year: string, hour: string, minute: string}}
+     */
+    dateUsParams(){
+        return {
+            'day': 'numeric',
+            'month': 'short',
+            'year': 'numeric',
+            'hour': 'numeric',
+            'minute': 'numeric'
+        };
+    },
+
     //
     // Datasets
     //

@@ -542,6 +542,7 @@
                 });
             },
 
+            curDateUsString: util.curDateUsString,
             extendDateField: util.extendDateField,
 
             processResults() {

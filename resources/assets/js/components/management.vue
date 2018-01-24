@@ -150,8 +150,7 @@
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa fa-tachometer"></i></span>
                     <div class="info-box-content info-box-label">
-                        Key Management Report - {{ (new Date()).toLocaleString("en-us",{'day':'numeric','month':'short',
-                        'year':'numeric', 'hour':'numeric','minute':'numeric'}) }}
+                        Key Management Report - {{ curDateUsString() }}
                         <!-- TODO: fix: Date(tls.created_at_utc * 1000.0 - (new Date().getTimezoneOffset())*60) -->
                     </div>
                 </div>
@@ -1316,6 +1315,7 @@
 
             take: util.take,
             len: util.len,
+            curDateUsString: util.curDateUsString,
             extendDateField: util.extendDateField,
             moment: util.moment,
             momentu: util.momentu,
