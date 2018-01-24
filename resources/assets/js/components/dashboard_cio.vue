@@ -823,6 +823,8 @@
             len: util.len,
             utcTimeLocaleString: util.utcTimeLocaleString,
             utcTimeLocaleStringUs: Req.del(util.utcTimeLocaleStringUs, util),
+            utcTimeLocaleDateString: util.utcTimeLocaleDateString,
+            utcTimeLocaleDateStringUs: Req.del(util.utcTimeLocaleDateStringUs, util),
             curDateUsString: Req.del(util.curDateUsString, util),
             extendDateField: util.extendDateField,
             moment: util.moment,

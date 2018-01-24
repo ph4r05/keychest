@@ -75,6 +75,28 @@ export default {
     },
 
     /**
+     * Formats UTC time with toLocaleDateString.
+     * @param utc
+     * @param locale
+     * @param params
+     * @returns {string}
+     */
+    utcTimeLocaleDateString(utc, locale, params){
+        return new Date(utc * 1000.0).toLocaleDateString(locale, params);
+    },
+
+    /**
+     * Formats UTC time with toLocaleDateString.
+     * @param utc
+     * @param locale
+     * @param params
+     * @returns {string}
+     */
+    utcTimeLocaleDateStringUs(utc, locale, params){
+        return new Date(utc * 1000.0).toLocaleDateString(locale || 'en-us', params || this.dateUsParams());
+    },
+
+    /**
      * Formats UTC time with toLocaleString.
      * @param utc
      * @param locale

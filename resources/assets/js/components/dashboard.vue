@@ -509,7 +509,7 @@
                                     <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-if="momentu(grp[0].valid_to_utc * 1000.0)<momentu()">
                                         SERVER DOWN since {{ momentu(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
                                     <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-else="">
-                                        {{ new Date(grp[0].valid_to_utc * 1000.0).toLocaleDateString() }}
+                                        {{ utcTimeLocaleDateString(grp[0].valid_to_utc) }}
                                         ({{ momentu(grp[0].valid_to_utc * 1000.0).fromNow() }}) </td>
                                     <td v-bind:class="grp[0].planCss.tbl">
                                         <ul class="coma-list" v-if="len(getCertHostPorts(grp)) > 0">
@@ -552,7 +552,7 @@
                                 <td v-bind:class="cur_whois.planCss.tbl">
                                     {{ momentu(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
                                 <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ new Date(cur_whois.expires_at_utc * 1000.0).toLocaleDateString() }}</td>
+                                    {{ utcTimeLocaleDateString(cur_whois.expires_at_utc) }}</td>
                             </tr>
 
                             </tbody>
@@ -1092,6 +1092,8 @@
             len: util.len,
             utcTimeLocaleString: util.utcTimeLocaleString,
             utcTimeLocaleStringUs: Req.del(util.utcTimeLocaleStringUs, util),
+            utcTimeLocaleDateString: util.utcTimeLocaleDateString,
+            utcTimeLocaleDateStringUs: Req.del(util.utcTimeLocaleDateStringUs, util),
             curDateUsString: Req.del(util.curDateUsString, util),
             extendDateField: util.extendDateField,
             moment: util.moment,
