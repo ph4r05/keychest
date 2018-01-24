@@ -1100,7 +1100,6 @@
                 results: null,
                 dataProcessStart: null,
 
-                graphLibLoaded: false,
                 graphsRendered: false,
                 graphDataReady: false,
 
@@ -1408,7 +1407,6 @@
 
                 this.$nextTick(() => {
                     this.graphDataReady = true;
-                    this.graphLibLoaded = true;
                     this.renderCharts();
                     this.postLoad();
                     const processTime = moment().diff(this.dataProcessStart);
@@ -1431,7 +1429,7 @@
             //
 
             renderCharts(){
-                if (!this.graphLibLoaded || !this.graphDataReady){
+                if (!this.graphDataReady){
                     return;
                 }
 
