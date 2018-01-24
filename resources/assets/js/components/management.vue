@@ -1080,6 +1080,7 @@
     import Psl from 'ph4-psl';
     import Req from 'req';
     import ReqD from 'req-data';
+    import util from './dashboard/util';
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
@@ -1697,7 +1698,7 @@
             plannerGraph(){
                 const labels = ['Time', 'Let\'s Encrypt', 'Managed by CDN/ISP', 'Long validity'];
                 const datasets = _.map([this.crtTlsMonth, this.crtAllMonth], x => {
-                    return this.graphDataConv(_.concat([labels], x));
+                    return util.graphDataConv(_.concat([labels], x));
                 });
 
                 const baseOptions = {
@@ -2002,36 +2003,6 @@
                 return ret+1;
             },
 
-            graphDataConv(data){
-                // [[dataset names], [label, d1, d2, ...], [label, d1, d2, ...]]
-                // converts to charjs data set format.
-                if (_.isEmpty(data) || _.isEmpty(data[0])){
-                    return {};
-                }
-
-                const ln = data[0].length;
-                const labels = [];
-                const datasets = [];
-                for(let i=0; i<ln-1; i++){
-                    datasets.push({
-                        label: data[0][i+1],
-                        backgroundColor: this.chartColors[i % this.chartColors.length],
-                        data: []
-                    });
-                }
-
-                _.forEach(data, (value, idx) => {
-                    if (idx===0){
-                        return;
-                    }
-                    labels.push(value[0]);
-                    for(let i=1; i < ln; i++){
-                        datasets[i-1].data.push(value[i]);
-                    }
-                });
-                return {labels: labels, datasets: datasets};
-            },
-
             certTypes(certSet){
                 // certificate type aggregation
                 const certTypes = [0, 0, 0];  // LE, Cloudflare, Public / other
@@ -2048,43 +2019,9 @@
                 return certTypes;
             },
 
-            extrapolatePlannerCerts(certSet){
-                // Adds certificates to the planner multiple times for planner if validity len < 12M
-                const valid12m = 3600 * 24 * 365;
-                const filtered = _.filter(certSet, x => {
-                    return x.validity_sec < valid12m;
-                });
-
-                if (_.size(filtered) === 0){
-                    return certSet;
-                }
-
-                // Has to clone, we dont want to add extrapolated certificates to other graphs
-                const newSet = _.clone(_.castArray(certSet));
-                const threshold = moment().utc().add(1, 'year').unix();
-
-                // Add each cert
-                _.forEach(filtered, cert => {
-                    let lastCert = cert;
-                    while(lastCert.valid_to_utc + lastCert.validity_sec < threshold){
-                        // create just a lightweight shim, later for full clone do: _.cloneDeep(lastCert);
-                        const cloned = { is_clone: true };
-                        cloned.is_le = lastCert.is_le;
-                        cloned.is_cloudflare = lastCert.is_cloudflare;
-                        cloned.validity_sec = lastCert.validity_sec;
-                        cloned.valid_to_utc = lastCert.valid_to_utc + lastCert.validity_sec;
-                        cloned.valid_from_utc = lastCert.valid_to_utc;
-                        newSet.push(cloned);
-                        lastCert = cloned;
-                    }
-                });
-
-                return newSet;
-            },
-
             monthDataGen(certSet){
                 // cert per months, LE, Cloudflare, Others
-                const newSet = this.extrapolatePlannerCerts(certSet);
+                const newSet = util.extrapolatePlannerCerts(certSet);
                 const grp = _.groupBy(newSet, x => {
                     return moment.utc(x.valid_to_utc * 1000.0).format('YYYY-MM');
                 });
