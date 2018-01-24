@@ -1344,25 +1344,7 @@
             //
 
             plannerGraph(){
-                const labels = ['Time', 'Let\'s Encrypt', 'Managed by CDN/ISP', 'Long validity'];
-                const datasets = _.map([this.crtTlsMonth, this.crtAllMonth], x => {
-                    return util.graphDataConv(_.concat([labels], x));
-                });
-
-                const baseOptions = charts.plannerBaseConfig();
-
-                const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
-                graphCrtTlsData.options.title = {
-                    display: true,
-                    text: 'Certificates on watched servers - excluding those hidden behind CDN/ISP proxies'
-                };
-
-                const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
-                graphCrtAllData.options.title = {
-                    display: true,
-                    text: 'All issued certificates (CT)  - all valid certificates even when not detected on servers'
-                };
-
+                const [graphCrtTlsData, graphCrtAllData] = charts.plannerConfig(this.crtTlsMonth, this.crtAllMonth);
                 new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
                 new Chart(document.getElementById("columnchart_certificates_all_js"), graphCrtAllData);
             },

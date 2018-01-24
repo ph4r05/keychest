@@ -42,6 +42,35 @@ export default {
     },
 
     /**
+     * Generates 2 planner configurations
+     * @param crtTlsMonth
+     * @param crtAllMonth
+     * @returns {*[]}
+     */
+    plannerConfig(crtTlsMonth, crtAllMonth){
+        const labels = ['Time', 'Let\'s Encrypt', 'Managed by CDN/ISP', 'Long validity'];
+        const datasets = _.map([crtTlsMonth, crtAllMonth], x => {
+            return util.graphDataConv(_.concat([labels], x));
+        });
+
+        const baseOptions = charts.plannerBaseConfig();
+
+        const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
+        graphCrtTlsData.options.title = {
+            display: true,
+            text: 'Certificates on watched servers - excluding those hidden behind CDN/ISP proxies'
+        };
+
+        const graphCrtAllData = _.extend({data: datasets[1]}, _.cloneDeep(baseOptions));
+        graphCrtAllData.options.title = {
+            display: true,
+            text: 'All issued certificates (CT)  - all valid certificates even when not detected on servers'
+        };
+
+        return [graphCrtTlsData, graphCrtAllData];
+    },
+
+    /**
      * Returns config for doughnut chart with certificate types.
      * @param certTypesStatsAll
      * @param certTypesStats
