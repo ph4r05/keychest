@@ -853,6 +853,7 @@
     import Req from 'req';
     import ReqD from 'req-data';
     import util from './dashboard/util'
+    import charts from './dashboard/charts'
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
@@ -1384,33 +1385,7 @@
                     return util.graphDataConv(_.concat([labels], x));
                 });
 
-                const baseOptions = {
-                    type: 'bar',
-                    options: {
-                        scaleBeginAtZero: true,
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scaleShowGridLines: true,
-                        scaleGridLineColor: "rgba(0,0,0,.02)",
-                        scaleGridLineWidth: 1,
-                        scales: {
-                            xAxes: [{
-                                stacked: true,
-                            }],
-                            yAxes: [{
-                                stacked: true,
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: (value, index, values) => {
-                                        return _.floor(value) == value ? value : null;
-                                    }
-                                }
-                            }]
-                        },
-                        tooltips:{
-                            mode: 'index'
-                        },
-                    }};
+                const baseOptions = charts.plannerBaseConfig();
 
                 const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
                 graphCrtTlsData.options.title = {
@@ -1429,42 +1404,7 @@
             },
 
             certTypesGraph(){
-                const graphCertTypes = {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [
-                            {
-                                data: this.certTypesStatsAll,
-                                backgroundColor: [util.chartColors[0], util.chartColors[1], util.chartColors[2]],
-                                label: 'All issued certificates (CT)'
-                            },
-                            {
-                                data: this.certTypesStats,
-                                backgroundColor: [util.chartColors[0], util.chartColors[1], util.chartColors[2]],
-                                label: 'Certificates on watched servers'
-                            }],
-                        labels: [
-                            'Let\'s Encrypt',
-                            'Managed by CDN/ISP',
-                            'Long validity'
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Certificate types'
-                        },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
-
+                const graphCertTypes = charts.certTypesConfig(this.certTypesStatsAll, this.certTypesStats);
                 new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
             },
 
@@ -1473,45 +1413,7 @@
                     return;
                 }
 
-                // graph config
-                const config = {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: this.week4renewalsCounts,
-                            backgroundColor: [
-                                util.chartColors[12],
-                                util.chartColors[3],
-                                util.chartColors[1],
-                                util.chartColors[0],
-                                util.chartColors[2],
-                            ],
-                            label: 'Renewals in 4 weeks'
-                        }],
-                        labels: [
-                            "expired",
-                            "0-7 days",
-                            "8-14 days",
-                            "15-21 days",
-                            "22-28 days"
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        legend: {
-                            position: 'right',
-                        },
-                        // title: {
-                        //     display: true,
-                        //     text: 'Renewals in 4 weeks'
-                        // },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
-
+                const config = charts.week4renewConfig(this.week4renewalsCounts);
                 setTimeout(() => {
                     new Chart(document.getElementById("imminent_renewals_js"), config);
                 }, 1000);
@@ -1524,47 +1426,11 @@
                 ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
                 this.certIssuerTableData = _.sortBy(
                     ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
-                    x => {
-                        return -1 * _.max(_.tail(x));
-                    }
-                );
+                    util.invMaxTail);
 
                 const tlsIssuerUnz = _.unzip(tlsIssuerStats);
                 const allIssuerUnz = _.unzip(allIssuerStats);
-                const graphCertTypes = {
-                    type: 'horizontalBar',
-                    data: {
-                        datasets: [
-                            {
-                                data: tlsIssuerUnz[1],
-                                backgroundColor: util.chartColors[0],
-                                //backgroundColor: Req.takeMod(util.chartColors, tlsIssuerUnz[0].length),
-                                label: 'Detected on servers'
-                            },
-                            {
-                                data: allIssuerUnz[1],
-                                backgroundColor: util.chartColors[2],
-                                //backgroundColor: Req.takeMod(util.chartColors, allIssuerUnz[0].length),
-                                label: 'From CT logs only'
-                            }],
-                        labels: allIssuerUnz[0]
-                    },
-                    options: {
-                        scaleBeginAtZero: true,
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Certificate issuers'
-                        },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
+                const graphCertTypes = charts.certIssuerConfig(allIssuerUnz, tlsIssuerUnz);
 
                 setTimeout(() => {
                     new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
@@ -1583,76 +1449,10 @@
                 const unzipped = _.map(dataGraphs, _.unzip);
 
                 // Normal domains
-                const graphCertDomains = {
-                    type: 'bar',
-                    data: {
-                        datasets: [
-                            {
-                                data: unzipped[0][1],
-                                backgroundColor: util.chartColors[0],
-                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[0][1].length),
-                                label: 'Watched servers'
-                            },
-                            {
-                                data: unzipped[1][1],
-                                backgroundColor: util.chartColors[2],
-                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[1][1].length),
-                                label: 'All issued certificates (CT)'
-                            }],
-                        labels: _.map(unzipped[0][0], x => util.getCountCategoryLabel(x))
-                    },
-                    options: {
-                        scaleBeginAtZero: true,
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'All watched domains (server names)'
-                        },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
+                const graphCertDomains = charts.certDomainsConfig(unzipped, 'All watched domains (server names)');
 
-                // TLD domains
-                const graphCertDomainsTld = {
-                    type: 'bar',
-                    data: {
-                        datasets: [
-                            {
-                                data: unzipped[2][1],
-                                backgroundColor: util.chartColors[0],
-                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[2][1].length),
-                                label: 'Watched servers'
-                            },
-                            {
-                                data: unzipped[3][1],
-                                backgroundColor: util.chartColors[2],
-                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[3][1].length),
-                                label: 'All issued certificates (CT)'
-                            }],
-                        labels: _.map(unzipped[2][0], x => util.getCountCategoryLabel(x))
-                    },
-                    options: {
-                        scaleBeginAtZero: true,
-                        responsive: true,
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Registered domains (SLD)'
-                        },
-                        animation: {
-                            animateScale: true,
-                            animateRotate: true
-                        }
-                    }
-                };
+                // const unzippedTld = [unzipped[2], unzipped[3]];
+                // const graphCertDomainsTld = charts.certDomainsConfig(unzippedTld, 'Registered domains (SLD)');
 
                 setTimeout(() => {
                     new Chart(document.getElementById("pie_cert_domains"), graphCertDomains);

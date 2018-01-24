@@ -1279,10 +1279,7 @@
                 ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
                 this.certIssuerTableData = _.sortBy(
                     ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
-                    x => {
-                        return -1 * _.max(_.tail(x));
-                    }
-                );
+                    util.invMaxTail);
 
                 const tlsIssuerUnz = _.unzip(tlsIssuerStats);
                 const allIssuerUnz = _.unzip(allIssuerStats);

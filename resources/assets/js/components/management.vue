@@ -1081,6 +1081,7 @@
     import Req from 'req';
     import ReqD from 'req-data';
     import util from './dashboard/util';
+    import charts from './dashboard/charts';
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
@@ -1108,27 +1109,6 @@
                 includeNotVerified: false,
 
                 Laravel: window.Laravel,
-
-                chartColors: [
-                    '#00c0ef',
-                    '#f39c12',
-                    '#00a65a',
-                    '#f56954',
-                    '#3c8dbc',
-                    '#d2d6de',
-                    '#ff6384',
-                    '#d81b60',
-                    '#ffcd56',
-                    '#4bc0c0',
-                    '#36a2eb',
-                    '#9966ff',
-                    '#001F3F',
-                    '#605ca8',
-                    '#ffde56',
-                    '#c43833',
-                ],
-
-                countCategories: [1,2,5,10,25,50,100,250,500,1000]
             };
         },
 
@@ -1684,12 +1664,12 @@
                         datasets: [
                             {
                                 data: this.certTypesStatsAll,
-                                backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                                backgroundColor: [util.chartColors[0], util.chartColors[1], util.chartColors[2]],
                                 label: 'All issued certificates (CT)'
                             },
                             {
                                 data: this.certTypesStats,
-                                backgroundColor: [this.chartColors[0], this.chartColors[1], this.chartColors[2]],
+                                backgroundColor: [util.chartColors[0], util.chartColors[1], util.chartColors[2]],
                                 label: 'Certificates on watched servers'
                             }],
                         labels: [
@@ -1729,11 +1709,11 @@
                         datasets: [{
                             data: this.week4renewalsCounts,
                             backgroundColor: [
-                                this.chartColors[12],
-                                this.chartColors[3],
-                                this.chartColors[1],
-                                this.chartColors[0],
-                                this.chartColors[2],
+                                util.chartColors[12],
+                                util.chartColors[3],
+                                util.chartColors[1],
+                                util.chartColors[0],
+                                util.chartColors[2],
                             ],
                             label: 'Renewals in 4 weeks'
                         }],
@@ -1773,10 +1753,7 @@
                 ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
                 this.certIssuerTableData = _.sortBy(
                     ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
-                    x => {
-                        return -1 * _.max(_.tail(x));
-                    }
-                );
+                    util.invMaxTail);
 
                 const tlsIssuerUnz = _.unzip(tlsIssuerStats);
                 const allIssuerUnz = _.unzip(allIssuerStats);
@@ -1786,14 +1763,14 @@
                         datasets: [
                             {
                                 data: tlsIssuerUnz[1],
-                                backgroundColor: this.chartColors[0],
-                                //backgroundColor: Req.takeMod(this.chartColors, tlsIssuerUnz[0].length),
+                                backgroundColor: util.chartColors[0],
+                                //backgroundColor: Req.takeMod(util.chartColors, tlsIssuerUnz[0].length),
                                 label: 'Detected on servers'
                             },
                             {
                                 data: allIssuerUnz[1],
-                                backgroundColor: this.chartColors[2],
-                                //backgroundColor: Req.takeMod(this.chartColors, allIssuerUnz[0].length),
+                                backgroundColor: util.chartColors[2],
+                                //backgroundColor: Req.takeMod(util.chartColors, allIssuerUnz[0].length),
                                 label: 'From CT logs only'
                             }],
                         labels: allIssuerUnz[0]
@@ -1838,14 +1815,14 @@
                         datasets: [
                             {
                                 data: unzipped[0][1],
-                                backgroundColor: this.chartColors[0],
-                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[0][1].length),
+                                backgroundColor: util.chartColors[0],
+                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[0][1].length),
                                 label: 'Watched servers'
                             },
                             {
                                 data: unzipped[1][1],
-                                backgroundColor: this.chartColors[2],
-                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[1][1].length),
+                                backgroundColor: util.chartColors[2],
+                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[1][1].length),
                                 label: 'All issued certificates (CT)'
                             }],
                         labels: _.map(unzipped[0][0], x => util.getCountCategoryLabel(x))
@@ -1874,14 +1851,14 @@
                         datasets: [
                             {
                                 data: unzipped[2][1],
-                                backgroundColor: this.chartColors[0],
-                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[2][1].length),
+                                backgroundColor: util.chartColors[0],
+                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[2][1].length),
                                 label: 'Watched servers'
                             },
                             {
                                 data: unzipped[3][1],
-                                backgroundColor: this.chartColors[2],
-                                //backgroundColor: Req.takeMod(this.chartColors, unzipped[3][1].length),
+                                backgroundColor: util.chartColors[2],
+                                //backgroundColor: Req.takeMod(util.chartColors, unzipped[3][1].length),
                                 label: 'All issued certificates (CT)'
                             }],
                         labels: _.map(unzipped[2][0], x => util.getCountCategoryLabel(x))

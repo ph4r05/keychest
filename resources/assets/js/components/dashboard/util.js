@@ -76,6 +76,11 @@ export default {
     // Certs
     //
 
+    /**
+     * Returns numerical index [0,4] depending on a week the certificate is valid.
+     * @param x
+     * @returns {number}
+     */
     week4grouper(x){
         if (x.valid_to_days <= 0 && x.valid_to_days >= -28){
             return 0;
@@ -90,12 +95,22 @@ export default {
         }
     },
 
+    /**
+     * Projects watch_hostports to the array from the collection of certificates.
+     * @param certSet
+     * @returns {Array}
+     */
     getCertHostPorts(certSet){
         return _.sortedUniq(_.sortBy(_.reduce(_.castArray(certSet), (acc, x) => {
             return _.concat(acc, x.watch_hostports);
         }, [])));
     },
 
+    /**
+     * Determines certificate issuer from the certificate.
+     * @param cert
+     * @returns {*}
+     */
     certIssuer(cert){
         return Req.certIssuer(cert);
     },
@@ -226,6 +241,11 @@ export default {
         return newSet;
     },
 
+    /**
+     * Generates per-month certificate overview.
+     * @param certSet
+     * @returns {Array}
+     */
     monthDataGen(certSet){
         // cert per months, LE, Cloudflare, Others
         const newSet = this.extrapolatePlannerCerts(certSet);
@@ -297,6 +317,15 @@ export default {
         return _.groupBy(certSet, x=> {
             return this.getCountCategory(_.size(x.alt_slds));
         });
+    },
+
+    /**
+     * Occurrence / count sorting lambda. User with charts / tables
+     * @param x
+     * @returns {number}
+     */
+    invMaxTail(x){
+        return -1 * _.max(_.tail(x));
     },
 
 }
