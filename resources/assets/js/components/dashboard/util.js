@@ -82,7 +82,7 @@ export default {
      * @returns {string}
      */
     utcTimeLocaleDateString(utc, locale, params){
-        return new Date(utc * 1000.0).toLocaleDateString(locale, params);
+        return (new Date(utc * 1000.0)).toLocaleDateString(locale, params);
     },
 
     /**
@@ -93,7 +93,7 @@ export default {
      * @returns {string}
      */
     utcTimeLocaleDateStringUs(utc, locale, params){
-        return new Date(utc * 1000.0).toLocaleDateString(locale || 'en-us', params || this.dateUsParams());
+        return (new Date(utc * 1000.0)).toLocaleDateString(locale || 'en-us', params || this.dateUsParams());
     },
 
     /**
@@ -104,7 +104,7 @@ export default {
      * @returns {string}
      */
     utcTimeLocaleStringUs(utc, locale, params){
-        return new Date(utc * 1000.0).toLocaleString(locale || 'en-us', params || this.dateUsParams());
+        return (new Date(utc * 1000.0)).toLocaleString(locale || 'en-us', params || this.dateUsParams());
     },
 
     /**
@@ -115,7 +115,7 @@ export default {
      * @returns {string}
      */
     utcTimeLocaleString(utc, locale, params){
-        return new Date(utc * 1000.0).toLocaleString(locale, params);
+        return (new Date(utc * 1000.0)).toLocaleString(locale, params);
     },
 
     /**
