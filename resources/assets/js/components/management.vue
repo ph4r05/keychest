@@ -1892,57 +1892,11 @@
             //
 
             certTypes(certSet){
-                // certificate type aggregation
-                const certTypes = [0, 0, 0];  // LE, Cloudflare, Public / other
-
-                for(const [crtIdx, ccrt] of Object.entries(certSet)){
-                    if (ccrt.is_le){
-                        certTypes[0] += 1
-                    } else if (ccrt.is_cloudflare || ccrt.id in this.cdnCerts){
-                        certTypes[1] += 1
-                    } else {
-                        certTypes[2] += 1
-                    }
-                }
-                return certTypes;
+                return util.certTypes(certSet, this.cdnCerts);
             },
 
             monthDataGen(certSet){
-                // cert per months, LE, Cloudflare, Others
-                const newSet = util.extrapolatePlannerCerts(certSet);
-                const grp = _.groupBy(newSet, x => {
-                    return moment.utc(x.valid_to_utc * 1000.0).format('YYYY-MM');
-                });
-
-                const fillGap = (ret, lastMoment, toMoment) => {
-                    if (_.isUndefined(lastMoment) || lastMoment >= toMoment){
-                        return;
-                    }
-
-                    const terminal = toMoment.format('MM/YY');
-                    const i = moment.utc(lastMoment).add(1, 'month');
-                    for(i; i.format('MM/YY') !== terminal && i < toMoment; i.add(1, 'month')){
-                        ret.push([ i.format('MM/YY'), 0, 0, 0]);
-                    }
-                };
-
-                const sorted = _.sortBy(grp, [x => {return x[0].valid_to_utc; }]);
-                const ret = [];
-                let lastGrp = moment().utc().subtract(1, 'month');
-                for(const [idx, grp] of Object.entries(sorted)){
-                    const crt = grp[0];
-                    const curMoment = moment.utc(crt.valid_to_utc * 1000.0);
-                    const label = curMoment.format('MM/YY');
-
-                    fillGap(ret, lastGrp, curMoment);
-                    const certTypesStat = this.certTypes(grp);
-                    const curEntry = [label, certTypesStat[0], certTypesStat[1], certTypesStat[2]];
-                    ret.push(curEntry);
-                    lastGrp = curMoment;
-                }
-
-                fillGap(ret, lastGrp, moment().utc().add(1, 'year').add(1, 'month'));
-                return ret;
+                return util.monthDataGen(certSet, {'cdnCerts': this.cdnCerts});
             },
         }
     }

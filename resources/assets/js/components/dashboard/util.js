@@ -201,6 +201,28 @@ export default {
     },
 
     /**
+     * Certificate type aggregation into groups: LE, CDN, Other
+     *
+     * @param certSet
+     * @param cdnCerts optional set of CDN certificate IDs.
+     * @returns {number[]}
+     */
+    certTypes(certSet, cdnCerts){
+        const certTypes = [0, 0, 0];  // LE, Cloudflare, Public / other
+
+        for(const [crtIdx, ccrt] of Object.entries(certSet)){
+            if (ccrt.is_le){
+                certTypes[0] += 1
+            } else if (ccrt.is_cloudflare || (cdnCerts && ccrt.id in cdnCerts)){
+                certTypes[1] += 1
+            } else {
+                certTypes[2] += 1
+            }
+        }
+        return certTypes;
+    },
+
+    /**
      * Extrapolates certificates over time w.r.t. validity time of the certificates.
      * Used for the certificate planner to account with certificates with short validity period,
      * e.g., LetsEncrypt certificates (3M) - so they are in the 2 year planner multiple times.
@@ -244,9 +266,16 @@ export default {
     /**
      * Generates per-month certificate overview.
      * @param certSet
+     * @param options
      * @returns {Array}
      */
-    monthDataGen(certSet){
+    monthDataGen(certSet, options){
+        options = options || {};
+        const cdnCerts = _.get(options, 'cdnCerts');
+        const certTypesFnc = _.get(options, 'certTypes', x => {
+            return this.certTypes(x, cdnCerts);
+        });
+
         // cert per months, LE, Cloudflare, Others
         const newSet = this.extrapolatePlannerCerts(certSet);
         const grp = _.groupBy(newSet, x => {
@@ -274,7 +303,7 @@ export default {
             const label = curMoment.format('MM/YY');
 
             fillGap(ret, lastGrp, curMoment);
-            const certTypesStat = this.certTypes(grp);
+            const certTypesStat = certTypesFnc(grp);
             const curEntry = [label, certTypesStat[0], certTypesStat[1], certTypesStat[2]];
             ret.push(curEntry);
             lastGrp = curMoment;
