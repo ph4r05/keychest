@@ -83,7 +83,7 @@
 
                     <div class="small-box bg-yellow" v-else="">
                         <div class="inner">
-                            <h3>{{100 - Math.round(100*(dnsFailedLookups.length + tlsErrors.length)/numWatches) }}&#37;
+                            <h3>{{ 100 - Math.round(100*(dnsFailedLookups.length + tlsErrors.length)/numWatches) }}&#37;
                                 <span style="font-size: smaller">of {{ numWatches }}</span></h3>
                             <p>Security groups</p>
                         </div>
@@ -103,8 +103,8 @@
                     <div class="small-box"
                          v-bind:class="{'bg-green': numExpiresNow < 1, 'bg-red': numExpiresNow > 0}" >
                         <div class="inner">
-                            <h3>{{ Math.round(100*numExpiresNow/len(certs)) }}&#37; <span style="font-size: smaller">of {{len(certs)}}</span> </h3>
-                            <p>{{pluralize('Certificate', numExpiresNow)}} {{pluralize('expire', numExpiresNow)}} now</p>
+                            <h3>{{ Math.round(100*numExpiresNow/len(certs)) }}&#37; <span style="font-size: smaller">of {{ len(certs) }}</span> </h3>
+                            <p>{{ pluralize('Certificate', numExpiresNow) }} {{ pluralize('expire', numExpiresNow) }} now</p>
                         </div>
                         <div class="icon">
                             <i class="fa fa-exclamation-circle"></i>
@@ -125,7 +125,7 @@
                     <!-- small box -->
                     <div class="small-box bg-green" v-if="0 < 1">
                         <div class="inner">
-                            <h3>&uarr;{{30}}&#37; </h3>
+                            <h3>&uarr;{{ 30 }}&#37; </h3>
                             <p>Workload change - month</p>
                         </div>
                         <div class="icon">
@@ -137,7 +137,7 @@
 
                     <div class="small-box bg-yellow" v-else="">
                         <div class="inner">
-                            <h3>&uarr;{{31}}&#37; </h3>
+                            <h3>&uarr;{{ 31 }}&#37; </h3>
                             <p>Workload change - month</p>
                         </div>
 
@@ -226,27 +226,27 @@
                                 <tbody>
                                 <tr>
                                 <td>DNS configuration issues</td>
-                                <td>{{dnsFailedLookups.length}}</td>
+                                <td>{{ dnsFailedLookups.length }}</td>
                                 </tr>
 
                                 <tr>
                                 <td>Unreachable servers</td>
-                                <td>{{tlsErrors.length}}</td>
+                                <td>{{ tlsErrors.length }}</td>
                                 </tr>
 
                                 <tr>
                                 <td>Servers with configuration errors</td>
-                                <td>{{len(tlsInvalidTrust)}}</td>
+                                <td>{{ len(tlsInvalidTrust) }}</td>
                                 </tr>
 
                                 <tr>
                                 <td>Incorrect certificates</td>
-                                <td>{{len(tlsInvalidHostname)}}</td>
+                                <td>{{ len(tlsInvalidHostname) }}</td>
                                 </tr>
 
                                 <tr>
                                 <td>Expired certificates</td>
-                                <td>{{len(expiredCertificates)}}</td>
+                                <td>{{ len(expiredCertificates) }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -298,7 +298,7 @@
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">DNS errors ({{dnsFailedLookups.length}})</template>
+                        <template slot="title">DNS errors ({{ dnsFailedLookups.length }})</template>
                         <p>Please check if the following domain names are correct. You may also need to verify
                             your DNS configuration at your DNS registrar and at your DNS servers.</p>
                         <div class="table-responsive table-xfull">
@@ -328,7 +328,7 @@
             <div v-if="tlsErrors.length > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unreachable servers ({{tlsErrors.length}})</template>
+                        <template slot="title">Unreachable servers ({{ tlsErrors.length }})</template>
 
                         <p>We failed to connect to one or more servers using TLS protocol.</p>
                         <div class="table-responsive table-xfull">
@@ -421,7 +421,7 @@
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unused, default, or incorrect certificates ({{len(tlsInvalidHostname)}})</template>
+                        <template slot="title">Unused, default, or incorrect certificates ({{ len(tlsInvalidHostname) }})</template>
                         <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
@@ -461,7 +461,7 @@
             <div v-if="len(expiredCertificates) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :headerCollapse="true">
-                        <template slot="title">Servers with expired certificates ({{len(expiredCertificates)}})</template>
+                        <template slot="title">Servers with expired certificates ({{ len(expiredCertificates) }})</template>
                         <p>Clients can't connect to following servers due to expired certificates.</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">

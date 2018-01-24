@@ -47,7 +47,7 @@
                     <div class="small-box"
                          v-bind:class="{'bg-green': len(certs) > 1, 'bg-red': len(certs) < 1}" >
                         <div class="inner">
-                            <h3>100% <span style='font-size: smaller;'>of {{len(certs)}}</span></h3>
+                            <h3>100% <span style='font-size: smaller;'>of {{ len(certs) }}</span></h3>
 
                             <p>External compliance</p>
                         </div>
@@ -85,7 +85,7 @@
                           'bg-yellow': tlsNonCompliance.length*10 < len(tls),
                           'bg-red': tlsNonCompliance.length*10 >= len(tls)}" >
                         <div class="inner">
-                            <h3>{{ Math.round(100*(len(tls)-tlsNonCompliance.length)/len(tls)) }}% <span style='font-size: smaller;'>of {{len(tls)}}</span></h3>
+                            <h3>{{ Math.round(100*(len(tls)-tlsNonCompliance.length)/len(tls)) }}% <span style='font-size: smaller;'>of {{ len(tls) }}</span></h3>
                             <p>Network compliance</p>
                         </div>
                         <div class="icon">
@@ -174,12 +174,12 @@
 
                                 <tr>
                                 <td>Non-compliant TLS version</td>
-                                <td>{{tlsNonCompliance.length}}</td>
+                                <td>{{ tlsNonCompliance.length }}</td>
                                 </tr>
 
                                 <tr>
                                 <td>Incorrect certificates</td>
-                                <td>{{len(tlsInvalidHostname)}}</td>
+                                <td>{{ len(tlsInvalidHostname) }}</td>
                                 </tr>
 
                                 <tr>
@@ -271,7 +271,7 @@
             <div v-if="len(tlsInvalidHostname) > 0" class="row">
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unused, default, or incorrect certificates ({{len(tlsInvalidHostname)}})</template>
+                        <template slot="title">Unused, default, or incorrect certificates ({{ len(tlsInvalidHostname) }})</template>
                         <p>Service name (URL) is different from the name in certificates</p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
