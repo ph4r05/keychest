@@ -1209,11 +1209,7 @@
             },
 
             imminentRenewalCerts(){
-                const imm = _.filter(this.tlsCerts, x => { return (x.valid_to_days <= 28 && x.valid_to_days >= -28) });
-                const grp = _.groupBy(imm, x => {
-                    return x.valid_to_dayfmt;
-                });
-                return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+                return util.imminentRenewalCerts(this.tlsCerts);
             },
 
             crtTlsMonth(){
@@ -1256,13 +1252,7 @@
             },
 
             tlsErrors(){
-                return _.sortBy(_.filter(this.tls, x => {
-                    return x && x.status !== 1;
-                }),
-                    [
-                        x => { return x.url_short; },
-                        x => { return x.ip_scanned; }
-                    ]);
+                return util.tlsErrors(this.tls);
             },
 
             expiredCertificates(){

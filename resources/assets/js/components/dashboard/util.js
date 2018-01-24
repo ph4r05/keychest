@@ -73,8 +73,31 @@ export default {
     },
 
     //
-    // Certs
+    // Datasets
     //
+
+    tlsErrors(tlsScans){
+        return _.sortBy(_.filter(tlsScans, x => {
+                return x && x.status !== 1;
+            }),
+            [
+                x => { return x.url_short; },
+                x => { return x.ip_scanned; }
+            ]);
+    },
+
+    /**
+     * Dataset of certificates with imminent renewal
+     * @param certs
+     * @returns {*|Array}
+     */
+    imminentRenewalCerts(certs){
+        const imm = _.filter(certs, x => { return (x.valid_to_days <= 28 && x.valid_to_days >= -28) });
+        const grp = _.groupBy(imm, x => {
+            return x.valid_to_dayfmt;
+        });
+        return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+    },
 
     /**
      * Produces CDN mapping - set of certificate IDs recognized as CDN owned (e.g., Cloudflare)
@@ -132,6 +155,10 @@ export default {
         });
         return ret;
     },
+
+    //
+    // Cert utils
+    //
 
     /**
      * Returns numerical index [0,4] depending on a week the certificate is valid.
