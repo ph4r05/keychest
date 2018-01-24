@@ -61,7 +61,7 @@
                             @click="addToMonitoringChecked()">
                         <i class="glyphicon glyphicon-plus" title="Add to monitoring"></i></button>
                 </div>
-                <span>Selected {{numSelected}} {{ pluralize('sub-domain', numSelected) }} </span>
+                <span>Selected {{ numSelected }} {{ pluralize('sub-domain', numSelected) }} </span>
                 <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServerList" >
                     Download all sub-domains
                 </button>

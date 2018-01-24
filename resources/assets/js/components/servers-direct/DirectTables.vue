@@ -82,7 +82,7 @@
                   @click="onDeleteServers()">
             <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
         </div>
-        <span>Selected {{numSelected}} {{ pluralize('server', numSelected) }} </span>
+        <span>Selected {{ numSelected }} {{ pluralize('server', numSelected) }} </span>
       </div>
 
       <div class="vuetable-pagination form-group">

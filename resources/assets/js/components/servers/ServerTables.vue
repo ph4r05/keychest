@@ -75,8 +75,8 @@
         </template>
         <template slot="dns" slot-scope="props">
           <div v-if="!props.rowData.dns_error">
-            <span class="label label-primary" title="IPv4">{{props.rowData.dns_num_ipv4}}</span>
-            <span class="label label-success" title="IPv6">{{props.rowData.dns_num_ipv6}}</span>
+            <span class="label label-primary" title="IPv4">{{ props.rowData.dns_num_ipv4 }}</span>
+            <span class="label label-success" title="IPv6">{{ props.rowData.dns_num_ipv6 }}</span>
           </div>
           <span v-else="">-</span>
         </template>
@@ -103,7 +103,7 @@
                   @click="onDeleteServers()">
             <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
         </div>
-        <span>Selected {{numSelected}} {{ pluralize('server', numSelected) }} </span>
+        <span>Selected {{ numSelected }} {{ pluralize('server', numSelected) }} </span>
         <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadServers" >
           Download all servers
         </button>

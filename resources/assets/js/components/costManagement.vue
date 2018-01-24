@@ -130,7 +130,7 @@
                                     <tr>
                                         <td colspan="4">Certificate cost + labor </td>
                                         <td align="right">${{ formatTableNumber(totalCostWithKc - kcLicense) }} </td>
-                                        <td align="right">${{formatTableNumber(certsCostUsed-certsKcNonmanagedCost + certsKcManagedOpsSaving)}} </td>
+                                        <td align="right">${{ formatTableNumber(certsCostUsed-certsKcNonmanagedCost + certsKcManagedOpsSaving) }} </td>
                                     </tr>
                                     <tr>
                                         <td colspan="4">KeyChest License</td>

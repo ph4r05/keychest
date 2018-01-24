@@ -84,8 +84,8 @@
             <table class="table" v-if="showResultsTable">
                 <tbody>
                 <tr v-bind:class="defconStyle">
-                    <td><strong v-if="scanIpIsIpv6"><span class="tc-dark-green">IPv6 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
-                        <strong v-else><span class="tc-dark-green">IPv4 {{scanIp}},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                    <td><strong v-if="scanIpIsIpv6"><span class="tc-dark-green">IPv6 {{ scanIp }},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
+                        <strong v-else><span class="tc-dark-green">IPv4 {{ scanIp }},</span> {{ curJob.scan_host }}{{ curJob.portString }}</strong>
                         <span v-if="tlsScanHostCert && tlsScanHostCert.issuerOrgNorm"> (by {{ tlsScanHostCert.issuerOrgNorm }})</span></td>
                     <td v-if="tlsScanHostCert.is_expired">expired {{ Math.round((-1)*tlsScanHostCert.valid_to_days) }}
                         {{ pluralize('day', Math.round((-1)*tlsScanHostCert.valid_to_days)) }} ago</td>

@@ -78,7 +78,7 @@
                             @click="onDeleteBulk()">
                         <i class="glyphicon glyphicon-trash" title="Delete"></i></button>
                 </div>
-                <span>Selected {{numSelected}} {{ pluralize('host', numSelected) }} </span>
+                <span>Selected {{ numSelected }} {{ pluralize('host', numSelected) }} </span>
                 <button type="button" class="btn btn-sm pull-right btn-success" @click="downloadList" >
                     Download all hosts
                 </button>

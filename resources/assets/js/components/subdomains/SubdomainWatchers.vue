@@ -71,7 +71,7 @@
                             @click="deleteChecked()">
                         <i class="glyphicon glyphicon-trash" title="Remove"></i></button>
                 </div>
-                <span>Selected {{numSelected}} active {{ pluralize('domain', numSelected) }} </span>
+                <span>Selected {{ numSelected }} active {{ pluralize('domain', numSelected) }} </span>
             </div>
 
             <div class="vuetable-pagination">
