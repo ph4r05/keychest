@@ -191,6 +191,7 @@
     import Psl from 'ph4-psl';
     import Req from 'req';
     import ReqD from 'req-data';
+    import util from './dashboard/util';
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
@@ -245,19 +246,7 @@
                     return {};
                 }
 
-                const cdnCertsTls = _.map(_.filter(_.values(this.results.tls), tls => {
-                    return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
-                }), tls => {
-                    return tls.cert_id_leaf;
-                });
-
-                return Req.listToSet(_.uniq(_.union(cdnCertsTls,
-                    _.map(_.filter(this.results.certificates, crt =>{
-                        return crt.is_cloudflare;
-                    }), crt => {
-                        return crt.id;
-                    })
-                )));
+                return util.cdnCerts(this.results.tls, this.results.certificates);
             },
 
             tlsCerts(){
@@ -447,17 +436,7 @@
                 });
             },
 
-            extendDateField(obj, key) {
-                if (_.isEmpty(obj[key]) || _.isUndefined(obj[key])){
-                    obj[key+'_utc'] = undefined;
-                    obj[key+'_days'] = undefined;
-                    return;
-                }
-
-                const utc = moment.utc(obj[key]).unix();
-                obj[key+'_utc'] = utc;
-                obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
-            },
+            extendDateField: util.extendDateField,
 
             processResults() {
                 const curTime = moment().valueOf() / 1000.0;
@@ -578,10 +557,7 @@
                 ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
                 this.certIssuerTableData = _.sortBy(
                     ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
-                    x => {
-                        return -1 * _.max(_.tail(x));
-                    }
-                );
+                    util.invMaxTail);
             },
 
             cleanResults(){

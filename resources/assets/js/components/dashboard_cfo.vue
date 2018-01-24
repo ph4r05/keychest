@@ -350,19 +350,7 @@
                     return {};
                 }
 
-                const cdnCertsTls = _.map(_.filter(_.values(this.results.tls), tls => {
-                    return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
-                }), tls => {
-                    return tls.cert_id_leaf;
-                });
-
-                return Req.listToSet(_.uniq(_.union(cdnCertsTls,
-                    _.map(_.filter(this.results.certificates, crt =>{
-                        return crt.is_cloudflare;
-                    }), crt => {
-                        return crt.id;
-                    })
-                )));
+                return util.cdnCerts(this.results.tls, this.results.certificates);
             },
 
             tlsCerts(){

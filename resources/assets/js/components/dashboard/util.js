@@ -77,6 +77,63 @@ export default {
     //
 
     /**
+     * Produces CDN mapping - set of certificate IDs recognized as CDN owned (e.g., Cloudflare)
+     * @param tlsScans
+     * @param certificates
+     * @returns {{}}
+     */
+    cdnCerts(tlsScans, certificates){
+        const cdnCertsTls = _.map(_.filter(_.values(tlsScans), tls => {
+            return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
+        }), tls => {
+            return tls.cert_id_leaf;
+        });
+
+        return Req.listToSet(_.uniq(_.union(cdnCertsTls,
+            _.map(_.filter(certificates, crt =>{
+                return crt.is_cloudflare;
+            }), crt => {
+                return crt.id;
+            })
+        )));
+    },
+
+    /**
+     * Generates dataset for week4 renewal
+     * @param dataset
+     * @returns {*|Array}
+     */
+    week4renewals(dataset){
+        const r = _.filter(dataset, x => {
+            return x && x.valid_to_days && x.valid_to_days <= 28;
+        });
+        const r2 = _.map(r, x => {
+            x.week4cat = this.week4grouper(x);
+            return x;
+        });
+        const grp = _.groupBy(r2, x => {
+            return x.week4cat;
+        });
+        return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+    },
+
+    /**
+     * Week4 renewal counts dataset
+     * @param dataset
+     * @returns {number[]}
+     */
+    week4renewalsCounts(dataset){
+        const r = _.filter(dataset, x => {
+            return x && x.valid_to_days && x.valid_to_days <= 28 && x.valid_to_days >= -28;
+        });
+        const ret = [0, 0, 0, 0, 0];
+        _.forEach(r, x => {
+            ret[this.week4grouper(x)] += 1;
+        });
+        return ret;
+    },
+
+    /**
      * Returns numerical index [0,4] depending on a week the certificate is valid.
      * @param x
      * @returns {number}

@@ -660,19 +660,7 @@
                     return {};
                 }
 
-                const cdnCertsTls = _.map(_.filter(_.values(this.results.tls), tls => {
-                    return !_.isEmpty(tls.cdn_cname) || !_.isEmpty(tls.cdn_headers) || !_.isEmpty(tls.cdn_reverse);
-                }), tls => {
-                    return tls.cert_id_leaf;
-                });
-
-                return Req.listToSet(_.uniq(_.union(cdnCertsTls,
-                    _.map(_.filter(this.results.certificates, crt =>{
-                        return crt.is_cloudflare;
-                    }), crt => {
-                        return crt.id;
-                    })
-                )));
+                return util.cdnCerts(this.results.tls, this.results.certificates);
             },
 
             tlsCerts(){
@@ -820,28 +808,11 @@
             },
 
             week4renewals(){
-                const r = _.filter(this.tlsCerts, x => {
-                    return x && x.valid_to_days && x.valid_to_days <= 28;
-                });
-                const r2 = _.map(r, x => {
-                    x.week4cat = util.week4grouper(x);
-                    return x;
-                });
-                const grp = _.groupBy(r2, x => {
-                    return x.week4cat;
-                });
-                return _.sortBy(grp, [x => {return x[0].valid_to_days; }]);
+                return util.week4renewals(this.tlsCerts);
             },
 
             week4renewalsCounts(){
-                const r = _.filter(this.tlsCerts, x => {
-                    return x && x.valid_to_days && x.valid_to_days <= 28 && x.valid_to_days >= -28;
-                });
-                const ret = [0, 0, 0, 0, 0];
-                _.forEach(r, x => {
-                    ret[util.week4grouper(x)] += 1;
-                });
-                return ret;
+                return util.week4renewalsCounts(this.tlsCerts);
             },
 
             tlsCertIssuers(){
