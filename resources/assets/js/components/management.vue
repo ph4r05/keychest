@@ -1315,7 +1315,9 @@
 
             take: util.take,
             len: util.len,
-            curDateUsString: util.curDateUsString,
+            utcTimeLocaleString: util.utcTimeLocaleString,
+            utcTimeLocaleStringUs: Req.del(util.utcTimeLocaleStringUs, util),
+            curDateUsString: Req.del(util.curDateUsString, util),
             extendDateField: util.extendDateField,
             moment: util.moment,
             momentu: util.momentu,
@@ -1325,7 +1327,7 @@
 
             certIssuer: util.certIssuer,
             getCertHostPorts: util.getCertHostPorts,
-            getCountCategoryLabelTbl(idx) { return util.getCountCategoryLabelTbl(idx) },
+            getCountCategoryLabelTbl: Req.del(util.getCountCategoryLabelTbl, util),
 
             transition_hook(el){
                 this.recomp();

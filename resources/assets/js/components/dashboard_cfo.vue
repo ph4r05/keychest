@@ -542,7 +542,7 @@
                 });
             },
 
-            curDateUsString: util.curDateUsString,
+            curDateUsString: Req.del(util.curDateUsString, util),
             extendDateField: util.extendDateField,
 
             processResults() {

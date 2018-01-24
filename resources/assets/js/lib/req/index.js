@@ -200,6 +200,18 @@ function isEmpty(x){
 }
 
 /**
+ * Returns a closure calling function fnc() with passed arguments on object obj
+ * @param {Function} fnc
+ * @param {Object|undefined} obj
+ * @returns {function(...[*])}
+ */
+function del(fnc, obj){
+    return (...args) => {
+        fnc.apply(obj, args);
+    }
+}
+
+/**
  * Simple scheme / port filler one form another, http, https supported only.
  * @param scheme
  * @param port
@@ -759,6 +771,7 @@ export default {
 
     defval: defval,
     isEmpty: isEmpty,
+    del: del,
     isSameUrl: isSameUrl,
     autoFillSchemePort: autoFillSchemePort,
     parseUrl: parseUrl,
