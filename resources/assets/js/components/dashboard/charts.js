@@ -53,7 +53,7 @@ export default {
             return util.graphDataConv(_.concat([labels], x));
         });
 
-        const baseOptions = charts.plannerBaseConfig();
+        const baseOptions = this.plannerBaseConfig();
 
         const graphCrtTlsData = _.extend({data: datasets[0]}, _.cloneDeep(baseOptions));
         graphCrtTlsData.options.title = {
