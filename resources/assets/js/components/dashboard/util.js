@@ -26,6 +26,81 @@ export default {
     countCategories: [1, 2, 5, 10, 25, 50, 100, 250, 500, 1000],
 
     //
+    // Data utils
+    //
+
+    take(x, len){
+        return _.take(x, len);
+    },
+
+    len(x) {
+        if (x){
+            return _.size(x);
+        }
+        return 0;
+    },
+
+    moment(x){
+        return moment(x);
+    },
+
+    momentu(x){
+        return moment.utc(x);
+    },
+
+    extendDateField(obj, key) {
+        if (_.isEmpty(obj[key]) || _.isUndefined(obj[key])){
+            obj[key+'_utc'] = undefined;
+            obj[key+'_days'] = undefined;
+            return;
+        }
+
+        const utc = moment.utc(obj[key]).unix();
+        obj[key+'_utc'] = utc;
+        obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
+    },
+
+    sortBy(x, fld){
+        return _.sortBy(x, [ (o) => { return o[fld]; } ] );
+    },
+
+    sortExpiry(x){
+        return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
+    },
+
+    tblVal(x){
+        return x ? x : '-';
+    },
+
+    //
+    // Certs
+    //
+
+    week4grouper(x){
+        if (x.valid_to_days <= 0 && x.valid_to_days >= -28){
+            return 0;
+        } else if (x.valid_to_days <= 7){
+            return 1;
+        } else if (x.valid_to_days <=14){
+            return 2;
+        } else if (x.valid_to_days <= 21){
+            return 3;
+        } else {
+            return 4;
+        }
+    },
+
+    getCertHostPorts(certSet){
+        return _.sortedUniq(_.sortBy(_.reduce(_.castArray(certSet), (acc, x) => {
+            return _.concat(acc, x.watch_hostports);
+        }, [])));
+    },
+
+    certIssuer(cert){
+        return Req.certIssuer(cert);
+    },
+
+    //
     // Graphs
     //
 
@@ -74,6 +149,21 @@ export default {
             return _.last(this.countCategories) + '+';
         }
         return this.countCategories[idx];
+    },
+
+    /**
+     * idx -> table label
+     * @param idx
+     * @returns {*}
+     */
+    getCountCategoryLabelTbl(idx){
+        if (idx >= this.countCategories.length){
+            return _.last(this.countCategories) + '+';
+        } else if ((idx === 0) || (this.countCategories[idx] - this.countCategories[idx-1] < 2)) {
+            return this.countCategories[idx]
+        }
+
+        return (this.countCategories[idx-1] + 1) + '-' + this.countCategories[idx];
     },
 
     /**
@@ -207,24 +297,6 @@ export default {
         return _.groupBy(certSet, x=> {
             return this.getCountCategory(_.size(x.alt_slds));
         });
-    },
-
-    //
-    // Certs
-    //
-
-    week4grouper(x){
-        if (x.valid_to_days <= 0 && x.valid_to_days >= -28){
-            return 0;
-        } else if (x.valid_to_days <= 7){
-            return 1;
-        } else if (x.valid_to_days <=14){
-            return 2;
-        } else if (x.valid_to_days <= 21){
-            return 3;
-        } else {
-            return 4;
-        }
     },
 
 }

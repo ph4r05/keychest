@@ -554,17 +554,7 @@
                 });
             },
 
-            extendDateField(obj, key) {
-                if (_.isEmpty(obj[key]) || _.isUndefined(obj[key])){
-                    obj[key+'_utc'] = undefined;
-                    obj[key+'_days'] = undefined;
-                    return;
-                }
-
-                const utc = moment.utc(obj[key]).unix();
-                obj[key+'_utc'] = utc;
-                obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
-            },
+            extendDateField: util.extendDateField,
 
             processResults() {
                 const curTime = moment().valueOf() / 1000.0;

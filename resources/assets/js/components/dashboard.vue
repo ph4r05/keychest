@@ -1125,36 +1125,18 @@
             // Utility / helper functions / called from template directly
             //
 
-            take(x, len){
-                return _.take(x, len);
-            },
+            take: util.take,
+            len: util.len,
+            extendDateField: util.extendDateField,
+            moment: util.moment,
+            momentu: util.momentu,
+            sortBy: util.sortBy,
+            sortExpiry: util.sortExpiry,
+            tblVal: util.tblVal,
 
-            len(x) {
-                if (x){
-                    return _.size(x);
-                }
-                return 0;
-            },
-
-            extendDateField(obj, key) {
-                if (_.isEmpty(obj[key]) || _.isUndefined(obj[key])){
-                    obj[key+'_utc'] = undefined;
-                    obj[key+'_days'] = undefined;
-                    return;
-                }
-
-                const utc = moment.utc(obj[key]).unix();
-                obj[key+'_utc'] = utc;
-                obj[key+'_days'] = Math.round(10 * (utc - moment().utc().unix()) / 3600.0 / 24.0) / 10;
-            },
-
-            moment(x){
-                return moment(x);
-            },
-
-            momentu(x){
-                return moment.utc(x);
-            },
+            certIssuer: util.certIssuer,
+            getCertHostPorts: util.getCertHostPorts,
+            getCountCategoryLabelTbl(idx) { return util.getCountCategoryLabelTbl(idx) },
 
             transition_hook(el){
                 this.recomp();
@@ -1173,42 +1155,6 @@
                 $('#search-error').show();
                 this.recomp();
                 this.$emit('onError', msg);
-            },
-
-            sortBy(x, fld){
-                return _.sortBy(x, [ (o) => { return o[fld]; } ] );
-            },
-
-            sortExpiry(x){
-                return _.sortBy(x, [ (o) => { return o.valid_to_utc; } ] );
-            },
-
-            tblVal(x){
-                return x ? x : '-';
-            },
-
-            getCountCategoryLabelTbl(idx){
-                if (idx >= util.countCategories.length){
-                    return _.last(util.countCategories) + '+';
-                } else if ((idx == 0) || (util.countCategories[idx]-util.countCategories[idx-1]<2)) {
-                    return util.countCategories[idx]
-                }
-
-                return (util.countCategories[idx-1] + 1) + '-' + util.countCategories[idx];
-            },
-
-            getCertHostPorts(certSet){
-                return _.sortedUniq(_.sortBy(_.reduce(_.castArray(certSet), (acc, x) => {
-                    return _.concat(acc, x.watch_hostports);
-                }, [])));
-            },
-
-            //
-            // Cert processing
-            //
-
-            certIssuer(cert){
-                return Req.certIssuer(cert);
             },
 
             //
@@ -1653,7 +1599,7 @@
                                 //backgroundColor: Req.takeMod(util.chartColors, unzipped[1][1].length),
                                 label: 'All issued certificates (CT)'
                             }],
-                        labels: _.map(unzipped[0][0], this.getCountCategoryLabel)
+                        labels: _.map(unzipped[0][0], x => util.getCountCategoryLabel(x))
                     },
                     options: {
                         scaleBeginAtZero: true,
@@ -1689,7 +1635,7 @@
                                 //backgroundColor: Req.takeMod(util.chartColors, unzipped[3][1].length),
                                 label: 'All issued certificates (CT)'
                             }],
-                        labels: _.map(unzipped[2][0], this.getCountCategoryLabel)
+                        labels: _.map(unzipped[2][0], x => util.getCountCategoryLabel(x))
                     },
                     options: {
                         scaleBeginAtZero: true,
@@ -1718,27 +1664,6 @@
             //
             // Common graph data gen
             //
-
-            getCountCategoryLabel(idx){
-                if (idx >= util.countCategories.length){
-                    return _.last(util.countCategories) + '+';
-                }
-                return util.countCategories[idx];
-            },
-
-            getCountCategory(count){
-                let ret = -1;
-                const ln = util.countCategories.length;
-                for(let idx=0; idx < ln; idx++){
-                    if (count > util.countCategories[idx]){
-                        ret = idx;
-                    } else {
-                        break;
-                    }
-                }
-
-                return ret+1;
-            },
 
             certTypes(certSet){
                 // certificate type aggregation
