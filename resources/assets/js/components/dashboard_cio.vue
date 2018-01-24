@@ -854,10 +854,10 @@
 
             certDomainDataset(){
                 return [
-                    this.certDomainsDataGen(this.tlsCerts),
-                    this.certDomainsDataGen(this.certs),
-                    this.certDomainsDataGen(this.tlsCerts, true),
-                    this.certDomainsDataGen(this.certs, true)];
+                    util.certDomainsDataGen(this.tlsCerts),
+                    util.certDomainsDataGen(this.certs),
+                    util.certDomainsDataGen(this.tlsCerts, true),
+                    util.certDomainsDataGen(this.certs, true)];
             },
 
             certDomainsTableData(){
@@ -1538,39 +1538,11 @@
                 return ret;
             },
 
-            certDomainsDataGen(certSet, tld){
-                const grouped = tld ? this.groupTldDomainsCount(certSet) : this.groupDomainsCount(certSet);
-                return _.mapValues(grouped, (cur, key) => {
-                    const grp = _.castArray(cur);
-                    return {
-                        key: key,
-                        lbl: this.getCountCategoryLabel(key),
-                        size: _.size(grp),
-                        distIssuers: _.size(_.groupBy(grp, x => { return x.issuerOrgNorm; })),
-                        leCnt: _.size(_.filter(grp, x => { return x.is_le; })),
-                        issuerHist: _.countBy(grp, x => { return x.issuerOrgNorm; }),
-                        certs: grp
-                    };
-                });
-            },
-
             certIssuersGen(certSet){
                 const grp = _.groupBy(certSet, x => {
                     return x.issuerOrgNorm;
                 });
                 return grp; //return _.sortBy(grp, [x => {return x[0].issuerOrg; }]);
-            },
-
-            groupDomainsCount(certSet){
-                return _.groupBy(certSet, x=> {
-                    return this.getCountCategory(_.size(x.alt_domains));
-                });
-            },
-
-            groupTldDomainsCount(certSet){
-                return _.groupBy(certSet, x=> {
-                    return this.getCountCategory(_.size(x.alt_slds));
-                });
             },
         }
     }
