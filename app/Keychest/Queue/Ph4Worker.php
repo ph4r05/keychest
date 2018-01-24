@@ -10,12 +10,20 @@ namespace App\Keychest\Queue;
 
 
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Queue\QueueManager;
 use Illuminate\Queue\Worker;
 use Illuminate\Queue\WorkerOptions;
 
 
 class Ph4Worker extends Worker
 {
+    public function __construct(QueueManager $manager, Dispatcher $events, ExceptionHandler $exceptions)
+    {
+        parent::__construct($manager, $events, $exceptions);
+    }
+
     /**
      * @param WorkerOptions $options
      */
@@ -31,7 +39,11 @@ class Ph4Worker extends Worker
      */
     public function sleep($seconds)
     {
-        usleep(floatval($seconds) * 1e6);
+        if ($seconds < 1) {
+            usleep($seconds * 1000000);
+        } else {
+            sleep($seconds);
+        }
     }
 
     /**

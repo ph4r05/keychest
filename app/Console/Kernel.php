@@ -8,6 +8,7 @@ use App\Console\Commands\DumpSshKeyCommand;
 use App\Console\Commands\MigrateGenerateCommand;
 use App\Console\Commands\Setup;
 use App\Console\Commands\SetupEcho;
+use App\Console\Commands\WorkCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
         MigrateGenerateCommand::class,
         Setup::class,
         SetupEcho::class,
+        WorkCommand::class,
     ];
 
     /**

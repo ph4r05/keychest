@@ -69,10 +69,13 @@ class QueueServiceProvider extends ServiceProvider
      */
     protected function registerWorker()
     {
-        $this->app->singleton(Worker::class, function () {
+        $factory = function () {
             return new Ph4Worker(
                 $this->app['queue'], $this->app['events'], $this->app[ExceptionHandler::class]
             );
-        });
+        };
+
+        $this->app->singleton(Worker::class, $factory);
+        $this->app->singleton('queue.worker', $factory);
     }
 }
