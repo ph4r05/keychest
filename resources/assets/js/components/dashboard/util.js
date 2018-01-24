@@ -75,6 +75,51 @@ export default {
     },
 
     /**
+     * Formats UTC time with toLocaleString.
+     * @param utc
+     * @param locale
+     * @param params
+     * @returns {string}
+     */
+    utcTimeLocaleStringUs(utc, locale, params){
+        return new Date(utc * 1000.0).toLocaleString(locale || 'en-us', params || this.dateUsParams());
+    },
+
+    /**
+     * Formats UTC time with toLocaleString.
+     * @param utc
+     * @param locale
+     * @param params
+     * @returns {string}
+     */
+    utcTimeLocaleString(utc, locale, params){
+        return new Date(utc * 1000.0).toLocaleString(locale, params);
+    },
+
+    /**
+     * Formats given date with toLocaleString, under given locale and with given params.
+     * @param {Date} date
+     * @param locale
+     * @param params
+     * @returns {string}
+     */
+    dateLocaleString(date, locale, params){
+        return date.toLocaleString(locale, params);
+    },
+
+    /**
+     * Formats given date with toLocaleString, under given locale (en-us by default)
+     * and with given params (dateUsParams by default)
+     * @param {Date} date
+     * @param locale
+     * @param params
+     * @returns {string}
+     */
+    dateLocaleStringParams(date, locale, params){
+        return date.toLocaleString(locale || 'en-us', params || this.dateUsParams());
+    },
+
+    /**
      * Returns current date in the US format.
      * @returns {string}
      */

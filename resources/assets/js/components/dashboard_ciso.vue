@@ -256,9 +256,9 @@
                                             <li v-else="">No host certificate</li>
                                         </ul>
                                     </td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -296,9 +296,9 @@
                                         </ul>
                                         <span v-else="">No domains found</span>
                                     </td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
                                 </tr>
                                 </tbody>
                             </table>

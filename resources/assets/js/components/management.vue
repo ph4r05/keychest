@@ -561,7 +561,7 @@
                                         <span v-else-if="tls.err_code == 4">Domain lookup error</span>
                                         <span v-else="">TLS/SSL not present</span>
                                     </td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
                                          ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
                                     <td>{{ new Date(tls.last_scan_at_utc * 1000.0 ).toLocaleString() }}</td>
                                 </tr>
@@ -609,9 +609,9 @@
                                             <li v-else="">No host certificate</li>
                                         </ul>
                                     </td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -649,9 +649,9 @@
                                         </ul>
                                         <span v-else="">No domains found</span>
                                     </td>
-                                    <td>{{ new Date(tls.created_at_utc * 1000.0).toLocaleString() }}
+                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(tls.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -691,9 +691,9 @@
                                         </ul>
                                     </td>
                                     <td>{{ cert.issuerOrgNorm }}</td>
-                                    <td>{{ new Date(cert.valid_to_utc * 1000.0).toLocaleString() }}
+                                    <td>{{ utcTimeLocaleString(cert.valid_to_utc) }}
                                         ({{ momentu(cert.valid_to_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ new Date(cert.last_scan_at_utc * 1000.0).toLocaleString() }}</td>
+                                    <td>{{ utcTimeLocaleString(cert.last_scan_at_utc) }}</td>
                                     <!--<td>{{ cert.id }}</td>-->
                                 </tr>
                                 </tbody>
@@ -745,7 +745,7 @@
                                         </ul>
                                         <span v-else="">No domains found</span>
                                     </td>
-                                    <td v-bind:class="grp[0].planCss.tbl">{{new Date(grp[0].last_scan_at_utc * 1000.0).toLocaleString()}}</td>
+                                    <td v-bind:class="grp[0].planCss.tbl">{{ utcTimeLocaleString(grp[0].last_scan_at_utc) }}</td>
                                 </tr>
                                 </tbody>
                             </table>
