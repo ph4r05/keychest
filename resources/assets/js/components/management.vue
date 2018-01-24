@@ -1341,11 +1341,11 @@
             },
 
             tlsCertIssuers(){
-                return this.certIssuersGen(this.tlsCerts);
+                return util.certIssuersGen(this.tlsCerts);
             },
 
             allCertIssuers(){
-                return this.certIssuersGen(this.certs);
+                return util.certIssuersGen(this.certs);
             },
 
             certDomainDataset(){
@@ -2055,13 +2055,6 @@
 
                 fillGap(ret, lastGrp, moment().utc().add(1, 'year').add(1, 'month'));
                 return ret;
-            },
-
-            certIssuersGen(certSet){
-                const grp = _.groupBy(certSet, x => {
-                    return x.issuerOrgNorm;
-                });
-                return grp; //return _.sortBy(grp, [x => {return x[0].issuerOrg; }]);
             },
         }
     }

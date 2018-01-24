@@ -385,11 +385,11 @@
             },
 
             tlsCertIssuers(){
-                return this.certIssuersGen(this.tlsCerts);
+                return util.certIssuersGen(this.tlsCerts);
             },
 
             allCertIssuers(){
-                return this.certIssuersGen(this.certs);
+                return util.certIssuersGen(this.certs);
             },
 
             kcLicense(){
@@ -598,12 +598,6 @@
             postLoad(){
                 this.certPricing();
                 this.certIssuersGraph();
-            },
-
-            certIssuersGen(certSet){
-                return _.groupBy(certSet, x => {
-                    return x.issuerOrgNorm;
-                });
             },
 
             groupByCertParams(certSet){
