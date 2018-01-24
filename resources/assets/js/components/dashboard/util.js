@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
+
+import Psl from 'ph4-psl';
 import Req from 'req';
 
 export default {
@@ -197,6 +199,194 @@ export default {
      */
     certIssuer(cert){
         return Req.certIssuer(cert);
+    },
+
+    //
+    // Result processing
+    //
+
+    /**
+     * Processes loaded dashboard results.
+     * @param results
+     */
+    processResults(results){
+        this.processWatchResults(results);
+        this.processCertificatesResults(results);
+        this.processWhoisResults(results);
+        this.processDnsResults(results);
+        this.processTlsResults(results);
+    },
+
+    /**
+     * Processes Watches part of the loaded results.
+     * @param results
+     */
+    processWatchResults(results){
+        if (!results.watches){
+            return;
+        }
+
+        // noinspection JSUnusedLocalSymbols
+        for(const [watch_id, watch] of Object.entries(results.watches)){
+            this.extendDateField(watch, 'last_scan_at');
+            this.extendDateField(watch, 'created_at');
+            this.extendDateField(watch, 'updated_at');
+        }
+    },
+
+    /**
+     * Processes Certificates part of the loaded results.
+     * @param results
+     */
+    processCertificatesResults(results){
+        const curTime = moment().valueOf() / 1000.0;
+        const fqdnResolver = _.memoize(Psl.get);
+        const wildcardRemover = _.memoize(Req.removeWildcard);
+
+        for(const [certId, cert] of Object.entries(results.certificates)){
+            cert.valid_to_dayfmt = moment.utc(cert.valid_to_utc * 1000.0).format('YYYY-MM-DD');
+            cert.valid_to_days = Math.round(10 * (cert.valid_to_utc - curTime) / 3600.0 / 24.0) / 10;
+            cert.valid_from_days = Math.round(10 * (curTime - cert.valid_from_utc) / 3600.0 / 24.0) / 10;
+            cert.validity_sec = cert.valid_to_utc - cert.valid_from_utc;
+            cert.watch_hosts = [];
+            cert.watch_hostports = [];
+            cert.watch_urls = [];
+            cert.watch_hosts_ct = [];
+            cert.watch_urls_ct = [];
+            cert.alt_domains = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_names), x => {
+                return wildcardRemover(x);
+            })));
+            cert.alt_slds = _.sortedUniq(_.sortBy(_.map(_.castArray(cert.alt_domains), x => {
+                return fqdnResolver(x);  // too expensive now. 10 seconds for 150 certs. invoke later
+            })));
+
+            _.forEach(cert.tls_watches_ids, watch_id => {
+                if (watch_id in results.watches){
+                    cert.watch_hostports.push(results.watches[watch_id].host_port);
+                    cert.watch_hosts.push(results.watches[watch_id].scan_host);
+                    cert.watch_urls.push(results.watches[watch_id].url);
+                }
+            });
+
+            _.forEach(
+                _.uniq(_.union(
+                    cert.tls_watches_ids,
+                    cert.crtsh_watches_ids)), watch_id =>
+                {
+                    if (watch_id in results.watches) {
+                        cert.watch_hosts_ct.push(results.watches[watch_id].scan_host);
+                        cert.watch_urls_ct.push(results.watches[watch_id].url);
+                    }
+                });
+
+            cert.watch_hostports = _.sortedUniq(cert.watch_hostports.sort());
+            cert.watch_hosts = _.sortedUniq(cert.watch_hosts.sort());
+            cert.watch_urls = _.sortedUniq(cert.watch_urls.sort());
+            cert.watch_hosts_ct = _.sortedUniq(cert.watch_hosts_ct.sort());
+            cert.watch_urls_ct = _.sortedUniq(cert.watch_urls_ct.sort());
+            cert.last_scan_at_utc = _.reduce(cert.tls_watches_ids, (acc, val) => {
+                if (!results.watches || !(val in results.watches)){
+                    return acc;
+                }
+                const sc = results.watches[val].last_scan_at_utc;
+                return sc >= acc ? sc : acc;
+            }, null);
+
+            cert.planCss = {tbl: {
+                    'success': cert.valid_to_days > 14 && cert.valid_to_days <= 28,
+                    'warning': cert.valid_to_days > 7 && cert.valid_to_days <= 14,
+                    'warning-hi': cert.valid_to_days > 0  && cert.valid_to_days <= 7,
+                    'danger': cert.valid_to_days <= 0,
+                }};
+
+            if (cert.is_le) {
+                cert.type = 'Let\'s Encrypt';
+            } else if (cert.is_cloudflare){
+                cert.type = 'Cloudflare';
+            } else {
+                cert.type = 'Public';
+            }
+
+            cert.issuerOrg = this.certIssuer(cert);
+        }
+
+        Req.normalizeValue(results.certificates, 'issuerOrg', {
+            newField: 'issuerOrgNorm',
+            normalizer: Req.normalizeIssuer
+        });
+    },
+
+    /**
+     * Processes Whois part of the loaded results
+     * @param results
+     */
+    processWhoisResults(results){
+        if (!results.whois){
+            return;
+        }
+
+        for(const [whois_id, whois] of Object.entries(results.whois)){
+            this.extendDateField(whois, 'expires_at');
+            this.extendDateField(whois, 'registered_at');
+            this.extendDateField(whois, 'rec_updated_at');
+            this.extendDateField(whois, 'last_scan_at');
+            whois.planCss = {
+                tbl: {
+                    'success': whois.expires_at_days > 3 * 28 && whois.expires_at_days <= 6 * 28,
+                    'warning': whois.expires_at_days > 28 && whois.expires_at_days <= 3 * 28,
+                    'warning-hi': whois.expires_at_days > 14 && whois.expires_at_days <= 28,
+                    'danger': whois.expires_at_days <= 14,
+                }
+            };
+        }
+    },
+
+    /**
+     * Processes DNS part of the loaded results.
+     * @param results
+     */
+    processDnsResults(results){
+        if (!results.dns){
+            return;
+        }
+
+        for (const [dns_id, dns] of Object.entries(results.dns)) {
+            this.extendDateField(dns, 'last_scan_at');
+            dns.domain = results.watches && dns.watch_id in results.watches ?
+                results.watches[dns.watch_id].scan_host : undefined;
+        }
+    },
+
+    /**
+     * Processes TLS part of the loaded results.
+     * @param results
+     */
+    processTlsResults(results){
+        if (!results.tls){
+            return;
+        }
+
+        for(const [tls_id, tls] of Object.entries(results.tls)){
+            this.extendDateField(tls, 'last_scan_at');
+            this.extendDateField(tls, 'created_at');
+            this.extendDateField(tls, 'updated_at');
+            if (results.watches && tls.watch_id in results.watches){
+                tls.domain = results.watches[tls.watch_id].scan_host;
+                tls.url_short = results.watches[tls.watch_id].url_short;
+            }
+
+            tls.leaf_cert = results.certificates
+                    && tls.cert_id_leaf
+                    && tls.cert_id_leaf in results.certificates ?
+                results.certificates[tls.cert_id_leaf] : undefined;
+
+            if (tls.leaf_cert){
+                tls.host_cert = tls.leaf_cert;
+
+            } else if (results.certificates && tls.certs_ids && _.size(tls.certs_ids) === 1){
+                tls.host_cert = results.certificates[tls.certs_ids[0]];
+            }
+        }
     },
 
     //
