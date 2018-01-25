@@ -4,7 +4,7 @@
             <sbox cssBox="box-success" :headerCollapse="true">
                 <template slot="title">Number of incidents per category</template>
                 <p>The table shows a summary of the number of active incidents per category.
-                    Futher details are in the "Incidents" section of the dashboard.
+                    Further details are in the "Incidents" section of the dashboard.
                 </p>
                 <div class="table-responsive table-xfull">
                     <table class="table table-bordered table-striped table-hover">
