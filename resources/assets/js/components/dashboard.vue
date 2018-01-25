@@ -23,22 +23,6 @@
         <transition name="fade" v-on:after-leave="transition_hook">
         <div v-if="loadingState == 10">
 
-            <!-- X Google Chart - renewal planner -->
-            <!-- X Google Chart - renewal planner TLS+CT -->
-            <!--   Google Chart - renewal planner historical -->
-            <!--   Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
-            <!--   Google Chart - Certificate coverage for domain? Downtime graph -->
-            <!-- X DNS problem notices - resolution fails -->
-            <!--   DNS changes over time -->
-            <!-- X TLS connection fail notices - last attempt (connect fail, timeout, handshake) -->
-            <!-- X TLS certificate expired notices - last attempt -->
-            <!--   TLS certificates trust problems (self signed, is_ca, empty chain, generic, HOSTNAME validation error) -->
-            <!--   TLS certificate changes over time on the IP -->
-            <!--   connection stats, small inline graphs? like status -->
-            <!-- X Whois domain expiration notices -->
-            <!--   CT only certificates to a table + chart -->
-            <!--     how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
-
             <!-- Header info widgets -->
             <div class="row">
 
@@ -84,7 +68,7 @@
                         </div>
                         <a href="#renewals"
                            class="small-box-footer" v-if="numExpiresSoon > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
-                        <a v-else-if="(numExpiresSoon) == 0"
+                        <a v-else-if="numExpiresSoon === 0"
                            target="_blank"
                            href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=holiday"
                            class="small-box-footer">Take a holiday <i class="fa fa-arrow-circle-right"></i></a>
@@ -438,43 +422,11 @@
                     <sbox cssBox="box-danger" :headerCollapse="true">
                         <template slot="title">Servers with expired certificates ({{ len(expiredCertificates) }})</template>
                         <p>Clients can't connect to following servers due to expired certificates.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Certificate issuers</th>
-                                    <th>Expiration date</th>
-                                    <th>Last failure</th>
-                                    <!--<th>ID</th> -->
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                        </span>
-                                        <ul class="domain-list">
-                                            <li v-for="domain in cert.watch_hosts">
-                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
-                                                <template v-else="">{{ domain }}</template>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td>{{ cert.issuerOrgNorm }}</td>
-                                    <td>{{ utcTimeLocaleString(cert.valid_to_utc) }}
-                                        ({{ momentu(cert.valid_to_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(cert.last_scan_at_utc) }}</td>
-                                    <!--<td>{{ cert.id }}</td>-->
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+
+                        <cert-expired-table :expiredCertificates="expiredCertificates"/>
                     </sbox>
                 </div>
             </div>
-
 
             <!-- Section heading - PLANNING -->
             <div class="row">
@@ -495,33 +447,7 @@
                     <p>Watch carefully dates in the following table to prevent downtime on your servers. Certificates expired
                     more than 28 days ago are excluded.</p>
                     <div class="col-md-8">
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th colspan="2">Renew before</th>
-                                    <th>Server names</th>
-                                    <th>Last update</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="grp in imminentRenewalCerts">
-                                    <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-if="momentu(grp[0].valid_to_utc * 1000.0)<momentu()">
-                                        SERVER DOWN since {{ momentu(grp[0].valid_to_utc * 1000.0).fromNow() }} </td>
-                                    <td colspan="2" v-bind:class="grp[0].planCss.tbl" v-else="">
-                                        {{ utcTimeLocaleDateString(grp[0].valid_to_utc) }}
-                                        ({{ momentu(grp[0].valid_to_utc * 1000.0).fromNow() }}) </td>
-                                    <td v-bind:class="grp[0].planCss.tbl">
-                                        <ul class="coma-list" v-if="len(getCertHostPorts(grp)) > 0">
-                                            <li v-for="domain in getCertHostPorts(grp)">{{ domain }}</li>
-                                        </ul>
-                                        <span v-else="">No domains found</span>
-                                    </td>
-                                    <td v-bind:class="grp[0].planCss.tbl">{{ utcTimeLocaleString(grp[0].last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <imminent-renewals-table :imminent-renewal-certs="imminentRenewalCerts"/>
                     </div>
                     <div class="col-md-4">
                         <canvas id="imminent_renewals_js" style="width: 100%; height: 300px;"></canvas>
@@ -644,7 +570,6 @@
                 </div>
             </div>
 
-
             <!-- Certificate domains -->
             <div class="row">
                 <div class="xcol-md-12">
@@ -655,68 +580,11 @@
                             This information has an impact on the cost of certificats, if there issuance
                             is not free.</p>
 
-                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th rowspan="2">No of server names<br/> in certificates</th>
-                                    <th colspan="3">Certificates on watched servers</th>
-                                    <th colspan="3">All issued certificates (CT)</th>
-                                    <!--<th colspan="3">Watched SLDs</th>-->
-                                    <!--<th colspan="3">SLDs in global logs</th> -->
-                                </tr>
-                                <tr>
-                                    <th>Let&#39;s Encrypt</th>
-                                    <th>Other certificates</th>
-                                    <th><i>Number of all issuers</i></th>
-
-                                    <th>Let&#39;s Encrypt</th>
-                                    <th>Other certificates</th>
-                                    <th><i>Number of all issuers</i></th>
-
-                                    <!--<th>Certs</th>-->
-                                    <!--<th>Issuers</th>-->
-                                    <!--<th>LE</th>-->
-
-                                    <!--<th>Certs</th>-->
-                                    <!--<th>Issuers</th>-->
-                                    <!--<th>LE</th>-->
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                <tr v-for="group in certDomainsTableData">
-                                    <td>{{ getCountCategoryLabelTbl(group[0]) }}</td>
-
-                                    <td>{{ tblVal(group[1][0].leCnt) }}</td>
-                                    <td v-if="isNaN(tblVal(group[1][0].leCnt))">{{ tblVal(group[1][0].size) }}</td>
-                                    <td v-else="">{{ tblVal(group[1][0].size) - tblVal(group[1][0].leCnt) }}</td>
-                                    <td><i>{{ tblVal(group[1][0].distIssuers) }}</i></td>
-
-                                    <td>{{ tblVal(group[1][1].leCnt) }}</td>
-                                    <td v-if="isNaN(tblVal(group[1][1].leCnt))">{{ tblVal(group[1][1].size) }}</td>
-                                    <td v-else="">{{ tblVal(group[1][1].size) - tblVal(group[1][1].leCnt) }}</td>
-                                    <td><i>{{ tblVal(group[1][1].distIssuers) }}</i></td>
-
-                                    <!--<td>{{ tblVal(group[1][2].size) }}</td>-->
-                                    <!--<td>{{ tblVal(group[1][2].distIssuers) }}</td>-->
-                                    <!--<td>{{ tblVal(group[1][2].leCnt) }}</td>-->
-
-                                    <!--<td>{{ tblVal(group[1][3].size) }}</td>-->
-                                    <!--<td>{{ tblVal(group[1][3].distIssuers) }}</td>-->
-                                    <!--<td>{{ tblVal(group[1][3].leCnt) }}</td>-->
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
+                        <cert-domains-table :certDomainsTableData="certDomainsTableData"/>
 
                         <div class="col-md-12">
                             <canvas id="pie_cert_domains" style="height: 400px;"></canvas>
                         </div>
-                        <!--<div class="col-md-6">-->
-                            <!--<canvas id="pie_cert_domains_tld" style=" height: 400px;"></canvas>-->
-                        <!--</div>-->
                     </sbox>
                 </div>
             </div>
@@ -735,47 +603,11 @@
                                            color="#00a7d7"
                                            disabled="disabled"
                                            :labels="{checked: 'On', unchecked: 'Off'}"
-                            ></toggle-button>
+                            />
                         <label for="chk-include-notverified">Include certificates not verified from your servers</label>
                         </div>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server names</th>
-                                    <th>Issuer</th>
-                                    <th colspan="2">Renew / plan renewal</th>
-                                </tr>
-                                </thead>
 
-                                <tbody>
-                                <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                                    <td v-bind:class="cert.planCss.tbl">
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                            CNAME: {{ cert.cname }}
-                                        </span>
-                                        <ul class="domain-list">
-                                            <li v-for="domain in cert.watch_hosts">
-                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
-                                                <template v-else="">{{ domain }}</template>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)<2)">
-                                        SERVER DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-else-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)>1)">
-                                        SERVERS DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <tls-certs-table :tlsCerts="tlsCerts"/>
                     </sbox>
                 </div>
             </div>
@@ -786,53 +618,17 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
                         <template slot="title">All certificates of your servers</template>
+
                         <div class="form-group">
                             <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
                             <toggle-button v-model="includeExpired" id="chk-include-expired"
                                            color="#00a7d7"
                                            :labels="{checked: 'On', unchecked: 'Off'}"
-                            ></toggle-button>
+                            />
                             <label for="chk-include-expired">Include expired CT certificates</label>
                         </div>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Domain name(s)</th>
-                                    <th>Issuer</th>
-                                    <th>Source</th>
-                                    <th colspan="2">Certificate expiration date</th>
-                                </tr>
-                                </thead>
 
-                                <tbody>
-                                <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
-                                    <td v-bind:class="cert.planCss.tbl">
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                            CNAME: {{ cert.cname }}
-                                        </span>
-                                        <ul class="domain-list">
-                                            <li v-for="domain in cert.watch_hosts_ct">
-                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
-                                                <template v-else="">{{ domain }}</template>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">
-                                        <span class="label label-success" title="TLS scan" v-if="len(cert.watch_hosts) > 0">TLS</span>
-                                        <span class="label label-primary" title="CT scan" v-if="len(cert.watch_hosts_ct) > 0">CT</span>
-                                    </td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-if="momentu(cert.valid_to)<momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <all-certs-table :certs="certs"/>
                     </sbox>
                 </div>
             </div>
@@ -861,10 +657,26 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
+    import DashboardTlsCertsTable from './dashboard/TlsCertsTable';
+    import DashboardAllCertsTable from './dashboard/AllCertsTable';
+    import DashboardImminentRenewalsTable from './dashboard/ImminentRenewalsTable';
+    import DashboardCertDomainsTable from './dashboard/CertDomainsTable';
+    import DashboardCertExpiredTable from './dashboard/CertExpiredTable';
+
+    import './dashboard/css/dashboard.css';
+
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
+        components: {
+            'all-certs-table': DashboardAllCertsTable,
+            'tls-certs-table': DashboardTlsCertsTable,
+            'imminent-renewals-table': DashboardImminentRenewalsTable,
+            'cert-domains-table': DashboardCertDomainsTable,
+            'cert-expired-table': DashboardCertExpiredTable,
+        },
+
         data: function() {
             return {
                 loadingState: 0,
