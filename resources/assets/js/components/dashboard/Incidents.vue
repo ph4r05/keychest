@@ -4,7 +4,9 @@
             <div class="info-box">
                 <span class="info-box-icon bg-red"><i class="fa fa-exclamation-circle"></i></span>
                 <div class="info-box-content info-box-label">
-                    Incidents
+                    <slot name="title">
+                        Incidents
+                    </slot>
                 </div>
             </div>
         </div>
