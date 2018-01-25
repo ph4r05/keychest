@@ -64,6 +64,14 @@ class HomeController extends Controller
     }
 
     /**
+     * Dashboard Management
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function dashboardManagement(){
+        return view('adminlte::dashboard_management');
+    }
+
+    /**
      * Simple user guide view
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */

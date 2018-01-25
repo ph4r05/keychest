@@ -474,28 +474,28 @@
 
     import Psl from 'ph4-psl';
     import Req from 'req';
-    import util from './dashboard/code/util';
+    import util from './code/util';
 
     import VeeValidate from 'vee-validate';
     import ToggleButton from 'vue-js-toggle-button';
     import Vue from 'vue';
 
-    import CertsMixin from './dashboard/code/certsMix';
-    import DashboardStatsMixin from './dashboard/code/dashboardStatsMix';
-    import DashboardFailsMixin from './dashboard/code/dashboardFailsMix';
+    import CertsMixin from './code/certsMix';
+    import DashboardStatsMixin from './code/dashboardStatsMix';
+    import DashboardFailsMixin from './code/dashboardFailsMix';
 
-    import DashboardCertPlanner from './dashboard/CertPlanner';
-    import DashboardCertIssuers from './dashboard/CertIssuers';
-    import DashboardCertDomains from './dashboard/CertDomains';
-    import DashboardCertRenewals from './dashboard/CertRenewals';
-    import DashboardCertTypes from './dashboard/CertTypes';
-    import DashboardIncidentSummary from './dashboard/IncidentSummary';
-    import DashboardIncidents from './dashboard/Incidents';
-    import DashboardExpiringDomains from './dashboard/ExpiringDomains';
-    import DashboardCertTlsList from './dashboard/CertTlsList';
-    import DashboardCertAllList from './dashboard/CertAllList';
+    import DashboardCertPlanner from './CertPlanner';
+    import DashboardCertIssuers from './CertIssuers';
+    import DashboardCertDomains from './CertDomains';
+    import DashboardCertRenewals from './CertRenewals';
+    import DashboardCertTypes from './CertTypes';
+    import DashboardIncidentSummary from './IncidentSummary';
+    import DashboardIncidents from './Incidents';
+    import DashboardExpiringDomains from './ExpiringDomains';
+    import DashboardCertTlsList from './CertTlsList';
+    import DashboardCertAllList from './CertAllList';
 
-    import './dashboard/css/dashboard.css';
+    import './css/dashboard.css';
 
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});

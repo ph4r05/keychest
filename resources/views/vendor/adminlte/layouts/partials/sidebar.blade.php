@@ -48,6 +48,12 @@
                         </a>
                     </li>
 
+                    <li class="{{ Request::path() ==  'home/dashboard/management' ? 'active' : ''  }}">
+                        <a href="{{ url('home/dashboard/management') }}">
+                            <i class="fa fa-circle-o"></i> Management
+                        </a>
+                    </li>
+
                     <li class="{{ Request::path() ==  'home/dashboard/finance' ? 'active' : ''  }}">
                         <a href="{{ url('home/dashboard/finance') }}">
                             <i class="fa fa-circle-o"></i> Financial

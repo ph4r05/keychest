@@ -84,6 +84,7 @@ Route::get('content/understand_spot_checks.html', function(){
 Route::get('home/dashboard/finance', 'HomeController@dashboardCfo')->name('dashboardCfo');
 Route::get('home/dashboard/ops', 'HomeController@dashboardCio')->name('dashboardCio');
 Route::get('home/dashboard/sec', 'HomeController@dashboardCiso')->name('dashboardCiso');
+Route::get('home/dashboard/management', 'HomeController@dashboardManagement')->name('dashboardManagement');
 
 // Registered user space
 Route::get('home', 'HomeController@index')->name('home');

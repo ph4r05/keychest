@@ -65,6 +65,9 @@ Vue.component('dashboard_cio', resolve => {
 Vue.component('dashboard_ciso', resolve => {
     require.ensure([], require => resolve(require('./components/dashboard_ciso.vue')), 'dashboard_ciso');
 });
+Vue.component('dashboard_management', resolve => {
+    require.ensure([], require => resolve(require('./components/dashboard/ManagementOverview')), 'dashboard_management');
+});
 
 Vue.component('servers', resolve => {
     require.ensure([], require => resolve(require('./components/servers.vue')), 'servers');
