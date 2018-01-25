@@ -692,10 +692,6 @@
             },
         },
 
-        watch: {
-
-        },
-
         methods: {
             hookup(){
                 setTimeout(this.loadData, 0);

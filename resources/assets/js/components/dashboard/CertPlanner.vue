@@ -61,7 +61,7 @@
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
-        name: "cert-planner",
+        name: 'cert-planner',
 
         props: {
             /**
