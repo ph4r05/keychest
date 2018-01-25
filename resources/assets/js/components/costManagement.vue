@@ -191,7 +191,7 @@
     import Psl from 'ph4-psl';
     import Req from 'req';
     import ReqD from 'req-data';
-    import util from './dashboard/util';
+    import util from './dashboard/code/util';
 
     import VueCharts from 'vue-chartjs';
     import ToggleButton from 'vue-js-toggle-button';
