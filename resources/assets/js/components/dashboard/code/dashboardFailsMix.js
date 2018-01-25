@@ -42,6 +42,12 @@ export default {
                 return x && x.status === 1 && x.valid_path && !x.valid_hostname;
             });
         },
+
+        tlsNonCompliance(){
+            return _.filter(this.tls, x => {
+                return x && x.status === 1 && x.valid_hostname;
+            });
+        },
     },
 
 };
