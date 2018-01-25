@@ -361,27 +361,13 @@
             <cert-issuers
                     :certs="certs"
                     :tls-certs="tlsCerts"
-                    :cdn-certs="cdnCerts"
             />
 
             <!-- Certificate domains -->
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-primary" :headerCollapse="true">
-                        <template slot="title">Number of server names in SAN certificates</template>
-                        <p>Certificates can be used for multiple servers (domain names).
-                            The table shows how many servers can use a certain certificate.
-                            This information has an impact on the cost of certificats, if there issuance
-                            is not free.</p>
-
-                        <cert-domains-table :certDomainsTableData="certDomainsTableData"/>
-
-                        <div class="col-md-12">
-                            <canvas id="pie_cert_domains" style="height: 400px;"></canvas>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
+            <cert-domains
+                    :certs="certs"
+                    :tls-certs="tlsCerts"
+            />
 
             <!-- Certificate list -->
             <a name="certs"></a>
@@ -451,8 +437,9 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
-    import DashboardCertPlanner from './dashboard/CertPlanner'
-    import DashboardCertIssuers from './dashboard/CertIssuers'
+    import DashboardCertPlanner from './dashboard/CertPlanner';
+    import DashboardCertIssuers from './dashboard/CertIssuers';
+    import DashboardCertDomains from './dashboard/CertDomains';
     import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
     import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
     import DashboardTlsTrustErrorsTable from './dashboard/tables/TlsTrustErrorsTable';
@@ -462,7 +449,6 @@
     import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
     import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
     import DashboardCertIssuerTable from './dashboard/tables/CertIssuerTable';
-    import DashboardCertDomainsTable from './dashboard/tables/CertDomainsTable';
     import DashboardTlsCertsTable from './dashboard/tables/TlsCertsTable';
     import DashboardAllCertsTable from './dashboard/tables/AllCertsTable';
 
@@ -475,6 +461,7 @@
         components: {
             'cert-planner': DashboardCertPlanner,
             'cert-issuers': DashboardCertIssuers,
+            'cert-domains': DashboardCertDomains,
             'dns-errors-table': DashboardDnsErrorsTable,
             'tls-errors-table': DashboardTlsErrorsTable,
             'tls-trust-errors-table': DashboardTlsTrustErrorsTable,
@@ -484,7 +471,6 @@
             'expiring-domains-table': DashboardExpiringDomainsTable,
             'unknown-expiration-domains-table': DashboardUnknownExpirationDomainsTable,
             'cert-issuer-table': DashboardCertIssuerTable,
-            'cert-domains-table': DashboardCertDomainsTable,
             'tls-certs-table': DashboardTlsCertsTable,
             'all-certs-table': DashboardAllCertsTable,
         },
@@ -663,18 +649,6 @@
             week4renewalsCounts(){
                 return util.week4renewalsCounts(this.tlsCerts);
             },
-
-            certDomainDataset(){
-                return [
-                    util.certDomainsDataGen(this.tlsCerts),
-                    util.certDomainsDataGen(this.certs),
-                    util.certDomainsDataGen(this.tlsCerts, true),
-                    util.certDomainsDataGen(this.certs, true)];
-            },
-
-            certDomainsTableData(){
-                return _.toPairs(ReqD.flipGroups(this.certDomainDataset, {}));
-            },
         },
 
         methods: {
@@ -817,7 +791,6 @@
             renderChartjs(){
                 this.certTypesGraph();
                 this.week4renewGraph();
-                this.certDomainsGraph();
             },
 
             //
@@ -838,30 +811,6 @@
                 setTimeout(() => {
                     new Chart(document.getElementById("imminent_renewals_js"), config);
                 }, 1000);
-            },
-
-            certDomainsGraph(){
-                const dataGraphs = _.map(this.certDomainDataset, x=>{
-                    return _.map(x, y => {
-                        return [y.key, y.size];
-                    });
-                });
-
-                ReqD.mergeGroupStatsKeys(dataGraphs);
-                ReqD.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
-                const unzipped = _.map(dataGraphs, _.unzip);
-
-                // Normal domains
-                const graphCertDomains = charts.certDomainsConfig(unzipped, 'All watched domains (server names)');
-
-                // const unzippedTld = [unzipped[2], unzipped[3]];
-                // const graphCertDomainsTld = charts.certDomainsConfig(unzippedTld, 'Registered domains (SLD)');
-
-                setTimeout(() => {
-                    new Chart(document.getElementById("pie_cert_domains"), graphCertDomains);
-                    // new Chart(document.getElementById("pie_cert_domains_tld"), graphCertDomainsTld);
-                }, 1000);
-
             },
 
             //

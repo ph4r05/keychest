@@ -60,13 +60,6 @@
                     return []
                 },
             },
-
-            cdnCerts: {
-                type: Object,
-                default() {
-                    return {}
-                },
-            },
         },
 
         computed: {
@@ -146,15 +139,6 @@
                 setTimeout(() => {
                     new Chart(this.$refs.cert_issuers, this.graphData);
                 }, 1000);
-            },
-
-            /**
-             * Helper method for generating dataset
-             * @param certSet
-             * @returns {*|Array}
-             */
-            certTypes(certSet){
-                return util.certTypes(certSet, this.cdnCerts);
             },
         },
     }
