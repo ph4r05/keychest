@@ -1,17 +1,15 @@
 <template>
-    <div class="row">
+    <div v-if="showImminentRenewals" class="row">
         <div class="xcol-md-12">
-            <sbox cssBox="box-primary" :headerCollapse="true">
-                <template slot="title">Number of server names in SAN certificates</template>
-                <p>Certificates can be used for multiple servers (domain names).
-                    The table shows how many servers can use a certain certificate.
-                    This information has an impact on the cost of certificats, if there issuance
-                    is not free.</p>
-
-                <cert-domains-table :certDomainsTableData="certDomainsTableData"/>
-
-                <div class="col-md-12">
-                    <canvas ref="cert_domains" style="height: 400px;"></canvas>
+            <sbox cssBox="box-success" :headerCollapse="true">
+                <template slot="title">Renewals due in next 28 days</template>
+                <p>Watch carefully dates in the following table to prevent downtime on your servers. Certificates expired
+                    more than 28 days ago are excluded.</p>
+                <div class="col-md-8">
+                    <imminent-renewals-table :imminent-renewal-certs="imminentRenewalCerts"/>
+                </div>
+                <div class="col-md-4">
+                    <canvas ref="imminent_renewals" style="width: 100%; height: 300px;"></canvas>
                 </div>
             </sbox>
         </div>
@@ -34,17 +32,17 @@
     import VeeValidate from 'vee-validate';
     import { mapFields } from 'vee-validate';
 
-    import DashboardCertDomainsTable from './tables/CertDomainsTable';
+    import DashboardCertRenewalsTable from './tables/CertRenewalsTable';
 
     Vue.use(VueEvents);
     Vue.use(VueScrollTo);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
-        name: 'cert-domains',
+        name: 'imminent-renewals',
 
         components: {
-            'cert-domains-table': DashboardCertDomainsTable,
+            'imminent-renewals-table': DashboardCertRenewalsTable,
         },
 
         props: {
@@ -67,43 +65,33 @@
         },
 
         computed: {
-            certDomainDataset(){
-                return [
-                    util.certDomainsDataGen(this.tlsCerts),
-                    util.certDomainsDataGen(this.certs),
-                    util.certDomainsDataGen(this.tlsCerts, true),
-                    util.certDomainsDataGen(this.certs, true)];
+            imminentRenewalCerts(){
+                return util.imminentRenewalCerts(this.tlsCerts);
             },
 
-            certDomainsTableData(){
-                return _.toPairs(ReqD.flipGroups(this.certDomainDataset, {}));
+            showImminentRenewals(){
+                return _.reduce(this.tlsCerts, (acc, cur) => {
+                    return (acc + (cur.valid_to_days <= 28 && cur.valid_to_days >= -28));
+                }, 0) > 0;
+            },
+
+            week4renewals(){
+                return util.week4renewals(this.tlsCerts);
+            },
+
+            week4renewalsCounts(){
+                return util.week4renewalsCounts(this.tlsCerts);
             },
 
             graphData() {
-                const dataGraphs = _.map(this.certDomainDataset, x=>{
-                    return _.map(x, y => {
-                        return [y.key, y.size];
-                    });
-                });
-
-                ReqD.mergeGroupStatsKeys(dataGraphs);
-                ReqD.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
-                const unzipped = _.map(dataGraphs, _.unzip);
-
-                // Normal domains
-                const graphCertDomains = charts.certDomainsConfig(unzipped, 'All watched domains (server names)');
-
-                // const unzippedTld = [unzipped[2], unzipped[3]];
-                // const graphCertDomainsTld = charts.certDomainsConfig(unzippedTld, 'Registered domains (SLD)');
-
-                return [graphCertDomains, undefined];
+                return !this.showImminentRenewals ? {} :  charts.week4renewConfig(this.week4renewalsCounts);
             },
         },
 
         watch: {
             graphData(newVal, oldVal) {
                 if (newVal !== oldVal || !newVal) {
-                    this.certDomainsGraph();
+                    this.week4renewGraph();
                 }
             }
         },
@@ -134,16 +122,15 @@
              * Executed when mounted.
              */
             hookup(){
-                this.certDomainsGraph();
+                this.week4renewGraph();
             },
 
             /**
              * Renders the graph
              */
-            certDomainsGraph(){
+            week4renewGraph(){
                 setTimeout(() => {
-                    new Chart(this.$refs.cert_domains, (this.graphData)[0]);
-                    // new Chart(this.$refs.cert_domains_tld, (this.graphData)[1]);
+                    new Chart(this.$refs.imminent_renewals, this.graphData);
                 }, 1000);
             },
         },

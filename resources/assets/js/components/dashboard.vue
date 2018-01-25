@@ -290,21 +290,10 @@
 
             <!-- Imminent renewals -->
             <a name="renewals"></a>
-            <div v-if="showImminentRenewals" class="row">
-                <div class="xcol-md-12">
-                <sbox cssBox="box-success" :headerCollapse="true">
-                    <template slot="title">Renewals due in next 28 days</template>
-                    <p>Watch carefully dates in the following table to prevent downtime on your servers. Certificates expired
-                    more than 28 days ago are excluded.</p>
-                    <div class="col-md-8">
-                        <imminent-renewals-table :imminent-renewal-certs="imminentRenewalCerts"/>
-                    </div>
-                    <div class="col-md-4">
-                        <canvas id="imminent_renewals_js" style="width: 100%; height: 300px;"></canvas>
-                    </div>
-                </sbox>
-                </div>
-            </div>
+            <imminent-renewals
+                    :certs="certs"
+                    :tls-certs="tlsCerts"
+            />
 
             <!-- Expiring domains -->
             <div v-if="showExpiringDomains" class="row">
@@ -437,15 +426,17 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
+
     import DashboardCertPlanner from './dashboard/CertPlanner';
     import DashboardCertIssuers from './dashboard/CertIssuers';
     import DashboardCertDomains from './dashboard/CertDomains';
+    import DashboardCertRenewals from './dashboard/CertRenewals';
+
     import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
     import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
     import DashboardTlsTrustErrorsTable from './dashboard/tables/TlsTrustErrorsTable';
     import DashboardTlsInvalidHostsErrorsTable from './dashboard/tables/TlsInvalidHostsTable';
     import DashboardCertExpiredTable from './dashboard/tables/CertExpiredTable';
-    import DashboardImminentRenewalsTable from './dashboard/tables/ImminentRenewalsTable';
     import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
     import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
     import DashboardCertIssuerTable from './dashboard/tables/CertIssuerTable';
@@ -462,12 +453,13 @@
             'cert-planner': DashboardCertPlanner,
             'cert-issuers': DashboardCertIssuers,
             'cert-domains': DashboardCertDomains,
+            'imminent-renewals': DashboardCertRenewals,
+
             'dns-errors-table': DashboardDnsErrorsTable,
             'tls-errors-table': DashboardTlsErrorsTable,
             'tls-trust-errors-table': DashboardTlsTrustErrorsTable,
             'tls-invalid-hosts-table': DashboardTlsInvalidHostsErrorsTable,
             'cert-expired-table': DashboardCertExpiredTable,
-            'imminent-renewals-table': DashboardImminentRenewalsTable,
             'expiring-domains-table': DashboardExpiringDomainsTable,
             'unknown-expiration-domains-table': DashboardUnknownExpirationDomainsTable,
             'cert-issuer-table': DashboardCertIssuerTable,
@@ -569,12 +561,6 @@
                 return this.results ? _.size(this.results.watches) : 0;
             },
 
-            showImminentRenewals(){
-                return _.reduce(this.tlsCerts, (acc, cur) => {
-                    return (acc + (cur.valid_to_days <= 28 && cur.valid_to_days >= -28));
-                }, 0) > 0;
-            },
-
             showExpiringDomains(){
                 return _.reduce(this.whois, (acc, cur) => {
                         return acc + (cur.expires_at_days <= 90);
@@ -585,10 +571,6 @@
                 return _.reduce(this.whois, (acc, cur) => {
                         return acc + (!cur.expires_at_days);
                     }, 0) > 0;
-            },
-
-            imminentRenewalCerts(){
-                return util.imminentRenewalCerts(this.tlsCerts);
             },
 
             certTypesStats(){
@@ -640,14 +622,6 @@
                 return _.filter(this.tls, x => {
                     return x && x.status === 1 && x.valid_path && !x.valid_hostname;
                 });
-            },
-
-            week4renewals(){
-                return util.week4renewals(this.tlsCerts);
-            },
-
-            week4renewalsCounts(){
-                return util.week4renewalsCounts(this.tlsCerts);
             },
         },
 
@@ -790,7 +764,6 @@
 
             renderChartjs(){
                 this.certTypesGraph();
-                this.week4renewGraph();
             },
 
             //
@@ -800,17 +773,6 @@
             certTypesGraph(){
                 const graphCertTypes = charts.certTypesConfig(this.certTypesStatsAll, this.certTypesStats);
                 new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
-            },
-
-            week4renewGraph(){
-                if (!this.showImminentRenewals){
-                    return;
-                }
-
-                const config = charts.week4renewConfig(this.week4renewalsCounts);
-                setTimeout(() => {
-                    new Chart(document.getElementById("imminent_renewals_js"), config);
-                }, 1000);
             },
 
             //
