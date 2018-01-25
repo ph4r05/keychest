@@ -75,6 +75,17 @@ export default {
     },
 
     /**
+     * Warms up PSL cache by loading several entries.
+     * @param psl
+     */
+    pslWarmUp(psl){
+        psl = psl || Psl;
+        psl.get('test.now.sh');
+        psl.get('test.通販');
+        return psl;
+    },
+
+    /**
      * Formats UTC time with toLocaleDateString.
      * @param utc
      * @param locale
