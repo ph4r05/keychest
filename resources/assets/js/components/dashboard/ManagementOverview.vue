@@ -147,6 +147,7 @@
             <div class="row">
                 <!-- left-hand side selection box -->
                 <div class="col-lg-3 col-xs-6" style="background-color: white;">
+                    <div class="row">
                     <div class="box">
                         <div class="box-header with-border">
                             <h3 class="box-title">Regulated</h3>
@@ -168,7 +169,9 @@
                         </div>
                         <!-- box-footer -->
                     </div>
+                    </div>
                     <!-- /.box -->
+                    <div class="row">
                     <div class="btn-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Destination filter</button>
                         <div class="dropdown-menu">
@@ -181,11 +184,13 @@
                             <a class="dropdown-item" href="#">Key algorithm</a>
                         </div>
                     </div>
+                    </div>
 
                     <div class="row">
                         <br>
                         <h5 style="text-align: center">List of "selected filter"</h5>
                     </div>
+                    <div class="row">
                     <div class="col-lg-12" style="padding-left:5px;padding-right:5px">
                         <div class="small-box bg-green">
                             <div class="inner">
@@ -216,6 +221,7 @@
                             <!-- /.box-body -->
                         </div>
                         <!-- /.box -->
+                    </div>
                     </div>
                 </div>
                 <!-- main list of LoAs and the destionation table -->
