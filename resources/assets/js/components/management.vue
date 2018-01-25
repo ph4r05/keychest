@@ -1387,10 +1387,7 @@
             },
 
             warmup(){
-                setTimeout(() => {
-                    Psl.get('test.now.sh');
-                    Psl.get('test.通販');
-                }, 10);
+                setTimeout(() => util.pslWarmUp(Psl), 10);
             },
 
             processData(){
