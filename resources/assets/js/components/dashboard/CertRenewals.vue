@@ -18,6 +18,7 @@
 
 <script>
     import _ from 'lodash';
+    import Chart from 'chart.js';
     import moment from 'moment';
     import pluralize from 'pluralize';
 

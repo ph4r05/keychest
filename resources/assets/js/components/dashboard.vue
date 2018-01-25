@@ -99,7 +99,7 @@
                 <!-- HEADLINE: no of servers -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-aqua" v-if="dnsFailedLookups.length+ tlsErrors.length < 1 ">
+                    <div class="small-box bg-aqua" v-if="len(dnsFailedLookups) + len(tlsErrors) < 1 ">
                         <div class="inner">
                             <h3>{{ numWatches }}</h3>
                             <p>Watched servers</p>
@@ -113,7 +113,7 @@
 
                     <div class="small-box bg-yellow" v-else="">
                         <div class="inner">
-                            <h3>{{ dnsFailedLookups.length+ tlsErrors.length }} / {{ numWatches }}</h3>
+                            <h3>{{ len(dnsFailedLookups) + len(tlsErrors) }} / {{ numWatches }}</h3>
                             <p>Watched servers DOWN</p>
                         </div>
 
@@ -160,7 +160,7 @@
                     :len-tls-invalid-hostname="len(tlsInvalidHostname)"
             />
 
-            <!-- Section heading -->
+            <!-- Section heading - INCIDENTS -->
             <incidents
                     :dns-failed-lookups="dnsFailedLookups"
                     :tls-errors="tlsErrors"
@@ -225,7 +225,6 @@
                     @include-not-verified="val => { includeNotVerified = val }"
             />
 
-
             <!-- All Certificate list -->
             <a name="allCerts"></a>
             <all-certs
@@ -246,14 +245,10 @@
 
     import Psl from 'ph4-psl';
     import Req from 'req';
-    import ReqD from 'req-data';
     import util from './dashboard/code/util';
-    import charts from './dashboard/code/charts';
 
-    import VueCharts from 'vue-chartjs';
     import VeeValidate from 'vee-validate';
     import ToggleButton from 'vue-js-toggle-button';
-    import Chart from 'chart.js';
     import toastr from 'toastr';
     import Vue from 'vue';
 
