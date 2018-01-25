@@ -330,21 +330,11 @@
             </div>
 
             <!-- Certificate types -->
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Certificate overview</template>
-                        <div class="form-group">
-                            <p>
-                                Certificates in your inventory can be managed by third-party (CDN or ISP). You are
-                                responsible for renewing certificate issued by Let&#39;s Encrypt (short validity
-                                certificates) and by other authorities (long validity certificates).
-                            </p>
-                            <canvas id="pie_cert_types" style="width: 100%; height: 350px;"></canvas>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
+            <cert-types
+                    :certs="certs"
+                    :tls-certs="tlsCerts"
+                    :cdn-certs="cdnCerts"
+            />
 
             <!-- Certificate issuers -->
             <cert-issuers
@@ -431,6 +421,7 @@
     import DashboardCertIssuers from './dashboard/CertIssuers';
     import DashboardCertDomains from './dashboard/CertDomains';
     import DashboardCertRenewals from './dashboard/CertRenewals';
+    import DashboardCertTypes from './dashboard/CertTypes';
 
     import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
     import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
@@ -453,6 +444,7 @@
             'cert-planner': DashboardCertPlanner,
             'cert-issuers': DashboardCertIssuers,
             'cert-domains': DashboardCertDomains,
+            'cert-types': DashboardCertTypes,
             'imminent-renewals': DashboardCertRenewals,
 
             'dns-errors-table': DashboardDnsErrorsTable,
@@ -571,14 +563,6 @@
                 return _.reduce(this.whois, (acc, cur) => {
                         return acc + (!cur.expires_at_days);
                     }, 0) > 0;
-            },
-
-            certTypesStats(){
-                return this.certTypes(this.tlsCerts);
-            },
-
-            certTypesStatsAll(){
-                return this.certTypes(this.certs);
             },
 
             dns(){
@@ -759,28 +743,6 @@
                 }
 
                 this.graphsRendered = true;
-                this.renderChartjs();
-            },
-
-            renderChartjs(){
-                this.certTypesGraph();
-            },
-
-            //
-            // Subgraphs
-            //
-
-            certTypesGraph(){
-                const graphCertTypes = charts.certTypesConfig(this.certTypesStatsAll, this.certTypesStats);
-                new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
-            },
-
-            //
-            // Common graph data gen
-            //
-
-            certTypes(certSet){
-                return util.certTypes(certSet, this.cdnCerts);
             },
         }
     }
