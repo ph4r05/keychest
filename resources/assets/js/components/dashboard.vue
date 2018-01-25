@@ -847,21 +847,18 @@
     import _ from 'lodash';
     import axios from 'axios';
     import moment from 'moment';
-    import sprintf from 'sprintf-js';
+
     import Psl from 'ph4-psl';
     import Req from 'req';
     import ReqD from 'req-data';
-    import util from './dashboard/util'
-    import charts from './dashboard/charts'
+    import util from './dashboard/code/util';
+    import charts from './dashboard/code/charts';
 
     import VueCharts from 'vue-chartjs';
     import VeeValidate from 'vee-validate';
-
     import ToggleButton from 'vue-js-toggle-button';
-    import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
     import toastr from 'toastr';
-
     import Vue from 'vue';
 
     Vue.use(ToggleButton);
@@ -1308,63 +1305,6 @@
 </script>
 
 <style>
-    ul.domain-list {
-        padding-left: 0;
-    }
-
-    ul.domain-list li {
-        list-style-type: none;
-    }
-
-    .coma-list {
-        display: inline;
-        list-style: none;
-        padding-left: 0;
-    }
-
-    .coma-list li {
-        display: inline;
-    }
-
-    .coma-list li:after {
-        content: ", ";
-    }
-
-    .coma-list li:last-child:after {
-        content: "";
-    }
-
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity 1.0s
-    }
-    .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-        opacity: 0
-    }
-
-    .box-body > .table-xfull {
-        margin-left: -10px;
-        margin-right: -10px;
-        margin-bottom: -10px;
-        width: auto;
-    }
-
-    .box-body > .table-xfull > .table {
-        margin-bottom: auto;
-    }
-
-    .box-body > .table-xfull > .table > thead > tr > th,
-    .box-body > .table-xfull > .table > tbody > tr > td
-    {
-        padding-left: 12px;
-    }
-
-    .info-box-label {
-        line-height: 80px;
-        padding-left: 50px;
-        font-size: 20px;
-        font-weight: 400;
-        color: #444;
-    }
 
 </style>
 
