@@ -242,5 +242,23 @@ export default {
         };
     },
 
+    /**
+     * Creates the graph if chart is undefined otherwise updates chart data.
+     * @param chart
+     * @param em
+     * @param data
+     * @returns {*}
+     */
+    chartCreateUpdate(chart, em, data){
+        if (chart){
+            chart.data = data.data;
+            chart.update();
+        } else {
+            chart = new Chart(em, data);
+        }
+
+        return chart;
+    },
+
 }
 

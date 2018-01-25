@@ -114,6 +114,13 @@
             }
         },
 
+        data: function() {
+            return {
+                chartTls: null,
+                chartAll: null,
+            };
+        },
+
         mounted() {
             this.$nextTick(() => {
                 this.hookup();
@@ -149,8 +156,8 @@
             plannerGraph(){
                 const [graphCrtTlsData, graphCrtAllData] = this.graphData;
                 if (graphCrtTlsData) {
-                    new Chart(this.$refs.chart_certs_tls, graphCrtTlsData);
-                    new Chart(this.$refs.chart_certs_all, graphCrtAllData);
+                    this.chartTls = charts.chartCreateUpdate(this.chartTls, this.$refs.chart_certs_tls, graphCrtTlsData);
+                    this.chartAll = charts.chartCreateUpdate(this.chartAll, this.$refs.chart_certs_all, graphCrtAllData);
                 }
             },
 

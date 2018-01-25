@@ -97,6 +97,12 @@
             }
         },
 
+        data: function() {
+            return {
+                chart: null,
+            };
+        },
+
         mounted() {
             this.$nextTick(() => {
                 this.hookup();
@@ -131,8 +137,8 @@
              */
             week4renewGraph(){
                 setTimeout(() => {
-                    new Chart(this.$refs.imminent_renewals, this.graphData);
-                }, 1000);
+                    this.chart = charts.chartCreateUpdate(this.chart, this.$refs.imminent_renewals, this.graphData);
+                }, 250);
             },
         },
     }

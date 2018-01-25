@@ -96,6 +96,12 @@
             },
         },
 
+        data: function() {
+            return {
+                chart: null,
+            };
+        },
+
         watch: {
             graphData(newVal, oldVal) {
                 if (newVal !== oldVal || !newVal) {
@@ -138,8 +144,8 @@
              */
             certIssuersGraph(){
                 setTimeout(() => {
-                    new Chart(this.$refs.cert_issuers, this.graphData);
-                }, 1000);
+                    this.chart = charts.chartCreateUpdate(this.chart, this.$refs.cert_issuers, this.graphData);
+                }, 250);
             },
         },
     }

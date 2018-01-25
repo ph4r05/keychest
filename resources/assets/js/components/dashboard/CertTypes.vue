@@ -93,6 +93,12 @@
             }
         },
 
+        data: function() {
+            return {
+                chart: null,
+            };
+        },
+
         mounted() {
             this.$nextTick(() => {
                 this.hookup();
@@ -126,7 +132,7 @@
              * Renders the graph
              */
             certTypesGraph(){
-                new Chart(this.$refs.cert_types, this.graphData);
+                this.chart = charts.chartCreateUpdate(this.chart, this.$refs.cert_types, this.graphData);
             },
 
             certTypes(certSet){

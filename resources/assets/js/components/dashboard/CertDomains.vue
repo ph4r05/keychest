@@ -109,6 +109,12 @@
             }
         },
 
+        data: function() {
+            return {
+                chart: null,
+            };
+        },
+
         mounted() {
             this.$nextTick(() => {
                 this.hookup();
@@ -143,9 +149,9 @@
              */
             certDomainsGraph(){
                 setTimeout(() => {
-                    new Chart(this.$refs.cert_domains, (this.graphData)[0]);
-                    // new Chart(this.$refs.cert_domains_tld, (this.graphData)[1]);
-                }, 1000);
+                    this.chart = charts.chartCreateUpdate(this.chart, this.$refs.cert_domains, (this.graphData)[0]);
+                    // this.chart2 = charts.chartCreateUpdate(this.chart2, this.$refs.cert_domains, (this.graphData)[1]);
+                }, 250);
             },
         },
     }
