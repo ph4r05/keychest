@@ -319,8 +319,8 @@
     import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
     import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
     import DashboardCertIssuerTable from './dashboard/tables/CertIssuerTable';
-    import DashboardTlsCertsTable from './dashboard/tables/TlsCertsTable';
-    import DashboardAllCertsTable from './dashboard/tables/AllCertsTable';
+    import DashboardTlsCertsTable from './dashboard/tables/CertsTlsTable';
+    import DashboardAllCertsTable from './dashboard/tables/CertsAllTable';
 
     import './dashboard/css/dashboard.css';
     import IncidentSummary from "./dashboard/IncidentSummary";

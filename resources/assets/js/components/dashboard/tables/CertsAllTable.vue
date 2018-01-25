@@ -13,13 +13,15 @@
             <tbody>
             <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss">
                 <td v-bind:class="cert.planCss.tbl">
-                                    <span class="hidden">
-                                        ID: {{ cert.id }}
-                                        CNAME: {{ cert.cname }}
-                                    </span>
+                    <span class="hidden">
+                        ID: {{ cert.id }}
+                        CNAME: {{ cert.cname }}
+                    </span>
                     <ul class="domain-list">
                         <li v-for="domain in cert.watch_hosts_ct">
-                            <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
+                            <template v-if="cert.cname === domain">{{ domain }}
+                                <small><em>(CN)</em></small>
+                            </template>
                             <template v-else="">{{ domain }}</template>
                         </li>
                     </ul>
@@ -31,9 +33,11 @@
                 </td>
                 <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                 <td v-bind:class="cert.planCss.tbl"
-                    v-if="momentu(cert.valid_to) < momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}</td>
+                    v-if="momentu(cert.valid_to) < momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}
+                </td>
                 <td v-bind:class="cert.planCss.tbl"
-                    v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
+                    v-else="">{{ momentu(cert.valid_to).fromNow() }}
+                </td>
             </tr>
             </tbody>
         </table>

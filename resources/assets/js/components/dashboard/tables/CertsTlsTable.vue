@@ -12,13 +12,15 @@
             <tbody>
             <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
                 <td v-bind:class="cert.planCss.tbl">
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                            CNAME: {{ cert.cname }}
-                                        </span>
+                    <span class="hidden">
+                        ID: {{ cert.id }}
+                        CNAME: {{ cert.cname }}
+                    </span>
                     <ul class="domain-list">
                         <li v-for="domain in cert.watch_hosts">
-                            <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
+                            <template v-if="cert.cname === domain">{{ domain }}
+                                <small><em>(CN)</em></small>
+                            </template>
                             <template v-else="">{{ domain }}</template>
                         </li>
                     </ul>
@@ -27,12 +29,15 @@
                 <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
                 <td v-bind:class="cert.planCss.tbl"
                     v-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)<2)">
-                    SERVER DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
+                    SERVER DOWN since {{ momentu(cert.valid_to).fromNow() }}
+                </td>
                 <td v-bind:class="cert.planCss.tbl"
                     v-else-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)>1)">
-                    SERVERS DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
+                    SERVERS DOWN since {{ momentu(cert.valid_to).fromNow() }}
+                </td>
                 <td v-bind:class="cert.planCss.tbl"
-                    v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
+                    v-else="">{{ momentu(cert.valid_to).fromNow() }}
+                </td>
             </tr>
             </tbody>
         </table>
