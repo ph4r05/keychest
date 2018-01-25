@@ -172,12 +172,12 @@
                                 <tbody>
                                 <tr>
                                     <td>DNS configuration issues</td>
-                                    <td>{{ dnsFailedLookups.length }}</td>
+                                    <td>{{ len(dnsFailedLookups) }}</td>
                                 </tr>
 
                                 <tr>
                                     <td>Unreachable servers</td>
-                                    <td>{{ tlsErrors.length }}</td>
+                                    <td>{{ len(tlsErrors) }}</td>
                                 </tr>
 
                                 <tr>
@@ -203,8 +203,8 @@
 
             <!-- Section heading -->
             <div class="row" v-if="
-                    dnsFailedLookups.length > 0 ||
-                    tlsErrors.length > 0 ||
+                    len(dnsFailedLookups) > 0 ||
+                    len(tlsErrors) > 0 ||
                     len(expiredCertificates) > 0 ||
                     len(tlsInvalidTrust) > 0 ||
                     len(tlsInvalidHostname) > 0
