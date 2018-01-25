@@ -152,54 +152,13 @@
 
             <!-- incident summary table -->
             <a name="incidentSummary"></a>
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Number of incidents per category</template>
-                        <p>The table shows a summary of the number of active incidents per category.
-                            Futher details are in the "Incidents" section of the dashboard.
-                        </p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <!--<th>ID</th>-->
-                                    <th>Incident category</th>
-                                    <th>Number of active incidents</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                <tr>
-                                    <td>DNS configuration issues</td>
-                                    <td>{{ len(dnsFailedLookups) }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Unreachable servers</td>
-                                    <td>{{ len(tlsErrors) }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Servers with configuration errors</td>
-                                    <td>{{ len(tlsInvalidTrust) }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Incorrect certificates</td>
-                                    <td>{{ len(tlsInvalidHostname) }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Expired certificates</td>
-                                    <td>{{ len(expiredCertificates) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
+            <incident-summary
+                    :len-dns-failed-lookups="len(dnsFailedLookups)"
+                    :len-tls-errors="len(tlsErrors)"
+                    :len-expired-certificates="len(expiredCertificates)"
+                    :len-tls-invalid-trust="len(tlsInvalidTrust)"
+                    :len-tls-invalid-hostname="len(tlsInvalidHostname)"
+            />
 
             <!-- Section heading -->
             <div class="row" v-if="
@@ -422,6 +381,7 @@
     import DashboardCertDomains from './dashboard/CertDomains';
     import DashboardCertRenewals from './dashboard/CertRenewals';
     import DashboardCertTypes from './dashboard/CertTypes';
+    import DashboardIncidentSummary from './dashboard/IncidentSummary';
 
     import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
     import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
@@ -435,17 +395,20 @@
     import DashboardAllCertsTable from './dashboard/tables/AllCertsTable';
 
     import './dashboard/css/dashboard.css';
+    import IncidentSummary from "./dashboard/IncidentSummary";
 
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
         components: {
+            IncidentSummary,
             'cert-planner': DashboardCertPlanner,
             'cert-issuers': DashboardCertIssuers,
             'cert-domains': DashboardCertDomains,
             'cert-types': DashboardCertTypes,
             'imminent-renewals': DashboardCertRenewals,
+            'incident-summary': DashboardIncidentSummary,
 
             'dns-errors-table': DashboardDnsErrorsTable,
             'tls-errors-table': DashboardTlsErrorsTable,
