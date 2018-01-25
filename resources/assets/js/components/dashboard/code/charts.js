@@ -1,9 +1,11 @@
-import _ from 'lodash';
-import moment from 'moment';
 
-import Req from 'req';
+import _ from 'lodash';
+
 import util from './util';
 
+/**
+ * Chart related utilities for generating datasets and ChartJs configurations.
+ */
 export default {
 
     /**

@@ -4,6 +4,9 @@ import moment from 'moment';
 import Psl from 'ph4-psl';
 import Req from 'req';
 
+/**
+ * Dashboard related misc utility functions.
+ */
 export default {
 
     chartColors: [

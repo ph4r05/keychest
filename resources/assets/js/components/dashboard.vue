@@ -252,6 +252,10 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
+    import CertsMixin from './dashboard/code/certsMix';
+    import DashboardStatsMixin from './dashboard/code/dashboardStatsMix';
+    import DashboardFailsMixin from './dashboard/code/dashboardFailsMix';
+
     import DashboardCertPlanner from './dashboard/CertPlanner';
     import DashboardCertIssuers from './dashboard/CertIssuers';
     import DashboardCertDomains from './dashboard/CertDomains';
@@ -269,6 +273,12 @@
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
+        mixins: [
+            CertsMixin,
+            DashboardStatsMixin,
+            DashboardFailsMixin,
+        ],
+
         components: {
             'cert-planner': DashboardCertPlanner,
             'cert-issuers': DashboardCertIssuers,
@@ -307,116 +317,6 @@
         computed: {
             hasAccount(){
                 return !this.Laravel.authGuest;
-            },
-
-            tlsCertsIdsMap(){
-                if (!this.results || !this.results.watch_to_tls_certs){
-                    return {};
-                }
-
-                return Req.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
-            },
-
-            cdnCerts() {
-                if (!this.results || !this.results.tls || !this.results.certificates){
-                    return {};
-                }
-
-                return util.cdnCerts(this.results.tls, this.results.certificates);
-            },
-
-            tlsCerts(){
-                return _.map(_.keys(this.tlsCertsIdsMap), x => {
-                    return this.results.certificates[x];
-                });
-            },
-
-            allCerts(){
-                if (!this.results || !this.results.certificates){
-                    return {};
-                }
-
-                return this.results.certificates;
-            },
-
-            certs(){
-                if (!this.results || !this.results.certificates){
-                    return {};
-                }
-
-                return _.filter(this.results.certificates, x=>{
-                    return this.includeExpired || (x.id in this.tlsCertsIdsMap) || (x.valid_to_days >= -28);
-                });
-            },
-
-            whois(){
-                if (this.results && this.results.whois){
-                    return this.results.whois;
-                }
-                return {};
-            },
-
-            numHiddenCerts(){
-                return Number(_.size(this.certs) - _.size(this.tlsCerts));
-            },
-
-            numExpiresSoon(){
-                return Number(_.sumBy(this.tlsCerts, cur => {
-                    return (cur.valid_to_days <= 28 && cur.valid_to_days >= -28);
-                }));
-            },
-
-            numExpiresNow(){
-                return Number(_.sumBy(this.tlsCerts, cur => {
-                    return (cur.valid_to_days <= 8 && cur.valid_to_days >= -28);
-                }));
-            },
-
-            numWatches(){
-                return this.results ? _.size(this.results.watches) : 0;
-            },
-
-            dns(){
-                if (this.results && this.results.dns){
-                    return this.results.dns;
-                }
-                return {};
-            },
-
-            tls(){
-                if (this.results && this.results.tls){
-                    return this.results.tls;
-                }
-                return {};
-            },
-
-            dnsFailedLookups(){
-                const r = _.filter(this.dns, x => {
-                    return x && x.status !== 1;
-                });
-                return _.sortBy(r, [x => { return x.domain; }]);
-            },
-
-            tlsErrors(){
-                return util.tlsErrors(this.tls);
-            },
-
-            expiredCertificates(){
-                return _.filter(this.tlsCerts, x => {
-                    return x.is_expired;
-                });
-            },
-
-            tlsInvalidTrust(){
-                return _.filter(this.tls, x => {
-                    return x && x.status === 1 && !x.valid_path;
-                });
-            },
-
-            tlsInvalidHostname(){
-                return _.filter(this.tls, x => {
-                    return x && x.status === 1 && x.valid_path && !x.valid_hostname;
-                });
             },
         },
 
