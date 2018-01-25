@@ -144,47 +144,11 @@
             </div>
 
             <!-- Monthly planner -->
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Yearly renewal calendar</template>
-                        <p>
-                            The following two charts provide information about the effort needed in the next 12 months
-                            to
-                            keep all your certificates valid. The first chart shows certificates we verified directly
-                            when scanning your servers.
-                            <br>
-                            <i>Note: you can click an chart labels to hide/unhide types of certificates.</i>
-                        </p>
-                        <div class="form-group">
-                            <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
-                        </div>
-
-                        <div class="form-group">
-                            <canvas id="columnchart_certificates_all_js" style="width:100%; height: 350px"></canvas>
-                        </div>
-                        <p>
-
-                            <i>Note: The number of renewals for certificates, notably Let&#39;s Encrypt certificates,
-                                valid
-                                for less than 12 months, is estimated for months beyond their maximum validity.</i>
-                            <br/><br/>
-                            You may want to check that all certificates are legitimate if:
-                        </p>
-                        <ul>
-                            <li>there is a difference between the two charts;</li>
-                            <li>all monitored servers are running; and</li>
-                            <li>there is no CDN/ISP certificate in the first chart.</li>
-                        </ul>
-                        <p>
-                            The "Informational" part of this dashboard lists all certificates sorted by expiration date
-                            so you can easily find a complete list of relevant certificates with expiry dates in the
-                            given month.
-                        </p>
-                    </sbox>
-                </div>
-            </div>
-
+            <cert-planner
+                    :certs="certs"
+                    :tls-certs="tlsCerts"
+                    :cdn-certs="cdnCerts"
+            />
 
             <!-- incident summary table -->
             <a name="incidentSummary"></a>
@@ -495,6 +459,7 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
+    import DashboardCertPlanner from './dashboard/CertPlanner'
     import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
     import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
     import DashboardTlsTrustErrorsTable from './dashboard/tables/TlsTrustErrorsTable';
@@ -515,6 +480,7 @@
 
     export default {
         components: {
+            'cert-planner': DashboardCertPlanner,
             'dns-errors-table': DashboardDnsErrorsTable,
             'tls-errors-table': DashboardTlsErrorsTable,
             'tls-trust-errors-table': DashboardTlsTrustErrorsTable,
@@ -644,16 +610,6 @@
 
             imminentRenewalCerts(){
                 return util.imminentRenewalCerts(this.tlsCerts);
-            },
-
-            crtTlsMonth(){
-                return this.monthDataGen(_.filter(this.tlsCerts, o => {
-                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
-            },
-
-            crtAllMonth() {
-                return this.monthDataGen(_.filter(this.certs, o => {
-                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }))
             },
 
             certTypesStats(){
@@ -878,7 +834,6 @@
             },
 
             renderChartjs(){
-                this.plannerGraph();
                 this.certTypesGraph();
                 this.week4renewGraph();
                 this.certIssuersGraph();
@@ -888,12 +843,6 @@
             //
             // Subgraphs
             //
-
-            plannerGraph(){
-                const [graphCrtTlsData, graphCrtAllData] = charts.plannerConfig(this.crtTlsMonth, this.crtAllMonth);
-                new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
-                new Chart(document.getElementById("columnchart_certificates_all_js"), graphCrtAllData);
-            },
 
             certTypesGraph(){
                 const graphCertTypes = charts.certTypesConfig(this.certTypesStatsAll, this.certTypesStats);
