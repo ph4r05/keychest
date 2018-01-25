@@ -187,28 +187,7 @@
             />
 
             <!-- Expiring domains -->
-            <div v-if="showExpiringDomains" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Domain name expiration dates</template>
-                        <p>The following domain names' registration expires within 90 days.</p>
-
-                        <expiring-domains-table :whois="whois"/>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- Domains without expiration date detected - important, not to mislead it is fine -->
-            <div v-if="showDomainsWithUnknownExpiration" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-warning" :headerCollapse="true">
-                        <template slot="title">Domains with unknown expiration</template>
-                        <p>We were unable to detect expiration domain date for the following domains:</p>
-
-                        <unknown-expiration-domains-table :whois="whois"/>
-                    </sbox>
-                </div>
-            </div>
+            <expiring-domains :whois="whois"/>
 
             <!-- Section heading - INFORMATIONAL -->
             <div class="row">
@@ -285,14 +264,11 @@
     import DashboardCertTypes from './dashboard/CertTypes';
     import DashboardIncidentSummary from './dashboard/IncidentSummary';
     import DashboardIncidents from './dashboard/Incidents';
+    import DashboardExpiringDomains from './dashboard/ExpiringDomains';
     import DashboardCertTlsList from './dashboard/CertTlsList';
     import DashboardCertAllList from './dashboard/CertAllList';
 
-    import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
-    import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
-
     import './dashboard/css/dashboard.css';
-    import IncidentSummary from "./dashboard/IncidentSummary";
 
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
@@ -306,11 +282,9 @@
             'imminent-renewals': DashboardCertRenewals,
             'incident-summary': DashboardIncidentSummary,
             'incidents': DashboardIncidents,
+            'expiring-domains': DashboardExpiringDomains,
             'tls-certs': DashboardCertTlsList,
             'all-certs': DashboardCertAllList,
-
-            'expiring-domains-table': DashboardExpiringDomainsTable,
-            'unknown-expiration-domains-table': DashboardUnknownExpirationDomainsTable,
         },
 
         data: function() {
@@ -405,18 +379,6 @@
 
             numWatches(){
                 return this.results ? _.size(this.results.watches) : 0;
-            },
-
-            showExpiringDomains(){
-                return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (cur.expires_at_days <= 90);
-                    }, 0) > 0;
-            },
-
-            showDomainsWithUnknownExpiration(){
-                return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (!cur.expires_at_days);
-                    }, 0) > 0;
             },
 
             dns(){
