@@ -4,24 +4,27 @@
             <thead>
             <tr>
                 <th>Server name</th>
-                <th>Name(s) in certificate</th>
+                <th>Address</th>
+                <th>Cause</th>
                 <th>Time of detection</th>
                 <th>Last failure</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
+            <tr v-for="tls in tlsErrors" class="danger">
                 <td>
                     <span class="hidden">
                         ID: {{ tls.id }}
                     </span>
                     {{ tls.url_short }}
                 </td>
+                <td>{{ tls.ip_scanned }}</td>
                 <td>
-                    <ul class="coma-list" v-if="tls.host_cert">
-                        <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
-                    </ul>
-                    <span v-else="">No domains found</span>
+                    <span v-if="tls.err_code == 1">TLS handshake error</span>
+                    <span v-else-if="tls.err_code == 2">No server detected</span>
+                    <span v-else-if="tls.err_code == 3">Timeout</span>
+                    <span v-else-if="tls.err_code == 4">Domain lookup error</span>
+                    <span v-else="">TLS/SSL not present</span>
                 </td>
                 <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
                     ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
@@ -37,7 +40,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -54,7 +57,7 @@
             /**
              * Input to display
              */
-            tlsInvalidHostname: {
+            tlsErrors: {
                 type: Array,
                 default() {
                     return []

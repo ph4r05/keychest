@@ -3,32 +3,17 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
-                <th>Server name</th>
-                <th>Address</th>
-                <th>Cause</th>
-                <th>Time of detection</th>
-                <th>Last failure</th>
+                <th>Domain name</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="tls in tlsErrors" class="danger">
+            <tr v-for="dns in dnsFailedLookups" class="danger">
                 <td>
                     <span class="hidden">
-                        ID: {{ tls.id }}
+                        ID: {{ dns.id }}
                     </span>
-                    {{ tls.url_short }}
+                    {{ dns.domain }}
                 </td>
-                <td>{{ tls.ip_scanned }}</td>
-                <td>
-                    <span v-if="tls.err_code == 1">TLS handshake error</span>
-                    <span v-else-if="tls.err_code == 2">No server detected</span>
-                    <span v-else-if="tls.err_code == 3">Timeout</span>
-                    <span v-else-if="tls.err_code == 4">Domain lookup error</span>
-                    <span v-else="">TLS/SSL not present</span>
-                </td>
-                <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                    ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
             </tr>
             </tbody>
         </table>
@@ -40,7 +25,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -57,7 +42,7 @@
             /**
              * Input to display
              */
-            tlsErrors: {
+            dnsFailedLookups: {
                 type: Array,
                 default() {
                     return []

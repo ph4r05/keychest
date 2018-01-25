@@ -3,12 +3,29 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
-                <th>Domain</th>
+                <th>Server name</th>
+                <th>Name(s) in certificate</th>
+                <th>Time of detection</th>
+                <th>Last failure</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days" class="warning">
-                <td>{{ cur_whois.domain }}</td>
+            <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
+                <td>
+                    <span class="hidden">
+                        ID: {{ tls.id }}
+                    </span>
+                    {{ tls.url_short }}
+                </td>
+                <td>
+                    <ul class="coma-list" v-if="tls.host_cert">
+                        <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
+                    </ul>
+                    <span v-else="">No domains found</span>
+                </td>
+                <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
+                    ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
             </tr>
             </tbody>
         </table>
@@ -20,7 +37,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -37,10 +54,10 @@
             /**
              * Input to display
              */
-            whois: {
-                type: Object,
+            tlsInvalidHostname: {
+                type: Array,
                 default() {
-                    return {}
+                    return []
                 },
             },
         },

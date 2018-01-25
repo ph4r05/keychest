@@ -42,7 +42,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';

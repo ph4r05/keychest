@@ -495,18 +495,18 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
-    import DashboardDnsErrorsTable from './dashboard/DnsErrorsTable';
-    import DashboardTlsErrorsTable from './dashboard/TlsErrorsTable';
-    import DashboardTlsTrustErrorsTable from './dashboard/TlsTrustErrorsTable';
-    import DashboardTlsInvalidHostsErrorsTable from './dashboard/TlsInvalidHostsTable';
-    import DashboardCertExpiredTable from './dashboard/CertExpiredTable';
-    import DashboardImminentRenewalsTable from './dashboard/ImminentRenewalsTable';
-    import DashboardExpiringDomainsTable from './dashboard/ExpiringDomainsTable';
-    import DashboardUnknownExpirationDomainsTable from './dashboard/UnknownExpirationDomainsTable';
-    import DashboardCertIssuerTable from './dashboard/CertIssuerTable';
-    import DashboardCertDomainsTable from './dashboard/CertDomainsTable';
-    import DashboardTlsCertsTable from './dashboard/TlsCertsTable';
-    import DashboardAllCertsTable from './dashboard/AllCertsTable';
+    import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
+    import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
+    import DashboardTlsTrustErrorsTable from './dashboard/tables/TlsTrustErrorsTable';
+    import DashboardTlsInvalidHostsErrorsTable from './dashboard/tables/TlsInvalidHostsTable';
+    import DashboardCertExpiredTable from './dashboard/tables/CertExpiredTable';
+    import DashboardImminentRenewalsTable from './dashboard/tables/ImminentRenewalsTable';
+    import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
+    import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
+    import DashboardCertIssuerTable from './dashboard/tables/CertIssuerTable';
+    import DashboardCertDomainsTable from './dashboard/tables/CertDomainsTable';
+    import DashboardTlsCertsTable from './dashboard/tables/TlsCertsTable';
+    import DashboardAllCertsTable from './dashboard/tables/AllCertsTable';
 
     import './dashboard/css/dashboard.css';
 

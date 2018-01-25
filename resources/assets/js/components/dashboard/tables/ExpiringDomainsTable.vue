@@ -3,36 +3,22 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
-                <th>Server name</th>
-                <th>Address</th>
-                <th>Cause</th>
-                <th>Time of detection</th>
-                <th>Last failure</th>
+                <th>Domain name</th>
+                <th>You have to renew</th>
+                <th>Expiration date</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
-                <td>
-                    <span class="hidden">
-                        ID: {{ tls.id }}
-                    </span>
-                    {{ tls.url_short }}
+            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 90">
+                <td v-bind:class="cur_whois.planCss.tbl">
+                    {{ cur_whois.domain }}
                 </td>
-                <td>{{ tls.ip_scanned }}</td>
-                <td>
-                    <ul class="domain-list">
-                        <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
-                        <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
-                        <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
-                        <li v-else-if="len(tls.certs_ids) === 1">Incomplete trust chain</li>
-                        <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
-                        <li v-else-if="tls.host_cert">Untrusted certificate</li>
-                        <li v-else="">No host certificate</li>
-                    </ul>
+                <td v-bind:class="cur_whois.planCss.tbl">
+                    {{ momentu(cur_whois.expires_at_utc * 1000.0).fromNow() }}
                 </td>
-                <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                    ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
+                <td v-bind:class="cur_whois.planCss.tbl">
+                    {{ utcTimeLocaleDateString(cur_whois.expires_at_utc) }}
+                </td>
             </tr>
             </tbody>
         </table>
@@ -44,7 +30,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -61,10 +47,10 @@
             /**
              * Input to display
              */
-            tlsInvalidTrust: {
-                type: Array,
+            whois: {
+                type: Object,
                 default() {
-                    return []
+                    return {}
                 },
             },
         },

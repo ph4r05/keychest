@@ -3,36 +3,36 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
-                <th>Server names</th>
-                <th>Issuer</th>
-                <th colspan="2">Renew / plan renewal</th>
+                <th>Server name</th>
+                <th>Address</th>
+                <th>Cause</th>
+                <th>Time of detection</th>
+                <th>Last failure</th>
             </tr>
             </thead>
-
             <tbody>
-            <tr v-for="cert in sortExpiry(tlsCerts)" v-if="cert.planCss">
-                <td v-bind:class="cert.planCss.tbl">
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                            CNAME: {{ cert.cname }}
-                                        </span>
+            <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
+                <td>
+                    <span class="hidden">
+                        ID: {{ tls.id }}
+                    </span>
+                    {{ tls.url_short }}
+                </td>
+                <td>{{ tls.ip_scanned }}</td>
+                <td>
                     <ul class="domain-list">
-                        <li v-for="domain in cert.watch_hosts">
-                            <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
-                            <template v-else="">{{ domain }}</template>
-                        </li>
+                        <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
+                        <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
+                        <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
+                        <li v-else-if="len(tls.certs_ids) === 1">Incomplete trust chain</li>
+                        <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
+                        <li v-else-if="tls.host_cert">Untrusted certificate</li>
+                        <li v-else="">No host certificate</li>
                     </ul>
                 </td>
-                <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
-                <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                <td v-bind:class="cert.planCss.tbl"
-                    v-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)<2)">
-                    SERVER DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
-                <td v-bind:class="cert.planCss.tbl"
-                    v-else-if="(momentu(cert.valid_to)<momentu())&&(len(cert.watch_hosts)>1)">
-                    SERVERS DOWN since {{ momentu(cert.valid_to).fromNow() }}</td>
-                <td v-bind:class="cert.planCss.tbl"
-                    v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
+                <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
+                    ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
+                <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
             </tr>
             </tbody>
         </table>
@@ -44,7 +44,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -59,9 +59,9 @@
     export default {
         props: {
             /**
-             * Input certs to display
+             * Input to display
              */
-            tlsCerts: {
+            tlsInvalidTrust: {
                 type: Array,
                 default() {
                     return []

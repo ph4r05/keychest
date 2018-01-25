@@ -3,22 +3,12 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
             <tr>
-                <th>Domain name</th>
-                <th>You have to renew</th>
-                <th>Expiration date</th>
+                <th>Domain</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 90">
-                <td v-bind:class="cur_whois.planCss.tbl">
-                    {{ cur_whois.domain }}
-                </td>
-                <td v-bind:class="cur_whois.planCss.tbl">
-                    {{ momentu(cur_whois.expires_at_utc * 1000.0).fromNow() }}
-                </td>
-                <td v-bind:class="cur_whois.planCss.tbl">
-                    {{ utcTimeLocaleDateString(cur_whois.expires_at_utc) }}
-                </td>
+            <tr v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days" class="warning">
+                <td>{{ cur_whois.domain }}</td>
             </tr>
             </tbody>
         </table>
@@ -30,7 +20,7 @@
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import util from './code/util';
+    import util from '../code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
