@@ -53,7 +53,7 @@
                 <!-- HEADLINE: no of servers -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-green" v-if="dnsFailedLookups.length+ tlsErrors.length < 1 ">
+                    <div class="small-box bg-green" v-if="len(dnsFailedLookups) + len(tlsErrors) < 1 ">
                         <div class="inner">
                             <h3>100&#37; <span style="font-size: smaller">of {{ numWatches }}</span></h3>
                             <p>Security groups</p>
@@ -67,7 +67,7 @@
 
                     <div class="small-box bg-yellow" v-else="">
                         <div class="inner">
-                            <h3>{{ 100 - Math.round(100*(dnsFailedLookups.length + tlsErrors.length)/numWatches) }}&#37;
+                            <h3>{{ percSecurityGroup }}&#37;
                                 <span style="font-size: smaller">of {{ numWatches }}</span></h3>
                             <p>Security groups</p>
                         </div>
@@ -87,7 +87,7 @@
                     <div class="small-box"
                          v-bind:class="{'bg-green': numExpiresNow < 1, 'bg-red': numExpiresNow > 0}" >
                         <div class="inner">
-                            <h3>{{ Math.round(100*numExpiresNow/len(certs)) }}&#37; <span style="font-size: smaller">of {{ len(certs) }}</span> </h3>
+                            <h3>{{ percExpiresNow }}&#37; <span style="font-size: smaller">of {{ len(certs) }}</span> </h3>
                             <p>{{ pluralize('Certificate', numExpiresNow) }} {{ pluralize('expire', numExpiresNow) }} now</p>
                         </div>
                         <div class="icon">
@@ -96,7 +96,7 @@
                         <a href="#renewals" class="small-box-footer"
                            v-if="numExpiresNow > 0">More info <i class="fa fa-arrow-circle-right"></i></a>
                         <a href="https://www.tripadvisor.co.uk/Search?geo=&latitude=&longitude=&searchNearby=&redirect=&startTime=&uiOrigin=&q=short+breaks"
-                           v-else-if="numExpiresSoon>0"
+                           v-else-if="numExpiresSoon > 0"
                            target="_blank"
                            class="small-box-footer">Take a short break <i class="fa fa-arrow-circle-right"></i></a>
                         <a href="#" class="small-box-footer" v-else="">This looks good</a>
@@ -156,88 +156,21 @@
             </div>
 
             <!-- Monthly planner -->
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Operational status - 12 months</template>
-                        <p>
-                            A chart of the operational status of business functions,
-                            and destinations.
-                            <br>
-                            <i>Note: you can click an chart labels to hide/unhide information.</i>
-                        </p>
-                        <div class="form-group">
-                            <canvas id="columnchart_certificates_js" style="width:100%; height: 350px"></canvas>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Certificate expiration levels - 12 months</template>
-                        <p>A chart of the level of expired certificates over the last 12 months.
-                            <br>
-                            <i>Note: you can click an chart labels to hide/unhide information.</i></p>
-                        <div class="form-group">
-                            <canvas id="columnchart_certificates_all_js" style="width:100%; height: 350px"></canvas>
-                        </div>
-
-                    </sbox>
-                </div>
-            </div>
+            <cert-planner-cio
+                    :certs="certs"
+                    :tls-certs="tlsCerts"
+                    :cdn-certs="cdnCerts"
+            />
 
             <!-- incident summary table -->
             <a name="incidentSummary"></a>
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Number of incidents per category</template>
-                            <p>The table shows a summary of the number of active incidents per category.
-                            Futher details are in the "Incidents" section of the dashboard.
-                            </p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <!--<th>ID</th>-->
-                                    <th>Incident category</th>
-                                    <th>Number of active incidents</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                <tr>
-                                <td>DNS configuration issues</td>
-                                <td>{{ dnsFailedLookups.length }}</td>
-                                </tr>
-
-                                <tr>
-                                <td>Unreachable servers</td>
-                                <td>{{ tlsErrors.length }}</td>
-                                </tr>
-
-                                <tr>
-                                <td>Servers with configuration errors</td>
-                                <td>{{ len(tlsInvalidTrust) }}</td>
-                                </tr>
-
-                                <tr>
-                                <td>Incorrect certificates</td>
-                                <td>{{ len(tlsInvalidHostname) }}</td>
-                                </tr>
-
-                                <tr>
-                                <td>Expired certificates</td>
-                                <td>{{ len(expiredCertificates) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
+            <incident-summary
+                    :len-dns-failed-lookups="len(dnsFailedLookups)"
+                    :len-tls-errors="len(tlsErrors)"
+                    :len-expired-certificates="len(expiredCertificates)"
+                    :len-tls-invalid-trust="len(tlsInvalidTrust)"
+                    :len-tls-invalid-hostname="len(tlsInvalidHostname)"
+            />
 
             <a name="operationalStatusBusiness"></a>
             <div class="row">
@@ -261,229 +194,14 @@
                 </div>
             </div>
 
-
             <!-- Section heading -->
-            <div class="row" v-if="
-                    dnsFailedLookups.length > 0 ||
-                    tlsErrors.length > 0 ||
-                    len(expiredCertificates) > 0 ||
-                    len(tlsInvalidTrust) > 0 ||
-                    len(tlsInvalidHostname) > 0
-                ">
-                <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation-circle"></i></span>
-                    <div class="info-box-content info-box-label">
-                        Incidents
-                    </div>
-                </div>
-            </div>
-
-            <!-- DNS lookup fails -->
-            <div v-if="tlsErrors.length > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">DNS errors ({{ dnsFailedLookups.length }})</template>
-                        <p>Please check if the following domain names are correct. You may also need to verify
-                            your DNS configuration at your DNS registrar and at your DNS servers.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Domain name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="dns in dnsFailedLookups" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ dns.id }}
-                                        </span>
-                                        {{ dns.domain }}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS connection fails -->
-            <div v-if="tlsErrors.length > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unreachable servers ({{ tlsErrors.length }})</template>
-
-                        <p>We failed to connect to one or more servers using TLS protocol.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Address</th>
-                                    <th>Cause</th>
-                                    <th>Time of detection</th>
-                                    <th>Last failure</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="tls in tlsErrors" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ tls.id }}
-                                        </span>
-                                        {{ tls.url_short }}
-                                    </td>
-                                    <td>{{ tls.ip_scanned }}</td>
-                                    <td>
-                                        <span v-if="tls.err_code == 1">TLS handshake error</span>
-                                        <span v-else-if="tls.err_code == 2">No server detected</span>
-                                        <span v-else-if="tls.err_code == 3">Timeout</span>
-                                        <span v-else-if="tls.err_code == 4">Domain lookup error</span>
-                                        <span v-else="">TLS/SSL not present</span>
-                                    </td>
-                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS trust errors -->
-            <div v-if="len(tlsInvalidTrust) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Servers with configuration errors ({{ len(tlsInvalidTrust) }})</template>
-                        <p>We detected security or configuration problems at following servers</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Address</th>
-                                    <th>Cause</th>
-                                    <th>Time of detection</th>
-                                    <th>Last failure</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ tls.id }}
-                                        </span>
-                                        {{ tls.url_short }}
-                                    </td>
-                                    <td>{{ tls.ip_scanned }}</td>
-                                    <td>
-                                        <ul class="domain-list">
-                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
-                                            <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
-                                            <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
-                                            <li v-else-if="len(tls.certs_ids) === 1">Incomplete trust chain</li>
-                                            <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
-                                            <li v-else-if="tls.host_cert">Untrusted certificate</li>
-                                            <li v-else="">No host certificate</li>
-                                        </ul>
-                                    </td>
-                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                                        ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS hostname errors -->
-            <div v-if="len(tlsInvalidHostname) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unused, default, or incorrect certificates ({{ len(tlsInvalidHostname) }})</template>
-                        <p>Service name (URL) is different from the name in certificates</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Name(s) in certificate</th>
-                                    <th>Time of detection</th>
-                                    <th>Last failure</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
-                                    <td><span class="hidden">
-                                            ID: {{ tls.id }}
-                                        </span>
-                                        {{ tls.url_short }}
-                                    </td>
-                                    <td>
-                                        <ul class="coma-list" v-if="tls.host_cert">
-                                            <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
-                                        </ul>
-                                        <span v-else="">No domains found</span>
-                                    </td>
-                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                                        ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS expired certificates -->
-            <div v-if="len(expiredCertificates) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :headerCollapse="true">
-                        <template slot="title">Servers with expired certificates ({{ len(expiredCertificates) }})</template>
-                        <p>Clients can't connect to following servers due to expired certificates.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Certificate issuers</th>
-                                    <th>Expiration date</th>
-                                    <th>Last failure</th>
-                                    <!--<th>ID</th> -->
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="cert in sortBy(expiredCertificates, 'expires_at_utc')" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                        </span>
-                                        <ul class="domain-list">
-                                            <li v-for="domain in cert.watch_hosts">
-                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
-                                                <template v-else="">{{ domain }}</template>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td>{{ cert.issuerOrgNorm }}</td>
-                                    <td>{{ utcTimeLocaleString(cert.valid_to_utc) }}
-                                        ({{ momentu(cert.valid_to_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(cert.last_scan_at_utc) }}</td>
-                                    <!--<td>{{ cert.id }}</td>-->
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
-
+            <incidents
+                    :dns-failed-lookups="dnsFailedLookups"
+                    :tls-errors="tlsErrors"
+                    :expired-certificates="expiredCertificates"
+                    :tls-invalid-trust="tlsInvalidTrust"
+                    :tls-invalid-hostname="tlsInvalidHostname"
+            />
 
             <!-- Section heading - INFORMATIONAL -->
             <div class="row">
@@ -497,60 +215,10 @@
 
             <!-- All Certificate list -->
             <a name="allCerts"></a>
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">All certificates of your servers</template>
-                        <div class="form-group">
-                            <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
-                            <toggle-button v-model="includeExpired" id="chk-include-expired"
-                                           color="#00a7d7"
-                                           :labels="{checked: 'On', unchecked: 'Off'}"
-                            ></toggle-button>
-                            <label for="chk-include-expired">Include expired CT certificates</label>
-                        </div>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Domain name(s)</th>
-                                    <th>Issuer</th>
-                                    <th>Source</th>
-                                    <th colspan="2">Certificate expiration date</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                <tr v-for="cert in sortExpiry(certs)" v-if="cert.planCss && (momentu(cert.valid_to)<momentu())">
-                                    <td v-bind:class="cert.planCss.tbl">
-                                        <span class="hidden">
-                                            ID: {{ cert.id }}
-                                            CNAME: {{ cert.cname }}
-                                        </span>
-                                        <ul class="domain-list">
-                                            <li v-for="domain in cert.watch_hosts_ct">
-                                                <template v-if="cert.cname === domain">{{ domain }} <small><em>(CN)</em></small></template>
-                                                <template v-else="">{{ domain }}</template>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.issuerOrgNorm }}</td>
-                                    <td v-bind:class="cert.planCss.tbl">
-                                        <span class="label label-success" title="TLS scan" v-if="len(cert.watch_hosts) > 0">TLS</span>
-                                        <span class="label label-primary" title="CT scan" v-if="len(cert.watch_hosts_ct) > 0">CT</span>
-                                    </td>
-                                    <td v-bind:class="cert.planCss.tbl">{{ cert.valid_to }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-if="momentu(cert.valid_to)<momentu()">EXPIRED {{ momentu(cert.valid_to).fromNow() }}</td>
-                                    <td v-bind:class="cert.planCss.tbl"
-                                        v-else="">{{ momentu(cert.valid_to).fromNow() }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
+            <all-certs
+                    :certs="certs"
+                    @include-expired="val => { includeExpired = val }"
+            />
 
         </div>
         </transition>
@@ -562,37 +230,54 @@
     import _ from 'lodash';
     import axios from 'axios';
     import moment from 'moment';
-    import sprintf from 'sprintf-js';
+    import toastr from 'toastr';
     import pluralize from 'pluralize';
+
     import Psl from 'ph4-psl';
     import Req from 'req';
-    import ReqD from 'req-data';
     import util from './dashboard/code/util';
-    import charts from './dashboard/code/charts';
 
-    import VueCharts from 'vue-chartjs';
     import VeeValidate from 'vee-validate';
     import ToggleButton from 'vue-js-toggle-button';
-    import { Bar, Line } from 'vue-chartjs';
-    import Chart from 'chart.js';
-    import toastr from 'toastr';
 
     import Vue from 'vue';
+
+    import CertsMixin from './dashboard/code/certsMix';
+    import DashboardStatsMixin from './dashboard/code/dashboardStatsMix';
+    import DashboardFailsMixin from './dashboard/code/dashboardFailsMix';
+
+    import DashboardCertPlanner from './dashboard/CertPlanner';
+    import DashboardCertPlannerCio from './dashboard/CertPlannerCio';
+    import DashboardIncidentSummary from './dashboard/IncidentSummary';
+    import DashboardIncidents from './dashboard/Incidents';
+    import DashboardCertAllList from './dashboard/CertAllList';
+
+    import './dashboard/css/dashboard.css';
 
     Vue.use(ToggleButton);
     Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
+        mixins: [
+            CertsMixin,
+            DashboardStatsMixin,
+            DashboardFailsMixin,
+        ],
+
+        components: {
+            'cert-planner': DashboardCertPlanner,
+            'cert-planner-cio': DashboardCertPlannerCio,
+            'incident-summary': DashboardIncidentSummary,
+            'incidents': DashboardIncidents,
+            'all-certs': DashboardCertAllList,
+        },
+
         data: function() {
             return {
                 loadingState: 0,
                 results: null,
                 dataProcessStart: null,
 
-                graphsRendered: false,
-                graphDataReady: false,
-
-                certIssuerTableData: null,
                 includeExpired: false,
                 includeNotVerified: false,
 
@@ -607,191 +292,17 @@
         },
 
         computed: {
-            hasAccount(){
+            hasAccount() {
                 return !this.Laravel.authGuest;
             },
 
-            tlsCertsIdsMap(){
-                if (!this.results || !this.results.watch_to_tls_certs){
-                    return {};
-                }
-
-                return Req.listToSet(_.uniq(_.flattenDeep(_.values(this.results.watch_to_tls_certs))));
+            percSecurityGroup() {
+                return 100 - Math.round(100. * (this.len(this.dnsFailedLookups) + this.len(this.tlsErrors)) / this.numWatches);
             },
 
-            cdnCerts() {
-                if (!this.results || !this.results.tls || !this.results.certificates){
-                    return {};
-                }
-
-                return util.cdnCerts(this.results.tls, this.results.certificates);
+            percExpiresNow() {
+                return Math.round(100. * this.numExpiresNow / this.len(this.certs));
             },
-
-            tlsCerts(){
-                return _.map(_.keys(this.tlsCertsIdsMap), x => {
-                    return this.results.certificates[x];
-                });
-            },
-
-            allCerts(){
-                if (!this.results || !this.results.certificates){
-                    return {};
-                }
-
-                return this.results.certificates;
-            },
-
-            certs(){
-                if (!this.results || !this.results.certificates){
-                    return {};
-                }
-
-                return _.filter(this.results.certificates, x=>{
-                    return this.includeExpired || (x.id in this.tlsCertsIdsMap) || (x.valid_to_days >= -28);
-                });
-            },
-
-            whois(){
-                if (this.results && this.results.whois){
-                    return this.results.whois;
-                }
-                return {};
-            },
-
-            numHiddenCerts(){
-                return Number(_.size(this.certs) - _.size(this.tlsCerts));
-            },
-
-            numExpiresSoon(){
-                return Number(_.sumBy(this.tlsCerts, cur => {
-                    return (cur.valid_to_days <= 28 && cur.valid_to_days >= -28);
-                }));
-            },
-
-            numExpiresNow(){
-                return Number(_.sumBy(this.tlsCerts, cur => {
-                    return (cur.valid_to_days <= 8 && cur.valid_to_days >= -28);
-                }));
-            },
-
-            numWatches(){
-                return this.results ? _.size(this.results.watches) : 0;
-            },
-
-            showImminentRenewals(){
-                return _.reduce(this.tlsCerts, (acc, cur) => {
-                    return (acc + (cur.valid_to_days <= 28 && cur.valid_to_days >= -28));
-                }, 0) > 0;
-            },
-
-            showExpiringDomains(){
-                return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (cur.expires_at_days <= 90);
-                    }, 0) > 0;
-            },
-
-            showDomainsWithUnknownExpiration(){
-                return _.reduce(this.whois, (acc, cur) => {
-                        return acc + (!cur.expires_at_days);
-                    }, 0) > 0;
-            },
-
-            imminentRenewalCerts(){
-                return util.imminentRenewalCerts(this.tlsCerts);
-            },
-
-            crtTlsMonth(){
-                return this.monthDataGen(_.filter(this.tlsCerts, o => {
-                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }));
-            },
-
-            crtAllMonth() {
-                return this.monthDataGen(_.filter(this.certs, o => {
-                    return o.valid_to_days >= 0 && o.valid_to_days < 365; }))
-            },
-
-            certTypesStats(){
-                return this.certTypes(this.tlsCerts);
-            },
-
-            certTypesStatsAll(){
-                return this.certTypes(this.certs);
-            },
-
-            dns(){
-                if (this.results && this.results.dns){
-                    return this.results.dns;
-                }
-                return {};
-            },
-
-            tls(){
-                if (this.results && this.results.tls){
-                    return this.results.tls;
-                }
-                return {};
-            },
-
-            dnsFailedLookups(){
-                const r = _.filter(this.dns, x => {
-                    return x && x.status !== 1;
-                });
-                return _.sortBy(r, [x => { return x.domain; }]);
-            },
-
-            tlsErrors(){
-                return util.tlsErrors(this.tls);
-            },
-
-            expiredCertificates(){
-                return _.filter(this.tlsCerts, x => {
-                    return x.is_expired;
-                });
-            },
-
-            tlsInvalidTrust(){
-                return _.filter(this.tls, x => {
-                    return x && x.status === 1 && !x.valid_path;
-                });
-            },
-
-            tlsInvalidHostname(){
-                return _.filter(this.tls, x => {
-                    return x && x.status === 1 && x.valid_path && !x.valid_hostname;
-                });
-            },
-
-            week4renewals(){
-                return util.week4renewals(this.tlsCerts);
-            },
-
-            week4renewalsCounts(){
-                return util.week4renewalsCounts(this.tlsCerts);
-            },
-
-            tlsCertIssuers(){
-                return util.certIssuersGen(this.tlsCerts);
-            },
-
-            allCertIssuers(){
-                return util.certIssuersGen(this.certs);
-            },
-
-            certDomainDataset(){
-                return [
-                    util.certDomainsDataGen(this.tlsCerts),
-                    util.certDomainsDataGen(this.certs),
-                    util.certDomainsDataGen(this.tlsCerts, true),
-                    util.certDomainsDataGen(this.certs, true)];
-            },
-
-            certDomainsTableData(){
-                return _.toPairs(ReqD.flipGroups(this.certDomainDataset, {}));
-            },
-        },
-
-        watch: {
-
         },
 
         methods: {
@@ -879,10 +390,7 @@
             },
 
             warmup(){
-                setTimeout(() => {
-                    Psl.get('test.now.sh');
-                    Psl.get('test.通販');
-                }, 10);
+                setTimeout(() => util.pslWarmUp(Psl), 10);
             },
 
             processData(){
@@ -902,8 +410,6 @@
                 this.loadingState = 10;
 
                 this.$nextTick(() => {
-                    this.graphDataReady = true;
-                    this.renderCharts();
                     this.postLoad();
                     const processTime = moment().diff(this.dataProcessStart);
                     console.log('Processing finished in ' + processTime + ' ms');
@@ -919,169 +425,11 @@
                 this.loadingState = 0;
                 this.$emit('onReset');
             },
-
-            //
-            // Graphs
-            //
-
-            renderCharts(){
-                if (!this.graphDataReady){
-                    return;
-                }
-
-                this.graphsRendered = true;
-                this.renderChartjs();
-            },
-
-            renderChartjs(){
-                this.plannerGraph();
-                this.certTypesGraph();
-                this.week4renewGraph();
-                this.certIssuersGraph();
-                this.certDomainsGraph();
-            },
-
-            //
-            // Subgraphs
-            //
-
-            plannerGraph(){
-                const [graphCrtTlsData, graphCrtAllData] = charts.plannerConfig(this.crtTlsMonth, this.crtAllMonth);
-                new Chart(document.getElementById("columnchart_certificates_js"), graphCrtTlsData);
-                new Chart(document.getElementById("columnchart_certificates_all_js"), graphCrtAllData);
-            },
-
-            certTypesGraph(){
-                const graphCertTypes = charts.certTypesConfig(this.certTypesStatsAll, this.certTypesStats);
-                new Chart(document.getElementById("pie_cert_types"), graphCertTypes);
-            },
-
-            week4renewGraph(){
-                if (!this.showImminentRenewals){
-                    return;
-                }
-
-                const config = charts.week4renewConfig(this.week4renewalsCounts);
-                setTimeout(() => {
-                    new Chart(document.getElementById("imminent_renewals_js"), config);
-                }, 1000);
-            },
-
-            certIssuersGraph(){
-                const tlsIssuerStats = ReqD.groupStats(this.tlsCertIssuers, 'count');
-                const allIssuerStats = ReqD.groupStats(this.allCertIssuers, 'count');
-                ReqD.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
-                ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
-                this.certIssuerTableData = _.sortBy(
-                    ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
-                    util.invMaxTail);
-
-                const tlsIssuerUnz = _.unzip(tlsIssuerStats);
-                const allIssuerUnz = _.unzip(allIssuerStats);
-                const graphCertTypes = charts.certIssuerConfig(allIssuerUnz, tlsIssuerUnz);
-
-                setTimeout(() => {
-                    new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
-                }, 1000);
-            },
-
-            certDomainsGraph(){
-                const dataGraphs = _.map(this.certDomainDataset, x=>{
-                    return _.map(x, y => {
-                        return [y.key, y.size];
-                    });
-                });
-
-                ReqD.mergeGroupStatsKeys(dataGraphs);
-                ReqD.mergedGroupStatSort(dataGraphs, ['0', '1'], ['asc', 'asc']);
-                const unzipped = _.map(dataGraphs, _.unzip);
-
-                // Normal domains
-                const graphCertDomains = charts.certDomainsConfig(unzipped, 'All watched domains (server names)');
-
-                // const unzippedTld = [unzipped[2], unzipped[3]];
-                // const graphCertDomainsTld = charts.certDomainsConfig(unzippedTld, 'Registered domains (SLD)');
-
-                setTimeout(() => {
-                    new Chart(document.getElementById("pie_cert_domains"), graphCertDomains);
-                    // new Chart(document.getElementById("pie_cert_domains_tld"), graphCertDomainsTld);
-                }, 1000);
-
-            },
-
-            //
-            // Common graph data gen
-            //
-
-            certTypes(certSet){
-                return util.certTypes(certSet, this.cdnCerts);
-            },
-
-            monthDataGen(certSet){
-                return util.monthDataGen(certSet, {'cdnCerts': this.cdnCerts});
-            },
         }
     }
 </script>
 
 <style>
-    ul.domain-list {
-        padding-left: 0;
-    }
-
-    ul.domain-list li {
-        list-style-type: none;
-    }
-
-    .coma-list {
-        display: inline;
-        list-style: none;
-        padding-left: 0;
-    }
-
-    .coma-list li {
-        display: inline;
-    }
-
-    .coma-list li:after {
-        content: ", ";
-    }
-
-    .coma-list li:last-child:after {
-        content: "";
-    }
-
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity 1.0s
-    }
-    .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-        opacity: 0
-    }
-
-    .box-body > .table-xfull {
-        margin-left: -10px;
-        margin-right: -10px;
-        margin-bottom: -10px;
-        width: auto;
-    }
-
-    .box-body > .table-xfull > .table {
-        margin-bottom: auto;
-    }
-
-    .box-body > .table-xfull > .table > thead > tr > th,
-    .box-body > .table-xfull > .table > tbody > tr > td
-    {
-        padding-left: 12px;
-    }
-
-    .info-box-label {
-        line-height: 80px;
-        padding-left: 50px;
-        font-size: 20px;
-        font-weight: 400;
-        color: #444;
-    }
 
 </style>
 
