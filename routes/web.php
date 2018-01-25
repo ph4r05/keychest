@@ -80,6 +80,11 @@ Route::get('content/understand_spot_checks.html', function(){
     return Redirect::to('content/understand_spot_checks', 301);
 });
 
+// Dashboards
+Route::get('home/dashboard/finance', 'HomeController@dashboardCfo')->name('dashboardCfo');
+Route::get('home/dashboard/ops', 'HomeController@dashboardCio')->name('dashboardCio');
+Route::get('home/dashboard/sec', 'HomeController@dashboardCiso')->name('dashboardCiso');
+
 // Registered user space
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('home/servers', 'ServersController@index')->name('servers');

@@ -40,6 +40,30 @@ class HomeController extends Controller
     }
 
     /**
+     * Dashboard CFO
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function dashboardCfo(){
+        return view('adminlte::dashboard_cfo');
+    }
+
+    /**
+     * Dashboard CIO
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function dashboardCio(){
+        return view('adminlte::dashboard_cio');
+    }
+
+    /**
+     * Dashboard CISO
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function dashboardCiso(){
+        return view('adminlte::dashboard_ciso');
+    }
+
+    /**
      * Simple user guide view
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */

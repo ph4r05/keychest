@@ -33,8 +33,40 @@
         <ul class="sidebar-menu">
             <li class="header">{{ trans('adminlte_lang::message.header') }}</li>
 
-            <li class="{{ Request::path() ==  'home' ? 'active' : ''  }}">
-                <a href="{{ url('home') }}"><i class='fa fa-dashboard'></i> <span>{{ trans('admin.dashboard') }}</span></a>
+            <li class="treeview menu-open {{ Request::path() == 'home' || strstr(Request::path(), 'home/dashboard') !== false ? 'active' : ''  }}">
+                <a href="{{ url('home') }}">
+                    <i class='fa fa-dashboard'></i> <span>{{ trans('admin.dashboard') }}</span>
+                    <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+
+                <ul class="treeview-menu">
+                    <li class="{{ Request::path() ==  'home' ? 'active' : ''  }}">
+                        <a href="{{ url('home') }}">
+                            <i class="fa fa-circle-o"></i> Full
+                        </a>
+                    </li>
+
+                    <li class="{{ Request::path() ==  'home/dashboard/finance' ? 'active' : ''  }}">
+                        <a href="{{ url('home/dashboard/finance') }}">
+                            <i class="fa fa-circle-o"></i> Financial
+                        </a>
+                    </li>
+
+                    <li class="{{ Request::path() ==  'home/dashboard/ops' ? 'active' : ''  }}">
+                        <a href="{{ url('home/dashboard/ops') }}">
+                            <i class="fa fa-circle-o"></i> Operations
+                        </a>
+                    </li>
+
+                    <li class="{{ Request::path() ==  'home/dashboard/sec' ? 'active' : ''  }}">
+                        <a href="{{ url('home/dashboard/sec') }}">
+                            <i class="fa fa-circle-o"></i> Security
+                        </a>
+                    </li>
+
+                </ul>
             </li>
 
             <li class="{{ Request::path() ==  'home/scan' ? 'active' : ''  }}">

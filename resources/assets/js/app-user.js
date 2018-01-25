@@ -56,6 +56,15 @@ Vue.component('quicksearch', resolve => {
 Vue.component('dashboard', resolve => {
     require.ensure([], require => resolve(require('./components/dashboard.vue')), 'dashboard');
 });
+Vue.component('dashboard_cfo', resolve => {
+    require.ensure([], require => resolve(require('./components/dashboard_cfo.vue')), 'dashboard_cfo');
+});
+Vue.component('dashboard_cio', resolve => {
+    require.ensure([], require => resolve(require('./components/dashboard_cio.vue')), 'dashboard_cio');
+});
+Vue.component('dashboard_ciso', resolve => {
+    require.ensure([], require => resolve(require('./components/dashboard_ciso.vue')), 'dashboard_ciso');
+});
 
 Vue.component('servers', resolve => {
     require.ensure([], require => resolve(require('./components/servers.vue')), 'servers');
