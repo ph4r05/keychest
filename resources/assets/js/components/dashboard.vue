@@ -242,6 +242,7 @@
     import _ from 'lodash';
     import axios from 'axios';
     import moment from 'moment';
+    import toastr from 'toastr';
 
     import Psl from 'ph4-psl';
     import Req from 'req';
@@ -249,7 +250,6 @@
 
     import VeeValidate from 'vee-validate';
     import ToggleButton from 'vue-js-toggle-button';
-    import toastr from 'toastr';
     import Vue from 'vue';
 
     import CertsMixin from './dashboard/code/certsMix';
