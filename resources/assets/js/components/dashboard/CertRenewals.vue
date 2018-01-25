@@ -18,12 +18,10 @@
 
 <script>
     import _ from 'lodash';
-    import Chart from 'chart.js';
     import moment from 'moment';
     import pluralize from 'pluralize';
 
     import Req from 'req';
-    import ReqD from 'req-data';
     import util from './code/util';
     import charts from './code/charts';
 

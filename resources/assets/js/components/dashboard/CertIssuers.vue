@@ -18,7 +18,6 @@
     import _ from 'lodash';
     import moment from 'moment';
     import pluralize from 'pluralize';
-    import Chart from 'chart.js';
 
     import Req from 'req';
     import ReqD from 'req-data';
