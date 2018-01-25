@@ -161,81 +161,13 @@
             />
 
             <!-- Section heading -->
-            <div class="row" v-if="
-                    len(dnsFailedLookups) > 0 ||
-                    len(tlsErrors) > 0 ||
-                    len(expiredCertificates) > 0 ||
-                    len(tlsInvalidTrust) > 0 ||
-                    len(tlsInvalidHostname) > 0
-                ">
-                <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation-circle"></i></span>
-                    <div class="info-box-content info-box-label">
-                        Incidents
-                    </div>
-                </div>
-            </div>
-
-            <!-- DNS lookup fails -->
-            <div v-if="dnsFailedLookups.length > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">DNS configuration issues ({{ dnsFailedLookups.length }})</template>
-                        <p>Please check if the following domain names are correct. You may also need to verify
-                            your DNS configuration at your DNS registrar and at your DNS servers.</p>
-
-                        <dns-errors-table :dnsFailedLookups="dnsFailedLookups"/>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS connection fails -->
-            <div v-if="tlsErrors.length > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unreachable servers ({{ tlsErrors.length }})</template>
-                        <p>We failed to connect to one or more servers using TLS protocol.</p>
-
-                        <tls-errors-table :tlsErrors="tlsErrors"/>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS trust errors -->
-            <div v-if="len(tlsInvalidTrust) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Servers with configuration errors ({{ len(tlsInvalidTrust) }})</template>
-                        <p>We detected security or configuration problems at following servers</p>
-
-                        <tls-trust-errors-table :tlsInvalidTrust="tlsInvalidTrust"/>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS hostname errors -->
-            <div v-if="len(tlsInvalidHostname) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Unused, default, or incorrect certificates ({{ len(tlsInvalidHostname) }})</template>
-                        <p>Service name (URL) is different from the name in certificates</p>
-
-                        <tls-invalid-hosts-table :tlsInvalidHostname="tlsInvalidHostname"/>
-                    </sbox>
-                </div>
-            </div>
-
-            <!-- TLS expired certificates -->
-            <div v-if="len(expiredCertificates) > 0" class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-danger" :headerCollapse="true">
-                        <template slot="title">Servers with expired certificates ({{ len(expiredCertificates) }})</template>
-                        <p>Clients can't connect to following servers due to expired certificates.</p>
-
-                        <cert-expired-table :expiredCertificates="expiredCertificates"/>
-                    </sbox>
-                </div>
-            </div>
+            <incidents
+                    :dns-failed-lookups="dnsFailedLookups"
+                    :tls-errors="tlsErrors"
+                    :expired-certificates="expiredCertificates"
+                    :tls-invalid-trust="tlsInvalidTrust"
+                    :tls-invalid-hostname="tlsInvalidHostname"
+            />
 
             <!-- Section heading - PLANNING -->
             <div class="row">
@@ -382,12 +314,8 @@
     import DashboardCertRenewals from './dashboard/CertRenewals';
     import DashboardCertTypes from './dashboard/CertTypes';
     import DashboardIncidentSummary from './dashboard/IncidentSummary';
+    import DashboardIncidents from './dashboard/Incidents';
 
-    import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
-    import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
-    import DashboardTlsTrustErrorsTable from './dashboard/tables/TlsTrustErrorsTable';
-    import DashboardTlsInvalidHostsErrorsTable from './dashboard/tables/TlsInvalidHostsTable';
-    import DashboardCertExpiredTable from './dashboard/tables/CertExpiredTable';
     import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
     import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
     import DashboardCertIssuerTable from './dashboard/tables/CertIssuerTable';
@@ -409,12 +337,8 @@
             'cert-types': DashboardCertTypes,
             'imminent-renewals': DashboardCertRenewals,
             'incident-summary': DashboardIncidentSummary,
+            'incidents': DashboardIncidents,
 
-            'dns-errors-table': DashboardDnsErrorsTable,
-            'tls-errors-table': DashboardTlsErrorsTable,
-            'tls-trust-errors-table': DashboardTlsTrustErrorsTable,
-            'tls-invalid-hosts-table': DashboardTlsInvalidHostsErrorsTable,
-            'cert-expired-table': DashboardCertExpiredTable,
             'expiring-domains-table': DashboardExpiringDomainsTable,
             'unknown-expiration-domains-table': DashboardUnknownExpirationDomainsTable,
             'cert-issuer-table': DashboardCertIssuerTable,
