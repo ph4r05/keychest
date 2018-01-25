@@ -1,14 +1,20 @@
 <template>
-    <div class="row" v-if="certIssuerTableData">
+    <div class="row">
         <div class="xcol-md-12">
             <sbox cssBox="box-success" :headerCollapse="true">
                 <template slot="title">Number of certificates per issuer</template>
 
-                <cert-issuer-table :certIssuerTableData="certIssuerTableData"/>
+                <template v-if="certIssuerTableData">
+                    <cert-issuer-table :certIssuerTableData="certIssuerTableData"/>
 
-                <div class="form-group">
-                    <canvas ref="cert_issuers" style="width: 100%; height: 500px;"></canvas>
-                </div>
+                    <div class="form-group">
+                        <canvas ref="cert_issuers" style="width: 100%; height: 500px;"></canvas>
+                    </div>
+                </template>
+
+                <template v-else="">
+                    <p>No data is available</p>
+                </template>
             </sbox>
         </div>
     </div>
