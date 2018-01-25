@@ -241,47 +241,18 @@
 
             <!-- Certificate list -->
             <a name="certs"></a>
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">Certificates under your management</template>
-                        <div class="form-group">
-                        <p>This is a list of all certificates that you control and are responsible for renewals.
-                            You can choose to see only certificates correctly installed on your server,
-                            or all certificates issued to your servers.</p>
-                            <toggle-button v-model="includeNotVerified" id="chk-include-notverified"
-                                           color="#00a7d7"
-                                           disabled="disabled"
-                                           :labels="{checked: 'On', unchecked: 'Off'}"
-                            />
-                        <label for="chk-include-notverified">Include certificates not verified from your servers</label>
-                        </div>
+            <tls-certs
+                    :tlsCerts="tlsCerts"
+                    @include-not-verified="val => { includeNotVerified = val }"
+            />
 
-                        <tls-certs-table :tlsCerts="tlsCerts"/>
-                    </sbox>
-                </div>
-            </div>
 
             <!-- All Certificate list -->
             <a name="allCerts"></a>
-            <div class="row">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-primary" :collapsed="true" :headerCollapse="true">
-                        <template slot="title">All certificates of your servers</template>
-
-                        <div class="form-group">
-                            <p>The list shows all certificates in Certificate Transparency (CT) public logs ({{ len(certs) }}).</p>
-                            <toggle-button v-model="includeExpired" id="chk-include-expired"
-                                           color="#00a7d7"
-                                           :labels="{checked: 'On', unchecked: 'Off'}"
-                            />
-                            <label for="chk-include-expired">Include expired CT certificates</label>
-                        </div>
-
-                        <all-certs-table :certs="certs"/>
-                    </sbox>
-                </div>
-            </div>
+            <all-certs
+                    :certs="certs"
+                    @include-expired="val => { includeExpired = val }"
+            />
 
         </div>
         </transition>
@@ -307,7 +278,6 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
-
     import DashboardCertPlanner from './dashboard/CertPlanner';
     import DashboardCertIssuers from './dashboard/CertIssuers';
     import DashboardCertDomains from './dashboard/CertDomains';
@@ -315,12 +285,11 @@
     import DashboardCertTypes from './dashboard/CertTypes';
     import DashboardIncidentSummary from './dashboard/IncidentSummary';
     import DashboardIncidents from './dashboard/Incidents';
+    import DashboardCertTlsList from './dashboard/CertTlsList';
+    import DashboardCertAllList from './dashboard/CertAllList';
 
     import DashboardExpiringDomainsTable from './dashboard/tables/ExpiringDomainsTable';
     import DashboardUnknownExpirationDomainsTable from './dashboard/tables/UnknownExpirationDomainsTable';
-    import DashboardCertIssuerTable from './dashboard/tables/CertIssuerTable';
-    import DashboardTlsCertsTable from './dashboard/tables/CertsTlsTable';
-    import DashboardAllCertsTable from './dashboard/tables/CertsAllTable';
 
     import './dashboard/css/dashboard.css';
     import IncidentSummary from "./dashboard/IncidentSummary";
@@ -330,7 +299,6 @@
 
     export default {
         components: {
-            IncidentSummary,
             'cert-planner': DashboardCertPlanner,
             'cert-issuers': DashboardCertIssuers,
             'cert-domains': DashboardCertDomains,
@@ -338,12 +306,11 @@
             'imminent-renewals': DashboardCertRenewals,
             'incident-summary': DashboardIncidentSummary,
             'incidents': DashboardIncidents,
+            'tls-certs': DashboardCertTlsList,
+            'all-certs': DashboardCertAllList,
 
             'expiring-domains-table': DashboardExpiringDomainsTable,
             'unknown-expiration-domains-table': DashboardUnknownExpirationDomainsTable,
-            'cert-issuer-table': DashboardCertIssuerTable,
-            'tls-certs-table': DashboardTlsCertsTable,
-            'all-certs-table': DashboardAllCertsTable,
         },
 
         data: function() {
