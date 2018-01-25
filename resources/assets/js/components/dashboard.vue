@@ -6,12 +6,12 @@
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-                 v-if="loadingState == 0">
+                 v-if="loadingState === 0">
                 <span>Loading data, please wait...</span>
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert"
-                 v-else-if="loadingState == 1">
+                 v-else-if="loadingState === 1">
                 <span>Processing data ...</span>
             </div>
 
@@ -21,7 +21,7 @@
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
-        <div v-if="loadingState == 10">
+        <div v-if="loadingState === 10">
 
             <!-- Header info widgets -->
             <div class="row">
@@ -149,7 +149,8 @@
                     <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Yearly renewal calendar</template>
                         <p>
-                            The following two charts provide information about the effort needed in the next 12 months to
+                            The following two charts provide information about the effort needed in the next 12 months
+                            to
                             keep all your certificates valid. The first chart shows certificates we verified directly
                             when scanning your servers.
                             <br>
@@ -164,7 +165,8 @@
                         </div>
                         <p>
 
-                            <i>Note: The number of renewals for certificates, notably Let&#39;s Encrypt certificates, valid
+                            <i>Note: The number of renewals for certificates, notably Let&#39;s Encrypt certificates,
+                                valid
                                 for less than 12 months, is estimated for months beyond their maximum validity.</i>
                             <br/><br/>
                             You may want to check that all certificates are legitimate if:
@@ -190,9 +192,9 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Number of incidents per category</template>
-                            <p>The table shows a summary of the number of active incidents per category.
+                        <p>The table shows a summary of the number of active incidents per category.
                             Futher details are in the "Incidents" section of the dashboard.
-                            </p>
+                        </p>
                         <div class="table-responsive table-xfull">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -205,28 +207,28 @@
 
                                 <tbody>
                                 <tr>
-                                <td>DNS configuration issues</td>
-                                <td>{{ dnsFailedLookups.length }}</td>
+                                    <td>DNS configuration issues</td>
+                                    <td>{{ dnsFailedLookups.length }}</td>
                                 </tr>
 
                                 <tr>
-                                <td>Unreachable servers</td>
-                                <td>{{ tlsErrors.length }}</td>
+                                    <td>Unreachable servers</td>
+                                    <td>{{ tlsErrors.length }}</td>
                                 </tr>
 
                                 <tr>
-                                <td>Servers with configuration errors</td>
-                                <td>{{ len(tlsInvalidTrust) }}</td>
+                                    <td>Servers with configuration errors</td>
+                                    <td>{{ len(tlsInvalidTrust) }}</td>
                                 </tr>
 
                                 <tr>
-                                <td>Incorrect certificates</td>
-                                <td>{{ len(tlsInvalidHostname) }}</td>
+                                    <td>Incorrect certificates</td>
+                                    <td>{{ len(tlsInvalidHostname) }}</td>
                                 </tr>
 
                                 <tr>
-                                <td>Expired certificates</td>
-                                <td>{{ len(expiredCertificates) }}</td>
+                                    <td>Expired certificates</td>
+                                    <td>{{ len(expiredCertificates) }}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -234,8 +236,6 @@
                     </sbox>
                 </div>
             </div>
-
-
 
             <!-- Section heading -->
             <div class="row" v-if="
