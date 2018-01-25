@@ -6,12 +6,12 @@
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-                 v-if="loadingState == 0">
+                 v-if="loadingState === 0">
                 <span>Loading data, please wait...</span>
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert"
-                 v-else-if="loadingState == 1">
+                 v-else-if="loadingState === 1">
                 <span>Processing data...</span>
             </div>
 
@@ -21,7 +21,7 @@
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
-            <div v-if="loadingState == 10">
+            <div v-if="loadingState === 10">
                 <div class="row">
 
                 <!-- Header info widgets
@@ -52,7 +52,7 @@
                         <!-- small box -->
                         <div class="small-box bg-aqua" >
                             <div class="inner">
-                                <h3>{{ Math.round(certsOpsHours/8/260*10+0.5,0,PHP_ROUND_UP_HALF)/10 }}</h3>
+                                <h3>{{ fullTimeResource }}</h3>
                                 <p>Full time resource</p>
                             </div>
                             <div class="icon">
@@ -305,6 +305,7 @@
     import pluralize from 'pluralize';
 
     import VueCharts from 'vue-chartjs';
+    import VeeValidate from 'vee-validate';
     import ToggleButton from 'vue-js-toggle-button';
     import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
@@ -317,6 +318,7 @@
     Vue.use(VueEvents);
     Vue.use(VueRouter);
     Vue.use(ToggleButton);
+    Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     const router = window.VueRouter; // type: VueRouter
     export default {
@@ -468,6 +470,12 @@
 
             totalSaving(){
                 return this.totalCostWithoutKc - this.totalCostWithKc;
+            },
+
+            fullTimeResource(){
+                const hoursADay = 8.;
+                const workDays = 260.;
+                return Math.ceil((this.certsOpsHours / hoursADay / workDays) * 10 + 0.5) / 10;
             },
 
         },

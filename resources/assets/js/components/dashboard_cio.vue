@@ -6,12 +6,12 @@
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-                 v-if="loadingState == 0">
+                 v-if="loadingState === 0">
                 <span>Loading data, please wait...</span>
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert"
-                 v-else-if="loadingState == 1">
+                 v-else-if="loadingState === 1">
                 <span>Processing data ...</span>
             </div>
 
@@ -21,23 +21,7 @@
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
-        <div v-if="loadingState == 10">
-
-            <!-- X Google Chart - renewal planner -->
-            <!-- X Google Chart - renewal planner TLS+CT -->
-            <!--   Google Chart - renewal planner historical -->
-            <!--   Google Chart, pie - certificate ratio, LE / Cloudflare / Other -->
-            <!--   Google Chart - Certificate coverage for domain? Downtime graph -->
-            <!-- X DNS problem notices - resolution fails -->
-            <!--   DNS changes over time -->
-            <!-- X TLS connection fail notices - last attempt (connect fail, timeout, handshake) -->
-            <!-- X TLS certificate expired notices - last attempt -->
-            <!--   TLS certificates trust problems (self signed, is_ca, empty chain, generic, HOSTNAME validation error) -->
-            <!--   TLS certificate changes over time on the IP -->
-            <!--   connection stats, small inline graphs? like status -->
-            <!-- X Whois domain expiration notices -->
-            <!--   CT only certificates to a table + chart -->
-            <!--     how to detect CT only? was detected at some point? at some scan? new DB table for watch <-> cert assoc ? -->
+        <div v-if="loadingState === 10">
 
             <!-- Header info widgets -->
             <div class="row">
@@ -587,6 +571,7 @@
     import charts from './dashboard/code/charts';
 
     import VueCharts from 'vue-chartjs';
+    import VeeValidate from 'vee-validate';
     import ToggleButton from 'vue-js-toggle-button';
     import { Bar, Line } from 'vue-chartjs';
     import Chart from 'chart.js';
@@ -595,6 +580,7 @@
     import Vue from 'vue';
 
     Vue.use(ToggleButton);
+    Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     export default {
         data: function() {
