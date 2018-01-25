@@ -260,25 +260,8 @@
                         <template slot="title">DNS configuration issues ({{ dnsFailedLookups.length }})</template>
                         <p>Please check if the following domain names are correct. You may also need to verify
                             your DNS configuration at your DNS registrar and at your DNS servers.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Domain name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="dns in dnsFailedLookups" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ dns.id }}
-                                        </span>
-                                        {{ dns.domain }}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+
+                        <dns-errors-table :dnsFailedLookups="dnsFailedLookups"/>
                     </sbox>
                 </div>
             </div>
@@ -288,42 +271,9 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Unreachable servers ({{ tlsErrors.length }})</template>
-
                         <p>We failed to connect to one or more servers using TLS protocol.</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Address</th>
-                                    <th>Cause</th>
-                                    <th>Time of detection</th>
-                                    <th>Last failure</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="tls in tlsErrors" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ tls.id }}
-                                        </span>
-                                        {{ tls.url_short }}
-                                    </td>
-                                    <td>{{ tls.ip_scanned }}</td>
-                                    <td>
-                                        <span v-if="tls.err_code == 1">TLS handshake error</span>
-                                        <span v-else-if="tls.err_code == 2">No server detected</span>
-                                        <span v-else-if="tls.err_code == 3">Timeout</span>
-                                        <span v-else-if="tls.err_code == 4">Domain lookup error</span>
-                                        <span v-else="">TLS/SSL not present</span>
-                                    </td>
-                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                                         ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+
+                        <tls-errors-table :tlsErrors="tlsErrors"/>
                     </sbox>
                 </div>
             </div>
@@ -334,44 +284,8 @@
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Servers with configuration errors ({{ len(tlsInvalidTrust) }})</template>
                         <p>We detected security or configuration problems at following servers</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Address</th>
-                                    <th>Cause</th>
-                                    <th>Time of detection</th>
-                                    <th>Last failure</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="tls in sortBy(tlsInvalidTrust, 'created_at_utc')" class="danger">
-                                    <td>
-                                        <span class="hidden">
-                                            ID: {{ tls.id }}
-                                        </span>
-                                        {{ tls.url_short }}
-                                    </td>
-                                    <td>{{ tls.ip_scanned }}</td>
-                                    <td>
-                                        <ul class="domain-list">
-                                            <li v-if="tls.host_cert && tls.host_cert.is_self_signed">Self-signed certificate</li>
-                                            <li v-if="tls.host_cert && tls.host_cert.is_ca">CA certificate</li>
-                                            <li v-if="tls.host_cert && len(tls.certs_ids) > 1">Validation failed</li>
-                                            <li v-else-if="len(tls.certs_ids) === 1">Incomplete trust chain</li>
-                                            <li v-else-if="len(tls.certs_ids) === 0">No certificate</li>
-                                            <li v-else-if="tls.host_cert">Untrusted certificate</li>
-                                            <li v-else="">No host certificate</li>
-                                        </ul>
-                                    </td>
-                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                                        ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+
+                        <tls-trust-errors-table :tlsInvalidTrust="tlsInvalidTrust"/>
                     </sbox>
                 </div>
             </div>
@@ -382,36 +296,8 @@
                     <sbox cssBox="box-danger" :collapsed="true" :headerCollapse="true">
                         <template slot="title">Unused, default, or incorrect certificates ({{ len(tlsInvalidHostname) }})</template>
                         <p>Service name (URL) is different from the name in certificates</p>
-                        <div class="table-responsive table-xfull">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Server name</th>
-                                    <th>Name(s) in certificate</th>
-                                    <th>Time of detection</th>
-                                    <th>Last failure</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="tls in sortBy(tlsInvalidHostname, 'created_at_utc')" class="danger">
-                                    <td><span class="hidden">
-                                            ID: {{ tls.id }}
-                                        </span>
-                                        {{ tls.url_short }}
-                                    </td>
-                                    <td>
-                                        <ul class="coma-list" v-if="tls.host_cert">
-                                            <li v-for="domain in take(tls.host_cert.alt_domains, 10)">{{ domain }}</li>
-                                        </ul>
-                                        <span v-else="">No domains found</span>
-                                    </td>
-                                    <td>{{ utcTimeLocaleString(tls.created_at_utc) }}
-                                        ({{ momentu(tls.created_at_utc * 1000.0).fromNow() }})</td>
-                                    <td>{{ utcTimeLocaleString(tls.last_scan_at_utc) }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+
+                        <tls-invalid-hosts-table :tlsInvalidHostname="tlsInvalidHostname"/>
                     </sbox>
                 </div>
             </div>
@@ -462,28 +348,8 @@
                     <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Domain name expiration dates</template>
                         <p>The following domain names' registration expires within 90 days.</p>
-                        <div class="table-responsive table-xfull">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>Domain name</th>
-                                <th>You have to renew</th>
-                                <th>Expiration date</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="cur_whois in sortBy(whois, 'expires_at_utc')" v-if="cur_whois.expires_at_days <= 90">
-                                <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ cur_whois.domain }} </td>
-                                <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ momentu(cur_whois.expires_at_utc * 1000.0).fromNow() }} </td>
-                                <td v-bind:class="cur_whois.planCss.tbl">
-                                    {{ utcTimeLocaleDateString(cur_whois.expires_at_utc) }}</td>
-                            </tr>
 
-                            </tbody>
-                        </table>
-                        </div>
+                        <expiring-domains-table :whois="whois"/>
                     </sbox>
                 </div>
             </div>
@@ -494,20 +360,8 @@
                     <sbox cssBox="box-warning" :headerCollapse="true">
                         <template slot="title">Domains with unknown expiration</template>
                         <p>We were unable to detect expiration domain date for the following domains:</p>
-                        <div class="table-responsive table-xfull">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>Domain</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="cur_whois in whois" v-if="!cur_whois.expires_at_days" class="warning">
-                                <td>{{ cur_whois.domain }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </div>
+
+                        <unknown-expiration-domains-table :whois="whois"/>
                     </sbox>
                 </div>
             </div>
@@ -544,24 +398,8 @@
                 <div class="xcol-md-12">
                     <sbox cssBox="box-success" :headerCollapse="true">
                         <template slot="title">Number of certificates per issuer</template>
-                        <div class="table-responsive table-xfull" style="margin-bottom: 10px">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th>Provider</th>
-                                <th>Watched servers</th>
-                                <th>All issued certificates (CT)</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="curDat in certIssuerTableData">
-                                <td> {{ curDat[0] }} </td>
-                                <td> {{ curDat[1] }} </td>
-                                <td> {{ curDat[2] }} </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </div>
+
+                        <cert-issuer-table :certIssuerTableData="certIssuerTableData"/>
 
                         <div class="form-group">
                             <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
@@ -657,11 +495,18 @@
     import toastr from 'toastr';
     import Vue from 'vue';
 
+    import DashboardDnsErrorsTable from './dashboard/DnsErrorsTable';
+    import DashboardTlsErrorsTable from './dashboard/TlsErrorsTable';
+    import DashboardTlsTrustErrorsTable from './dashboard/TlsTrustErrorsTable';
+    import DashboardTlsInvalidHostsErrorsTable from './dashboard/TlsInvalidHostsTable';
+    import DashboardCertExpiredTable from './dashboard/CertExpiredTable';
+    import DashboardImminentRenewalsTable from './dashboard/ImminentRenewalsTable';
+    import DashboardExpiringDomainsTable from './dashboard/ExpiringDomainsTable';
+    import DashboardUnknownExpirationDomainsTable from './dashboard/UnknownExpirationDomainsTable';
+    import DashboardCertIssuerTable from './dashboard/CertIssuerTable';
+    import DashboardCertDomainsTable from './dashboard/CertDomainsTable';
     import DashboardTlsCertsTable from './dashboard/TlsCertsTable';
     import DashboardAllCertsTable from './dashboard/AllCertsTable';
-    import DashboardImminentRenewalsTable from './dashboard/ImminentRenewalsTable';
-    import DashboardCertDomainsTable from './dashboard/CertDomainsTable';
-    import DashboardCertExpiredTable from './dashboard/CertExpiredTable';
 
     import './dashboard/css/dashboard.css';
 
@@ -670,11 +515,18 @@
 
     export default {
         components: {
-            'all-certs-table': DashboardAllCertsTable,
-            'tls-certs-table': DashboardTlsCertsTable,
-            'imminent-renewals-table': DashboardImminentRenewalsTable,
-            'cert-domains-table': DashboardCertDomainsTable,
+            'dns-errors-table': DashboardDnsErrorsTable,
+            'tls-errors-table': DashboardTlsErrorsTable,
+            'tls-trust-errors-table': DashboardTlsTrustErrorsTable,
+            'tls-invalid-hosts-table': DashboardTlsInvalidHostsErrorsTable,
             'cert-expired-table': DashboardCertExpiredTable,
+            'imminent-renewals-table': DashboardImminentRenewalsTable,
+            'expiring-domains-table': DashboardExpiringDomainsTable,
+            'unknown-expiration-domains-table': DashboardUnknownExpirationDomainsTable,
+            'cert-issuer-table': DashboardCertIssuerTable,
+            'cert-domains-table': DashboardCertDomainsTable,
+            'tls-certs-table': DashboardTlsCertsTable,
+            'all-certs-table': DashboardAllCertsTable,
         },
 
         data: function() {
