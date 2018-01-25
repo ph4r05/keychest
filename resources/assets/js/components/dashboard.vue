@@ -358,19 +358,11 @@
             </div>
 
             <!-- Certificate issuers -->
-            <div class="row" v-if="certIssuerTableData">
-                <div class="xcol-md-12">
-                    <sbox cssBox="box-success" :headerCollapse="true">
-                        <template slot="title">Number of certificates per issuer</template>
-
-                        <cert-issuer-table :certIssuerTableData="certIssuerTableData"/>
-
-                        <div class="form-group">
-                            <canvas id="pie_cert_issuers" style="width: 100%; height: 500px;"></canvas>
-                        </div>
-                    </sbox>
-                </div>
-            </div>
+            <cert-issuers
+                    :certs="certs"
+                    :tls-certs="tlsCerts"
+                    :cdn-certs="cdnCerts"
+            />
 
             <!-- Certificate domains -->
             <div class="row">
@@ -460,6 +452,7 @@
     import Vue from 'vue';
 
     import DashboardCertPlanner from './dashboard/CertPlanner'
+    import DashboardCertIssuers from './dashboard/CertIssuers'
     import DashboardDnsErrorsTable from './dashboard/tables/DnsErrorsTable';
     import DashboardTlsErrorsTable from './dashboard/tables/TlsErrorsTable';
     import DashboardTlsTrustErrorsTable from './dashboard/tables/TlsTrustErrorsTable';
@@ -481,6 +474,7 @@
     export default {
         components: {
             'cert-planner': DashboardCertPlanner,
+            'cert-issuers': DashboardCertIssuers,
             'dns-errors-table': DashboardDnsErrorsTable,
             'tls-errors-table': DashboardTlsErrorsTable,
             'tls-trust-errors-table': DashboardTlsTrustErrorsTable,
@@ -504,7 +498,6 @@
                 graphsRendered: false,
                 graphDataReady: false,
 
-                certIssuerTableData: null,
                 includeExpired: false,
                 includeNotVerified: false,
 
@@ -671,14 +664,6 @@
                 return util.week4renewalsCounts(this.tlsCerts);
             },
 
-            tlsCertIssuers(){
-                return util.certIssuersGen(this.tlsCerts);
-            },
-
-            allCertIssuers(){
-                return util.certIssuersGen(this.certs);
-            },
-
             certDomainDataset(){
                 return [
                     util.certDomainsDataGen(this.tlsCerts),
@@ -832,7 +817,6 @@
             renderChartjs(){
                 this.certTypesGraph();
                 this.week4renewGraph();
-                this.certIssuersGraph();
                 this.certDomainsGraph();
             },
 
@@ -853,24 +837,6 @@
                 const config = charts.week4renewConfig(this.week4renewalsCounts);
                 setTimeout(() => {
                     new Chart(document.getElementById("imminent_renewals_js"), config);
-                }, 1000);
-            },
-
-            certIssuersGraph(){
-                const tlsIssuerStats = ReqD.groupStats(this.tlsCertIssuers, 'count');
-                const allIssuerStats = ReqD.groupStats(this.allCertIssuers, 'count');
-                ReqD.mergeGroupStatsKeys([tlsIssuerStats, allIssuerStats]);
-                ReqD.mergedGroupStatSort([tlsIssuerStats, allIssuerStats], ['1', '0'], ['desc', 'asc']);
-                this.certIssuerTableData = _.sortBy(
-                    ReqD.mergeGroupStatValues([tlsIssuerStats, allIssuerStats]),
-                    util.invMaxTail);
-
-                const tlsIssuerUnz = _.unzip(tlsIssuerStats);
-                const allIssuerUnz = _.unzip(allIssuerStats);
-                const graphCertTypes = charts.certIssuerConfig(allIssuerUnz, tlsIssuerUnz);
-
-                setTimeout(() => {
-                    new Chart(document.getElementById("pie_cert_issuers"), graphCertTypes);
                 }, 1000);
             },
 
@@ -904,10 +870,6 @@
 
             certTypes(certSet){
                 return util.certTypes(certSet, this.cdnCerts);
-            },
-
-            monthDataGen(certSet){
-                return util.monthDataGen(certSet, {'cdnCerts': this.cdnCerts});
             },
         }
     }
