@@ -2,29 +2,35 @@
     <div class="row">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false">Solutions</a></li>
-                <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Services</a></li>
-                <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Groups</a></li>
-                <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="true">Managed hosts</a></li>
+                <li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="false">Risk groups</a></li>
+                <li class="active"><a href="#tab_2" data-toggle="tab" aria-expanded="true">Solutions</a></li>
+                <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Services</a></li>
+                <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Groups</a></li>
+                <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Managed hosts</a></li>
                 <li class="pull-right"><a href="#" class="text-muted" title="Refresh" v-on:click="refresh"><i class="fa fa-refresh"></i></a></li>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="tab_1">
-                    <mgmt-solutions></mgmt-solutions>
+
+                <div class="tab-pane" id="tab_1">
+                    <mgmt-sec-groups/>
                 </div>
-                <!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_2">
-                    <mgmt-services></mgmt-services>
+
+                <div class="tab-pane active" id="tab_2">
+                    <mgmt-solutions/>
                 </div>
-                <!-- /.tab-pane -->
+
                 <div class="tab-pane" id="tab_3">
+                    <mgmt-services/>
+                </div>
+
+                <div class="tab-pane" id="tab_4">
                     <h3>Host group list</h3>
                 </div>
-                <!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_4">
-                    <mgmt-hosts></mgmt-hosts>
+
+                <div class="tab-pane" id="tab_5">
+                    <mgmt-hosts/>
                 </div>
-                <!-- /.tab-pane -->
+
             </div>
             <!-- /.tab-content -->
         </div>
@@ -39,6 +45,7 @@
     import VueRouter from 'vue-router';
 
     import ManagementHosts from './Hosts.vue';
+    import ManagementSecGroups from './SecGroups.vue';
     import ManagementServices from './Services.vue';
     import ManagementSolutions from './Solutions.vue';
 
@@ -59,7 +66,7 @@
             meta: {
                 editMode: false,
                 tabCode: 'mgmt',
-                tab:  4,
+                tab:  5,
                 parent: {name: 'management'},
             },
         },
@@ -72,7 +79,7 @@
             meta: {
                 editMode: true,
                 tabCode: 'mgmt',
-                tab:  4,
+                tab:  5,
                 parent: {name: 'management'},
             },
         },
@@ -84,7 +91,7 @@
             meta: {
                 editMode: false,
                 tabCode: 'mgmt',
-                tab:  2,
+                tab:  3,
                 parent: {name: 'management'}
             },
         },
@@ -97,7 +104,7 @@
             meta: {
                 editMode: true,
                 tabCode: 'mgmt',
-                tab:  2,
+                tab:  3,
                 parent: {name: 'management'}
             },
         },
@@ -109,7 +116,7 @@
             meta: {
                 editMode: false,
                 tabCode: 'mgmt',
-                tab:  1,
+                tab:  2,
                 parent: {name: 'management'}
             },
         },
@@ -122,7 +129,7 @@
             meta: {
                 editMode: true,
                 tabCode: 'mgmt',
-                tab:  1,
+                tab:  2,
                 parent: {name: 'management'}
             },
         },
@@ -134,7 +141,7 @@
             meta: {
                 editMode: false,
                 tabCode: 'mgmt',
-                tab:  4,
+                tab:  1,
                 parent: {name: 'management'},
             },
         },
@@ -147,7 +154,7 @@
             meta: {
                 editMode: true,
                 tabCode: 'mgmt',
-                tab:  4,
+                tab:  1,
                 parent: {name: 'management'},
             },
         },
@@ -168,6 +175,7 @@
     export default {
         components: {
             'mgmt-hosts': ManagementHosts,
+            'mgmt-sec-groups': ManagementSecGroups,
             'mgmt-services': ManagementServices,
             'mgmt-solutions': ManagementSolutions,
         },
