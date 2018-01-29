@@ -43,6 +43,7 @@
     import ManagementSolutions from './Solutions.vue';
 
     import ChangeHost from './ChangeHost.vue';
+    import ChangeSecGroup from './ChangeSecGroup.vue';
     import ChangeService from './ChangeService.vue';
     import ChangeSolution from './ChangeSolution.vue';
 
@@ -123,6 +124,31 @@
                 tabCode: 'mgmt',
                 tab:  1,
                 parent: {name: 'management'}
+            },
+        },
+
+        {
+            path: '/addRiskGroup',
+            name: 'addRiskGroup',
+            component: ChangeSecGroup,
+            meta: {
+                editMode: false,
+                tabCode: 'mgmt',
+                tab:  4,
+                parent: {name: 'management'},
+            },
+        },
+
+        {
+            path: '/editRiskGroup/:id',
+            name: 'editRiskGroup',
+            component: ChangeSecGroup,
+            props: true,
+            meta: {
+                editMode: true,
+                tabCode: 'mgmt',
+                tab:  4,
+                parent: {name: 'management'},
             },
         },
     ];
