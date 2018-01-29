@@ -21,6 +21,7 @@
   Vue.use(VueEvents);
 
   export default {
+    name: 'filter-bar',
     props: {
       globalEvt: {
           type: Boolean,
