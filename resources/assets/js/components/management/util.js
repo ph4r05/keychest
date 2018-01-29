@@ -1,4 +1,8 @@
 import _ from 'lodash';
+import accounting from 'accounting';
+import moment from 'moment';
+import pluralize from 'pluralize';
+
 import Req from 'req';
 
 export default {
@@ -52,6 +56,18 @@ export default {
     windowBack(router, route){
         const parent = _.get(route, 'meta.parent');
         return parent ? router.push(parent) : router.back();
+    },
+
+    allcap (value) {
+        return value.toUpperCase()
+    },
+
+    formatNumber (value) {
+        return accounting.formatNumber(value, 2)
+    },
+
+    formatDate (value, fmt = 'DD-MM-YYYY') {
+        return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
     },
 }
 

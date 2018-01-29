@@ -120,6 +120,7 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
+    import util from './util';
     import FilterBar from '../partials/FilterBar.vue';
     import DetailRow from './HostsDetail.vue';
 
@@ -223,16 +224,11 @@
         },
 
         methods: {
-            allcap (value) {
-                return value.toUpperCase()
-            },
-            formatNumber (value) {
-                return accounting.formatNumber(value, 2)
-            },
-            formatDate (value, fmt = 'DD-MM-YYYY') {
-                return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
-            },
+            allcap: util.allcap,
+            formatNumber: util.formatNumber,
+            formatDate: util.formatDate,
             pluralize,
+
             onPaginationData (paginationData) {
                 this.$refs.pagination.setPaginationData(paginationData);
                 this.$refs.paginationInfo.setPaginationData(paginationData);
@@ -254,7 +250,7 @@
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
             },
             onLoading(){
-                if (this.loadingState != 0){
+                if (this.loadingState !== 0){
                     this.loadingState = 2;
                 }
                 Req.bodyProgress(true);
