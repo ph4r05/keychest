@@ -120,6 +120,11 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
+    import util from './code/util';
+    import TableMixin from './code/tableMix';
+    import TableDefaultHandlersMixin from './code/tableDefaultHandlersMix';
+    import './css/table.css';
+
     import FilterBar from '../partials/FilterBar.vue';
     import DetailRow from './SolutionDetail.vue';
 
@@ -127,10 +132,15 @@
     Vue.use(VueRouter);
     Vue.use(Vue2Filters);
 
-    // Global detail row registration because my-vuetable would not see localy registered detail row in this component.
+    // Global detail row registration because my-vuetable would not see locally registered detail row in this component.
     Vue.component('mgmt-solution-detail-row', DetailRow);
 
     export default {
+        mixins: [
+            TableMixin,
+            TableDefaultHandlersMixin,
+        ],
+
         components: {
             Vuetable,
             VuetablePagination,
@@ -138,6 +148,7 @@
             VuetablePaginationBootstrap,
             'filter-bar': FilterBar,
         },
+
         data () {
             return {
                 loadingState: 0,
@@ -188,27 +199,7 @@
                     }
                 ],
                 css: {
-                    table: {
-                        tableClass: 'table table-bordered table-striped table-hover',
-                        ascendingIcon: 'glyphicon glyphicon-chevron-up',
-                        descendingIcon: 'glyphicon glyphicon-chevron-down'
-                    },
-                    pagination: {
-                        wrapperClass: 'pagination pull-right',
-                        activeClass: 'active',
-                        disabledClass: 'disabled',
-                        pageClass: 'page',
-                        linkClass: 'link',
-                    },
-                    info: {
-                        infoClass: "pull-left"
-                    },
-                    icons: {
-                        first: 'glyphicon glyphicon-step-backward',
-                        prev: 'glyphicon glyphicon-chevron-left',
-                        next: 'glyphicon glyphicon-chevron-right',
-                        last: 'glyphicon glyphicon-step-forward',
-                    },
+                    ...util.defaultTableCss(),
                 },
                 sortOrder: [
                     {field: 'sol_name', sortField: 'sol_name', direction: 'asc'}
@@ -222,26 +213,11 @@
         },
 
         methods: {
-            allcap (value) {
-                return value.toUpperCase()
-            },
-            formatNumber (value) {
-                return accounting.formatNumber(value, 2)
-            },
-            formatDate (value, fmt = 'DD-MM-YYYY') {
-                return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
-            },
+            allcap: util.allcap,
+            formatNumber: util.formatNumber,
+            formatDate: util.formatDate,
             pluralize,
-            onPaginationData (paginationData) {
-                this.$refs.pagination.setPaginationData(paginationData);
-                this.$refs.paginationInfo.setPaginationData(paginationData);
-            },
-            onChangePage (page) {
-                this.$refs.vuetable.changePage(page);
-            },
-            onDetailToggle (data) {
-                this.$refs.vuetable.toggleDetailRow(data.rowData.id);
-            },
+
             onFilterSet(filterText){
                 this.moreParams = {
                     filter: filterText
@@ -253,7 +229,7 @@
                 Vue.nextTick(() => this.$refs.vuetable.refresh());
             },
             onLoading(){
-                if (this.loadingState != 0){
+                if (this.loadingState !== 0){
                     this.loadingState = 2;
                 }
                 Req.bodyProgress(true);
@@ -264,12 +240,6 @@
             },
             onCheckboxToggled(){
                 this.numSelected = _.size(this.$refs.vuetable.selectedTo);
-            },
-            invertCheckBoxes(){
-                this.$refs.vuetable.invertCheckBoxes();
-            },
-            uncheckAll(){
-                this.$refs.vuetable.uncheckAllPages();
             },
             onEditServer(data) {
                 this.$refs.editServer.onEditServer(data);
@@ -375,25 +345,6 @@
                 }), ',');
             },
 
-            renderPagination(h) {
-                console.log('pagpag');
-                return h(
-                    'div',
-                    { class: {'vuetable-pagination': true} },
-                    [
-                        h('vuetable-pagination-info', { ref: 'paginationInfo', props: { css: this.css.paginationInfo } }),
-                        h('vuetable-pagination-bootstrap', {
-                            ref: 'pagination',
-                            class: { 'pull-right': true },
-                            props: {
-                            },
-                            on: {
-                                'vuetable-pagination:change-page': this.onChangePage
-                            }
-                        })
-                    ]
-                )
-            },
         },
         events: {
             'on-server-added' (data) {
@@ -409,63 +360,5 @@
     }
 </script>
 <style>
-    .pagination {
-        margin: 0;
-        float: right;
-    }
-    .pagination a.page {
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 10px;
-        margin-right: 2px;
-    }
-    .pagination a.page.active {
-        color: white;
-        background-color: #337ab7;
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 10px;
-        margin-right: 2px;
-    }
-    .pagination a.btn-nav {
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 7px;
-        margin-right: 2px;
-    }
-    .pagination a.btn-nav.disabled {
-        color: lightgray;
-        border: 1px solid lightgray;
-        border-radius: 3px;
-        padding: 5px 7px;
-        margin-right: 2px;
-        cursor: not-allowed;
-    }
-    .pagination-info {
-        float: left;
-    }
-    i.sort-icon {
-        /*padding-left: 5px;*/
-        font-size: 11px;
-        padding-top: 4px;
-    }
-    .loading .vuetable {
-
-    }
-    .vuetable-pagination{
-        min-height: 40px;
-    }
-
-    .table-xfull {
-        margin-left: -10px;
-        margin-right: -10px;
-        width: auto;
-    }
-
-    .table-xfull > .table > thead > tr > th,
-    .table-xfull > .table > tbody > tr > td
-    {
-        padding-left: 12px;
-    }
 
 </style>
