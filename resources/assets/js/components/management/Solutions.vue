@@ -2,12 +2,12 @@
     <div>
 
         <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-             v-if="loadingState == 0">
+             v-if="loadingState === 0">
             <span>Loading data, please wait...</span>
         </div>
 
-        <div v-show="loadingState != 0">
-            <h3>Managed solutions <help-trigger id="mgmtSolutionInfoModal"></help-trigger></h3>
+        <div v-show="loadingState !== 0">
+            <h3>Managed solutions <help-trigger id="mgmtSolutionInfoModal"/></h3>
             <!--<host-info></host-info>-->
 
             <div class="row">
@@ -27,11 +27,11 @@
                             :globalEvt="false"
                             v-on:filter-set="onFilterSet"
                             v-on:filter-reset="onFilterReset"
-                    ></filter-bar>
+                    />
                 </div>
             </div>
 
-            <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState==2}">
+            <div class="table-responsive table-xfull" v-bind:class="{'loading' : loadingState === 2}">
                 <vuetable-my ref="vuetable"
                              api-url="/home/management/solutions"
                              :fields="fields"
@@ -88,11 +88,11 @@
                 <vuetable-pagination-info ref="paginationInfo"
                                           info-class="pagination-info"
                                           :css="css.info"
-                ></vuetable-pagination-info>
+                />
                 <vuetable-pagination-bootstrap ref="pagination"
                                                :css="css.pagination"
                                                @vuetable-pagination:change-page="onChangePage"
-                ></vuetable-pagination-bootstrap>
+                />
             </div>
 
         </div>
