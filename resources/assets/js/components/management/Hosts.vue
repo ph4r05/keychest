@@ -120,7 +120,7 @@
     import VuetablePaginationInfo from 'vuetable-2/src/components/VuetablePaginationInfo';
     import VuetablePaginationBootstrap from '../../components/partials/VuetablePaginationBootstrap';
 
-    import util from './util';
+    import util from './code/util';
     import FilterBar from '../partials/FilterBar.vue';
     import DetailRow from './HostsDetail.vue';
 

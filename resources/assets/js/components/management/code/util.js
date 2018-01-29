@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import accounting from 'accounting';
 import moment from 'moment';
-import pluralize from 'pluralize';
 
 import Req from 'req';
+
 
 export default {
 
@@ -69,5 +69,36 @@ export default {
     formatDate (value, fmt = 'DD-MM-YYYY') {
         return (value === null) ? '' : moment.utc(value, 'YYYY-MM-DD HH:mm').local().format(fmt);
     },
+
+    /**
+     * Returns default vue-table CSS
+     * @returns {{table: {tableClass: string, ascendingIcon: string, descendingIcon: string}, pagination: {wrapperClass: string, activeClass: string, disabledClass: string, pageClass: string, linkClass: string}, info: {infoClass: string}, icons: {first: string, prev: string, next: string, last: string}}}
+     */
+    defaultTableCss(){
+        return {
+            table: {
+                tableClass: 'table table-bordered table-striped table-hover',
+                ascendingIcon: 'glyphicon glyphicon-chevron-up',
+                descendingIcon: 'glyphicon glyphicon-chevron-down'
+            },
+            pagination: {
+                wrapperClass: 'pagination pull-right',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                pageClass: 'page',
+                linkClass: 'link',
+            },
+            info: {
+                infoClass: "pull-left"
+            },
+            icons: {
+                first: 'glyphicon glyphicon-step-backward',
+                prev: 'glyphicon glyphicon-chevron-left',
+                next: 'glyphicon glyphicon-chevron-right',
+                last: 'glyphicon glyphicon-step-forward',
+            },
+        }
+    },
+
 }
 

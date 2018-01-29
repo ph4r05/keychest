@@ -42,7 +42,7 @@
     import _ from 'lodash';
     import axios from 'axios';
     import Req from 'req';
-    import mgmUtil from './util';
+    import mgmUtil from './code/util';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';

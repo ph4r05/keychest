@@ -121,7 +121,7 @@
     import pluralize from 'pluralize';
     import axios from 'axios';
     import Req from 'req';
-    import mgmUtil from './util';
+    import mgmUtil from './code/util';
     import swal from 'sweetalert2';
     import toastr from 'toastr';
 

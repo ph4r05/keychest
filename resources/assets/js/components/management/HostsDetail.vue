@@ -33,7 +33,7 @@
 
 <script>
     import _ from 'lodash';
-    import mgmUtil from './util';
+    import mgmUtil from './code/util';
 
     import Vue from 'vue';
     import HostGroups from './HostGroupsVueSelect';
