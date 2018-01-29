@@ -27,8 +27,7 @@
                 <template v-else="">Add a new managed solution.</template>
             </p>
             <p>
-                Solution represents a realization of the service. It is a set of parameters defining the service
-                implementation.
+                Solution is the business unit grouping all services.
             </p>
 
             <div class="">
