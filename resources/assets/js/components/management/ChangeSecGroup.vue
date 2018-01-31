@@ -179,7 +179,7 @@
             },
 
             fetchData(){
-                axios.get('/home/management/sec_group/' + this.id)
+                axios.get('/home/management/sec_groups/' + this.id)
                     .then(res => {
                         this.loadState = 0;
                         this.response = res.data;
@@ -224,7 +224,7 @@
                         this.formData.grp_name : this.formData.grp_display;
 
                     const params = this.formData;
-                    axios.post('/home/management/sec_group/' + (this.editMode ? 'edit' : 'add'), params)
+                    axios.post('/home/management/sec_groups/' + (this.editMode ? 'edit' : 'add'), params)
                         .then(res => {
                             this.sentState = 2;
                             resolve(res);

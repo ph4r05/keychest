@@ -156,6 +156,11 @@ Route::get('home/management/solutions/{id}', 'Management\MgmtSolutionController@
 Route::get('home/management/solutions/search', 'Management\MgmtSolutionController@search');
 Route::post('home/management/solutions/add', 'Management\MgmtSolutionController@addSolution');
 // TODO: solution delete, service edit
+Route::get('home/management/sec_groups', 'Management\SecGroupController@getGroups');
+Route::get('home/management/sec_groups/{id}', 'Management\SecGroupController@getGroup')->where('id', '[0-9]+');
+Route::get('home/management/sec_groups/search', 'Management\SecGroupController@searchGroups');
+Route::post('home/management/sec_groups/add', 'Management\SecGroupController@addGroup');
+// TODO: sec groups delete, service edit
 
 // Tester
 Route::get('tester', 'KeyCheckController@index');
