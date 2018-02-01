@@ -15,6 +15,8 @@ return [
     'wrk_key_check_emails_queue' => env('WORK_KEY_CHECK_EMAILS_QUEUE', 'default'),
 
     'enabled_ip_scanning' => env('APP_ENABLED_IP_SCANNING', false),
+    'enabled_management' => env('APP_ENABLED_MANAGEMENT', false),
+    'enabled_corporate' => env('APP_ENABLED_CORPORATE', false),
     'enabled_api_self_register' => env('APP_ENABLED_API_SELF_REGISTER', false),
     'enabled_user_auto_register' => env('APP_ENABLED_USER_AUTO_REGISTER', false),
 
