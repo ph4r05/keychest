@@ -38,6 +38,7 @@ Vue.prototype.trans = (key) => {
  */
 
 Vue.component('sbox', require('./components/partials/sbox.vue'));
+Vue.component('sboxs', require('./components/partials/sboxSimple.vue'));
 Vue.component('vuetable-my', require('./components/partials/VuetableMy.vue'));
 
 Vue.component('help-modal', require('./components/partials/HelpModal.vue'));

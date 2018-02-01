@@ -24,7 +24,6 @@
 
 <script>
     export default {
-        inject: ['$validator'],
         props: {
             remove: {
                 type: Boolean,
@@ -47,16 +46,6 @@
             },
         },
 
-        data: function() {
-            return {};
-        },
-
-        mounted() {
-            this.$nextTick(function () {
-                this.hookup();
-            })
-        },
-
         computed: {
             auxCss(){
                 return {
@@ -67,12 +56,6 @@
                 return this.headerCollapse ? 'collapse' : '';
             }
         },
-
-        methods: {
-            hookup(){
-
-            }
-        }
     }
 </script>
 
