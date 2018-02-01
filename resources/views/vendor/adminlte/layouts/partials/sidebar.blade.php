@@ -92,9 +92,11 @@
             </li>
             @endif
 
+            @if(config('keychest.enabled_management'))
             <li class="{{ Request::path() ==  'home/management' ? 'active' : ''  }}">
                 <a href="{{ url('home/management') }}"><i class='fa fa-cubes'></i> <span>{{ trans('admin.management') }}</span></a>
             </li>
+            @endif
 
             <li class="{{ Request::path() ==  'home/license' ? 'active' : ''  }}">
                 <a href="{{ url('home/license') }}"><i class='fa fa-drivers-license'></i> <span>{{ trans('admin.license') }}</span></a>
