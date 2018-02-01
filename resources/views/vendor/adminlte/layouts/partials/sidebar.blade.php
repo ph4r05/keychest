@@ -99,9 +99,11 @@
                 <a href="{{ url('home/license') }}"><i class='fa fa-drivers-license'></i> <span>{{ trans('admin.license') }}</span></a>
             </li>
 
+            @if (config('keychest.enabled_corporate'))
             <li class="{{ Request::path() ==  'home/cost-management' ? 'active' : ''  }}">
                 <a href="{{ url('home/cost-management') }}"><i class='fa fa-money'></i> <span>{{ trans('admin.cost-management') }}</span></a>
             </li>
+            @endif
         </ul>
 
         <hr/>
