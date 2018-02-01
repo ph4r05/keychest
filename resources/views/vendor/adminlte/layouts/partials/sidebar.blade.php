@@ -20,7 +20,7 @@
 
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li class="header">{{ trans('adminlte_lang::message.header') }}</li>
+            {{--<li class="header">{{ trans('adminlte_lang::message.header') }}</li>--}}
 
             <!-- Corporate dashboard vs. simple -->
             @if (config('keychest.enabled_corporate'))
