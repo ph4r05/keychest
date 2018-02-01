@@ -18,21 +18,12 @@
             </div>
         @endif
 
-        {{--<!-- search form (Optional) -->--}}
-        {{--<form action="#" method="get" class="sidebar-form">--}}
-            {{--<div class="input-group">--}}
-                {{--<input type="text" name="q" class="form-control" placeholder="{{ trans('adminlte_lang::message.search') }}..."/>--}}
-              {{--<span class="input-group-btn">--}}
-                {{--<button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>--}}
-              {{--</span>--}}
-            {{--</div>--}}
-        {{--</form>--}}
-        {{--<!-- /.search form -->--}}
-
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
             <li class="header">{{ trans('adminlte_lang::message.header') }}</li>
 
+            <!-- Corporate dashboard vs. simple -->
+            @if (config('keychest.enabled_corporate'))
             <li class="treeview menu-open {{ Request::path() == 'home' || strstr(Request::path(), 'home/dashboard') !== false ? 'active' : ''  }}">
                 <a href="{{ url('home') }}">
                     <i class='fa fa-dashboard'></i> <span>{{ trans('admin.dashboard') }}</span>
@@ -74,6 +65,18 @@
 
                 </ul>
             </li>
+
+            @else
+            <li class="{{ Request::path() == 'home' || strstr(Request::path(), 'home/dashboard') !== false ? 'active' : ''  }}">
+                <a href="{{ url('home') }}">
+                    <i class='fa fa-dashboard'></i> <span>{{ trans('admin.dashboard') }}</span>
+                    <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                </a>
+            </li>
+
+            @endif
 
             <li class="{{ Request::path() ==  'home/scan' ? 'active' : ''  }}">
                 <a href="{{ url('home/scan') }}"><i class='fa fa-wpexplorer'></i> <span>{{ trans('admin.scan') }}</span></a>
@@ -121,20 +124,9 @@
                 <a href="{{ url('/content') }}"><i class='fa fa-book'></i> <span>{{ trans('admin.content') }}</span></a>
             </li>
 
-
-
             {{--<li class="{{ Request::path() ==  '/intro' ? 'active' : ''  }}">--}}
                 {{--<a href="{{ url('/intro') }}"><i class='fa fa-home'></i> <span>{{ trans('admin.home-page') }}</span></a>--}}
             {{--</li>--}}
-
-            {{--<li class="treeview">--}}
-                {{--<a href="#"><i class='fa fa-link'></i> <span>{{ trans('adminlte_lang::message.multilevel') }}</span> <i class="fa fa-angle-left pull-right"></i></a>--}}
-                {{--<ul class="treeview-menu">--}}
-                    {{--<li><a href="#">{{ trans('adminlte_lang::message.linklevel2') }}</a></li>--}}
-                    {{--<li><a href="#">{{ trans('adminlte_lang::message.linklevel2') }}</a></li>--}}
-                {{--</ul>--}}
-            {{--</li>--}}
-
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->
