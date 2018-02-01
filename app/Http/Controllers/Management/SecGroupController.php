@@ -144,9 +144,44 @@ class SecGroupController extends Controller
     /**
      * Add a new group
      * @param ParamRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function addGroup(ParamRequest $request){
-        throw new \RuntimeException('Not implemented');
+        $this->validate($request, [  // TODO: refine validation rules
+            'sgrp_name' => 'required|max:250',
+            'sgrp_display' => 'present|max:250',
+            'sgrp_criticality' => 'required|integer',
+            'sgrp_assurance' => 'required|max:64',
+        ], [], [
+                'sgrp_code' => 'Risk Group Name']
+        );
+
+        // Host Db spec for storage.
+        $user = Auth::getUser();
+        $ownerId = $user->primary_owner_id;
+        $name = Input::get('sol_name');
+
+        // Duplicity detection
+        $exists = $this->secGroupManager->getQuery($name, $ownerId)->first();
+        if (!empty($exists)){
+            return response()->json(['status' => 'already-present'], 410);
+        }
+
+        $params = [
+            'sol_name' => $name,
+            'sol_display' => Input::get('sol_display'),
+            'sol_type' => Input::get('sol_type'),
+            'sol_criticality' => Input::get('sol_criticality'),
+            'sol_assurance_level' => Input::get('sol_assurance'),
+        ];
+
+        // Add
+        $dbRecord = $this->solutionManager->add($params, $ownerId);
+
+        return response()->json([
+            'state' => 'success',
+            'record' => $dbRecord,
+        ], 200);
     }
 
     /**

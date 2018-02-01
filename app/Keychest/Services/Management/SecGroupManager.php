@@ -117,5 +117,28 @@ class SecGroupManager
         return $rest->merge($loaded);
     }
 
+    /**
+     * Creates a new sec group from the specification.
+     * @param $params
+     * @param $ownerId
+     * @return ManagedSecGroup
+     */
+    public function add($params, $ownerId){
+        // Soft delete query
+        $trashedElem = $this->getByName($params['sgrp_name'], $ownerId)->onlyTrashed()->first();
+        if (!empty($trashedElem)){
+            $trashedElem->restore();
+            return $trashedElem;
+        }
+
+        // Insert a new record
+        unset($params['id']);
+        $item = new ManagedSecGroup(array_merge($params, [
+            'owner_id' => $ownerId
+        ]));
+        $item->save();
+        return $item;
+    }
+
 }
 
