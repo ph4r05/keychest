@@ -6,12 +6,12 @@
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert" id="search-info"
-                 v-if="loadingState == 0">
+                 v-if="loadingState === 0">
                 <span>Loading data, please wait...</span>
             </div>
 
             <div class="alert alert-info alert-waiting scan-alert"
-                 v-else-if="loadingState == 1">
+                 v-else-if="loadingState === 1">
                 <span>Processing data ...</span>
             </div>
 
@@ -21,7 +21,7 @@
         </div>
 
         <transition name="fade" v-on:after-leave="transition_hook">
-            <div v-if="loadingState == 10">
+            <div v-if="loadingState === 10">
 
                 <!-- Certificate price list -->
                 <div class="row" v-if="certPriceData">
@@ -187,17 +187,13 @@
     import axios from 'axios';
     import moment from 'moment';
     import numeral from 'numeral';
-    import sprintf from 'sprintf-js';
-    import Psl from 'ph4-psl';
+    import ToggleButton from 'vue-js-toggle-button';
+    import toastr from 'toastr';
+    import VeeValidate from 'vee-validate';
+
     import Req from 'req';
     import ReqD from 'req-data';
     import util from './dashboard/code/util';
-
-    import VueCharts from 'vue-chartjs';
-    import ToggleButton from 'vue-js-toggle-button';
-    import { Bar, Line } from 'vue-chartjs';
-    import Chart from 'chart.js';
-    import toastr from 'toastr';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
@@ -206,6 +202,7 @@
     Vue.use(VueEvents);
     Vue.use(VueRouter);
     Vue.use(ToggleButton);
+    Vue.use(VeeValidate, {fieldsBagName: 'formFields'});
 
     const router = window.VueRouter; // type: VueRouter
     export default {

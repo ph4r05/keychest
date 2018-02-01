@@ -297,19 +297,14 @@
     import axios from 'axios';
     import moment from 'moment';
     import numeral from 'numeral';
-    import sprintf from 'sprintf-js';
-    import Psl from 'ph4-psl';
+    import pluralize from 'pluralize';
+    import ToggleButton from 'vue-js-toggle-button';
+    import toastr from 'toastr';
+    import VeeValidate from 'vee-validate';
+
     import Req from 'req';
     import ReqD from 'req-data';
     import util from './dashboard/code/util'
-    import pluralize from 'pluralize';
-
-    import VueCharts from 'vue-chartjs';
-    import VeeValidate from 'vee-validate';
-    import ToggleButton from 'vue-js-toggle-button';
-    import { Bar, Line } from 'vue-chartjs';
-    import Chart from 'chart.js';
-    import toastr from 'toastr';
 
     import Vue from 'vue';
     import VueEvents from 'vue-events';
