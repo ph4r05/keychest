@@ -48,4 +48,14 @@ class UserTools {
     public static function generateUnsubscribeToken($user=null){
         return (new Factory())->getLowStrengthGenerator()->generateString(24, self::TOKEN_CHARSET);
     }
+
+    /**
+     * Returns true if the user was properly registered by the register event.
+     * e.g., primary owner is filled in.
+     * @param User $user
+     * @return bool
+     */
+    public static function wasUserProperlyRegistered($user){
+        return !empty($user->primary_owner_id);
+    }
 }

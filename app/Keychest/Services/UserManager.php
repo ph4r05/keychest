@@ -19,7 +19,9 @@ use App\Keychest\Utils\UserTools;
 use App\Models\AccessToken;
 use App\Models\ApiKey;
 use App\Models\ApiKeyLog;
+use App\Models\Owner;
 use App\Models\User;
+use App\Models\UserLoginHistory;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
@@ -146,6 +148,72 @@ class UserManager {
         }
 
         return UserSelfRegistrationResult::$ALLOWED;
+    }
+
+    /**
+     * Handles user login event
+     * @param $user
+     * @param null $event
+     */
+    public function onUserLogin($user, $event=null){
+        Log::info('Login event: ' . $user->id);
+
+        $user->last_login_at = $user->cur_login_at;
+        $user->cur_login_at = Carbon::now();
+
+        // By the login we verify the user account - has to know the password to login.
+        // Designed for auto-registered accounts.
+        $user->verified_at = Carbon::now();
+
+        // Also the user block (user blocked keychest from using the account) is reset by the
+        // explicit user login to the account.
+        $user->blocked_at = null;
+
+        $req = request();
+        $user->accredit = $req->session()->get('accredit');
+
+        // Clean some session state
+        if ($req){
+            $req->session()->forget('verify.email');
+        }
+
+        $newLoginRecord = new UserLoginHistory([
+            'user_id' => $user->id,
+            'login_at' => $user->cur_login_at,
+            'login_ip' => $req ? $req->ip() : null,
+        ]);
+
+        $newLoginRecord->save();
+
+        $user->last_login_id = $newLoginRecord->id;
+        $user->save();
+    }
+
+    /**
+     * Handles user registration event.
+     * @param $user
+     * @param null $event
+     * @return mixed
+     */
+    public function onUserRegistered($user, $event=null){
+        Log::info('New user registered: ' . $user->id);
+
+        $user->accredit_own = UserTools::accredit($user);
+        $user->email_verify_token = UserTools::generateVerifyToken($user);
+        $user->weekly_unsubscribe_token = UserTools::generateUnsubscribeToken($user);
+        $user->cert_notif_unsubscribe_token = UserTools::generateUnsubscribeToken($user);
+        $user->save();
+
+        $owner = new Owner([
+            'name' => $user->email,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at
+        ]);
+        $owner->save();
+
+        $user->primary_owner_id = $owner->id;
+        $user->save();
+        return $user;
     }
 
     /**
@@ -280,7 +348,7 @@ class UserManager {
      * Performs the token verification.
      * If token is valid, user is returned.
      * @param $token
-     * @return User|null
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
     public function checkVerifyToken($token){
         return empty($token) ? null :

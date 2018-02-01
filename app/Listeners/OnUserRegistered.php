@@ -2,19 +2,27 @@
 
 namespace App\Listeners;
 
+use App\Keychest\Services\UserManager;
 use App\Keychest\Utils\UserTools;
 use App\Models\Owner;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Log;
 
 
 class OnUserRegistered
 {
     /**
-     * Create the event listener.
+     * @var UserManager
      */
-    public function __construct()
+    protected $userManager;
+
+    /**
+     * Create the event listener.
+     * @param UserManager $userManager
+     */
+    public function __construct(UserManager $userManager)
     {
-        //
+        $this->userManager = $userManager;
     }
 
     /**
@@ -25,20 +33,6 @@ class OnUserRegistered
      */
     public function handle(Registered $event)
     {
-        $event->user->accredit_own = UserTools::accredit($event->user);
-        $event->user->email_verify_token = UserTools::generateVerifyToken($event->user);
-        $event->user->weekly_unsubscribe_token = UserTools::generateUnsubscribeToken($event->user);
-        $event->user->cert_notif_unsubscribe_token = UserTools::generateUnsubscribeToken($event->user);
-        $event->user->save();
-
-        $owner = new Owner([
-            'name' => $event->user->email,
-            'created_at' => $event->user->created_at,
-            'updated_at' => $event->user->updated_at
-        ]);
-        $owner->save();
-
-        $event->user->primary_owner_id = $owner->id;
-        $event->user->save();
+        $this->userManager->onUserRegistered($event->user, $event);
     }
 }

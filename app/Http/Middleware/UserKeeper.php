@@ -2,12 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Keychest\Utils\UserTools;
 use Carbon\Carbon;
 use Closure;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 
-class LastUserAction
+class UserKeeper
 {
     /**
      * Handle an incoming request.
@@ -21,11 +24,9 @@ class LastUserAction
     {
         if (Auth::guard($guard)->check()) {
             $user = Auth::getUser();
-            $oldAction = $user->last_action_at;
-            $user->last_action_at = Carbon::now();
 
-            if (empty($oldAction) || $user->last_action_at->diffInSeconds($oldAction) > 10) {
-                $user->save();
+            if (!UserTools::wasUserProperlyRegistered($user)){
+                event(new Registered($user));
             }
         }
 
