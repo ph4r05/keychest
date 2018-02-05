@@ -69,8 +69,8 @@ class UserController extends Controller
         ]);
 
         $data = $allowedInputs->mapWithKeys(function($item){
-            $val = trim(Input::get($item));
-            if (empty($val)){
+            $val = Input::get($item);
+            if ($val === null || $val === ''){
                 return [];
             }
 
